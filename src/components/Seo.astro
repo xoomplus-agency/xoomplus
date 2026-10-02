@@ -1,0 +1,52 @@
+---
+import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
+
+interface Props {
+	title: string;
+	description?: string;
+	image?: string;
+	type?: string;
+	/** Override canonical path; defaults to current pathname. Only emitted when SITE_URL is set. */
+	canonicalPath?: string;
+}
+
+const {
+	title,
+	description = '',
+	image,
+	type = 'website',
+	canonicalPath = Astro.url.pathname,
+} = Astro.props;
+
+// Canonicals only when SITE_URL / astro `site` is configured — avoids accidental production URLs in staging.
+const site = Astro.site;
+const canonical = site != null ? new URL(canonicalPath, site).href : undefined;
+
+const ogImage = image
+	? image.startsWith('http')
+		? image
+		: site
+			? new URL(image, site).href
+			: undefined
+	: undefined;
+---
+
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+
+{isStaging() && <meta name="robots" content={STAGING_ROBOTS} />}
+
+{canonical && <link rel="canonical" href={canonical} />}
+
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:type" content={type} />
+{canonical && <meta property="og:url" content={canonical} />}
+{ogImage && <meta property="og:image" content={ogImage} />}
+
+<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+{description && <meta name="twitter:description" content={description} />}
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+
+<slot name="json-ld" />

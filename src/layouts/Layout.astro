@@ -1,3 +1,21 @@
+---
+import Seo from '../components/Seo.astro';
+import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+}
+
+const { title = 'Astro Basics', description, image } = Astro.props;
+
+// Complements middleware for SSR/on-demand; static hosts still need platform headers (see middleware note).
+if (isStaging()) {
+	Astro.response.headers.set('X-Robots-Tag', STAGING_ROBOTS);
+}
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -6,7 +24,9 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<Seo title={title} description={description} image={image}>
+			<slot name="json-ld" slot="json-ld" />
+		</Seo>
 	</head>
 	<body>
 		<slot />
