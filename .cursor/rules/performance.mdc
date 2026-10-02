@@ -1,13 +1,70 @@
 ---
-description: Performance rules — minimal JS, optimized images, good Core Web Vitals
+description: Core Web Vitals and loading performance — LCP/INP/CLS, assets, WP API, validation
 globs: src/**/*.{astro,css,js,ts,mjs}
 alwaysApply: false
 ---
 
 # Performance
 
-- Minimize JavaScript and avoid unnecessary hydration.
-- Optimize images: correct dimensions, responsive `srcset`/`sizes` where appropriate, lazy-load non-critical images.
-- Avoid third-party and animation libraries unless required.
-- Keep CSS efficient; avoid render-blocking resources when possible.
-- Preserve Core Web Vitals without sacrificing design fidelity.
+## Targets (production)
+
+- **LCP** ≤ 2.5s · **INP** ≤ 200ms · **CLS** ≤ 0.1
+- Strong Lighthouse/PageSpeed on mobile and desktop without changing the approved design.
+
+## Loading
+
+- Minimize initial HTML/CSS/JS; prefer Astro static/SSR HTML over client JS.
+- JS and hydration only when interaction requires it; no large libs when a light solution works.
+- Keep the critical path small; avoid render-blocking resources.
+- Do not load page-specific resources globally; no speculative deps.
+
+## Images
+
+- Prefer AVIF/WebP when appropriate; serve correctly sized images.
+- Set explicit dimensions/aspect ratios; lazy-load below-the-fold only.
+- **Never lazy-load the LCP / primary above-the-fold image.**
+- Use responsive `srcset`/`sizes` where useful; avoid oversized backgrounds.
+
+## Hero / LCP
+
+- Prioritize the real LCP asset; no unnecessary JS before the hero.
+- Hero video: optimized poster; video must not own initial paint; compress for web.
+
+## Fonts
+
+- Only required families/weights; prefer project-hosted fonts; use `font-display`.
+- Avoid font strategies that cause visible layout shift.
+
+## CSS / JS
+
+- Minimal maintainable CSS; no unused frameworks; avoid expensive effects when simpler matches the design.
+- Prefer Astro default rendering; hydrate only interactive islands; no React/Vue/Svelte for static UI.
+
+## Third-party
+
+- No analytics, chat, embeds, or external fonts unless explicitly required.
+- Load non-critical third-party as late/efficiently as practical.
+
+## Layout stability (CLS)
+
+- Reserve space for images, video, fonts, nav, dynamic content, embeds, and late-loaded UI.
+- Content must not jump after first paint.
+
+## WordPress API
+
+- Fetch only what the page needs; avoid redundant/sequential requests when avoidable.
+- Use Astro build/server caching appropriately; never expose WP credentials to the client.
+- Do not let WP API calls unnecessarily block initial HTML when alternatives exist.
+
+## SEO + performance
+
+- Semantic HTML, correct headings, efficient metadata/canonicals, lightweight valid JSON-LD.
+- SEO-critical content in HTML, not client-only rendering.
+
+## Validation (before calling a page done)
+
+1. Test the **production build**, not only `astro dev`.
+2. Check Lighthouse/PSI, CWV, LCP path, CLS, INP.
+3. Inspect JS/CSS payloads, images, fonts, network, third-party.
+4. Fix measurable issues first; no speculative complexity.
+5. **Never alter the approved design** for performance shortcuts.
