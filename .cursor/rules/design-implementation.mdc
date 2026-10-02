@@ -1,0 +1,24 @@
+---
+description: Translate Figma/image designs accurately; no redesign or invented UI
+alwaysApply: true
+---
+
+# Design Implementation
+
+Figma/design references are the visual source of truth. Reproduce them; do not modernize or reinvent.
+
+- **No design yet:** do not invent colors, typography, spacing, cards, buttons, layouts, gradients, animations, page structures, or decorative elements. Do not create a visual design system until the final design is provided.
+- Do not redesign, invent UI, or add elements absent from the reference.
+- Match spacing, typography, proportions, and hierarchy.
+- Reuse supplied assets; preserve aspect ratios; do not replace with stock or generated imagery unless asked.
+- If an asset is missing, identify it — do not invent a substitute.
+- Avoid generic AI patterns: unnecessary gradients, excessive cards, glassmorphism, bento layouts, heavy shadows.
+
+## Workflow (mandatory)
+
+1. **Understand** — structure, visual system, sections, reusable patterns, assets, responsive, motion. Analyze only unless told to build.
+2. **Plan** — only when asked to implement: concise plan (pages, components, sections, assets, responsive, real deps).
+3. **Implement** — only after explicit request (“build”, “implement”, “create homepage”, etc.).
+4. **Verify** — targeted checks: files, semantics, responsive, excess client JS, design fidelity.
+
+Receiving a design/image alone is **not** permission to code.

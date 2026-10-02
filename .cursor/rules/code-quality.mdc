@@ -1,0 +1,13 @@
+---
+description: Code quality & minimalism — simple, focused changes; no drive-by refactors
+alwaysApply: true
+---
+
+# Code Quality & Minimalism
+
+- Keep implementations simple; avoid unnecessary abstraction and premature optimization.
+- Avoid unnecessary component fragmentation; split only when it clearly improves maintainability.
+- Avoid duplicate code where practical.
+- Do not refactor unrelated files or rewrite working code without need.
+- Do not introduce libraries for tasks solvable with native HTML/CSS/JS.
+- Keep changes focused on the requested task only.

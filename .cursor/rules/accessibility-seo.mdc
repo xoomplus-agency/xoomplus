@@ -1,0 +1,14 @@
+---
+description: Baseline accessibility and SEO — semantic HTML, a11y, crawlable content
+globs: src/**/*.{astro,html}
+alwaysApply: false
+---
+
+# Accessibility & SEO
+
+- Use semantic HTML and a correct heading hierarchy.
+- Accessible navigation; keyboard-accessible interactive elements; proper button vs link usage.
+- Meaningful alt text; labeled form controls; visible focus states.
+- Descriptive page metadata; canonical when applicable; crawlable HTML.
+- Do not rely on JavaScript for content that should be in HTML.
+- Keep SEO simple — no unnecessary complexity.

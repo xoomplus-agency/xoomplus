@@ -1,0 +1,14 @@
+---
+description: Responsive CSS across desktop/laptop/tablet/mobile from design refs
+globs: src/**/*.{astro,css}
+alwaysApply: false
+---
+
+# Responsive Design
+
+- Support desktop, laptop, tablet, and mobile.
+- Prefer responsive CSS over duplicated markup; avoid separate desktop/mobile implementations unless necessary.
+- Use design references as breakpoint/layout source of truth.
+- Preserve spacing and hierarchy across breakpoints.
+- Avoid arbitrary breakpoint proliferation.
+- Verify important responsive states before calling work complete.

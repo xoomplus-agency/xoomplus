@@ -1,0 +1,15 @@
+---
+description: Minimize context, tokens, and credits — inspect only what’s needed
+alwaysApply: true
+---
+
+# Low Credit / Low Context Workflow
+
+- Inspect only files relevant to the current task; do not recursively scan the project without reason.
+- Do not re-read unchanged files; reuse established project knowledge.
+- Search for specific symbols/files instead of opening large groups.
+- Avoid reading generated files, caches, or `node_modules`.
+- Avoid unnecessary commands, repeated builds/tests, and speculative installs.
+- Do not generate alternative implementations unless requested.
+- Prefer the smallest sufficient action; keep plans and replies concise.
+- Do not regenerate unchanged files or inspect unrelated paths.

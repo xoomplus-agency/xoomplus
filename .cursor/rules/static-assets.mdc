@@ -1,0 +1,27 @@
+---
+description: Static Astro assets in public/ — formats, hero video, no WP for fixed design media
+alwaysApply: true
+---
+
+# Static Assets
+
+Design-permanent assets live under Astro `public/`:
+
+```text
+public/
+├── images/
+├── videos/
+├── fonts/
+└── icons/
+```
+
+- Examples: logo, favicon, fonts, hero graphics/images/videos/posters, illustrations, decorative graphics, icons, fixed page imagery.
+- Choose formats by asset: SVG for vectors; WebP/AVIF when suitable; PNG for needed transparency/lossless; JPEG when appropriate; WebM/MP4 for video.
+- Do not blindly convert everything to WebP; do not optimize until quality visibly suffers.
+
+## Hero video (when design uses one)
+
+- Treat as a static site asset when part of the fixed design.
+- Prefer WebM; MP4 fallback when useful; always provide a poster.
+- Background-style: `muted` `autoplay` `loop` `playsinline` as appropriate.
+- Keep files web-sized; do not host fixed hero video in WordPress unless requested.

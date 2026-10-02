@@ -1,0 +1,16 @@
+---
+description: Headless WordPress CMS — blog/editorial via REST; no content duplication
+alwaysApply: true
+---
+
+# Headless WordPress
+
+WordPress is the CMS for dynamic editorial content. Astro is the frontend.
+
+- Fetch blog posts and editorial media from the WordPress REST API.
+- WordPress is source of truth for: posts, featured images, post images, infographics, editorial media.
+- Do not copy WordPress editorial images into Astro unless explicitly instructed.
+- Do not duplicate CMS content into the repo as static copies.
+- Do not install WP/API client packages until a genuine need is confirmed and briefly justified.
+- Prefer native `fetch` over extra libraries when sufficient.
+- Fixed design assets (logo, hero, fonts, icons) stay in Astro `public/` — not WordPress — unless explicitly requested otherwise.

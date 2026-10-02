@@ -1,0 +1,13 @@
+---
+description: Performance rules — minimal JS, optimized images, good Core Web Vitals
+globs: src/**/*.{astro,css,js,ts,mjs}
+alwaysApply: false
+---
+
+# Performance
+
+- Minimize JavaScript and avoid unnecessary hydration.
+- Optimize images: correct dimensions, responsive `srcset`/`sizes` where appropriate, lazy-load non-critical images.
+- Avoid third-party and animation libraries unless required.
+- Keep CSS efficient; avoid render-blocking resources when possible.
+- Preserve Core Web Vitals without sacrificing design fidelity.

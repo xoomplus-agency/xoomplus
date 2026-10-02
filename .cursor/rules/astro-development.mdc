@@ -1,0 +1,16 @@
+---
+description: Astro development conventions — prefer static Astro, minimal JS/deps
+alwaysApply: true
+---
+
+# Astro Development
+
+- Prefer `.astro` components and static HTML/CSS.
+- Keep JavaScript minimal; hydrate only when interactivity requires it.
+- Do not add React, Vue, Svelte, or other UI frameworks unless explicitly required.
+- Prefer native browser APIs over libraries for small tasks.
+- Keep dependencies minimal; explain briefly before adding any package.
+- Do not add UI kits, animation libs, icon packs, or utility libs unless genuinely required.
+- Prefer readable, maintainable components over abstractions.
+- Avoid over-engineering; preserve Astro’s performance model.
+- Do not install packages or start building UI until the user explicitly requests implementation.
