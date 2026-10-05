@@ -1,0 +1,47 @@
+---
+description: Headless WordPress SEO — Yoast yoast_head_json mapped into Astro head; no HTML injection
+alwaysApply: true
+---
+
+# Headless WordPress SEO
+
+WordPress is the CMS source of truth for blog SEO metadata. Astro owns frontend rendering and `<head>` output. Do not inject WordPress-generated HTML into Astro’s `<head>`. Do not add RankMath-specific code unless the project switches SEO plugins.
+
+## API source
+
+- Fetch posts from `/wp-json/wp/v2/posts`.
+- Use `yoast_head_json` as the primary Yoast SEO source.
+- Do not scrape/parse `yoast_head`.
+- Do not re-implement `_yoast_wpseo_*` fields when `yoast_head_json` is available.
+
+## Map `yoast_head_json` → Astro `<head>`
+
+| Yoast field | Output |
+|---|---|
+| `title` | `<title>` |
+| `description` | `meta[name="description"]` |
+| `robots` | `meta[name="robots"]` (preserve `index`, `follow`, `max-snippet`, `max-image-preview`, `max-video-preview`) |
+| `canonical` | `<link rel="canonical">` |
+| `og_title` / `og_description` / `og_url` / `og_type` / `og_image` | Open Graph tags |
+| `twitter_card` / `twitter_title` / `twitter_description` / `twitter_image` | Twitter tags |
+| `schema` | JSON-LD |
+
+- No duplicate SEO tags.
+- Prefer Yoast’s schema graph; do not rebuild Article/BlogPosting when `schema` exists.
+- Render schema as JSON-LD only — one graph, no duplicates.
+
+## Fallbacks (only when Yoast value missing)
+
+- Title → post title
+- Description → excerpt
+- OG image → featured image
+- Canonical → Astro canonical URL for the post
+
+Do not invent SEO values WordPress already provides.
+
+## URLs & architecture
+
+- Blog URLs: `/blogs/{slug}/` (keep production-compatible so Yoast canonicals stay valid).
+- Centralize SEO rendering in one shared Astro SEO/head component.
+- Blog pages pass WordPress SEO data into that component; do not duplicate SEO logic per page.
+- Keep the implementation minimal; no unnecessary dependencies.
