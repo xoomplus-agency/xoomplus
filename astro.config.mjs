@@ -4,6 +4,8 @@ import { loadEnv } from 'vite';
 
 import react from '@astrojs/react';
 
+import tailwindcss from '@tailwindcss/vite';
+
 // Load all env keys (not only VITE_/PUBLIC_) for `site` configuration.
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
 
@@ -13,4 +15,11 @@ export default defineConfig({
   site: env.SITE_URL || undefined,
 
   integrations: [react()],
+
+  vite: {
+    plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+    },
+  },
 });

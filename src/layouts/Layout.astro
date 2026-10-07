@@ -1,6 +1,8 @@
 ---
 import Seo from '../components/Seo.astro';
 import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
+import '../styles/global.css';
+import sfProDisplayBold from '../assets/fonts/SFPRODISPLAYBOLD.OTF';
 
 interface Props {
 	title?: string;
@@ -8,9 +10,12 @@ interface Props {
 	image?: string;
 }
 
-const { title = 'Astro Basics', description, image } = Astro.props;
+const {
+	title = 'Xoomplus — Digital Marketing & Growth Partner',
+	description = 'Xoomplus combines SEO, web design and development, social media marketing, and paid search to help businesses grow.',
+	image,
+} = Astro.props;
 
-// Complements middleware for SSR/on-demand; static hosts still need platform headers (see middleware note).
 if (isStaging()) {
 	Astro.response.headers.set('X-Robots-Tag', STAGING_ROBOTS);
 }
@@ -20,7 +25,14 @@ if (isStaging()) {
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link
+			rel="preload"
+			href={sfProDisplayBold}
+			as="font"
+			type="font/otf"
+			crossorigin
+		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
@@ -28,16 +40,7 @@ if (isStaging()) {
 			<slot name="json-ld" slot="json-ld" />
 		</Seo>
 	</head>
-	<body>
+	<body class="m-0 min-h-full w-full">
 		<slot />
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

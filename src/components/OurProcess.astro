@@ -1,0 +1,275 @@
+---
+const intro =
+	'We keep the process straightforward so you always know what happens next. From the first conversation through strategy, implementation, and reporting, every stage has a clear purpose.';
+
+const steps = [
+	{
+		icon: '/icons/discovery-call.svg',
+		width: 214,
+		height: 190,
+		title: 'Discovery Call',
+		description:
+			'We start by understanding your business, goals, audience, current challenges, and what you want to achieve.',
+	},
+	{
+		icon: '/icons/audit-and-opportunity-review.svg',
+		width: 214,
+		height: 190,
+		title: 'Audit & Opportunity Review',
+		description:
+			'We start by understanding your business, goals, audience, current challenges, and what you want to achieve.',
+	},
+	{
+		icon: '/icons/strategy-and-implementation.svg',
+		width: 212,
+		height: 184,
+		title: 'Strategy & Implementation',
+		description:
+			'We turn the findings into a clear strategy and begin implementing the work across the agreed digital services.',
+	},
+	{
+		icon: '/icons/reporting-and-refinement.svg',
+		width: 201,
+		height: 171,
+		title: 'Reporting & Refinement',
+		description:
+			'We track progress, review performance, and refine the work based on what we learn.',
+	},
+];
+---
+
+<section
+	id="process"
+	class="bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-[clamp(4rem,8vw,6.5rem)]"
+	aria-labelledby="process-heading"
+>
+	<div class="mx-auto w-full max-w-[1560px]">
+		<div class="mx-auto mb-12 w-full text-center lg:mb-16">
+			<p class="pill-light mb-5">OUR PROCESS</p>
+			<h2
+				id="process-heading"
+				class="mb-4 whitespace-nowrap text-h1 font-medium tracking-[-0.03em] text-primary-black max-[1100px]:whitespace-normal"
+			>
+				A Clear Process From First Conversation to Ongoing Improvement
+			</h2>
+			<p class="process-intro mx-auto max-w-[640px]">
+				{intro}
+			</p>
+		</div>
+
+		<div class="process-visual">
+			<img
+				class="process-bg"
+				src="/icons/our-process-svgs-bg-image.svg"
+				alt=""
+				width="1183"
+				height="90"
+				decoding="async"
+				loading="lazy"
+				aria-hidden="true"
+			/>
+
+			<ol class="process-steps m-0 list-none p-0" role="list">
+				{
+					steps.map((step, index) => (
+						<li class={`process-step process-step--${index + 1}`}>
+							<div class="process-icon" aria-hidden="true">
+								<img
+									src={step.icon}
+									alt=""
+									width={step.width}
+									height={step.height}
+									class="process-icon-img"
+									decoding="async"
+									loading="lazy"
+								/>
+							</div>
+							<h3 class="process-title m-0">{step.title}</h3>
+							<p class="process-desc m-0">{step.description}</p>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</div>
+</section>
+
+<style>
+	.process-visual {
+		position: relative;
+		isolation: isolate;
+		width: 100%;
+		max-width: 1183px;
+		margin-inline: auto;
+	}
+
+	.process-bg {
+		position: absolute;
+		z-index: 0;
+		top: 72px;
+		left: 50%;
+		width: 100%;
+		max-width: 1183px;
+		height: auto;
+		pointer-events: none;
+		user-select: none;
+		transform: translateX(-50%);
+	}
+
+	.process-steps {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		align-items: start;
+		gap: 1.25rem 1rem;
+	}
+
+	.process-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.process-icon {
+		display: flex;
+		width: 100%;
+		max-width: 214px;
+		height: 190px;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 1.25rem;
+	}
+
+	.process-icon-img {
+		display: block;
+		width: 100%;
+		max-width: 214px;
+		height: auto;
+		object-fit: contain;
+	}
+
+	.process-title {
+		margin-bottom: 0.65rem;
+		font-size: 1.25rem;
+		font-weight: 700;
+		line-height: 1.25;
+		letter-spacing: -0.02em;
+		color: var(--color-primary-black);
+	}
+
+	.process-intro,
+	.process-desc {
+		font-family: var(--font-inter);
+		font-weight: 400;
+		color: var(--color-text-on-light);
+	}
+
+	.process-intro {
+		font-size: var(--text-body);
+		line-height: var(--text-body--line-height);
+	}
+
+	.process-desc {
+		max-width: 260px;
+		font-size: 15px;
+		line-height: 1.5;
+	}
+
+	/* Staggered organic float — each step slightly different */
+	.process-step--1 .process-icon {
+		animation: process-float-a 5.2s ease-in-out infinite;
+	}
+
+	.process-step--2 .process-icon {
+		animation: process-float-b 6s ease-in-out infinite;
+		animation-delay: -1.4s;
+	}
+
+	.process-step--3 .process-icon {
+		animation: process-float-c 5.6s ease-in-out infinite;
+		animation-delay: -0.7s;
+	}
+
+	.process-step--4 .process-icon {
+		animation: process-float-d 6.4s ease-in-out infinite;
+		animation-delay: -2.1s;
+	}
+
+	@keyframes process-float-a {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-7px);
+		}
+	}
+
+	@keyframes process-float-b {
+		0%,
+		100% {
+			transform: translateY(0) translateX(0);
+		}
+		50% {
+			transform: translateY(-9px) translateX(2px);
+		}
+	}
+
+	@keyframes process-float-c {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-6px);
+		}
+	}
+
+	@keyframes process-float-d {
+		0%,
+		100% {
+			transform: translateY(0) translateX(0);
+		}
+		50% {
+			transform: translateY(-8px) translateX(-2px);
+		}
+	}
+
+	@media (max-width: 1100px) {
+		.process-steps {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 2.5rem 1.5rem;
+		}
+
+		.process-bg {
+			display: none;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.process-steps {
+			grid-template-columns: 1fr;
+			gap: 2rem;
+		}
+
+		.process-icon {
+			height: auto;
+			min-height: 160px;
+		}
+
+		.process-desc {
+			max-width: 320px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.process-step--1 .process-icon,
+		.process-step--2 .process-icon,
+		.process-step--3 .process-icon,
+		.process-step--4 .process-icon {
+			animation: none;
+		}
+	}
+</style>

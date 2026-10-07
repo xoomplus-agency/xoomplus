@@ -1,0 +1,287 @@
+---
+import Button from './Button.astro';
+
+const nav = [
+	{ label: 'Home', href: '/', active: true },
+	{ label: 'Services', href: '#services', hasDropdown: true },
+	{ label: 'About', href: '#about' },
+	{ label: 'Industries', href: '#industries' },
+	{ label: 'Case Studies', href: '#case-studies' },
+	{ label: 'Contact', href: '#contact' },
+	{ label: 'Blog', href: '#blog' },
+];
+
+/** Glass: #FFFFFF 5% · blur 34.8px (no stroke — matches design) */
+const glassFill = 'rgb(255 255 255 / 0.05)';
+const glassBlur = '34.8px';
+---
+
+<header class="pointer-events-none fixed inset-x-0 top-0 z-50" data-site-header>
+	<!--
+		Default (screenshot): Logo left · glass nav (links only) center · CTA right
+		Scrolled: one unified glass shell around logo + links + CTA
+	-->
+	<div
+		class="pointer-events-auto mx-auto hidden w-full max-w-[1920px] grid-cols-[1fr_auto_1fr] items-center gap-x-6 bg-transparent px-8 pt-6 lg:grid lg:px-12"
+		data-nav-desktop
+	>
+		<a class="z-[1] shrink-0 justify-self-start" href="/" aria-label="Xoomplus home" data-nav-logo>
+			<img
+				src="/images/logo-xoomplus.webp"
+				alt="Xoomplus"
+				width="132"
+				height="36"
+				class="h-auto w-[clamp(104px,10vw,132px)] transition-[width] duration-500 motion-reduce:transition-none"
+				decoding="async"
+			/>
+		</a>
+
+		<nav
+			class="min-w-0 justify-self-center rounded-full"
+			aria-label="Primary"
+			data-nav-cluster
+		>
+			<ul class="m-0 flex list-none items-center gap-0 p-1">
+				{
+					nav.map((item) => (
+						<li class:list={[item.active && 'min-w-0']}>
+							<a
+								class:list={[
+									'inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full text-[0.875rem] font-medium tracking-[-0.01em] transition-colors',
+									item.active
+										? 'nav-link-active font-semibold text-primary-black'
+										: 'px-3.5 py-2.5 text-secondary-white hover:bg-white/10',
+								]}
+								href={item.href}
+								aria-current={item.active ? 'page' : undefined}
+							>
+								{item.label}
+								{item.hasDropdown && (
+									<svg
+										class="opacity-85"
+										width="10"
+										height="6"
+										viewBox="0 0 10 6"
+										aria-hidden="true"
+									>
+										<path
+											d="M1 1l4 4 4-4"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.5"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										/>
+									</svg>
+								)}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="z-[1] shrink-0 justify-self-end" data-nav-cta>
+			<Button size="nav" href="#contact">Let’s Talk</Button>
+		</div>
+	</div>
+
+	<!-- Mobile -->
+	<div
+		class="pointer-events-auto mx-auto w-full bg-transparent px-4 pt-6 sm:px-6 lg:hidden"
+		data-nav-mobile
+	>
+		<div class="flex items-center justify-between gap-3">
+			<a class="shrink-0" href="/" aria-label="Xoomplus home">
+				<img
+					src="/images/logo-xoomplus.webp"
+					alt="Xoomplus"
+					width="132"
+					height="36"
+					class="h-auto w-[clamp(104px,10vw,132px)]"
+					decoding="async"
+				/>
+			</a>
+
+			<button
+				class="inline-flex size-11 items-center justify-center rounded-full"
+				type="button"
+				aria-expanded="false"
+				aria-controls="mobile-nav"
+				data-menu-toggle
+			>
+				<span class="sr-only">Menu</span>
+				<span
+					class="relative block h-0.5 w-[1.1rem] rounded-sm bg-secondary-white before:absolute before:left-0 before:top-[-6px] before:block before:h-0.5 before:w-[1.1rem] before:rounded-sm before:bg-secondary-white before:content-[''] after:absolute after:left-0 after:top-[6px] after:block after:h-0.5 after:w-[1.1rem] after:rounded-sm after:bg-secondary-white after:content-['']"
+					aria-hidden="true"
+					data-menu-icon
+				></span>
+			</button>
+		</div>
+
+		<nav
+			id="mobile-nav"
+			class="mt-3 hidden origin-top rounded-2xl border border-white/10 bg-[rgba(12,12,12,0.92)] p-4 backdrop-blur-2xl transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none"
+			aria-label="Mobile"
+			hidden
+			data-mobile-nav
+		>
+			<ul class="m-0 grid list-none gap-[0.35rem] p-0">
+				{
+					nav.map((item) => (
+						<li>
+							<a
+								class="block rounded-xl px-[0.9rem] py-3 font-medium text-secondary-white"
+								href={item.href}
+								aria-current={item.active ? 'page' : undefined}
+								data-mobile-link
+							>
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+				<li class="mt-1">
+					<Button size="nav" class="!w-full" href="#contact">Let’s Talk</Button>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</header>
+
+<style define:vars={{ glassFill, glassBlur }}>
+	/* Active link — Figma: 117.57×43, #FFF / #0A0A0A */
+	[data-nav-desktop] .nav-link-active {
+		box-sizing: border-box;
+		width: 117.57px;
+		max-width: 100%;
+		height: 43px;
+		flex-shrink: 1;
+		padding: 0;
+		background-color: #ffffff;
+		color: #0a0a0a;
+	}
+
+	[data-nav-desktop],
+	[data-nav-mobile],
+	[data-nav-cluster],
+	[data-menu-toggle] {
+		transition:
+			width 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			max-width 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			margin 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			padding 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			background-color 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			backdrop-filter 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			-webkit-backdrop-filter 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			gap 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	/* Default: glass only on centered nav links (no stroke) */
+	[data-nav-cluster],
+	[data-menu-toggle] {
+		border: none;
+		background-color: var(--glassFill);
+		backdrop-filter: blur(var(--glassBlur));
+		-webkit-backdrop-filter: blur(var(--glassBlur));
+	}
+
+	/* Scrolled: same glass on unified shell; nav cluster clears */
+	[data-site-header][data-scrolled] [data-nav-desktop] {
+		width: min(94vw, 1100px);
+		max-width: 1100px;
+		margin-top: 0.75rem;
+		padding: 0.5rem 0.85rem;
+		border: none;
+		border-radius: 9999px;
+		background-color: var(--glassFill);
+		backdrop-filter: blur(var(--glassBlur));
+		-webkit-backdrop-filter: blur(var(--glassBlur));
+		gap: 0.75rem;
+	}
+
+	[data-site-header][data-scrolled] [data-nav-mobile] {
+		width: min(94vw, 100%);
+		max-width: 100%;
+		margin-top: 0.65rem;
+		margin-inline: auto;
+		padding: 0.65rem 0.85rem;
+		border: none;
+		border-radius: 1.25rem;
+		background-color: var(--glassFill);
+		backdrop-filter: blur(var(--glassBlur));
+		-webkit-backdrop-filter: blur(var(--glassBlur));
+	}
+
+	[data-site-header][data-scrolled] [data-nav-cluster] {
+		background-color: transparent;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	[data-site-header][data-scrolled] [data-menu-toggle] {
+		background-color: transparent;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-site-header] [data-nav-desktop],
+		[data-site-header] [data-nav-mobile],
+		[data-site-header] [data-nav-cluster],
+		[data-site-header] [data-menu-toggle],
+		[data-mobile-nav] {
+			transition: none !important;
+		}
+	}
+</style>
+
+<script>
+	const header = document.querySelector('[data-site-header]');
+	const toggle = document.querySelector('[data-menu-toggle]');
+	const panel = document.querySelector('[data-mobile-nav]');
+
+	const SCROLL_THRESHOLD = 100;
+	let ticking = false;
+
+	function setScrolled(scrolled) {
+		if (!(header instanceof HTMLElement)) return;
+		header.toggleAttribute('data-scrolled', scrolled);
+	}
+
+	function onScroll() {
+		if (ticking) return;
+		ticking = true;
+		requestAnimationFrame(() => {
+			setScrolled(window.scrollY > SCROLL_THRESHOLD);
+			ticking = false;
+		});
+	}
+
+	setScrolled(window.scrollY > SCROLL_THRESHOLD);
+	window.addEventListener('scroll', onScroll, { passive: true });
+
+	function setMenuOpen(open) {
+		if (!(toggle instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) return;
+		toggle.setAttribute('aria-expanded', String(open));
+		panel.hidden = !open;
+		panel.classList.toggle('hidden', !open);
+	}
+
+	if (toggle instanceof HTMLButtonElement && panel instanceof HTMLElement) {
+		toggle.addEventListener('click', () => {
+			const open = toggle.getAttribute('aria-expanded') !== 'true';
+			setMenuOpen(open);
+		});
+
+		panel.querySelectorAll('[data-mobile-link]').forEach((link) => {
+			link.addEventListener('click', () => setMenuOpen(false));
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') setMenuOpen(false);
+		});
+	}
+</script>

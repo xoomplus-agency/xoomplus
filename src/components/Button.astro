@@ -1,0 +1,72 @@
+---
+import loadingIcon from '../assets/icons/btn-loading-icon.svg';
+
+interface Props {
+	href?: string;
+	type?: 'button' | 'submit' | 'reset';
+	loading?: boolean;
+	disabled?: boolean;
+	/** `nav` = 156×48 · `hero` = 233×56 · default = content padding */
+	size?: 'default' | 'nav' | 'hero';
+	class?: string;
+	'aria-label'?: string;
+}
+
+const {
+	href,
+	type = 'button',
+	loading = false,
+	disabled = false,
+	size = 'default',
+	class: className = '',
+	'aria-label': ariaLabel,
+} = Astro.props;
+
+const isDisabled = disabled || loading;
+
+const sizeClass =
+	size === 'nav' ? 'btn-size-nav' : size === 'hero' ? 'btn-size-hero' : 'px-[28px] py-[18px]';
+
+const classes = [
+	'btn',
+	'inline-flex items-center justify-center',
+	'box-border rounded-button',
+	sizeClass,
+	'font-semibold text-[0.95rem] leading-none tracking-[-0.01em]',
+	'text-primary-black',
+	'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+	isDisabled && !loading && 'bg-button-disabled text-[#888888] pointer-events-none',
+	loading && 'pointer-events-none',
+	className,
+]
+	.filter(Boolean)
+	.join(' ');
+
+const Tag = href && !isDisabled ? 'a' : 'button';
+---
+
+<Tag
+	class={classes}
+	href={Tag === 'a' ? href : undefined}
+	type={Tag === 'button' ? type : undefined}
+	disabled={Tag === 'button' ? isDisabled : undefined}
+	aria-busy={loading || undefined}
+	aria-label={loading ? ariaLabel || 'Loading' : ariaLabel}
+>
+	<span class="btn__label inline-flex items-center justify-center gap-2">
+		{
+			loading ? (
+				<img
+					class="btn-loading-icon size-[21px]"
+					src={loadingIcon.src}
+					width="21"
+					height="21"
+					alt=""
+					aria-hidden="true"
+				/>
+			) : (
+				<slot />
+			)
+		}
+	</span>
+</Tag>

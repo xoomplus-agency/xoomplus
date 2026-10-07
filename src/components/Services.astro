@@ -1,0 +1,332 @@
+---
+import Button from './Button.astro';
+
+const intro =
+	'From search visibility to website experiences and social campaigns, Xoomplus brings key digital services together to help your business reach, engage, and the right audience.';
+
+const services = [
+	{
+		title: 'SEO',
+		icon: '/icons/service-circles.svg',
+		description:
+			'Improve your search visibility, reach the right audience, and create a stronger foundation for long-term organic growth.',
+		features: [
+			'AI SEO (GEO & AEO)',
+			'Local SEO',
+			'Technical SEO',
+			'On-Page SEO',
+			'Link Building (Off-Page)',
+			'SEO Audit',
+			'SEO Content Marketing',
+		],
+		cta: { label: 'View Service', href: '#services-seo' },
+	},
+	{
+		title: 'Web Design & Development',
+		icon: '/icons/service-layers.svg',
+		description:
+			'Create clear, responsive, and purposeful websites designed around your users and business goals.',
+		features: [
+			'UI/UX Design',
+			'Landing Page Design',
+			'Website Redesign',
+			'WordPress Development',
+			'Shopify Development',
+			'Ecommerce Development',
+			'Custom Website Development',
+		],
+		cta: { label: 'View Service', href: '#services-web' },
+	},
+	{
+		title: 'Social Media Marketing',
+		icon: '/icons/service-circles.svg',
+		description:
+			'Build a stronger brand presence, engage your audience, and drive consistent growth across the platforms that matter.',
+		features: [
+			'Social Media Strategy',
+			'Content Creation',
+			'Community Management',
+			'Paid Social Advertising',
+			'Influencer Campaigns',
+			'Analytics & Reporting',
+			'Platform Management',
+		],
+		cta: { label: 'View Service', href: '#services-social' },
+	},
+	{
+		title: 'PPC & Google Ads',
+		icon: '/icons/service-circles.svg',
+		description:
+			'Drive qualified traffic and measurable conversions with paid campaigns built around your goals and budget.',
+		features: [
+			'Google Search Ads',
+			'Display Advertising',
+			'Remarketing Campaigns',
+			'Shopping Ads',
+			'YouTube Ads',
+			'Landing Page Optimization',
+			'Conversion Tracking',
+		],
+		cta: { label: 'Get in touch', href: '#contact' },
+	},
+];
+
+const helpCard = {
+	title: 'Not Sure Which Service Is Right for Your Business?',
+	description:
+		'Tell us what you are trying to achieve and we can help you identify the right digital service for your needs.',
+	cta: { label: 'Get in touch', href: '#contact' },
+};
+---
+
+<section
+	id="services"
+	class="services relative isolate overflow-hidden bg-[#0B0A0B] px-[clamp(1rem,12.3vw,236px)] py-[clamp(4rem,8vw,6.5rem)] text-secondary-white"
+	aria-labelledby="services-heading"
+>
+	<div class="services-glow pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+
+	<div class="relative mx-auto w-full max-w-[1560px]">
+		<div class="mx-auto mb-12 w-full text-center lg:mb-14">
+			<p class="pill-dark mb-5 text-primary">OUR SERVICES</p>
+			<h2
+				id="services-heading"
+				class="text-heading-dark mb-4 whitespace-nowrap max-[1280px]:whitespace-normal"
+			>
+				Everything You Need to Build a Stronger Digital Presence
+			</h2>
+			<p class="mx-auto max-w-[640px] text-lead font-normal leading-[1.55] text-[var(--color-text-on-dark)] [font-family:var(--font-inter)]">
+				{intro}
+			</p>
+		</div>
+
+		<div class="services-grid">
+			{
+				services.map((service) => (
+					<article class="service-card flex h-full flex-col">
+						<img
+							src={service.icon}
+							alt=""
+							width="47"
+							height="47"
+							class="mb-5 size-[47px] object-contain"
+							decoding="async"
+							loading="lazy"
+						/>
+						<h3 class="mb-3 text-[32px] font-medium leading-[1.2] tracking-[-0.02em] text-secondary-white">
+							{service.title}
+						</h3>
+						<p class="mb-5 text-[15px] leading-[1.5] text-[var(--color-text-on-dark)] [font-family:var(--font-inter)]">{service.description}</p>
+						<ul class="mb-8 flex flex-1 list-none flex-col gap-2.5 p-0">
+							{service.features.map((feature) => (
+								<li class="service-feature flex items-start gap-2.5 text-[14px] leading-snug [font-family:var(--font-inter)]">
+									<span class="service-check mt-0.5 inline-flex size-[18px] shrink-0 items-center justify-center rounded-full" aria-hidden="true">
+										<svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+											<path
+												d="M1 4l2.5 2.5L9 1"
+												stroke="#0B0A0B"
+												stroke-width="1.6"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</span>
+									{feature}
+								</li>
+							))}
+						</ul>
+						<a class="service-card-btn" href={service.cta.href}>
+							{service.cta.label}
+							<span aria-hidden="true">→</span>
+						</a>
+					</article>
+				))
+			}
+
+			<article class="service-card service-card--help flex h-full flex-col justify-between text-center">
+				<div class="flex flex-1 flex-col items-center justify-center px-2 py-6">
+					<h3 class="mb-4 text-[32px] font-medium leading-[1.2] tracking-[-0.02em] text-secondary-white">
+						{helpCard.title}
+					</h3>
+					<p class="mx-auto max-w-[320px] text-[15px] leading-[1.5] text-[var(--color-text-on-dark)] [font-family:var(--font-inter)]">
+						{helpCard.description}
+					</p>
+				</div>
+				<a class="service-card-btn" href={helpCard.cta.href}>
+					{helpCard.cta.label}
+					<span aria-hidden="true">→</span>
+				</a>
+			</article>
+		</div>
+
+		<div class="services-cta-bar mt-8 flex flex-col items-center justify-between gap-5 rounded-[1.25rem] bg-[rgb(255_255_255_/_0.06)] px-6 py-5 backdrop-blur-[40px] sm:flex-row sm:px-8">
+			<p class="m-0 text-center text-[18px] font-medium tracking-[-0.01em] text-secondary-white sm:text-left">
+				Ready to find the right service for your business?
+			</p>
+			<Button size="nav" href="#contact">Get in touch</Button>
+		</div>
+	</div>
+</section>
+
+<style>
+	.services-glow {
+		background:
+			/* Top-left — soft glow, nudged slightly inward */
+			radial-gradient(
+				ellipse 48% 50% at 6% 8%,
+				rgb(255 211 108 / 0.22) 0%,
+				rgb(255 168 0 / 0.12) 45%,
+				rgb(255 117 72 / 0) 100%
+			),
+			/* Bottom-right — slightly dimmer, nudged slightly inward */
+			radial-gradient(
+				ellipse 48% 52% at 94% 78%,
+				rgb(255 168 0 / 0.28) 0%,
+				rgb(0 0 0 / 0) 100%
+			);
+	}
+
+	/* Fixed Figma width — do not change */
+	.services-cta-bar {
+		width: 954px;
+		max-width: 100%;
+		margin-inline: auto;
+	}
+
+	/* Match Why Choose Us: 500px cards, shared container edges */
+	.services-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 500px));
+		justify-content: center;
+		gap: 1rem;
+	}
+
+	.service-card {
+		box-sizing: border-box;
+		position: relative;
+		isolation: isolate;
+		width: 100%;
+		max-width: 500px;
+		border-radius: 16px;
+		border: 1px solid rgb(255 255 255 / 0.1);
+		background: linear-gradient(
+			180deg,
+			rgb(255 255 255 / 0.15) 0%,
+			rgb(255 255 255 / 0.03) 50%,
+			rgb(255 255 255 / 0.07) 100%
+		);
+		padding: 1.5rem 1.35rem 1.35rem;
+		backdrop-filter: blur(40px);
+		-webkit-backdrop-filter: blur(40px);
+	}
+
+	/* Hover fill — originates top-right; opacity crossfade for smooth transition */
+	.service-card::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		background: linear-gradient(
+			225deg,
+			rgb(255 168 0 / 0.3) 0%,
+			rgb(255 255 255 / 0.03) 60%,
+			rgb(255 255 255 / 0.07) 100%
+		);
+		opacity: 0;
+		transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.service-card:hover::before {
+		opacity: 1;
+	}
+
+	.service-card > * {
+		position: relative;
+		z-index: 1;
+	}
+
+	.service-feature {
+		color: rgb(247 247 245 / 0.5);
+		transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.service-card:hover .service-feature {
+		color: #ffffff;
+	}
+
+	.service-check {
+		background-color: rgb(255 168 0 / 0.5);
+		transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.service-card:hover .service-check {
+		background-color: #ffa800;
+	}
+
+	.service-card-btn {
+		position: relative;
+		display: inline-flex;
+		box-sizing: border-box;
+		width: 100%;
+		height: 44px;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
+		isolation: isolate;
+		border-radius: 12px;
+		border: 1px solid rgb(255 255 255 / 0.35);
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.08) 0%, rgb(255 255 255 / 0) 100%);
+		box-shadow: inset 0 0 5px 2px rgb(255 255 255 / 0.24);
+		padding: 0 1rem;
+		font-size: 0.95rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		color: #ffa800;
+		transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.service-card-btn::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: inherit;
+		pointer-events: none;
+		background: linear-gradient(180deg, rgb(255 168 0 / 0.05) 0%, rgb(255 168 0 / 0.5) 100%);
+		opacity: 0;
+		transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* Card hover drives button state (no need to hover the button) */
+	.service-card:hover .service-card-btn {
+		color: #ffffff;
+	}
+
+	.service-card:hover .service-card-btn::before {
+		opacity: 1;
+	}
+
+	@media (max-width: 1280px) {
+		.services-grid {
+			grid-template-columns: repeat(2, minmax(0, 500px));
+		}
+	}
+
+	@media (max-width: 720px) {
+		.services-grid {
+			grid-template-columns: minmax(0, 500px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.service-card::before,
+		.service-card-btn,
+		.service-card-btn::before,
+		.service-check,
+		.service-feature {
+			transition: none;
+		}
+	}
+</style>

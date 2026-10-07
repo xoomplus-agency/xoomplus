@@ -1,0 +1,200 @@
+---
+import Button from './Button.astro';
+
+const trust = [
+	{
+		id: 'partner',
+		icon: '/icons/google.svg',
+		iconW: 47,
+		iconH: 47,
+		title: 'Google Partner',
+		subtitle: 'CERTIFIED AGENCY',
+	},
+	{
+		id: 'rating',
+		icon: '/icons/star.svg',
+		iconW: 47,
+		iconH: 47,
+		ratingValue: '5.0',
+		ratingSuffix: '/ 5',
+		subtitle: 'Rating on Google',
+	},
+	{
+		id: 'reviews',
+		icon: '/icons/google-reviews.svg',
+		iconW: 47,
+		iconH: 47,
+		title: 'Google Reviews',
+		subtitle: '100+ REVIEWS',
+		stars: 5,
+	},
+	{
+		id: 'trustpilot',
+		icon: '/icons/trustpilot.svg',
+		iconW: 47,
+		iconH: 47,
+		title: 'Trustpilot',
+		subtitleBefore: 'Based on ',
+		subtitleLink: '56 reviews',
+	},
+];
+---
+
+<section
+	class="relative isolate flex h-[780px] flex-col justify-center overflow-hidden bg-[#0b0b0b] px-4 pb-10 pt-[calc(5.5rem+1.5rem)] text-secondary-white sm:px-6 sm:pb-10 lg:px-10 max-[960px]:h-auto max-[960px]:min-h-0 max-[560px]:pt-[calc(5.5rem+0.5rem)] max-[960px]:pb-7"
+>
+	<div
+		class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
+		aria-hidden="true"
+	>
+		<video
+			class="absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
+			autoplay
+			muted
+			loop
+			playsinline
+			preload="auto"
+		>
+			<source src="/videos/bg-hero-video.webm" type="video/webm" />
+		</video>
+
+		<div
+			class="pointer-events-none absolute inset-0 z-[1] bg-black/[0.85]"
+			aria-hidden="true"
+		></div>
+	</div>
+
+	<div class="mx-auto w-full max-w-[1100px] pt-[clamp(1.5rem,4vh,3rem)] text-center">
+		<p class="pill-dark mb-5 text-[#ff9a3c]">
+			Your All-in-one digital growth partner
+		</p>
+		<h1 class="text-hero-h1 mb-[1.15rem]">
+			<span class="block whitespace-nowrap max-[720px]:whitespace-normal">Digital Marketing That Moves</span>
+			<span class="block whitespace-nowrap max-[720px]:whitespace-normal">Your Business Forward</span>
+		</h1>
+		<p class="text-on-dark mx-auto mb-7 max-w-[640px] tracking-[-0.01em]">
+			We combine SEO, web design and development, social media marketing, and paid search to help
+			businesses build stronger digital experiences, reach the right audience, and create
+			opportunities for growth.
+		</p>
+		<div
+			class="flex flex-wrap items-center justify-center gap-x-7 gap-y-5 max-[560px]:flex-col max-[560px]:gap-4"
+		>
+			<Button size="hero" class="btn-book-call" href="#contact">
+				Book a Call
+				<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+					<path
+						d="M3 8h10M9 4l4 4-4 4"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.75"
+						stroke-linecap="round"
+						stroke-linejoin="round"></path>
+				</svg>
+			</Button>
+			<a
+				class="text-[0.98rem] font-medium tracking-[-0.01em] text-secondary-white underline decoration-1 underline-offset-[0.28em] hover:opacity-90"
+				href="#case-studies"
+			>
+				View Case Studies
+			</a>
+		</div>
+	</div>
+
+	<div
+		class="mx-auto mt-[clamp(2.5rem,6vh,4rem)] grid w-full max-w-[1100px] grid-cols-4 items-center rounded-[1.35rem] bg-[linear-gradient(180deg,rgb(45_45_45_/_0.4)_0%,rgb(32_32_32_/_0.4)_50%,rgb(46_46_46_/_0.4)_100%)] px-5 py-4 [backdrop-filter:blur(22.1px)] [-webkit-backdrop-filter:blur(22.1px)] max-[960px]:grid-cols-2 max-[960px]:gap-y-[0.85rem] max-[960px]:p-4 max-[560px]:grid-cols-1"
+		role="list"
+		aria-label="Trust signals"
+	>
+		{
+			trust.map((item, index) => (
+				<div
+					class:list={[
+						'flex min-w-0 items-center gap-3 px-[0.85rem] py-[0.35rem]',
+						index > 0 && 'border-l border-white/14 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-white/10 max-[560px]:pt-[0.85rem]',
+						index % 2 === 0 && 'max-[960px]:border-l-0',
+						index % 2 === 1 && 'max-[960px]:border-l max-[960px]:border-white/14',
+						index >= 2 && 'max-[960px]:border-t max-[960px]:border-white/10 max-[960px]:pt-[0.85rem]',
+					]}
+					role="listitem"
+				>
+					<img
+						src={item.icon}
+						alt=""
+						width={item.iconW}
+						height={item.iconH}
+						class="size-[47px] shrink-0 object-contain"
+						decoding="async"
+						loading="lazy"
+					/>
+					<div class="min-w-0 text-left">
+						{item.id === 'rating' ? (
+							<p class="m-0 flex items-baseline gap-1 whitespace-nowrap leading-tight max-[560px]:whitespace-normal">
+								<span class="text-[21px] font-semibold tracking-[-0.015em] text-[#F5F5F5]">
+									{item.ratingValue}
+								</span>
+								<span class="text-[12px] font-medium text-[#A7A7A7]">{item.ratingSuffix}</span>
+							</p>
+						) : (
+							<p class="m-0 text-[21px] font-semibold leading-tight tracking-[-0.015em] text-[#F5F5F5] whitespace-nowrap max-[560px]:whitespace-normal">
+								{item.title}
+							</p>
+						)}
+
+						{item.id === 'reviews' ? (
+							<p class="mt-[0.2rem] flex flex-wrap items-center gap-[0.35rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
+								<span class="inline-flex gap-0.5" aria-hidden="true">
+									{Array.from({ length: item.stars }).map(() => (
+										<img
+											src="/icons/star.svg"
+											alt=""
+											width="12"
+											height="12"
+											class="size-3"
+										/>
+									))}
+								</span>
+								{item.subtitle}
+							</p>
+						) : item.id === 'trustpilot' ? (
+							<p class="mt-[0.2rem] text-[14px] font-medium leading-snug text-[#FFFFFF] whitespace-nowrap max-[560px]:whitespace-normal">
+								{item.subtitleBefore}
+								<span class="underline underline-offset-[0.18em]">{item.subtitleLink}</span>
+							</p>
+						) : (
+							<p class="mt-[0.2rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
+								{item.subtitle}
+							</p>
+						)}
+					</div>
+				</div>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	:global(.btn-book-call.btn) {
+		overflow: visible;
+	}
+
+	:global(.btn-book-call svg) {
+		display: block;
+		transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+		will-change: transform;
+	}
+
+	:global(.btn-book-call:hover svg) {
+		transform: translateX(5px);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(.btn-book-call svg) {
+			transition: none;
+		}
+
+		:global(.btn-book-call:hover svg) {
+			transform: none;
+		}
+	}
+</style>

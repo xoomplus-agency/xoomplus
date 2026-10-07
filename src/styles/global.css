@@ -1,0 +1,463 @@
+@import "tailwindcss";
+
+/* SF Pro Display — local files from src/assets/fonts (metadata-mapped) */
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYULTRALIGHTITALIC.OTF") format("opentype");
+	font-weight: 100;
+	font-style: italic;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYTHINITALIC.OTF") format("opentype");
+	font-weight: 200;
+	font-style: italic;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYLIGHTITALIC.OTF") format("opentype");
+	font-weight: 300;
+	font-style: italic;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYREGULAR.OTF") format("opentype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYMEDIUM.OTF") format("opentype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYSEMIBOLDITALIC.OTF") format("opentype");
+	font-weight: 600;
+	font-style: italic;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYBOLD.OTF") format("opentype");
+	font-weight: 700;
+	font-style: normal;
+	/* Critical hero heading face — block avoids fallback → SF Pro flash */
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYHEAVYITALIC.OTF") format("opentype");
+	font-weight: 800;
+	font-style: italic;
+	font-display: block;
+}
+
+@font-face {
+	font-family: "SF Pro Display";
+	src: url("../assets/fonts/SFPRODISPLAYBLACKITALIC.OTF") format("opentype");
+	font-weight: 900;
+	font-style: italic;
+	font-display: block;
+}
+
+@theme {
+	--color-primary: #ffa800;
+	--color-primary-black: #0a0a0a;
+	--color-secondary-white: #ffffff;
+	--color-muted: #6b6b6b;
+	--color-hero-muted: rgba(255, 255, 255, 0.78);
+	/* Body/paragraph on section backgrounds */
+	--color-text-on-dark: #ffffff;
+	--color-text-on-light: #555555;
+
+	--font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		Helvetica, Arial, sans-serif;
+	/* Pill uses Inter when available; no extra font package */
+	--font-inter: Inter, "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		Helvetica, Arial, sans-serif;
+
+	--radius-button: 8px;
+	--radius-hero: 56px;
+
+	/* Button sizes */
+	--size-btn-nav-w: 156px;
+	--size-btn-nav-h: 48px;
+	--size-btn-hero-w: 233px;
+	--size-btn-hero-h: 56px;
+
+	/* Typography scale (visual tokens — keep semantic HTML separate) */
+	--text-h1: 40px;
+	--text-h1--line-height: 1.15;
+	--text-h1--font-weight: 500;
+	--text-h2: 32px;
+	--text-h2--line-height: 1.2;
+	--text-h2--font-weight: 500;
+	--text-h3: 24px;
+	--text-h3--line-height: 1.3;
+	--text-h3--font-weight: 500;
+	--text-lead: 20px;
+	--text-lead--line-height: 1.5;
+	--text-lead--font-weight: 400;
+	--text-body: 16px;
+	--text-body--line-height: 1.5;
+	--text-body--font-weight: 400;
+	--text-caption: 12px;
+	--text-caption--line-height: 1.4;
+	--text-caption--font-weight: 500;
+	/* Hero exception */
+	--text-hero-h1: 72px;
+	--text-hero-h1--line-height: 1.08;
+	--text-hero-h1--font-weight: 500;
+}
+
+@utility bg-button {
+	background-image: linear-gradient(100deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+}
+
+@utility bg-button-hover {
+	background-image: linear-gradient(100deg, #ff7548 0%, #ffa800 50%, #ffd36c 100%);
+}
+
+@utility bg-button-active {
+	background-image: linear-gradient(90deg, #eabb55 0%, #e99500 50%, #e96238 100%);
+}
+
+@utility bg-button-disabled {
+	background-image: linear-gradient(90deg, #f2e7cd 0%, #efddc5 50%, #eed5cd 100%);
+}
+
+@utility bg-brand-gradient {
+	background-image: linear-gradient(100deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+}
+
+/* Body/paragraph — contextual by section background (apply per section) */
+@utility text-on-dark {
+	font-family: var(--font-inter);
+	font-size: var(--text-lead);
+	font-weight: var(--text-lead--font-weight);
+	line-height: var(--text-lead--line-height);
+	color: var(--color-text-on-dark);
+}
+
+@utility text-on-light {
+	font-family: var(--font-inter);
+	font-size: var(--text-body);
+	font-weight: var(--text-body--font-weight);
+	line-height: var(--text-body--line-height);
+	color: var(--color-text-on-light);
+}
+
+/*
+ * Button surface — primary #FFA800
+ * Default / hover gradients crossfade via ::before opacity (gradients can't transition).
+ */
+.btn {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+	background-color: #ffa800;
+	background-image: linear-gradient(100deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+}
+
+.btn::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	background-image: linear-gradient(100deg, #ff7548 0%, #ffa800 50%, #ffd36c 100%);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover:not(:disabled):not([aria-busy="true"])::before {
+	opacity: 1;
+}
+
+.btn:active:not(:disabled):not([aria-busy="true"]) {
+	background-image: linear-gradient(90deg, #eabb55 0%, #e99500 50%, #e96238 100%);
+}
+
+.btn:active:not(:disabled):not([aria-busy="true"])::before {
+	opacity: 0;
+	transition-duration: 80ms;
+}
+
+.btn:disabled::before,
+.btn[aria-busy="true"]::before {
+	opacity: 0;
+	transition: none;
+}
+
+.btn.bg-button-disabled,
+.btn:disabled:not([aria-busy="true"]) {
+	background-image: linear-gradient(90deg, #f2e7cd 0%, #efddc5 50%, #eed5cd 100%);
+}
+
+.btn__label {
+	position: relative;
+	z-index: 1;
+}
+
+/* Shared white → #999 text gradient — standard direction: top → bottom */
+@utility text-gradient-dark {
+	background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}
+
+/* Hero-only H1 visual: 72px / 700 + top→bottom gradient (light → dark) */
+@utility text-hero-h1 {
+	font-size: clamp(1.65rem, 5vw + 0.75rem, var(--text-hero-h1));
+	font-weight: var(--text-hero-h1--font-weight);
+	line-height: var(--text-hero-h1--line-height);
+	letter-spacing: -0.03em;
+	background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}
+
+@media (max-width: 720px) {
+	.text-hero-h1 {
+		font-size: 1.75rem; /* 28px — mobile */
+		line-height: 1.15;
+	}
+}
+
+@media (min-width: 721px) and (max-width: 1024px) {
+	.text-hero-h1 {
+		font-size: clamp(2rem, 4.2vw, 3rem);
+	}
+}
+
+/* Dark-section heading visual (apply to semantic h2): 40px / 500 + top→bottom gradient */
+@utility text-heading-dark {
+	font-size: clamp(1.75rem, 3.5vw, var(--text-h1));
+	font-weight: var(--text-h1--font-weight);
+	line-height: var(--text-h1--line-height);
+	letter-spacing: -0.03em;
+	background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}
+
+/*
+ * Dark-background pill — Figma glass (frost 24, depth/refraction approx)
+ * Inter Semibold 16 · pad 12×6 · fill white 10%
+ */
+@utility pill-dark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 12px;
+	border-radius: 9999px;
+	border: 1px solid rgb(255 255 255 / 0.12);
+	background-color: rgb(255 255 255 / 0.1);
+	font-family: var(--font-inter);
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.25;
+	letter-spacing: 0.01em;
+	backdrop-filter: blur(24px) saturate(1.35) brightness(1.08);
+	-webkit-backdrop-filter: blur(24px) saturate(1.35) brightness(1.08);
+	box-shadow:
+		inset 0 1px 0 0 rgb(255 255 255 / 0.22),
+		inset 0 -8px 16px 0 rgb(0 0 0 / 0.12);
+}
+
+/*
+ * Light-background pill — Why Xoomplus / light sections
+ * White fill · 1.5px top→bottom gray gradient border · no clip / no shadow
+ * Do not merge with pill-dark (Hero / dark sections)
+ */
+@utility pill-light {
+	display: inline-flex;
+	box-sizing: border-box;
+	overflow: visible;
+	height: 43px;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 16px;
+	border-radius: 9999px;
+	border: 1.5px solid transparent;
+	background:
+		linear-gradient(#ffffff, #ffffff) padding-box,
+		linear-gradient(180deg, #d6d6d6 0%, #4a4a4a 100%) border-box;
+	font-family: var(--font-inter);
+	font-size: 1.15rem;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	text-transform: uppercase;
+	color: #ffa800;
+	box-shadow: none;
+	outline: none;
+}
+
+@utility btn-size-nav {
+	width: var(--size-btn-nav-w);
+	height: var(--size-btn-nav-h);
+	padding: 0;
+}
+
+@utility btn-size-hero {
+	width: var(--size-btn-hero-w);
+	height: var(--size-btn-hero-h);
+	padding: 0;
+}
+
+@layer base {
+	html {
+		-webkit-text-size-adjust: 100%;
+		scroll-behavior: smooth;
+	}
+
+	body {
+		@apply min-h-full bg-secondary-white font-sans font-normal text-primary-black antialiased;
+		line-height: 1.5;
+		text-rendering: optimizeLegibility;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: 500;
+	}
+
+	img {
+		@apply block max-w-full h-auto;
+	}
+
+	a {
+		@apply text-inherit no-underline;
+	}
+
+	button {
+		@apply cursor-pointer border-0 bg-transparent p-0;
+		font: inherit;
+		color: inherit;
+	}
+
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-primary;
+	}
+}
+
+/* Hero multi-ray — not expressible cleanly with utilities alone */
+@keyframes hero-rays {
+	0% {
+		opacity: 0.65;
+		transform: rotate(-1.5deg) scale(1);
+	}
+	100% {
+		opacity: 0.95;
+		transform: rotate(1.5deg) scale(1.03);
+	}
+}
+
+@keyframes hero-rays-alt {
+	0% {
+		opacity: 0.55;
+		transform: rotate(1deg);
+	}
+	100% {
+		opacity: 0.9;
+		transform: rotate(-1deg);
+	}
+}
+
+@keyframes btn-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.hero-rays {
+	background: repeating-conic-gradient(
+		from 198deg at 88% -2%,
+		transparent 0deg 5.5deg,
+		rgba(255, 236, 190, 0.08) 5.5deg 6.2deg,
+		rgba(255, 244, 210, 0.28) 6.2deg 7deg,
+		rgba(255, 220, 150, 0.14) 7deg 7.8deg,
+		transparent 7.8deg 13deg
+	);
+	-webkit-mask-image: radial-gradient(
+		ellipse 85% 75% at 88% 0%,
+		#000 0%,
+		rgba(0, 0, 0, 0.75) 35%,
+		transparent 68%
+	);
+	mask-image: radial-gradient(
+		ellipse 85% 75% at 88% 0%,
+		#000 0%,
+		rgba(0, 0, 0, 0.75) 35%,
+		transparent 68%
+	);
+	animation: hero-rays 20s ease-in-out infinite alternate;
+}
+
+.hero-rays::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: repeating-conic-gradient(
+		from 202deg at 90% -4%,
+		transparent 0deg 7deg,
+		rgba(255, 230, 170, 0.1) 7deg 7.6deg,
+		rgba(255, 245, 220, 0.32) 7.6deg 8.4deg,
+		rgba(255, 200, 120, 0.12) 8.4deg 9deg,
+		transparent 9deg 16deg
+	);
+	-webkit-mask-image: inherit;
+	mask-image: inherit;
+	filter: blur(2px);
+	opacity: 0.9;
+	animation: hero-rays-alt 24s ease-in-out infinite alternate-reverse;
+}
+
+.btn-loading-icon {
+	animation: btn-spin 0.85s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	.hero-rays,
+	.hero-rays::before,
+	.btn-loading-icon {
+		animation: none !important;
+	}
+
+	.hero-rays {
+		opacity: 0.8;
+		transform: none;
+	}
+
+	.btn::before {
+		transition: none;
+	}
+}

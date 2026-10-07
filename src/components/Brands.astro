@@ -1,0 +1,71 @@
+---
+import LogoLoop from './LogoLoop.tsx';
+
+const logos = [
+	{
+		src: '/images/brand-concisemedico.webp',
+		alt: 'ConciseMedico',
+		width: 300,
+		height: 68,
+	},
+	{
+		src: '/images/brand-sterling-cooper.webp',
+		alt: 'Sterling Cooper Consultants Ltd.',
+		width: 300,
+		height: 68,
+	},
+	{
+		src: '/images/brand-bodykite.webp',
+		alt: 'Bodykite',
+		width: 300,
+		height: 68,
+	},
+	{
+		src: '/images/brand-gopsych.webp',
+		alt: 'Go Psych',
+		width: 300,
+		height: 68,
+	},
+];
+---
+
+<section
+	class="overflow-x-clip bg-secondary-white px-4 py-[clamp(3.5rem,7vw,5.5rem)] pb-[clamp(4rem,8vw,6rem)] sm:px-6 lg:px-10"
+	aria-labelledby="brands-heading"
+>
+	<div class="mx-auto w-full max-w-[1366px] text-center">
+		<h2
+			id="brands-heading"
+			class="mb-[0.85rem] text-h2 font-medium tracking-[-0.03em] text-primary-black"
+		>
+			Brands That Believe in Us
+		</h2>
+		<p class="text-on-light mx-auto mb-11 max-w-[640px]">
+			Illustrated stand-ins: logos, review counts, quotes, screens and photos are examples to swap
+			for real client assets at launch.
+		</p>
+		<div class="brands-logo-loop mx-auto w-full max-w-full">
+			<LogoLoop
+				client:load
+				logos={logos}
+				speed={70}
+				direction="left"
+				logoHeight={68}
+				gap={56}
+				hoverSpeed={0}
+				fadeOut
+				fadeOutColor="#FFFFFF"
+				scaleOnHover={false}
+				ariaLabel="Xoomplus clients and technology partners"
+			/>
+		</div>
+	</div>
+</section>
+
+<style>
+	.brands-logo-loop :global(.logoloop__item img) {
+		width: 300px;
+		height: 68px;
+		object-fit: contain;
+	}
+</style>
