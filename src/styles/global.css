@@ -276,8 +276,9 @@
 	font-weight: 600;
 	line-height: 1.25;
 	letter-spacing: 0.01em;
-	backdrop-filter: blur(24px) saturate(1.35) brightness(1.08);
+	/* -webkit first: LightningCSS prod minify can drop the unprefixed property otherwise */
 	-webkit-backdrop-filter: blur(24px) saturate(1.35) brightness(1.08);
+	backdrop-filter: blur(24px) saturate(1.35) brightness(1.08);
 	box-shadow:
 		inset 0 1px 0 0 rgb(255 255 255 / 0.22),
 		inset 0 -8px 16px 0 rgb(0 0 0 / 0.12);
