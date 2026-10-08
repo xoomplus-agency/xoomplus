@@ -1,0 +1,462 @@
+---
+import Button from './Button.astro';
+
+const intro =
+	'Your digital presence should do more than look good. We bring strategy, creativity, technology, and performance together to create digital experiences that support your business objectives.';
+
+const projects = [
+	{
+		industry: 'Real Estate Solutions',
+		name: 'Immolibre',
+		image: '/images/Immolibre-project.webp',
+		categories: ['Web Design', 'SEO'],
+		description:
+			'A modern carpentry website designed to generate leads and showcase custom work.',
+		metrics: [
+			{ value: '+180%', label: 'Organic Traffic' },
+			{ value: '+50', label: 'Leads / month' },
+		],
+		href: '#case-studies',
+	},
+	{
+		industry: 'Health and Fitness',
+		name: 'Bodykite',
+		image: '/images/Bodykite-project.webp',
+		imageClass: 'case-hero-img--bodykite',
+		categories: ['Social Media', 'Web Design'],
+		description:
+			'A modern carpentry website designed to generate leads and showcase custom work.',
+		metrics: [
+			{ value: '+180%', label: 'Organic Traffic' },
+			{ value: '+50', label: 'Leads / month' },
+		],
+		href: '#case-studies',
+	},
+	{
+		industry: 'Psychology Services',
+		name: 'Gopsych',
+		image: '/images/gopsych-project.webp',
+		categories: ['Web Design', 'SEO'],
+		description:
+			'A modern carpentry website designed to generate leads and showcase custom work.',
+		metrics: [
+			{ value: '+180%', label: 'Organic Traffic' },
+			{ value: '+50', label: 'Leads / month' },
+		],
+		href: '#case-studies',
+	},
+];
+---
+
+<section
+	id="case-studies"
+	class="case-studies bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-[clamp(4rem,8vw,6.5rem)]"
+	aria-labelledby="case-studies-heading"
+>
+	<div class="mx-auto w-full max-w-[1560px]">
+		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+			<p class="pill-light mb-5">Case Studies</p>
+			<h2
+				id="case-studies-heading"
+				class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				Real Projects. Clear Challenges. Measurable Outcomes.
+			</h2>
+			<p class="text-on-light mx-auto max-w-[640px]">
+				{intro}
+			</p>
+		</div>
+
+		<ul class="case-grid m-0 list-none p-0" role="list">
+			{
+				projects.map((project) => (
+					<li class="case-card">
+						<a class="case-card-link" href={project.href}>
+							<div class="case-hero">
+								<div class="case-hero-copy">
+									<p class="case-industry m-0">{project.industry}</p>
+									<h3 class="case-hero-title m-0">{project.name}</h3>
+								</div>
+								<div class="case-hero-media">
+									<div class="case-hero-img-wrap">
+										<img
+											src={project.image}
+											alt=""
+											width="280"
+											height="150"
+											class:list={['case-hero-img', project.imageClass]}
+											decoding="async"
+											loading="lazy"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="case-body">
+								<ul class="case-categories m-0 flex list-none flex-wrap gap-2 p-0" role="list">
+									{project.categories.map((category) => (
+										<li class="case-category">{category}</li>
+									))}
+								</ul>
+
+								<h3 class="case-title m-0">
+									{project.name} | {project.industry}
+								</h3>
+								<p class="case-desc m-0">{project.description}</p>
+
+								<div class="case-footer">
+									<div class="case-metrics">
+										<div class="case-metric">
+											<p class="case-metric-value m-0">{project.metrics[0].value}</p>
+											<p class="case-metric-label m-0">{project.metrics[0].label}</p>
+										</div>
+										<span class="case-metric-sep" aria-hidden="true">
+											|
+										</span>
+										<div class="case-metric">
+											<p class="case-metric-value m-0">{project.metrics[1].value}</p>
+											<p class="case-metric-label m-0">{project.metrics[1].label}</p>
+										</div>
+									</div>
+									<span class="case-arrow" aria-hidden="true">
+										<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+											<path
+												d="M3.75 9h10.5M9.75 4.5 14.25 9l-4.5 4.5"
+												stroke="currentColor"
+												stroke-width="1.75"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</span>
+								</div>
+							</div>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+
+		<div class="mt-12 flex justify-center lg:mt-14">
+			<Button href="#case-studies">View All Case Studies</Button>
+		</div>
+	</div>
+</section>
+
+<style>
+	.case-studies {
+		--case-ink: #0a0a0a;
+		--case-accent: #ffa800;
+		--case-muted: #888888;
+		--case-pill-bg: #f7f7f5;
+		--case-border: #e9e9e7;
+		--case-radius: 24px;
+	}
+
+	.case-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 464px));
+		justify-content: center;
+		gap: 1.25rem;
+	}
+
+	.case-card {
+		position: relative;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 464px;
+		height: auto;
+		min-height: 380px;
+		overflow: hidden;
+		isolation: isolate;
+		border: 1px solid transparent;
+		border-radius: var(--case-radius);
+		/* Black hero band + white body — glow sits above this, below the image */
+		background:
+			linear-gradient(var(--case-ink), var(--case-ink)) top / 100% 150px no-repeat,
+			#ffffff;
+		font-family: var(--font-inter);
+		box-shadow: 0 8px 24px 0 rgb(149 157 165 / 0);
+		transition:
+			box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1),
+			border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* Soft amber glow behind mockups — not clipped by the image box */
+	.case-card::before {
+		content: "";
+		position: absolute;
+		right: -5%;
+		top: 50%;
+		z-index: 0;
+		width: 70%;
+		height: 130%;
+		transform: translateY(-45%);
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse at center,
+			rgba(255, 168, 0, 0.6) 0%,
+			rgba(255, 168, 0, 0.25) 45%,
+			transparent 72%
+		);
+		filter: blur(25px);
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+
+	.case-card:hover {
+		border-color: #ffffff;
+		box-shadow: 0 8px 24px 0 rgb(149 157 165 / 0.2);
+	}
+
+	.case-card-link {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		overflow: hidden;
+		border-radius: inherit;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.case-hero {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+		height: 150px;
+		flex-shrink: 0;
+		overflow: hidden;
+		background-color: transparent;
+	}
+
+	.case-hero-copy {
+		position: relative;
+		z-index: 2;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		justify-content: center;
+		gap: 0.45rem;
+		padding: 1.15rem 1.1rem 1.15rem 1.25rem;
+		background-color: transparent;
+	}
+
+	.case-industry {
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: var(--case-accent);
+	}
+
+	.case-hero-title {
+		font-size: clamp(1.5rem, 2.2vw, 2rem);
+		font-weight: 500;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
+		background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		color: transparent;
+	}
+
+	.case-hero-media {
+		position: relative;
+		z-index: 1;
+		min-width: 0;
+		height: 100%;
+		overflow: hidden;
+		background-color: transparent;
+	}
+
+	.case-hero-img-wrap {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+	}
+
+	.case-hero-img {
+		display: block;
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: left center;
+		transform: scale(1);
+		transform-origin: center;
+		will-change: transform;
+		transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	/* Bodykite asset is wider (358×150) — slide content left */
+	.case-hero-img--bodykite {
+		width: auto;
+		min-width: 100%;
+		height: 100%;
+		max-width: none;
+		object-fit: cover;
+		object-position: left center;
+		transform: translateX(-32%) scale(1);
+		transform-origin: center;
+	}
+
+	@media (hover: hover) {
+		.case-card:hover::before {
+			opacity: 1;
+		}
+
+		.case-card:hover .case-hero-img {
+			transform: scale(1.05);
+		}
+
+		.case-card:hover .case-hero-img--bodykite {
+			transform: translateX(-32%) scale(1.05);
+		}
+	}
+
+	.case-body {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: 0.7rem;
+		background-color: #ffffff;
+		padding: 1rem 1.25rem 28px;
+	}
+
+	.case-category {
+		display: inline-flex;
+		box-sizing: border-box;
+		height: 23px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		background-color: var(--case-pill-bg);
+		padding: 5px 10px;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1;
+		color: var(--color-text-on-light);
+		white-space: nowrap;
+	}
+
+	.case-title {
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.3;
+		letter-spacing: -0.02em;
+		color: var(--case-ink);
+	}
+
+	.case-desc {
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: #555555;
+	}
+
+	.case-footer {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: auto;
+	}
+
+	.case-metrics {
+		display: flex;
+		align-items: center;
+		gap: 0;
+	}
+
+	.case-metric-sep {
+		display: block;
+		flex-shrink: 0;
+		width: 1px;
+		height: 2.75rem;
+		margin: 0 1.1rem;
+		overflow: hidden;
+		background-color: rgb(85 85 85 / 0.22);
+		color: transparent;
+		user-select: none;
+	}
+
+	.case-metric-value {
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: var(--case-accent);
+	}
+
+	.case-metric-label {
+		margin-top: 0.15rem;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: var(--case-muted);
+	}
+
+	.case-arrow {
+		display: inline-flex;
+		width: 44px;
+		height: 44px;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		background-color: var(--case-accent);
+		color: var(--case-ink);
+	}
+
+	.case-arrow svg {
+		transform: rotate(0deg);
+		transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.case-card:hover .case-arrow svg {
+		transform: rotate(-30deg);
+	}
+
+	@media (max-width: 1280px) {
+		.case-grid {
+			grid-template-columns: repeat(2, minmax(0, 464px));
+		}
+	}
+
+	@media (max-width: 720px) {
+		.case-grid {
+			grid-template-columns: minmax(0, 464px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.case-card,
+		.case-card::before,
+		.case-hero-img,
+		.case-arrow svg {
+			transition: none;
+		}
+
+		.case-card:hover .case-hero-img {
+			transform: scale(1);
+		}
+
+		.case-card:hover .case-hero-img--bodykite {
+			transform: translateX(-32%) scale(1);
+		}
+
+		.case-card:hover .case-arrow svg {
+			transform: none;
+		}
+	}
+</style>

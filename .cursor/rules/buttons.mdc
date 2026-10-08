@@ -1,0 +1,33 @@
+---
+description: Reuse shared primary and outline button components — no one-off button styles
+alwaysApply: true
+---
+
+# Buttons
+
+Do **not** create new button styles. Reuse the existing shared buttons exactly (hover, focus, disabled included).
+
+## Primary fill (gradient)
+
+- Component: `src/components/Button.astro`
+- Surface class: `.btn` in `src/styles/global.css`
+- Examples: Header “Let’s Talk”, Hero “Book a call”, Blogs “Read all”, Case Studies CTA, Contact submit
+
+## Outline (white fill + brand gradient border)
+
+- Component: `src/components/ButtonOutline.astro`
+- Surface class: `.btn-outline` in `src/styles/global.css`
+- Icon class inside slot: `.btn-outline__icon`
+- Example: Locations “View Details”
+
+## Allowed props / classes only
+
+Pass label (slot), `href`, icon (slot), `type`, `size` (`default` | `nav` | `hero`), `loading`, `disabled`, `id`, `aria-label`, and **layout/width** utility classes (e.g. `!w-full`, `!w-[220px]`).
+
+Do **not** override colors, gradient, radius, font, or hover effects.
+
+## Extending
+
+If something is missing (full-width, `type="submit"`, `id`), extend `Button` / `ButtonOutline` minimally with a prop or layout class — do not fork styles per section.
+
+Dark service-card glass CTAs (`.service-card-btn`) are a separate card-chrome pattern, not a general site button. Do not use them as page CTAs.

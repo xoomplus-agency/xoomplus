@@ -8,7 +8,10 @@ interface Props {
 	disabled?: boolean;
 	/** `nav` = 156×48 · `hero` = 233×56 · default = content padding */
 	size?: 'default' | 'nav' | 'hero';
+	/** `primary` = gradient fill · `light` = white fill + amber border */
+	variant?: 'primary' | 'light';
 	class?: string;
+	id?: string;
 	'aria-label'?: string;
 }
 
@@ -18,24 +21,28 @@ const {
 	loading = false,
 	disabled = false,
 	size = 'default',
+	variant = 'primary',
 	class: className = '',
+	id,
 	'aria-label': ariaLabel,
 } = Astro.props;
 
 const isDisabled = disabled || loading;
+const isLight = variant === 'light';
 
 const sizeClass =
 	size === 'nav' ? 'btn-size-nav' : size === 'hero' ? 'btn-size-hero' : 'px-[28px] py-[18px]';
 
 const classes = [
 	'btn',
+	isLight && 'btn--light',
 	'inline-flex items-center justify-center',
-	'box-border rounded-button',
+	'box-border',
+	!isLight && 'rounded-button',
 	sizeClass,
-	'font-semibold text-[0.95rem] leading-none tracking-[-0.01em]',
 	'text-primary-black',
-	'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-	isDisabled && !loading && 'bg-button-disabled text-[#888888] pointer-events-none',
+	!isLight && 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+	isDisabled && !loading && !isLight && 'bg-button-disabled text-[#888888] pointer-events-none',
 	loading && 'pointer-events-none',
 	className,
 ]
@@ -47,6 +54,7 @@ const Tag = href && !isDisabled ? 'a' : 'button';
 
 <Tag
 	class={classes}
+	id={id}
 	href={Tag === 'a' ? href : undefined}
 	type={Tag === 'button' ? type : undefined}
 	disabled={Tag === 'button' ? isDisabled : undefined}

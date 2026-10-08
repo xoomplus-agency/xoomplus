@@ -1,0 +1,70 @@
+/**
+ * Shared infinite horizontal marquee.
+ * Same loop contract as Brands Logo Loop (duplicate set, seamless wrap,
+ * pause on hover, reduced-motion fallback) implemented as CSS so card
+ * carousels can reuse it without a second animation system.
+ *
+ * Usage: two `.infinite-marquee__group` siblings inside `.infinite-marquee__track`
+ * (second group aria-hidden="true"). Animation translates 0 → -50%.
+ */
+.infinite-marquee {
+	overflow: hidden;
+	width: 100%;
+	mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+	-webkit-mask-image: linear-gradient(
+		to right,
+		transparent 0%,
+		#000 10%,
+		#000 90%,
+		transparent 100%
+	);
+}
+
+.infinite-marquee__track {
+	display: flex;
+	width: max-content;
+	will-change: transform;
+	animation: infinite-marquee-scroll var(--marquee-duration, 50s) linear infinite;
+}
+
+.infinite-marquee__group {
+	display: flex;
+	align-items: stretch;
+	gap: var(--marquee-gap, 20px);
+	padding-right: var(--marquee-gap, 20px);
+	list-style: none;
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+}
+
+@media (hover: hover) {
+	.infinite-marquee:hover .infinite-marquee__track {
+		animation-play-state: paused;
+	}
+}
+
+@keyframes infinite-marquee-scroll {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.infinite-marquee {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: thin;
+		mask-image: none;
+		-webkit-mask-image: none;
+	}
+
+	.infinite-marquee__track {
+		animation: none;
+		transform: none;
+	}
+}

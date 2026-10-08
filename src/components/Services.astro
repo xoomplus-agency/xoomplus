@@ -195,10 +195,10 @@ const helpCard = {
 		backdrop-filter: blur(40px);
 	}
 
-	/* Match Why Choose Us: 500px cards, shared container edges */
+	/* Desktop card size: 463×547 — grid caps column width; cards stay fluid below */
 	.services-grid {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 500px));
+		grid-template-columns: repeat(3, minmax(0, 463px));
 		justify-content: center;
 		gap: 1rem;
 	}
@@ -208,7 +208,8 @@ const helpCard = {
 		position: relative;
 		isolation: isolate;
 		width: 100%;
-		max-width: 500px;
+		max-width: 463px;
+		height: 547px;
 		border-radius: 16px;
 		border: 1px solid rgb(255 255 255 / 0.1);
 		background: linear-gradient(
@@ -312,13 +313,18 @@ const helpCard = {
 
 	@media (max-width: 1280px) {
 		.services-grid {
-			grid-template-columns: repeat(2, minmax(0, 500px));
+			grid-template-columns: repeat(2, minmax(0, 463px));
 		}
 	}
 
 	@media (max-width: 720px) {
 		.services-grid {
-			grid-template-columns: minmax(0, 500px);
+			grid-template-columns: minmax(0, 463px);
+		}
+
+		.service-card {
+			height: auto;
+			min-height: 547px;
 		}
 	}
 

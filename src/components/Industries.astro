@@ -1,0 +1,152 @@
+---
+/** Card order matches screenshot L→R, top→bottom */
+const industries = [
+	{
+		icon: '/icons/home-trade-services.svg',
+		title: 'Home & Trade Services',
+		description: 'Local visibility · Quote enquiries',
+	},
+	{
+		icon: '/icons/accounting-and-finance.svg',
+		title: 'Accounting and Finance',
+		description: 'Project showcases · Lead generation',
+	},
+	{
+		icon: '/icons/health-and-fitness.svg',
+		title: 'Health and fitness',
+		description: 'Search discovery · Appointment bookings',
+	},
+	{
+		icon: '/icons/real-estate.svg',
+		title: 'Real Estate',
+		description: 'Product discovery · Online sales',
+	},
+	{
+		icon: '/icons/legal.svg',
+		title: 'Legal',
+		description: 'Authority building · Qualified enquiries',
+	},
+	{
+		icon: '/icons/medical-reporting.svg',
+		title: 'Medical Reporting',
+		description: 'Local discovery · Direct bookings',
+	},
+];
+---
+
+<section
+	id="industries"
+	class="bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-[clamp(4rem,8vw,6.5rem)]"
+	aria-labelledby="industries-heading"
+>
+	<div class="mx-auto w-full max-w-[1560px]">
+		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+			<p class="pill-light mb-5">INDUSTRIES WE SERVE</p>
+			<h2
+				id="industries-heading"
+				class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				Digital Solutions Built Around Your Industry
+			</h2>
+			<p class="text-on-light mx-auto max-w-[640px]">
+				Different industries have different audiences, challenges, and digital opportunities. Our
+				services can be tailored around the needs of your business and the people you want to reach.
+			</p>
+		</div>
+
+		<ul class="industry-grid m-0 list-none p-0" role="list">
+			{
+				industries.map((item) => (
+					<li class="industry-card">
+						<div class="industry-card-icon" aria-hidden="true">
+							<img
+								src={item.icon}
+								alt=""
+								width="28"
+								height="28"
+								class="size-7 object-contain"
+								decoding="async"
+								loading="lazy"
+							/>
+						</div>
+						<h3 class="m-0 text-[1.25rem] font-bold tracking-[-0.02em] text-primary-black">
+							{item.title}
+						</h3>
+						<p class="m-0 text-[15px] leading-[1.5] text-[var(--color-text-on-light)] [font-family:var(--font-inter)]">
+							{item.description}
+						</p>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
+
+<style>
+	/* Card styles mirrored from Why Xoomplus — do not diverge */
+	.industry-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 464px));
+		justify-content: center;
+		gap: 1.25rem;
+	}
+
+	.industry-card {
+		box-sizing: border-box;
+		display: flex;
+		width: 100%;
+		max-width: 464px;
+		height: 238px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		border: 1px solid #e9e9e7;
+		border-radius: 24px;
+		background-color: #ffffff;
+		padding: 1.75rem 1.5rem;
+		text-align: center;
+		transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.industry-card:hover {
+		box-shadow: 0 0 24px 0 rgba(149, 157, 165, 0.2);
+	}
+
+	.industry-card-icon {
+		display: inline-flex;
+		width: 3rem;
+		height: 3rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.75rem;
+		background: linear-gradient(
+			180deg,
+			#fbfbfe 0%,
+			rgb(211 211 211 / 0.45) 100%
+		);
+	}
+
+	@media (max-width: 1280px) {
+		.industry-grid {
+			grid-template-columns: repeat(2, minmax(0, 464px));
+		}
+	}
+
+	@media (max-width: 720px) {
+		.industry-grid {
+			grid-template-columns: minmax(0, 464px);
+		}
+
+		.industry-card {
+			height: auto;
+			min-height: 238px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.industry-card {
+			transition: none;
+		}
+	}
+</style>

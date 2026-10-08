@@ -1,0 +1,132 @@
+---
+import Button from './Button.astro';
+---
+
+<section
+	id="cta"
+	class="bg-secondary-white p-12"
+	aria-labelledby="cta-heading"
+>
+	<div class="mx-auto w-full max-w-[1560px]">
+		<div
+			class="cta-card"
+			style="background-image: url('/images/cta-bg-image.webp')"
+		>
+			<div class="cta-card__inner">
+				<div class="cta-card__left">
+					<p class="pill-dark text-primary m-0">Your next chapter</p>
+					<h2 id="cta-heading" class="cta-card__heading text-hero-h1 m-0 mt-4 whitespace-nowrap">
+						Let's move your business forward.
+					</h2>
+					<p class="cta-card__copy m-0">
+						Tell us what you're working towards. We'll explore the challenge, the possibilities
+						and the right place to start.
+					</p>
+				</div>
+				<div class="cta-card__right">
+					<Button href="#contact">Discuss your project</Button>
+					<a class="cta-card__email" href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.cta-card {
+		box-sizing: border-box;
+		overflow: hidden;
+		width: 100%;
+		min-height: 196px;
+		border-radius: 30px;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+	}
+
+	.cta-card__inner {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 48px;
+		box-sizing: border-box;
+		min-height: 196px;
+		padding: 34px 42px 34px 34px;
+	}
+
+	.cta-card__left {
+		display: flex;
+		flex: 1 1 auto;
+		max-width: 620px;
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
+	}
+
+	.cta-card__heading {
+		font-size: 48px !important;
+	}
+
+	.cta-card__copy {
+		margin-top: 14px;
+		max-width: 560px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.cta-card__right {
+		display: flex;
+		flex: 0 0 auto;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 16px;
+	}
+
+	.cta-card__email {
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.7);
+		text-decoration: none;
+	}
+
+	.cta-card__email:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	@media (hover: hover) {
+		.cta-card__email:hover {
+			color: #ffa800;
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.cta-card {
+			border-radius: 24px;
+		}
+
+		.cta-card__inner {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 28px;
+			padding: 32px 24px;
+		}
+
+		.cta-card__right {
+			align-items: flex-start;
+			width: 100%;
+		}
+
+		.cta-card__right :global(.btn) {
+			width: 100%;
+		}
+	}
+</style>
