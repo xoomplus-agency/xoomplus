@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import OurStory from '../components/OurStory.astro';
+import ExpertiseImpact from '../components/ExpertiseImpact.astro';
+import OurPurpose from '../components/OurPurpose.astro';
+import WhatGuidesUs from '../components/WhatGuidesUs.astro';
+import OurExpertise from '../components/OurExpertise.astro';
+import HowWeWork from '../components/HowWeWork.astro';
+import WhatToExpect from '../components/WhatToExpect.astro';
+import OurProcess from '../components/OurProcess.astro';
+import FAQ from '../components/FAQ.astro';
+import ContactSection from '@/components/ContactSection.astro';
+import CTASection from '@/components/CTASection.astro';
+---
+
+<Layout
+	title="About Us | Xoomplus"
+	description="Learn about Xoomplus, a digital marketing agency based in Blackburn helping businesses grow through web design, SEO, social media and paid search."
+>
+	<main id="main-content" class="flex-1">
+		<PageHero title="About us" />
+		<OurStory />
+		<ExpertiseImpact />
+		<OurPurpose />
+		<WhatGuidesUs />
+		<OurExpertise />
+		<OurProcess />
+		<HowWeWork />
+		<WhatToExpect />
+		<FAQ />
+		<ContactSection />
+		<CTASection />
+	</main>
+</Layout>

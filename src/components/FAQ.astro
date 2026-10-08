@@ -1,8 +1,17 @@
 ---
+import Section from './Section.astro';
 import FAQAccordion from './FAQAccordion';
 import type { FAQItem } from './FAQAccordion';
 
-const faqItems: FAQItem[] = [
+interface Props {
+	items?: FAQItem[];
+	pill?: string;
+	heading?: string;
+	paragraph?: string;
+	id?: string;
+}
+
+const defaultItems: FAQItem[] = [
 	{
 		id: 'item-1',
 		question: 'Are these examples of industries you have worked in?',
@@ -41,6 +50,20 @@ const faqItems: FAQItem[] = [
 	},
 ];
 
+const {
+	items = defaultItems,
+	pill = 'FAQ',
+	heading = 'Frequently Asked Questions',
+	paragraph = 'Hear directly from the businesses we work with about their experience working with Xoomplus.',
+	id = 'faq',
+} = Astro.props;
+
+const faqItems: FAQItem[] = items.map((item, index) => ({
+	id: item.id || `item-${index + 1}`,
+	question: item.question,
+	answer: item.answer,
+}));
+
 const faqJsonLd = {
 	'@context': 'https://schema.org',
 	'@type': 'FAQPage',
@@ -55,28 +78,25 @@ const faqJsonLd = {
 };
 ---
 
-<section
-	id="faq"
-	class="bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-[clamp(4rem,8vw,6.5rem)]"
-	aria-labelledby="faq-heading"
->
-	<div class="mx-auto w-full max-w-[1560px]">
-		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
-			<p class="pill-light mb-5">FAQ</p>
-			<h2
-				id="faq-heading"
-				class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
-			>
-				Frequently Asked Questions
-			</h2>
-			<p class="text-on-light mx-auto max-w-[640px]">
-				Hear directly from the businesses we work with about their experience working with
-				Xoomplus.
-			</p>
-		</div>
+{
+	faqItems.length > 0 && (
+		<>
+			<Section id={id} aria-labelledby="faq-heading">
+				<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+					<p class="pill-light mb-5">{pill}</p>
+					<h2
+						id="faq-heading"
+						class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+					>
+						{heading}
+					</h2>
+					<p class="text-on-light mx-auto max-w-[640px]">{paragraph}</p>
+				</div>
 
-		<FAQAccordion client:load items={faqItems} />
-	</div>
-</section>
+				<FAQAccordion client:load items={faqItems} />
+			</Section>
 
-<script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+			<script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+		</>
+	)
+}

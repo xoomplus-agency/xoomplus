@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import Brands from '../components/Brands.astro';
 import Services from '../components/Services.astro';
@@ -8,7 +7,6 @@ import OurGrowth from '../components/OurGrowth.astro';
 import WhyChooseUs from '../components/WhyChooseUs.astro';
 import OurProcess from '../components/OurProcess.astro';
 import Industries from '../components/Industries.astro';
-import FAQ from '../components/FAQ.astro';
 import CaseStudies from '../components/CaseStudies.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Blogs from '../components/Blogs.astro';
@@ -18,8 +16,7 @@ import CTASection from '../components/CTASection.astro';
 ---
 
 <Layout>
-	<Header />
-	<main>
+	<main class="flex-1">
 		<Hero />
 		<Brands />
 		<Services />
@@ -31,7 +28,6 @@ import CTASection from '../components/CTASection.astro';
 		<OurLocations />
 		<Testimonials />
 		<Blogs />
-		<!-- <FAQ /> -->
 		<ContactSection />
 		<CTASection />
 	</main>

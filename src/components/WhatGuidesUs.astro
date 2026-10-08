@@ -1,0 +1,158 @@
+---
+import Section from './Section.astro';
+
+/**
+ * Icons live in /public/icons/ (no /public/assets folder).
+ * All four SVGs use fill #FFA800 — no color fallback needed.
+ */
+const principles = [
+	{
+		icon: '/icons/simplicity-essential.svg',
+		title: 'Simplicity is essential.',
+		text: 'Simplify the complex. Use straightforward language to clarify choices and next steps.',
+	},
+	{
+		icon: '/icons/remain-inquisitive.svg',
+		title: 'Remain inquisitive',
+		text: 'Pose thoughtful questions. Know your audience and challenge the obvious.',
+	},
+	{
+		icon: '/icons/focus-on-every-detail.svg',
+		title: 'Focus on every detail.',
+		text: 'Appreciate both aesthetics and functionality. Concentrate on the minor choices.',
+	},
+	{
+		icon: '/icons/evolve-through-teamwork.svg',
+		title: 'Evolve through teamwork.',
+		text: 'Exchange ideas, take ownership, and learn collectively for improved results.',
+	},
+];
+---
+
+<Section aria-labelledby="guides-heading">
+	<div class="guides-header">
+		<p class="pill-light mb-5">What guides us</p>
+		<h2
+			id="guides-heading"
+			class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+		>
+			Good work starts with good principles.
+		</h2>
+		<p class="text-on-light mx-auto max-w-[640px]">
+			The way we think matters just as much as the work we make.
+		</p>
+	</div>
+
+	<ul class="guides-grid m-0 list-none p-0" role="list">
+		{
+			principles.map((item) => (
+				<li class="why-card guides-card">
+					<div class="guides-card__icon" aria-hidden="true">
+						<img
+							src={item.icon}
+							alt=""
+							width="20"
+							height="20"
+							decoding="async"
+							loading="lazy"
+						/>
+					</div>
+					<h3 class="guides-card__title m-0">{item.title}</h3>
+					<p class="guides-card__text m-0">{item.text}</p>
+				</li>
+			))
+		}
+	</ul>
+</Section>
+
+<style>
+	.guides-header {
+		max-width: 820px;
+		margin-inline: auto;
+		text-align: center;
+	}
+
+	/* pb leaves room so why-card hover shadows are not clipped */
+	.guides-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 16px;
+		margin-top: 40px;
+		padding-bottom: 24px;
+		align-items: stretch;
+	}
+
+	.guides-card {
+		align-items: flex-start;
+		justify-content: flex-start;
+		height: 100%;
+		gap: 0;
+		padding: 1.5rem 1.25rem;
+		text-align: left;
+	}
+
+	.guides-card__icon {
+		display: flex;
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(255, 168, 0, 0.2);
+		border-radius: 10px;
+		background-color: rgba(255, 168, 0, 0.05);
+	}
+
+	.guides-card__icon img {
+		display: block;
+		width: 20px;
+		height: 20px;
+		object-fit: contain;
+	}
+
+	.guides-card__title {
+		margin-top: 20px;
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.25;
+		color: var(--color-primary-black);
+	}
+
+	.guides-card__text {
+		margin-top: 10px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: #555555;
+	}
+
+	/*
+	 * 1024–1279: 2 columns — 4 equal columns leave ~180–220px cards,
+	 * too narrow for 24px/18px copy without overflow.
+	 */
+	@media (max-width: 1279px) {
+		.guides-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 639px) {
+		.guides-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.guides-card {
+			padding: 1.25rem 1rem;
+		}
+
+		.guides-card__title {
+			font-size: clamp(1.25rem, 5vw, 1.25rem); /* 20px */
+		}
+
+		.guides-card__text {
+			font-size: clamp(1rem, 4vw, 1rem); /* 16px */
+		}
+	}
+</style>

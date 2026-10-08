@@ -1,0 +1,288 @@
+---
+import Section from './Section.astro';
+
+/**
+ * Images live in /public/images/ (no /public/assets folder).
+ * Files: how-we-work-1.webp, how-we-work-2.webp
+ */
+const images = [
+	{
+		src: '/images/how-we-work-1.webp',
+		width: 1020,
+		height: 320,
+		alt: 'Team members sketching ideas on paper at a wooden table',
+		wide: true,
+	},
+	{
+		src: '/images/how-we-work-2.webp',
+		width: 600,
+		height: 320,
+		alt: 'A hand sketching a wireframe in a notebook beside a laptop',
+		wide: false,
+	},
+];
+
+const columns = [
+	{
+		title: 'Ideas are shared early.',
+		text: 'We make space for questions, constructive feedback and perspectives from every discipline.',
+	},
+	{
+		title: 'The handover is a conversation.',
+		text: 'Design, development and marketing stay connected rather than working in separate lanes.',
+	},
+	{
+		title: 'Learning is part of the work.',
+		text: 'We review, reflect and stay open to a better way of solving the next challenge.',
+	},
+];
+---
+
+<Section background="light-gray" aria-labelledby="how-we-work-heading">
+	<div class="hww-header">
+		<div class="hww-header__left">
+			<p class="pill-light m-0">How we work together</p>
+			<h2
+				id="how-we-work-heading"
+				class="hww-heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				Good ideas don't happen in isolation.
+			</h2>
+		</div>
+		<p class="hww-intro m-0">
+			Our approach to collaboration is simple: bring different perspectives<br
+				class="hww-intro__break"
+			/>
+			into the room, respect the craft and keep the business goal in view.<br
+				class="hww-intro__break"
+			/>
+			The work gets stronger when everyone can contribute.
+		</p>
+	</div>
+
+	<div class="hww-images">
+		{
+			images.map((image) => (
+				<div class:list={['hww-images__frame', image.wide && 'hww-images__frame--wide']}>
+					<img
+						class="hww-images__img"
+						src={image.src}
+						alt={image.alt}
+						width={image.width}
+						height={image.height}
+						loading="lazy"
+						decoding="async"
+					/>
+				</div>
+			))
+		}
+	</div>
+
+	<ul class="hww-columns m-0 list-none p-0" role="list">
+		{
+			columns.map((col) => (
+				<li class="hww-column">
+					<article>
+						<h3 class="hww-column__title m-0">{col.title}</h3>
+						<p class="hww-column__text m-0">{col.text}</p>
+					</article>
+				</li>
+			))
+		}
+	</ul>
+</Section>
+
+<style>
+	.hww-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 48px;
+	}
+
+	.hww-header__left {
+		flex: 1 1 400px;
+		min-width: 0;
+		text-align: left;
+	}
+
+	.hww-heading {
+		margin-top: 16px;
+		line-height: 1.15;
+	}
+
+	/* One line when the row is wide enough for heading + 3-line intro */
+	@media (min-width: 1600px) {
+		.hww-heading {
+			white-space: nowrap;
+		}
+	}
+
+	.hww-intro {
+		flex: 0 0 590px;
+		width: 590px;
+		max-width: 590px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: #555555;
+		text-align: left;
+	}
+
+	/* Forced 3-line breaks on desktop; natural wrap on smaller screens */
+	.hww-intro__break {
+		display: none;
+	}
+
+	@media (min-width: 1024px) {
+		.hww-intro__break {
+			display: inline;
+		}
+	}
+
+	.hww-images {
+		display: flex;
+		gap: 16px;
+		margin-top: 32px;
+		height: clamp(200px, 22vw, 320px);
+	}
+
+	.hww-images__frame {
+		flex: 1 1 0;
+		overflow: hidden;
+		border-radius: 18px;
+		min-width: 0;
+		height: 100%;
+	}
+
+	.hww-images__frame--wide {
+		flex: 1.7 1 0;
+	}
+
+	.hww-images__img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 18px;
+	}
+
+	.hww-columns {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 32px;
+		align-items: start;
+		margin-top: 28px;
+		text-align: center;
+	}
+
+	.hww-column__title {
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.25;
+		color: var(--color-primary-black);
+	}
+
+	.hww-column__text {
+		/* ~430px lets each body wrap to 2 lines at 18px (was 340px → 3 lines) */
+		max-width: 430px;
+		margin-top: 10px;
+		margin-inline: auto;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: #555555;
+	}
+
+	/* Tablet 640–1023px */
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.hww-header {
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		.hww-header__left,
+		.hww-intro {
+			flex: none;
+			width: 100%;
+			max-width: 100%;
+		}
+
+		.hww-intro {
+			width: 100%;
+		}
+
+		.hww-images {
+			height: 200px;
+		}
+
+		/* Keep 3 columns when each can be ~220px+; otherwise stack */
+		.hww-columns {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 24px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 899px) {
+		.hww-columns {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+	}
+
+	/* Mobile <640px */
+	@media (max-width: 639px) {
+		.hww-header {
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		.hww-header__left,
+		.hww-intro {
+			flex: none;
+			width: 100%;
+			max-width: 100%;
+		}
+
+		.hww-intro {
+			width: 100%;
+		}
+
+		.hww-heading {
+			font-size: clamp(1.75rem, 8vw, 2rem); /* ~28–32px */
+		}
+
+		.hww-intro {
+			font-size: clamp(1rem, 4vw, 1.125rem);
+		}
+
+		.hww-images {
+			flex-direction: column;
+			height: auto;
+			gap: 14px;
+		}
+
+		.hww-images__frame,
+		.hww-images__frame--wide {
+			flex: none;
+			width: 100%;
+			height: 200px;
+		}
+
+		.hww-columns {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+
+		.hww-column__title {
+			font-size: clamp(1.25rem, 5vw, 1.25rem); /* ~20px */
+		}
+
+		.hww-column__text {
+			font-size: clamp(1rem, 4vw, 1rem); /* ~16px */
+		}
+	}
+</style>

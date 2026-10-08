@@ -1,0 +1,186 @@
+---
+import Section from './Section.astro';
+import LocationMap from './LocationMap.astro';
+
+/**
+ * Icons live at /public/icons/ (not /public/assets/icons/).
+ * All three already use stroke="#FFA800".
+ * Filenames match the screenshot: circle = single bubble, square = overlapping, arrow = up-right.
+ */
+const cards = [
+	{
+		number: '01',
+		icon: '/icons/contact-message-circle.svg',
+		title: 'We understand the challenge',
+		text: 'We read through your enquiry and consider your goals, your current situation and the expertise that could help.',
+	},
+	{
+		number: '02',
+		icon: '/icons/contact-message-square.svg',
+		title: 'We start a conversation',
+		text: 'We get in touch to ask questions, explore the brief and understand what a useful partnership would look like.',
+	},
+	{
+		number: '03',
+		icon: '/icons/contact-arrow-up.svg',
+		title: 'We shape the next step',
+		text: 'Together, we discuss the right direction, the scope and the practicalities before any project moves forward.',
+	},
+] as const;
+---
+
+<>
+	<Section
+		background="dark"
+		aria-labelledby="what-next-heading"
+		class="what-happens-next section-glow-top-left"
+	>
+		<div class="what-next-header">
+			<p class="pill-dark text-primary m-0">What happens next</p>
+			<h2
+				id="what-next-heading"
+				class="text-hero-h1 dark-section-heading what-next-heading m-0"
+			>
+				A clear path from hello.
+			</h2>
+			<p class="dark-section-intro what-next-intro m-0">
+				Thoughtful questions. Shared direction. No pressure to have every answer.
+			</p>
+		</div>
+
+		<ul class="what-next-grid m-0 list-none p-0" role="list">
+			{
+				cards.map((card) => (
+					<li>
+						<article class="service-card what-next-card">
+							<div class="what-next-card__top">
+								<span class="what-next-card__number">{card.number}</span>
+								<img
+									class="what-next-card__icon"
+									src={card.icon}
+									alt=""
+									aria-hidden="true"
+									width="20"
+									height="20"
+									decoding="async"
+								/>
+							</div>
+							<h3 class="what-next-card__title m-0">{card.title}</h3>
+							<p class="dark-glass-card__text what-next-card__text m-0">{card.text}</p>
+						</article>
+					</li>
+				))
+			}
+		</ul>
+	</Section>
+
+	{/* Full-bleed map — no Section wrapper, no gap above footer */}
+	<LocationMap class="what-next-map" radius={0} />
+</>
+
+<style>
+	.what-next-header {
+		max-width: 640px;
+		margin-inline: auto;
+		text-align: center;
+	}
+
+	.what-next-heading {
+		margin-top: 16px;
+	}
+
+	.what-next-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 20px;
+		margin-top: 40px;
+		align-items: stretch;
+	}
+
+	.what-next-grid > li {
+		min-width: 0;
+		height: 100%;
+	}
+
+	.what-next-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		height: 100%;
+		text-align: left;
+	}
+
+	.what-next-card__top {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.what-next-card__number {
+		font-family: var(--font-inter);
+		font-size: clamp(1.5rem, 3vw, 1.75rem); /* 24–28px */
+		font-weight: 400;
+		line-height: 1;
+		color: #ffffff;
+	}
+
+	.what-next-card__icon {
+		display: block;
+		flex-shrink: 0;
+		width: 20px;
+		height: 20px;
+	}
+
+	.what-next-card__title {
+		margin-top: 20px;
+		font-family: var(--font-inter);
+		font-size: clamp(1.25rem, 2.5vw, 1.5rem); /* 20–24px */
+		font-weight: 500;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: #ffffff;
+	}
+
+	.what-next-card__text {
+		margin-top: 10px;
+	}
+
+	/* Full-bleed under the dark section — no gap, edge-to-edge */
+	:global(.what-next-map) {
+		width: 100%;
+		height: 320px;
+		margin: 0;
+		border-radius: 0;
+	}
+
+	/*
+	 * Tablet: 2 columns, third card centered on the next row.
+	 * (Chosen over a single column for better use of mid-width space.)
+	 */
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.what-next-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 20px;
+		}
+
+		.what-next-grid > li:last-child {
+			grid-column: 1 / -1;
+			max-width: calc(50% - 10px);
+			width: 100%;
+			margin-inline: auto;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.what-next-grid {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 24px;
+		}
+
+		:global(.what-next-map) {
+			height: 450px;
+		}
+	}
+</style>

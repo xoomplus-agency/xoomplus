@@ -1,0 +1,180 @@
+---
+import Section from './Section.astro';
+
+const items = [
+	{
+		title: 'A plan you can understand',
+		text: 'Clear priorities, a practical scope and an honest conversation about the next step.',
+	},
+	{
+		title: 'A conversation that stays open',
+		text: 'Space for your questions, regular updates and decisions explained in context.',
+	},
+	{
+		title: 'A focus that stays on your business',
+		text: 'Recommendations shaped around your audience, your needs and where you want to go.',
+	},
+];
+---
+
+<Section aria-labelledby="expect-heading">
+	<div class="expect">
+		<div class="expect__left">
+			<p class="pill-light m-0">What you can expect</p>
+			<h2
+				id="expect-heading"
+				class="expect__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				A digital partner. Not just a delivery team.
+			</h2>
+			<p class="expect__intro text-on-light m-0">
+				The best partnerships make the work feel clearer. We aim to give you the context, confidence
+				and collaboration to move forward with purpose.
+			</p>
+		</div>
+
+		<ul class="expect__list m-0 list-none p-0" role="list">
+			{
+				items.map((item) => (
+					<li class="expect__item">
+						<span class="expect__check" aria-hidden="true">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 18 18"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<circle cx="9" cy="9" r="9" fill="#FFA800" />
+								<path
+									d="M5.25 9.25L7.75 11.75L12.75 6.5"
+									stroke="#ffffff"
+									stroke-width="1.75"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+							</svg>
+						</span>
+						<div class="expect__item-body">
+							<h3 class="expect__item-title m-0">{item.title}</h3>
+							<p class="expect__item-text m-0">{item.text}</p>
+						</div>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</Section>
+
+<style>
+	.expect {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 80px;
+	}
+
+	.expect__left {
+		flex: 0 1 46%;
+		min-width: 0;
+		text-align: left;
+	}
+
+	.expect__heading {
+		margin-top: 16px;
+		max-width: 420px;
+		line-height: 1.15;
+	}
+
+	.expect__intro {
+		margin-top: 16px;
+		max-width: 420px;
+	}
+
+	.expect__list {
+		flex: 0 1 46%;
+		min-width: 0;
+		width: 100%;
+	}
+
+	.expect__item {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+		padding: 20px 0;
+		border-bottom: 1px solid #ededed;
+	}
+
+	.expect__item:first-child {
+		padding-top: 0;
+	}
+
+	.expect__check {
+		display: inline-flex;
+		flex-shrink: 0;
+		width: 20px;
+		height: 20px;
+		margin-top: 4px;
+	}
+
+	.expect__check svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.expect__item-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.expect__item-title {
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 700;
+		line-height: 1.25;
+		color: var(--color-primary-black);
+	}
+
+	.expect__item-text {
+		margin-top: 8px;
+		max-width: 380px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 140%;
+		color: #555555;
+	}
+
+	@media (max-width: 1023px) {
+		.expect {
+			flex-direction: column;
+			gap: 40px;
+		}
+
+		.expect__left,
+		.expect__list {
+			flex: none;
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.expect__heading {
+			font-size: clamp(1.75rem, 8vw, 2rem);
+		}
+
+		.expect__check {
+			width: 18px;
+			height: 18px;
+		}
+
+		.expect__item-title {
+			font-size: clamp(1.25rem, 5vw, 1.25rem);
+		}
+
+		.expect__item-text {
+			font-size: clamp(1rem, 4vw, 1rem);
+		}
+	}
+</style>

@@ -1,0 +1,100 @@
+---
+import Section from './Section.astro';
+
+/**
+ * Intro matches Services (and the reference). The phrase
+ * "reach, engage, and the right audience" still reads incomplete
+ * (likely missing a verb such as "convert") — kept as provided.
+ */
+const intro =
+	'From search visibility to website experiences and social campaigns, Xoomplus brings key digital services together to help your business reach, engage, and the right audience.';
+
+const cards = [
+	{
+		pill: 'Our mission',
+		title: 'Make digital work harder for your business.',
+		text: 'Turn business challenges into clear digital direction. Create experiences and campaigns that connect with the right people, and keep improving the work as needs change.',
+	},
+	{
+		pill: 'Our vision',
+		title: 'A more connected way to move forward.',
+		text: 'A digital presence where brand, experience and marketing strengthen each other. Where businesses feel confident in their next step, and good ideas have room to grow.',
+	},
+];
+---
+
+<Section
+	background="dark"
+	aria-labelledby="purpose-heading"
+	class="our-purpose section-glow-top-left"
+>
+	<div class="purpose-header">
+		<h2 id="purpose-heading" class="text-hero-h1 dark-section-heading purpose-heading m-0">
+			Our purpose
+		</h2>
+		<p class="dark-section-intro purpose-intro m-0">{intro}</p>
+	</div>
+
+	<div class="purpose-grid">
+		{
+			cards.map((card) => (
+				<article class="service-card service-card--wide purpose-card">
+					<p class="pill-dark text-primary m-0">{card.pill}</p>
+					<h3 class="purpose-card__title m-0">{card.title}</h3>
+					<p class="dark-glass-card__text purpose-card__text m-0">{card.text}</p>
+				</article>
+			))
+		}
+	</div>
+</Section>
+
+<style>
+	.purpose-header {
+		max-width: 640px;
+		margin-inline: auto;
+		text-align: center;
+	}
+
+	.purpose-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		justify-content: center;
+		gap: 24px;
+		margin-top: 40px;
+		align-items: stretch;
+	}
+
+	.purpose-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		height: 100%;
+		text-align: left;
+	}
+
+	.purpose-card__title {
+		margin-top: 16px;
+		font-family: var(--font-inter);
+		font-size: clamp(1.5rem, 2.5vw, 2rem); /* 24–32px */
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+		color: #ffffff;
+	}
+
+	.purpose-card__text {
+		margin-top: 12px;
+	}
+
+	@media (max-width: 1023px) {
+		.purpose-grid {
+			grid-template-columns: 1fr;
+			gap: 20px;
+		}
+
+		.purpose-card {
+			max-width: 708px;
+			margin-inline: auto;
+		}
+	}
+</style>

@@ -1,0 +1,65 @@
+---
+interface Props {
+	title: string;
+	icon: string;
+	description: string;
+	features: string[];
+	cta: { label: string; href: string };
+	class?: string;
+}
+
+const {
+	title,
+	icon,
+	description,
+	features,
+	cta,
+	class: className = '',
+} = Astro.props;
+---
+
+<article class:list={['service-card', 'flex', 'h-full', 'flex-col', className]}>
+	<img
+		src={icon}
+		alt=""
+		width="47"
+		height="47"
+		class="mb-5 size-[47px] object-contain"
+		decoding="async"
+		loading="lazy"
+		aria-hidden="true"
+	/>
+	<h3 class="mb-3 text-[32px] font-medium leading-[1.2] tracking-[-0.02em] text-secondary-white">
+		{title}
+	</h3>
+	<p class="mb-5 text-[15px] leading-[1.5] text-[var(--color-text-on-dark)] [font-family:var(--font-inter)]">
+		{description}
+	</p>
+	<ul class="mb-8 flex flex-1 list-none flex-col gap-2.5 p-0">
+		{
+			features.map((feature) => (
+				<li class="service-feature flex items-start gap-2.5 text-[14px] leading-snug [font-family:var(--font-inter)]">
+					<span
+						class="service-check mt-0.5 inline-flex size-[18px] shrink-0 items-center justify-center rounded-full"
+						aria-hidden="true"
+					>
+						<svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+							<path
+								d="M1 4l2.5 2.5L9 1"
+								stroke="#0B0A0B"
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+					</span>
+					{feature}
+				</li>
+			))
+		}
+	</ul>
+	<a class="service-card-btn mt-auto" href={cta.href}>
+		{cta.label}
+		<span aria-hidden="true">→</span>
+	</a>
+</article>

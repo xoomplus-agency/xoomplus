@@ -1,37 +1,82 @@
 ---
 import Button from './Button.astro';
+import ServicesMegaMenu from './ServicesMegaMenu.astro';
+import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
+
+interface Props {
+	/** `solid` = primary black bar for white pages without a hero (e.g. blog detail) */
+	variant?: 'default' | 'solid';
+	/** `light` = menu pill over white/#F7F7F5 from first paint (e.g. blog detail) */
+	theme?: 'dark' | 'light';
+}
+
+const { variant = 'default', theme = 'dark' } = Astro.props;
+
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
 const nav = [
-	{ label: 'Home', href: '/', active: true },
-	{ label: 'Services', href: '#services', hasDropdown: true },
-	{ label: 'About', href: '#about' },
+	{ label: 'Home', href: '/' },
+	{ label: 'Services', href: '/services', hasDropdown: true },
+	{ label: 'About', href: '/about' },
 	{ label: 'Industries', href: '#industries' },
 	{ label: 'Case Studies', href: '#case-studies' },
-	{ label: 'Contact', href: '#contact' },
-	{ label: 'Blog', href: '#blog' },
+	{ label: 'Contact', href: '/contact' },
+	{ label: 'Blog', href: '/blogs' },
 ];
+
+const servicesSections = getServicesMenuSections();
+const megaPanelId = 'services-mega-menu';
+
+function isActive(href: string) {
+	if (href.startsWith('#')) return false;
+	const path = href.replace(/\/+$/, '') || '/';
+	// Home is exact-match only; other routes match themselves and nested paths
+	if (path === '/') return pathname === '/';
+	return pathname === path || pathname.startsWith(`${path}/`);
+}
 
 /** Glass: #FFFFFF 5% · blur 34.8px (no stroke — matches design) */
 const glassFill = 'rgb(255 255 255 / 0.05)';
 ---
 
-<header class="pointer-events-none fixed inset-x-0 top-0 z-50" data-site-header>
+<header
+	class="pointer-events-none fixed inset-x-0 top-0 z-50"
+	data-site-header
+	data-variant={variant}
+	data-theme={theme === 'light' ? 'light' : undefined}
+>
 	<!--
 		Default (screenshot): Logo left · glass nav (links only) center · CTA right
 		Scrolled: one unified glass shell around logo + links + CTA
 	-->
 	<div
-		class="pointer-events-auto mx-auto hidden w-full max-w-[1920px] grid-cols-[1fr_auto_1fr] items-center gap-x-6 bg-transparent px-8 pt-6 lg:grid lg:px-12"
+		class="pointer-events-auto relative mx-auto hidden w-full max-w-[1920px] grid-cols-[1fr_auto_1fr] items-center gap-x-6 bg-transparent px-8 pt-6 lg:grid lg:px-12"
 		data-nav-desktop
 	>
-		<a class="z-[1] shrink-0 justify-self-start" href="/" aria-label="Xoomplus home" data-nav-logo>
+		<a
+			class="nav-logo-link z-[1] shrink-0 justify-self-start"
+			href="/"
+			aria-label="Xoomplus home"
+			data-nav-logo
+		>
 			<img
 				src="/images/logo-xoomplus.webp"
 				alt="Xoomplus"
 				width="132"
 				height="36"
-				class="h-auto w-[clamp(104px,10vw,132px)] transition-[width] duration-500 motion-reduce:transition-none"
+				class="logo logo--white h-auto w-[clamp(104px,10vw,132px)] transition-[width] duration-500 motion-reduce:transition-none"
+				loading="eager"
 				decoding="async"
+			/>
+			<img
+				src="/images/logo-black.webp"
+				alt=""
+				width="132"
+				height="36"
+				class="logo logo--black h-auto w-[clamp(104px,10vw,132px)] transition-[width] duration-500 motion-reduce:transition-none"
+				loading="eager"
+				decoding="async"
+				aria-hidden="true"
 			/>
 		</a>
 
@@ -42,40 +87,67 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		>
 			<ul class="m-0 flex list-none items-center gap-0 p-1">
 				{
-					nav.map((item) => (
-						<li class:list={[item.active && 'min-w-0']}>
-							<a
-								class:list={[
-									'inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full text-[0.875rem] font-medium tracking-[-0.01em] transition-colors',
-									item.active
-										? 'nav-link-active font-semibold text-primary-black'
-										: 'px-3.5 py-2.5 text-secondary-white hover:bg-white/10',
-								]}
-								href={item.href}
-								aria-current={item.active ? 'page' : undefined}
-							>
-								{item.label}
-								{item.hasDropdown && (
-									<svg
-										class="opacity-85"
-										width="10"
-										height="6"
-										viewBox="0 0 10 6"
-										aria-hidden="true"
+					nav.map((item) => {
+						const active = isActive(item.href);
+						const isServices = Boolean(item.hasDropdown);
+
+						if (isServices) {
+							return (
+								<li class="services-nav-item" data-services-nav>
+									<a
+										class:list={[
+											'inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full text-[0.875rem] font-medium tracking-[-0.01em] transition-colors',
+											active
+												? 'nav-link-active font-semibold text-primary-black'
+												: 'px-3.5 py-2.5 text-secondary-white hover:bg-white/10',
+										]}
+										href={item.href}
+										aria-current={active ? 'page' : undefined}
+										aria-haspopup="true"
+										aria-expanded="false"
+										aria-controls={megaPanelId}
+										data-services-trigger
 									>
-										<path
-											d="M1 1l4 4 4-4"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.5"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-										/>
-									</svg>
-								)}
-							</a>
-						</li>
-					))
+										{item.label}
+										<svg
+											class="opacity-85"
+											width="10"
+											height="6"
+											viewBox="0 0 10 6"
+											aria-hidden="true"
+										>
+											<path
+												d="M1 1l4 4 4-4"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</a>
+									<ServicesMegaMenu />
+								</li>
+							);
+						}
+
+						return (
+							<li class:list={[active && 'min-w-0']}>
+								<a
+									class:list={[
+										'inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full text-[0.875rem] font-medium tracking-[-0.01em] transition-colors',
+										active
+											? 'nav-link-active font-semibold text-primary-black'
+											: 'px-3.5 py-2.5 text-secondary-white hover:bg-white/10',
+									]}
+									href={item.href}
+									aria-current={active ? 'page' : undefined}
+								>
+									{item.label}
+								</a>
+							</li>
+						);
+					})
 				}
 			</ul>
 		</nav>
@@ -91,14 +163,25 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		data-nav-mobile
 	>
 		<div class="flex items-center justify-between gap-3">
-			<a class="shrink-0" href="/" aria-label="Xoomplus home">
+			<a class="nav-logo-link shrink-0" href="/" aria-label="Xoomplus home" data-nav-logo-mobile>
 				<img
 					src="/images/logo-xoomplus.webp"
 					alt="Xoomplus"
 					width="132"
 					height="36"
-					class="h-auto w-[clamp(104px,10vw,132px)]"
+					class="logo logo--white h-auto w-[clamp(104px,10vw,132px)]"
+					loading="eager"
 					decoding="async"
+				/>
+				<img
+					src="/images/logo-black.webp"
+					alt=""
+					width="132"
+					height="36"
+					class="logo logo--black h-auto w-[clamp(104px,10vw,132px)]"
+					loading="eager"
+					decoding="async"
+					aria-hidden="true"
 				/>
 			</a>
 
@@ -127,18 +210,97 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		>
 			<ul class="m-0 grid list-none gap-[0.35rem] p-0">
 				{
-					nav.map((item) => (
-						<li>
-							<a
-								class="block rounded-xl px-[0.9rem] py-3 font-medium text-secondary-white"
-								href={item.href}
-								aria-current={item.active ? 'page' : undefined}
-								data-mobile-link
-							>
-								{item.label}
-							</a>
-						</li>
-					))
+					nav.map((item) => {
+						const active = isActive(item.href);
+						const isServices = Boolean(item.hasDropdown);
+
+						if (isServices) {
+							return (
+								<li class="mobile-services" data-mobile-services>
+									<button
+										class="mobile-services__trigger flex w-full items-center justify-between rounded-xl px-[0.9rem] py-3 text-left font-medium text-secondary-white"
+										type="button"
+										aria-expanded="false"
+										aria-controls="mobile-services-panel"
+										data-mobile-services-toggle
+									>
+										<span>{item.label}</span>
+										<svg
+											class="mobile-services__chevron opacity-85"
+											width="10"
+											height="6"
+											viewBox="0 0 10 6"
+											aria-hidden="true"
+										>
+											<path
+												d="M1 1l4 4 4-4"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</button>
+									<div
+										id="mobile-services-panel"
+										class="mobile-services__panel"
+										hidden
+										data-mobile-services-panel
+									>
+										<ul class="m-0 grid list-none gap-1 p-0 pl-2">
+											<li>
+												<a
+													class="block rounded-lg px-[0.9rem] py-2 text-sm font-semibold text-secondary-white"
+													href={servicesMenu.footer.allServicesHref}
+													data-mobile-link
+												>
+													All Services
+												</a>
+											</li>
+											{servicesSections.map((section) => (
+												<li class="mobile-services__section">
+													<a
+														class="block rounded-lg px-[0.9rem] py-2 text-sm font-semibold text-secondary-white"
+														href={section.href}
+														data-mobile-link
+													>
+														{section.title}
+													</a>
+													<ul class="m-0 grid list-none gap-0.5 p-0">
+														{section.links.map((link) => (
+															<li>
+																<a
+																	class="block rounded-lg px-[0.9rem] py-1.5 text-sm font-normal text-white/70"
+																	href={link.href}
+																	data-mobile-link
+																>
+																	{link.label}
+																</a>
+															</li>
+														))}
+													</ul>
+												</li>
+											))}
+										</ul>
+									</div>
+								</li>
+							);
+						}
+
+						return (
+							<li>
+								<a
+									class="block rounded-xl px-[0.9rem] py-3 font-medium text-secondary-white"
+									href={item.href}
+									aria-current={active ? 'page' : undefined}
+									data-mobile-link
+								>
+									{item.label}
+								</a>
+							</li>
+						);
+					})
 				}
 				<li class="mt-1">
 					<Button size="nav" class="!w-full" href="#contact">Let’s Talk</Button>
@@ -149,6 +311,94 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 </header>
 
 <style define:vars={{ glassFill }}>
+	/* Menu pill bg — dark/hero (current glass) vs light sections */
+	@property --nav-pill-bg {
+		syntax: '<color>';
+		inherits: true;
+		initial-value: rgb(255 255 255 / 0.05);
+	}
+
+	[data-site-header] {
+		/* Same value as glassFill / prior pill fill — keep in sync */
+		--nav-pill-bg: rgb(255 255 255 / 0.05);
+	}
+
+	[data-site-header][data-theme='light'] {
+		--nav-pill-bg: rgba(0, 0, 0, 0.05);
+	}
+
+	/* Light theme: inactive pill links readable on white / 5% black fill */
+	[data-site-header][data-theme='light'] [data-nav-desktop] a:not(.nav-link-active) {
+		color: #555555;
+	}
+
+	[data-site-header][data-theme='light'] [data-nav-desktop] a:not(.nav-link-active):hover,
+	[data-site-header][data-theme='light'] [data-nav-desktop] a:not(.nav-link-active)[data-mega-open] {
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+
+	[data-site-header][data-theme='light'] [data-menu-icon],
+	[data-site-header][data-theme='light'] [data-menu-icon]::before,
+	[data-site-header][data-theme='light'] [data-menu-icon]::after {
+		background-color: #555555;
+	}
+
+	[data-site-header][data-theme='light'] [data-menu-toggle] {
+		background-color: var(--nav-pill-bg);
+	}
+
+	/* Navbar logo — crossfade with pill theme (data-theme on header) */
+	.nav-logo-link {
+		position: relative;
+		display: inline-block;
+	}
+
+	.nav-logo-link .logo {
+		display: block;
+		object-fit: contain;
+		transition: opacity 0.35s ease;
+	}
+
+	.nav-logo-link .logo--black {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	[data-site-header] .nav-logo-link .logo--white {
+		opacity: 1;
+	}
+
+	[data-site-header] .nav-logo-link .logo--black {
+		opacity: 0;
+	}
+
+	[data-site-header][data-theme='light'] .nav-logo-link .logo--white {
+		opacity: 0;
+	}
+
+	[data-site-header][data-theme='light'] .nav-logo-link .logo--black {
+		opacity: 1;
+	}
+
+	/* Solid navbar — primary black bar for light pages without a dark hero */
+	[data-site-header][data-variant='solid'] {
+		background-color: var(--color-primary-black);
+	}
+
+	[data-site-header][data-variant='solid'] [data-nav-desktop],
+	[data-site-header][data-variant='solid'] [data-nav-mobile] {
+		background-color: transparent;
+	}
+
+	[data-site-header][data-variant='solid'][data-scrolled] [data-nav-desktop],
+	[data-site-header][data-variant='solid'][data-scrolled] [data-nav-mobile] {
+		background-color: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(34.8px);
+		backdrop-filter: blur(34.8px);
+	}
+
 	/* Active link — Figma: 117.57×43, #FFF / #0A0A0A */
 	[data-nav-desktop] .nav-link-active {
 		box-sizing: border-box;
@@ -176,11 +426,30 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 			transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
+	/* Pill: theme fade uses 0.35s ease; keep other transitioned props unchanged */
+	[data-nav-cluster] {
+		transition:
+			width 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			max-width 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			margin 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			padding 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			background-color 0.35s ease,
+			gap 500ms cubic-bezier(0.22, 1, 0.36, 1),
+			transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
 	/*
 	 * Glass blur — literal px (not var) + -webkit first.
 	 * LightningCSS prod minify can drop unprefixed backdrop-filter when it comes first.
 	 */
-	[data-nav-cluster],
+	[data-nav-cluster] {
+		border: none;
+		background-color: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(34.8px);
+		backdrop-filter: blur(34.8px);
+	}
+
 	[data-menu-toggle] {
 		border: none;
 		background-color: var(--glassFill);
@@ -196,7 +465,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		padding: 0.5rem 0.85rem;
 		border: none;
 		border-radius: 9999px;
-		background-color: var(--glassFill);
+		background-color: var(--nav-pill-bg);
 		-webkit-backdrop-filter: blur(34.8px);
 		backdrop-filter: blur(34.8px);
 		gap: 0.75rem;
@@ -210,7 +479,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		padding: 0.65rem 0.85rem;
 		border: none;
 		border-radius: 1.25rem;
-		background-color: var(--glassFill);
+		background-color: var(--nav-pill-bg);
 		-webkit-backdrop-filter: blur(34.8px);
 		backdrop-filter: blur(34.8px);
 	}
@@ -227,12 +496,37 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		backdrop-filter: none;
 	}
 
+	/* Services mega: position against the desktop nav bar (not the link) */
+	.services-nav-item {
+		position: static;
+	}
+
+	/* Keep the Services pill in its hover look while the mega menu is open */
+	[data-nav-desktop] [data-services-trigger][data-mega-open]:not(.nav-link-active) {
+		background-color: rgb(255 255 255 / 0.1);
+	}
+
+	.mobile-services__panel {
+		padding-bottom: 0.35rem;
+	}
+
+	.mobile-services__trigger[aria-expanded='true'] .mobile-services__chevron {
+		transform: rotate(180deg);
+	}
+
+	.mobile-services__chevron {
+		transition: transform 0.2s ease;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		[data-site-header] [data-nav-desktop],
 		[data-site-header] [data-nav-mobile],
 		[data-site-header] [data-nav-cluster],
 		[data-site-header] [data-menu-toggle],
-		[data-mobile-nav] {
+		[data-mobile-nav],
+		.mobile-services__chevron,
+		[data-site-header] .nav-logo-link .logo {
+			transition-duration: 0s !important;
 			transition: none !important;
 		}
 	}
@@ -263,11 +557,63 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 	setScrolled(window.scrollY > SCROLL_THRESHOLD);
 	window.addEventListener('scroll', onScroll, { passive: true });
 
+	/** Case B: pill theme from section under the fixed navbar (no scroll listeners) */
+	function initNavPillThemeObserver() {
+		if (!(header instanceof HTMLElement)) return;
+		const sections = document.querySelectorAll('[data-bg]');
+		if (!sections.length) return;
+
+		const intersecting = new Map();
+
+		function applyThemeFromBand() {
+			if (!(header instanceof HTMLElement)) return;
+			let chosen = null;
+			let chosenTop = -Infinity;
+			for (const [el, entry] of intersecting) {
+				const top = entry.boundingClientRect.top;
+				if (top >= chosenTop) {
+					chosenTop = top;
+					chosen = el;
+				}
+			}
+			if (!chosen) return;
+			const bg = chosen.getAttribute('data-bg');
+			if (bg === 'light') {
+				header.setAttribute('data-theme', 'light');
+			} else {
+				header.removeAttribute('data-theme');
+			}
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (entry.isIntersecting) {
+						intersecting.set(entry.target, entry);
+					} else {
+						intersecting.delete(entry.target);
+					}
+				}
+				applyThemeFromBand();
+			},
+			{
+				root: null,
+				rootMargin: '-40px 0px -90% 0px',
+				threshold: 0,
+			},
+		);
+
+		sections.forEach((section) => observer.observe(section));
+	}
+
+	initNavPillThemeObserver();
+
 	function setMenuOpen(open) {
 		if (!(toggle instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) return;
 		toggle.setAttribute('aria-expanded', String(open));
 		panel.hidden = !open;
 		panel.classList.toggle('hidden', !open);
+		if (!open) setMobileServicesOpen(false);
 	}
 
 	if (toggle instanceof HTMLButtonElement && panel instanceof HTMLElement) {
@@ -281,7 +627,180 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		});
 
 		document.addEventListener('keydown', (event) => {
-			if (event.key === 'Escape') setMenuOpen(false);
+			if (event.key === 'Escape') {
+				if (isMegaOpen()) {
+					closeMega({ returnFocus: true });
+					return;
+				}
+				setMenuOpen(false);
+			}
 		});
+	}
+
+	/* ── Mobile Services accordion ── */
+	const mobileServicesToggle = document.querySelector('[data-mobile-services-toggle]');
+	const mobileServicesPanel = document.querySelector('[data-mobile-services-panel]');
+
+	function setMobileServicesOpen(open) {
+		if (
+			!(mobileServicesToggle instanceof HTMLButtonElement) ||
+			!(mobileServicesPanel instanceof HTMLElement)
+		)
+			return;
+		mobileServicesToggle.setAttribute('aria-expanded', String(open));
+		mobileServicesPanel.hidden = !open;
+	}
+
+	if (
+		mobileServicesToggle instanceof HTMLButtonElement &&
+		mobileServicesPanel instanceof HTMLElement
+	) {
+		mobileServicesToggle.addEventListener('click', () => {
+			const open = mobileServicesToggle.getAttribute('aria-expanded') !== 'true';
+			setMobileServicesOpen(open);
+		});
+	}
+
+	/* ── Desktop Services mega menu ── */
+	const servicesNav = document.querySelector('[data-services-nav]');
+	const servicesTrigger = document.querySelector('[data-services-trigger]');
+	const megaPanel = document.querySelector('[data-services-mega]');
+
+	const OPEN_DELAY_MS = 80;
+	const CLOSE_DELAY_MS = 120;
+	let openTimer = 0;
+	let closeTimer = 0;
+	let megaOpen = false;
+
+	function isDesktopMega() {
+		return window.matchMedia('(min-width: 1024px)').matches;
+	}
+
+	function isMegaOpen() {
+		return megaOpen;
+	}
+
+	function setMegaOpen(open) {
+		if (!(megaPanel instanceof HTMLElement) || !(servicesTrigger instanceof HTMLElement)) return;
+		if (!isDesktopMega() && open) return;
+
+		megaOpen = open;
+		megaPanel.dataset.open = open ? 'true' : 'false';
+		megaPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+		if (open) megaPanel.removeAttribute('inert');
+		else megaPanel.setAttribute('inert', '');
+		servicesTrigger.setAttribute('aria-expanded', String(open));
+		if (open) {
+			servicesTrigger.setAttribute('data-mega-open', '');
+		} else {
+			servicesTrigger.removeAttribute('data-mega-open');
+		}
+	}
+
+	function openMega() {
+		window.clearTimeout(closeTimer);
+		window.clearTimeout(openTimer);
+		setMegaOpen(true);
+	}
+
+	function closeMega({ returnFocus = false } = {}) {
+		window.clearTimeout(openTimer);
+		window.clearTimeout(closeTimer);
+		setMegaOpen(false);
+		if (returnFocus && servicesTrigger instanceof HTMLElement) {
+			servicesTrigger.focus();
+		}
+	}
+
+	function scheduleOpen() {
+		if (!isDesktopMega()) return;
+		window.clearTimeout(closeTimer);
+		window.clearTimeout(openTimer);
+		openTimer = window.setTimeout(() => setMegaOpen(true), OPEN_DELAY_MS);
+	}
+
+	function scheduleClose() {
+		window.clearTimeout(openTimer);
+		window.clearTimeout(closeTimer);
+		closeTimer = window.setTimeout(() => setMegaOpen(false), CLOSE_DELAY_MS);
+	}
+
+	function prefersFinePointer() {
+		return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+	}
+
+	if (
+		servicesNav instanceof HTMLElement &&
+		servicesTrigger instanceof HTMLElement &&
+		megaPanel instanceof HTMLElement
+	) {
+		setMegaOpen(false);
+
+		servicesNav.addEventListener('mouseenter', () => {
+			if (prefersFinePointer()) scheduleOpen();
+		});
+		servicesNav.addEventListener('mouseleave', () => {
+			if (prefersFinePointer()) scheduleClose();
+		});
+
+		megaPanel.addEventListener('mouseenter', () => {
+			if (prefersFinePointer()) {
+				window.clearTimeout(closeTimer);
+				openMega();
+			}
+		});
+		megaPanel.addEventListener('mouseleave', () => {
+			if (prefersFinePointer()) scheduleClose();
+		});
+
+		servicesTrigger.addEventListener('focus', () => {
+			if (isDesktopMega()) openMega();
+		});
+
+		servicesTrigger.addEventListener('keydown', (event) => {
+			if (!isDesktopMega()) return;
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				if (megaOpen) closeMega();
+				else openMega();
+			}
+		});
+
+		/* Touch / coarse pointer at desktop width: first tap opens; second tap navigates */
+		servicesTrigger.addEventListener('click', (event) => {
+			if (!isDesktopMega() || prefersFinePointer()) return;
+			if (!megaOpen) {
+				event.preventDefault();
+				openMega();
+			}
+		});
+
+		megaPanel.querySelectorAll('a').forEach((link) => {
+			link.addEventListener('click', () => closeMega());
+		});
+
+		document.addEventListener('focusin', (event) => {
+			if (!megaOpen || !isDesktopMega()) return;
+			const target = event.target;
+			if (!(target instanceof Node)) return;
+			if (servicesNav.contains(target) || megaPanel.contains(target)) return;
+			closeMega();
+		});
+
+		document.addEventListener('pointerdown', (event) => {
+			if (!megaOpen || !isDesktopMega()) return;
+			const target = event.target;
+			if (!(target instanceof Node)) return;
+			if (servicesNav.contains(target) || megaPanel.contains(target)) return;
+			closeMega();
+		});
+
+		window.addEventListener(
+			'resize',
+			() => {
+				if (!isDesktopMega()) closeMega();
+			},
+			{ passive: true },
+		);
 	}
 </script>

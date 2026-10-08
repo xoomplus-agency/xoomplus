@@ -1,0 +1,154 @@
+---
+import Section from './Section.astro';
+import ServiceCard from './ServiceCard.astro';
+import Button from './Button.astro';
+import { expertiseServices } from '../data/services';
+---
+
+<Section
+	background="dark"
+	aria-labelledby="our-expertise-heading"
+	class="our-expertise"
+>
+	<div class="expertise-header">
+		<p class="pill-dark text-primary m-0">OUR EXPERTISE</p>
+		<h2 id="our-expertise-heading" class="text-hero-h1 expertise-heading m-0">
+			Different disciplines. A joined-up view.
+		</h2>
+		<p class="expertise-intro m-0">
+			From the first impression to the next interaction, our capabilities are designed to work
+			together.
+		</p>
+	</div>
+
+	<div class="expertise-grid">
+		{
+			expertiseServices.map((service) => (
+				<ServiceCard
+					title={service.title}
+					icon={service.icon}
+					description={service.description}
+					features={service.features}
+					cta={service.cta}
+				/>
+			))
+		}
+	</div>
+
+	<p class="expertise-footer m-0">
+		One conversation. A shared direction. The right expertise for your next step.
+	</p>
+
+	<div class="expertise-cta">
+		<Button href="/services" class="!w-[220px] max-sm:!w-full">View all Services</Button>
+	</div>
+</Section>
+
+<style>
+	/* Dual glows — top-left + right-middle (match reference) */
+	:global(section.our-expertise)::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		background:
+			/* Top-left — large soft amber, origin off the left edge */
+			radial-gradient(
+				ellipse 55% 55% at -5% 5%,
+				rgb(255 211 108 / 0.28) 0%,
+				rgb(255 168 0 / 0.16) 40%,
+				rgb(255 168 0 / 0) 100%
+			),
+			/* Right-middle — smaller glow behind the third card */
+			radial-gradient(
+				ellipse 40% 50% at 100% 48%,
+				rgb(255 168 0 / 0.22) 0%,
+				rgb(255 168 0 / 0) 100%
+			);
+	}
+
+	.expertise-header {
+		text-align: center;
+	}
+
+	.expertise-heading {
+		margin-top: 20px;
+		font-size: 40px;
+		line-height: 1.15;
+	}
+
+	.expertise-intro {
+		max-width: 640px;
+		margin-top: 16px;
+		margin-inline: auto;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	/* Cap at home card width (463px) so widths match Services */
+	.expertise-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 463px));
+		justify-content: center;
+		align-items: stretch;
+		gap: 24px;
+		margin-top: 40px;
+	}
+
+	.expertise-grid :global(.service-card) {
+		max-width: 463px;
+		height: auto;
+		min-height: 100%;
+	}
+
+	.expertise-footer {
+		margin-top: 32px;
+		text-align: center;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.expertise-cta {
+		display: flex;
+		justify-content: center;
+		margin-top: 20px;
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.expertise-grid {
+			grid-template-columns: repeat(2, minmax(0, 463px));
+			gap: 20px;
+		}
+
+		.expertise-grid :global(.service-card:last-child) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.expertise-grid {
+			grid-template-columns: minmax(0, 463px);
+			gap: 20px;
+		}
+
+		.expertise-heading {
+			font-size: 1.75rem; /* match text-hero-h1 mobile (~28–32px) */
+			line-height: 1.15;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.expertise-heading {
+			font-size: clamp(2rem, 6vw, 2.5rem);
+		}
+	}
+</style>

@@ -1,0 +1,416 @@
+---
+import Section from './Section.astro';
+import BlogCard from './BlogCard.astro';
+import Button from './Button.astro';
+import { blogs } from '../data/blogs';
+
+const filters = [
+	'All articles',
+	'Digital marketing',
+	'SEO',
+	'Web design',
+	'Development',
+	'Brand strategy',
+] as const;
+---
+
+<Section aria-labelledby="blogs-heading">
+	<div data-blog-listing>
+	<div class="blog-listing__header">
+		<div class="blog-listing__intro">
+			<p class="pill-light">Explore the blog</p>
+			<h2
+				id="blogs-heading"
+				class="blog-listing__heading text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				The latest thinking.
+			</h2>
+		</div>
+
+		<div class="blog-listing__search">
+			<label class="sr-only" for="blog-search">Search articles</label>
+			<svg
+				class="blog-listing__search-icon"
+				width="16"
+				height="16"
+				viewBox="0 0 16 16"
+				fill="none"
+				aria-hidden="true"
+			>
+				<path
+					d="M7 12.5A5.5 5.5 0 1 0 7 1.5a5.5 5.5 0 0 0 0 11Z"
+					stroke="#555555"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"></path>
+				<path
+					d="m11.5 11.5 2.75 2.75"
+					stroke="#555555"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"></path>
+			</svg>
+			<input
+				id="blog-search"
+				class="blog-listing__search-input"
+				type="search"
+				name="q"
+				placeholder="Search articles"
+				autocomplete="off"
+				data-blog-search
+			/>
+		</div>
+	</div>
+
+	<div
+		class="blog-listing__filters"
+		role="group"
+		aria-label="Filter articles by category"
+		data-blog-filters
+	>
+		{
+			filters.map((label, index) => (
+				<button
+					type="button"
+					class:list={['blog-listing__chip', index === 0 && 'is-active']}
+					aria-pressed={index === 0 ? 'true' : 'false'}
+					data-filter-chip
+					data-filter={label}
+				>
+					{label}
+				</button>
+			))
+		}
+	</div>
+
+	<hr class="blog-listing__divider" />
+
+	<div class="blog-listing__meta">
+		<p class="blog-listing__meta-left" aria-live="polite">
+			<span data-blog-perspective>All perspectives</span>
+			{' '}· <span data-blog-count>{blogs.length}</span> articles shown
+		</p>
+		<p class="blog-listing__meta-right">
+			New article concepts are marked editorial draft.
+		</p>
+	</div>
+
+	<p class="blog-listing__empty" role="status" aria-live="polite" hidden data-blog-empty>
+		No articles match your search.
+	</p>
+
+	<!-- data-page-size reserved for future Load more pagination -->
+	<ul class="blog-listing__grid m-0 list-none p-0" role="list" data-page-size="9" data-blog-grid>
+		{
+			blogs.map((post) => (
+				<li
+					class="blog-listing__item"
+					data-blog-card
+					data-category={post.category}
+					data-title={post.title}
+					data-excerpt={post.excerpt}
+				>
+					<BlogCard
+						image={post.image}
+						alt={post.alt}
+						category={post.category}
+						title={post.title}
+						excerpt={post.excerpt}
+						href={post.href}
+					/>
+				</li>
+			))
+		}
+	</ul>
+
+	{/* Placeholder — no pagination behavior yet */}
+	<div class="blog-listing__load-more">
+		<Button type="button" id="load-more" class="!w-[220px]">
+			Load more
+			<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+				<path
+					d="M8 3v10M4 9l4 4 4-4"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"></path>
+			</svg>
+		</Button>
+	</div>
+	</div>
+</Section>
+
+<style>
+	.blog-listing__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 24px;
+	}
+
+	.blog-listing__intro {
+		min-width: 0;
+	}
+
+	.blog-listing__heading {
+		margin: 16px 0 0;
+	}
+
+	.blog-listing__search {
+		position: relative;
+		flex-shrink: 0;
+		width: 260px;
+		max-width: 100%;
+	}
+
+	.blog-listing__search-icon {
+		position: absolute;
+		top: 50%;
+		left: 14px;
+		z-index: 1;
+		display: block;
+		transform: translateY(-50%);
+		pointer-events: none;
+	}
+
+	.blog-listing__search-input {
+		box-sizing: border-box;
+		width: 100%;
+		height: 40px;
+		padding: 0 14px 0 38px;
+		border: 1px solid #e9e9e7;
+		border-radius: 8px;
+		background: #ffffff;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--color-primary-black);
+		outline: none;
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	.blog-listing__search-input::placeholder {
+		color: #888888;
+	}
+
+	.blog-listing__search-input:focus {
+		border-color: #ffa800;
+		box-shadow: 0 0 0 3px rgba(255, 168, 0, 0.18);
+	}
+
+	.blog-listing__filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 28px;
+	}
+
+	.blog-listing__chip {
+		box-sizing: border-box;
+		padding: 8px 16px;
+		border: 1px solid #e9e9e7;
+		border-radius: 9999px;
+		background: #ffffff;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: var(--color-primary-black);
+		cursor: pointer;
+		transition:
+			background-color 0.2s ease,
+			border-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.blog-listing__chip.is-active {
+		border-color: #ffa800;
+		background: #ffa800;
+		color: var(--color-primary-black);
+	}
+
+	.blog-listing__chip:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 2px;
+	}
+
+	@media (hover: hover) {
+		.blog-listing__chip:hover {
+			border-color: #ffa800;
+		}
+	}
+
+	.blog-listing__divider {
+		margin: 40px 0;
+		border: 0;
+		border-top: 1px solid #e9e9e7;
+	}
+
+	.blog-listing__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		margin-top: 0;
+	}
+
+	.blog-listing__meta-left,
+	.blog-listing__meta-right {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+	}
+
+	.blog-listing__empty {
+		margin: 20px 0 0;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+	}
+
+	.blog-listing__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+		margin-top: 40px;
+	}
+
+	.blog-listing__item {
+		min-width: 0;
+		height: 100%;
+	}
+
+	.blog-listing__item[hidden] {
+		display: none;
+	}
+
+	.blog-listing__load-more {
+		display: flex;
+		justify-content: center;
+		margin-top: 40px;
+	}
+
+	@media (min-width: 640px) {
+		.blog-listing__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.blog-listing__grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.blog-listing__header {
+			flex-wrap: wrap;
+		}
+
+		.blog-listing__search {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.blog-listing__header {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.blog-listing__filters {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			padding-bottom: 4px;
+			-webkit-overflow-scrolling: touch;
+			scrollbar-width: none;
+		}
+
+		.blog-listing__filters::-webkit-scrollbar {
+			display: none;
+		}
+
+		.blog-listing__chip {
+			flex-shrink: 0;
+		}
+
+		.blog-listing__meta {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+</style>
+
+<script>
+	const root = document.querySelector('[data-blog-listing]');
+	if (root instanceof HTMLElement) {
+		const chips = root.querySelectorAll('[data-filter-chip]');
+		const search = root.querySelector('[data-blog-search]');
+		const cards = root.querySelectorAll('[data-blog-card]');
+		const perspectiveEl = root.querySelector('[data-blog-perspective]');
+		const countEl = root.querySelector('[data-blog-count]');
+		const emptyEl = root.querySelector('[data-blog-empty]');
+
+		let activeCategory = 'All articles';
+		let query = '';
+		let debounceId = 0;
+
+		function applyFilters() {
+			const q = query.trim().toLowerCase();
+			let visible = 0;
+
+			cards.forEach((card) => {
+				if (!(card instanceof HTMLElement)) return;
+				const category = card.getAttribute('data-category') || '';
+				const title = card.getAttribute('data-title') || '';
+				const excerpt = card.getAttribute('data-excerpt') || '';
+				const catMatch = activeCategory === 'All articles' || category === activeCategory;
+				const searchMatch =
+					!q || title.toLowerCase().includes(q) || excerpt.toLowerCase().includes(q);
+				const show = catMatch && searchMatch;
+				card.toggleAttribute('hidden', !show);
+				if (show) visible += 1;
+			});
+
+			if (perspectiveEl) {
+				perspectiveEl.textContent =
+					activeCategory === 'All articles' ? 'All perspectives' : activeCategory;
+			}
+			if (countEl) countEl.textContent = String(visible);
+			if (emptyEl instanceof HTMLElement) emptyEl.hidden = visible !== 0;
+		}
+
+		chips.forEach((chip) => {
+			chip.addEventListener('click', () => {
+				if (!(chip instanceof HTMLElement)) return;
+				chips.forEach((other) => {
+					if (!(other instanceof HTMLElement)) return;
+					other.classList.toggle('is-active', other === chip);
+					other.setAttribute('aria-pressed', other === chip ? 'true' : 'false');
+				});
+				activeCategory = chip.getAttribute('data-filter') || 'All articles';
+				applyFilters();
+			});
+		});
+
+		if (search instanceof HTMLInputElement) {
+			search.addEventListener('input', () => {
+				window.clearTimeout(debounceId);
+				debounceId = window.setTimeout(() => {
+					query = search.value;
+					applyFilters();
+				}, 150);
+			});
+		}
+	}
+</script>

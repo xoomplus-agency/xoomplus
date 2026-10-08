@@ -78,6 +78,39 @@
 	font-display: block;
 }
 
+/* Inter — self-hosted for pills, body, and other explicit Inter usage */
+@font-face {
+	font-family: "Inter";
+	src: url("../assets/fonts/Inter-400.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Inter";
+	src: url("../assets/fonts/Inter-500.woff2") format("woff2");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Inter";
+	src: url("../assets/fonts/Inter-600.woff2") format("woff2");
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Inter";
+	src: url("../assets/fonts/Inter-700.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
 @theme {
 	--color-primary: #ffa800;
 	--color-primary-black: #0a0a0a;
@@ -90,7 +123,7 @@
 
 	--font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		Helvetica, Arial, sans-serif;
-	/* Pill uses Inter when available; no extra font package */
+	/* Explicit Inter usage (pills, body copy, etc.) — self-hosted via @font-face above */
 	--font-inter: Inter, "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		Helvetica, Arial, sans-serif;
 
@@ -126,6 +159,9 @@
 	--text-hero-h1: 72px;
 	--text-hero-h1--line-height: 1.08;
 	--text-hero-h1--font-weight: 500;
+
+	/* Section outer vertical spacing → py-section / pt-section / pb-section */
+	--spacing-section: var(--section-padding-y);
 }
 
 @utility bg-button {
@@ -398,6 +434,383 @@
 }
 
 /*
+ * Shared top-left amber glow for dark sections (Our Purpose / What happens next).
+ * Apply on a Section with background="dark" (already position:relative; overflow:hidden).
+ */
+.section-glow-top-left::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: radial-gradient(
+		ellipse 70% 65% at 0% 0%,
+		rgba(255, 168, 0, 0.38) 0%,
+		rgba(255, 168, 0, 0.16) 35%,
+		rgba(0, 0, 0, 0) 70%
+	);
+}
+
+/* Dark-section centered header (Our Purpose / What happens next) */
+.dark-section-heading {
+	font-size: 40px;
+	line-height: 1.15;
+}
+
+.dark-section-intro {
+	max-width: 600px;
+	margin-top: 16px;
+	margin-inline: auto;
+	font-family: var(--font-inter);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.5;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.dark-glass-card__text {
+	font-family: var(--font-inter);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: #888888;
+}
+
+@media (max-width: 1023px) {
+	.dark-section-heading {
+		font-size: clamp(2rem, 6vw, 2.5rem); /* ~32–40px */
+	}
+}
+
+@media (max-width: 720px) {
+	.dark-section-heading {
+		font-size: 1.75rem; /* match text-hero-h1 mobile */
+		line-height: 1.15;
+	}
+}
+
+/*
+ * Shared dark glass card chrome (Our Services / Our Purpose).
+ * Size (max-width / height) is set at the call site.
+ */
+.service-card {
+	box-sizing: border-box;
+	position: relative;
+	isolation: isolate;
+	width: 100%;
+	border-radius: 16px;
+	border: 1px solid rgb(255 255 255 / 0.1);
+	background: linear-gradient(
+		180deg,
+		rgb(255 255 255 / 0.15) 0%,
+		rgb(255 255 255 / 0.03) 50%,
+		rgb(255 255 255 / 0.07) 100%
+	);
+	padding: 1.5rem 1.35rem 1.35rem;
+	-webkit-backdrop-filter: blur(40px);
+	backdrop-filter: blur(40px);
+}
+
+.service-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: linear-gradient(
+		225deg,
+		rgb(255 168 0 / 0.3) 0%,
+		rgb(255 255 255 / 0.03) 60%,
+		rgb(255 255 255 / 0.07) 100%
+	);
+	opacity: 0;
+	transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover::before {
+	opacity: 1;
+}
+
+.service-card > * {
+	position: relative;
+	z-index: 1;
+}
+
+.service-card--wide {
+	max-width: 708px;
+	height: auto;
+}
+
+.service-feature {
+	color: rgb(247 247 245 / 0.5);
+	transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover .service-feature {
+	color: #ffffff;
+}
+
+.service-check {
+	background-color: rgb(255 168 0 / 0.5);
+	transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover .service-check {
+	background-color: #ffa800;
+}
+
+.service-card-btn {
+	position: relative;
+	display: inline-flex;
+	box-sizing: border-box;
+	width: 100%;
+	height: 44px;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	isolation: isolate;
+	border-radius: 12px;
+	border: 1px solid rgb(255 255 255 / 0.35);
+	background: linear-gradient(180deg, rgb(255 255 255 / 0.08) 0%, rgb(255 255 255 / 0) 100%);
+	box-shadow: inset 0 0 5px 2px rgb(255 255 255 / 0.24);
+	padding: 0 1rem;
+	font-size: 0.95rem;
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	color: #ffa800;
+	transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card-btn::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	background: linear-gradient(180deg, rgb(255 168 0 / 0.05) 0%, rgb(255 168 0 / 0.5) 100%);
+	opacity: 0;
+	transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover drives button state (no need to hover the button) */
+.service-card:hover .service-card-btn {
+	color: #ffffff;
+}
+
+.service-card:hover .service-card-btn::before {
+	opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.service-card::before,
+	.service-card-btn,
+	.service-card-btn::before,
+	.service-check,
+	.service-feature {
+		transition: none;
+	}
+}
+
+/*
+ * Shared light glass card chrome (Why Xoomplus / What guides us).
+ * Layout (align, height, icon) is set at the call site.
+ */
+.why-card {
+	box-sizing: border-box;
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	border: 1px solid #e9e9e7;
+	border-radius: 24px;
+	background-color: #ffffff;
+	transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+	.why-card:hover {
+		box-shadow: 0 0 24px 0 rgba(149, 157, 165, 0.2);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.why-card {
+		transition: none;
+	}
+}
+
+/*
+ * Shared contact form card + fields (home ContactSection + ContactEnquiry).
+ * Layout/grid stays at the call site.
+ */
+.contact-card {
+	box-sizing: border-box;
+	background: var(--color-secondary-white);
+	border: 1px solid #e9e9e7;
+	border-radius: 24px;
+	padding: 24px 20px;
+	box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.076);
+}
+
+.contact-card__title {
+	font-family: var(--font-inter);
+	font-size: clamp(1.375rem, 3vw, 1.75rem);
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	line-height: 1.25;
+	color: var(--color-primary-black);
+}
+
+.contact-card__subtitle {
+	margin-top: 0.5rem;
+	font-family: var(--font-inter);
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	color: var(--color-text-on-light);
+}
+
+.contact-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-top: 1.5rem;
+}
+
+.contact-honeypot {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+.contact-field {
+	display: flex;
+	flex-direction: column;
+}
+
+.contact-field label,
+.contact-field legend {
+	margin-bottom: 6px;
+	font-family: var(--font-inter);
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: var(--color-primary-black);
+}
+
+.contact-field label .contact-field__optional {
+	font-weight: 400;
+	color: var(--color-text-on-light);
+}
+
+.contact-field input,
+.contact-field textarea,
+.contact-field select {
+	box-sizing: border-box;
+	width: 100%;
+	border: 1px solid #e9e9e7;
+	border-radius: 12px;
+	background: var(--color-secondary-white);
+	font-family: var(--font-inter);
+	font-size: 1rem;
+	color: var(--color-primary-black);
+	outline: none;
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.contact-field input,
+.contact-field select {
+	height: 44px;
+	padding: 0 16px;
+}
+
+.contact-field select {
+	appearance: none;
+	padding-right: 40px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 5.25L7 8.75L10.5 5.25' stroke='%23555555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 16px center;
+	background-size: 14px;
+	cursor: pointer;
+}
+
+.contact-field select:has(option[value='']:checked) {
+	color: #888888;
+}
+
+.contact-field textarea {
+	min-height: 120px;
+	padding: 12px 16px;
+	resize: vertical;
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+	color: #888888;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus,
+.contact-field select:focus {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(255, 168, 0, 0.18);
+}
+
+.contact-field input:user-invalid,
+.contact-field textarea:user-invalid,
+.contact-field select:user-invalid {
+	border-color: #e05a5a;
+}
+
+.contact-submit__arrow {
+	display: block;
+	flex-shrink: 0;
+	transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: transform;
+}
+
+.contact-status {
+	margin: 0;
+	font-family: var(--font-inter);
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+
+.contact-status--success {
+	color: #1a7a3a;
+}
+
+.contact-status--error {
+	color: #c0392b;
+}
+
+@media (hover: hover) {
+	.btn:hover:not(:disabled) .contact-submit__arrow {
+		transform: translateX(5px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.contact-submit__arrow {
+		transition: none;
+	}
+
+	.btn:hover:not(:disabled) .contact-submit__arrow {
+		transform: none;
+	}
+}
+
+@media (min-width: 640px) {
+	.contact-card {
+		padding: 40px;
+	}
+}
+
+/*
  * Dark-background pill — Figma glass (frost 24, depth/refraction approx)
  * Inter Semibold 16 · pad 12×6 · fill white 10%
  */
@@ -647,6 +1060,9 @@
 }
 
 :root {
+	/* Shared outer vertical padding for all page sections */
+	--section-padding-y: 96px;
+
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
@@ -679,6 +1095,18 @@
 	--sidebar-accent-foreground: oklch(0.205 0 0);
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
+}
+
+@media (max-width: 1023px) {
+	:root {
+		--section-padding-y: 72px;
+	}
+}
+
+@media (max-width: 639px) {
+	:root {
+		--section-padding-y: 56px;
+	}
 }
 
 .dark {

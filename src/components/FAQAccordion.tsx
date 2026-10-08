@@ -56,11 +56,13 @@ function ToggleIcon() {
 }
 
 export default function FAQAccordion({ items }: FAQAccordionProps) {
+	const defaultOpen = items[0]?.id;
+
 	return (
 		<Accordion
 			type="single"
 			collapsible
-			defaultValue="item-1"
+			defaultValue={defaultOpen}
 			className="flex w-full flex-col gap-2.5"
 		>
 			{items.map((item) => (

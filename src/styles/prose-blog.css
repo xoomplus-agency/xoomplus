@@ -1,0 +1,126 @@
+/* Shared blog article prose — used by Markdown/MDX/CMS HTML later */
+.prose-blog h2,
+.prose-blog h3 {
+	margin: 28px 0 12px;
+	font-family: var(--font-inter);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--color-primary-black);
+}
+
+.prose-blog > :first-child {
+	margin-top: 0;
+}
+
+.prose-blog p {
+	margin: 0 0 16px;
+	font-family: var(--font-inter);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.7;
+	color: #555555;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+	margin: 20px 0;
+	padding: 0;
+	list-style: none;
+}
+
+.prose-blog li {
+	position: relative;
+	margin-bottom: 10px;
+	padding-left: 18px;
+	font-family: var(--font-inter);
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--color-primary-black);
+}
+
+.prose-blog ul > li::before {
+	content: '–';
+	position: absolute;
+	left: 0;
+	top: 0;
+	font-weight: 700;
+	color: var(--color-primary-black);
+}
+
+.prose-blog ol {
+	counter-reset: prose-ol;
+}
+
+.prose-blog ol > li {
+	counter-increment: prose-ol;
+}
+
+.prose-blog ol > li::before {
+	content: counter(prose-ol) '.';
+	position: absolute;
+	left: 0;
+	top: 0;
+	font-weight: 700;
+	color: var(--color-primary-black);
+}
+
+.prose-blog a {
+	color: var(--color-primary-black);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+@media (hover: hover) {
+	.prose-blog a:hover {
+		color: #ffa800;
+	}
+}
+
+.prose-blog strong {
+	font-weight: 600;
+}
+
+.prose-blog blockquote {
+	margin: 20px 0;
+	padding-left: 16px;
+	border-left: 3px solid #ffa800;
+	color: #555555;
+}
+
+.prose-blog img {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin: 24px 0;
+	border-radius: 20px;
+}
+
+.prose-blog .table-wrap {
+	width: 100%;
+	overflow-x: auto;
+	margin: 20px 0;
+}
+
+.prose-blog table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid #e9e9e7;
+}
+
+.prose-blog th,
+.prose-blog td {
+	padding: 10px 12px;
+	border: 1px solid #e9e9e7;
+	text-align: left;
+	font-family: var(--font-inter);
+	font-size: 14px;
+	color: #555555;
+}
+
+@media (max-width: 639px) {
+	.prose-blog li {
+		font-size: 16px;
+	}
+}

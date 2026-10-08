@@ -1,0 +1,71 @@
+---
+interface Props {
+	title?: string;
+}
+
+const { title = '' } = Astro.props;
+const titleId = 'page-hero-title';
+---
+
+<section class="page-hero" data-bg="dark" aria-labelledby={titleId}>
+	<h1 id={titleId} class="text-hero-h1 page-hero__title">{title}</h1>
+</section>
+
+<style>
+	/*
+	 * Page breadcrumb hero - fixed height (not --section-padding-y).
+	 * Navbar is position:fixed (same as home Hero), so it overlays this banner;
+	 * 393px is the total height including the area behind the nav.
+	 */
+	.page-hero {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 100%;
+		height: 393px;
+		overflow: hidden;
+		padding-top: 80px; /* ~navbar height; centers title in space below nav */
+		text-align: center;
+		background-color: var(--color-primary-black);
+		background-image: url('/images/bread-crumb-bg-image.webp');
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	/* Single top-right glow - Figma: #FFA800 30% to transparent */
+	.page-hero::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			circle at top right,
+			rgba(255, 168, 0, 0.3) 0%,
+			rgba(0, 0, 0, 0) 100%
+		);
+	}
+
+	.page-hero__title {
+		position: relative;
+		z-index: 1;
+		margin: 0;
+		/* Full text-hero-h1 size (72px desktop) — same as home Hero */
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.page-hero {
+			height: 320px;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.page-hero {
+			height: 260px;
+			padding-top: 72px;
+		}
+	}
+</style>

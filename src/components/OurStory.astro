@@ -1,0 +1,136 @@
+---
+import Section from './Section.astro';
+import Button from './Button.astro';
+
+/**
+ * Image already includes the bottom-left curve + amber plus (transparent webp).
+ * Path is /images/ (not assets/asstes — those folders do not exist under public/).
+ */
+const storyImage = {
+	src: '/images/our-story-image.webp',
+	width: 602,
+	height: 447,
+	alt: 'The Xoomplus team collaborating around a laptop',
+};
+---
+
+<Section aria-labelledby="our-story-heading">
+	<div class="our-story">
+		<div class="our-story__content">
+			<p class="pill-light">Our story</p>
+
+			<h2
+				id="our-story-heading"
+				class="our-story__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				Built around your business.
+				<br />
+				Not around silos.
+			</h2>
+
+			<div class="our-story__copy">
+				<p class="text-on-light m-0">
+					A great website should support your marketing. Your marketing should reflect your brand.
+					And every decision should start with your business.
+				</p>
+				<p class="text-on-light m-0">
+					That is the thinking behind XoomPlus. We bring digital marketing, design and development
+					into one conversation, so ideas can move from strategy to execution without losing their
+					purpose along the way.
+				</p>
+				<p class="text-on-light m-0">
+					We see ourselves as a digital partner: curious about your challenges, clear about our
+					thinking and invested in building something useful together.
+				</p>
+			</div>
+
+			<div class="our-story__cta">
+				<Button href="#contact" class="!w-[212px]">Let’s Talk</Button>
+			</div>
+		</div>
+
+		<div class="our-story__media">
+			<img
+				class="our-story__image"
+				src={storyImage.src}
+				alt={storyImage.alt}
+				width={storyImage.width}
+				height={storyImage.height}
+				loading="lazy"
+				decoding="async"
+			/>
+		</div>
+	</div>
+</Section>
+
+<style>
+	.our-story {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 64px;
+	}
+
+	.our-story__content {
+		flex: 1 1 50%;
+		max-width: 773px;
+		text-align: left;
+	}
+
+	.our-story__heading {
+		margin-top: 16px;
+	}
+
+	.our-story__copy {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		max-width: 773px;
+		margin-top: 20px;
+	}
+
+	.our-story__copy p {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+	}
+
+	.our-story__cta {
+		margin-top: 24px;
+	}
+
+	.our-story__media {
+		position: relative;
+		flex: 1 1 45%;
+		max-width: 540px;
+		width: 100%;
+	}
+
+	/* Shape + plus are baked into the webp — no extra radius, mask, or plus overlay */
+	.our-story__image {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	@media (max-width: 1023px) {
+		.our-story {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 40px;
+		}
+
+		.our-story__content,
+		.our-story__media {
+			flex: none;
+			max-width: 100%;
+		}
+
+		.our-story__media {
+			max-width: 560px;
+			margin-inline: auto;
+		}
+	}
+</style>

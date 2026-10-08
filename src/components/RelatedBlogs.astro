@@ -1,0 +1,66 @@
+---
+import Section from './Section.astro';
+import BlogCard from './BlogCard.astro';
+import type { BlogPost } from '../data/blogs';
+
+interface Props {
+	posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+{
+	posts.length > 0 && (
+		<Section aria-labelledby="related-blogs-heading" class="!px-12">
+			<div class="mx-auto mb-12  lg:mb-14">
+				<h2
+					id="related-blogs-heading"
+					class="mb-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				>
+					Related blogs
+				</h2>
+			</div>
+
+			<ul class="related-blogs__grid m-0 list-none p-0" role="list">
+				{posts.map((post) => (
+					<li class="related-blogs__item">
+						<BlogCard
+							image={post.image}
+							alt={post.alt}
+							category={post.category}
+							title={post.title}
+							excerpt={post.excerpt}
+							href={post.href}
+						/>
+					</li>
+				))}
+			</ul>
+		</Section>
+	)
+}
+
+<style>
+	.related-blogs__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+
+	.related-blogs__item {
+		min-width: 0;
+		height: 100%;
+	}
+
+	@media (min-width: 640px) {
+		.related-blogs__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.related-blogs__grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+</style>

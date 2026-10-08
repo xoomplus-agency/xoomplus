@@ -1,0 +1,512 @@
+---
+import Button from './Button.astro';
+import { servicesMenu } from '../data/services-menu';
+
+const { columns, footer } = servicesMenu;
+const panelId = 'services-mega-menu';
+---
+
+<div
+	id={panelId}
+	class="services-mega"
+	role="region"
+	aria-label="Services"
+	data-open="false"
+	aria-hidden="true"
+	inert
+	data-services-mega
+>
+	<div class="services-mega__body">
+		{
+			columns.map((column, colIndex) => {
+				if (column.type === 'service') {
+					const isGrouped = Boolean(column.groups?.length);
+					return (
+						<div
+							class:list={[
+								'services-mega__col',
+								colIndex > 0 && 'services-mega__col--divided',
+							]}
+						>
+							<a class="services-mega__title-row" href={column.href} data-mega-link>
+								<span class="services-mega__title">{column.title}</span>
+								<svg
+									class="services-mega__title-arrow"
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									aria-hidden="true"
+								>
+									<path
+										d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
+										stroke="currentColor"
+										stroke-width="1.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
+							</a>
+							<p class="services-mega__desc">{column.description}</p>
+							{!isGrouped && <div class="services-mega__rule" aria-hidden="true" />}
+							{column.links && (
+								<ul class="services-mega__links">
+									{column.links.map((item) => (
+										<li>
+											<a class="services-mega__link" href={item.href} data-mega-link>
+												<span>{item.label}</span>
+												<svg
+													class="services-mega__link-arrow"
+													width="12"
+													height="12"
+													viewBox="0 0 12 12"
+													fill="none"
+													aria-hidden="true"
+												>
+													<path
+														d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5"
+														stroke="currentColor"
+														stroke-width="1.25"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+													/>
+												</svg>
+											</a>
+										</li>
+									))}
+								</ul>
+							)}
+							{column.groups?.map((group, groupIndex) => (
+								<div class:list={[groupIndex === 0 && 'services-mega__group--first']}>
+									<p class="services-mega__group-label">{group.label}</p>
+									<ul class="services-mega__links">
+										{group.links.map((item) => (
+											<li>
+												<a class="services-mega__link" href={item.href} data-mega-link>
+													<span>{item.label}</span>
+													<svg
+														class="services-mega__link-arrow"
+														width="12"
+														height="12"
+														viewBox="0 0 12 12"
+														fill="none"
+														aria-hidden="true"
+													>
+														<path
+															d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5"
+															stroke="currentColor"
+															stroke-width="1.25"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+														/>
+													</svg>
+												</a>
+											</li>
+										))}
+									</ul>
+								</div>
+							))}
+						</div>
+					);
+				}
+
+				return (
+					<div
+						class:list={[
+							'services-mega__col',
+							'services-mega__col--stack',
+							colIndex > 0 && 'services-mega__col--divided',
+						]}
+					>
+						{column.items.map((item, itemIndex) => (
+							<div
+								class:list={[
+									'services-mega__stack-block',
+									itemIndex > 0 && 'services-mega__stack-block--divided',
+								]}
+							>
+								<a class="services-mega__title-row" href={item.href} data-mega-link>
+									<span class="services-mega__title">{item.title}</span>
+									<svg
+										class="services-mega__title-arrow"
+										width="16"
+										height="16"
+										viewBox="0 0 16 16"
+										fill="none"
+										aria-hidden="true"
+									>
+										<path
+											d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
+											stroke="currentColor"
+											stroke-width="1.5"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										/>
+									</svg>
+								</a>
+								<p class="services-mega__desc">{item.description}</p>
+								<div class="services-mega__rule" aria-hidden="true" />
+								<ul class="services-mega__text-links">
+									{item.textLinks.map((tl) => (
+										<li>
+											<a class="services-mega__text-link" href={tl.href} data-mega-link>
+												{tl.label}
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						))}
+					</div>
+				);
+			})
+		}
+	</div>
+
+	<div class="services-mega__footer">
+		<a class="services-mega__all" href={footer.allServicesHref} data-mega-link>
+			<span>All Services</span>
+			<svg
+				class="services-mega__all-arrow"
+				width="16"
+				height="16"
+				viewBox="0 0 16 16"
+				fill="none"
+				aria-hidden="true"
+			>
+				<path
+					d="M3 8h10M9 4l4 4-4 4"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		</a>
+
+		<div class="services-mega__footer-right">
+			<div class="services-mega__cta-copy">
+				<p class="services-mega__cta-heading">{footer.heading}</p>
+				<p class="services-mega__cta-text">{footer.text}</p>
+			</div>
+			<Button href={footer.buttonHref}>{footer.buttonLabel}</Button>
+		</div>
+	</div>
+</div>
+
+<style>
+	.services-mega {
+		--mega-bg: #151413;
+		--mega-stroke: rgba(255, 255, 255, 0.1216);
+		--mega-text: #e9e9e7;
+		--mega-text-muted: rgba(233, 233, 231, 0.8);
+		--mega-text-soft: #b8b8b8;
+		--mega-amber: var(--color-primary);
+
+		box-sizing: border-box;
+		position: absolute;
+		left: 50%;
+		top: calc(100% + 12px);
+		z-index: 40;
+		display: flex;
+		flex-direction: column;
+		width: min(1440px, calc(100vw - 48px));
+		height: auto;
+		max-height: min(480px, calc(100dvh - 100px));
+		max-width: calc(100vw - 48px);
+		overflow: hidden;
+		border: 1px solid var(--mega-stroke);
+		border-radius: 20px;
+		background-color: var(--mega-bg);
+		box-shadow: 0 24px 64px 0 rgba(0, 0, 0, 0.5);
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateX(-50%) translateY(8px);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease,
+			visibility 0.2s ease;
+	}
+
+	/* Invisible hover bridge so the pointer can travel from the nav link to the panel */
+	.services-mega::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 100%;
+		height: 16px;
+		pointer-events: auto;
+	}
+
+	.services-mega[data-open='true'] {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transform: translateX(-50%) translateY(0);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.services-mega {
+			transform: translateX(-50%);
+			transition:
+				opacity 0.2s ease,
+				visibility 0.2s ease;
+		}
+
+		.services-mega[data-open='true'] {
+			transform: translateX(-50%);
+		}
+	}
+
+	.services-mega__body {
+		display: grid;
+		flex: 1 1 auto;
+		min-height: 0;
+		grid-template-columns: 1fr 1.15fr 1.15fr;
+		padding: 24px 32px 20px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		scrollbar-width: none; /* Firefox */
+		-ms-overflow-style: none; /* Legacy Edge */
+	}
+
+	.services-mega__body::-webkit-scrollbar {
+		display: none; /* Chrome, Safari */
+		width: 0;
+		height: 0;
+	}
+
+	.services-mega__col--divided {
+		border-left: 1px solid var(--mega-stroke);
+		padding-left: 32px;
+	}
+
+	.services-mega__col:not(:last-child) {
+		padding-right: 32px;
+	}
+
+	.services-mega__title-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		text-decoration: none;
+		color: var(--mega-text);
+	}
+
+	.services-mega__title-row:focus-visible {
+		outline: 2px solid var(--mega-amber);
+		outline-offset: 2px;
+		border-radius: 6px;
+	}
+
+	.services-mega__title {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--mega-text);
+		white-space: nowrap;
+	}
+
+	.services-mega__title-arrow {
+		flex-shrink: 0;
+		color: var(--mega-amber);
+	}
+
+	.services-mega__desc {
+		margin: 8px 0 0;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--mega-text-muted);
+	}
+
+	.services-mega__rule {
+		height: 0;
+		margin: 14px 0 8px;
+		border: 0;
+		border-top: 1px solid var(--mega-stroke);
+	}
+
+	.services-mega__links {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.services-mega__link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 6px 0;
+		font-family: var(--font-inter);
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 1.3;
+		color: var(--mega-text);
+		text-decoration: none;
+	}
+
+	.services-mega__link:focus-visible {
+		outline: 2px solid var(--mega-amber);
+		outline-offset: 2px;
+		border-radius: 6px;
+	}
+
+	.services-mega__link-arrow {
+		flex-shrink: 0;
+		color: var(--mega-text-soft);
+		transition:
+			color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	@media (hover: hover) {
+		.services-mega__link:hover {
+			color: var(--mega-amber);
+		}
+
+		.services-mega__link:hover .services-mega__link-arrow {
+			color: var(--mega-amber);
+			transform: translate(2px, -2px);
+		}
+	}
+
+	.services-mega__group-label {
+		margin: 12px 0 2px;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--mega-amber);
+	}
+
+	.services-mega__group--first .services-mega__group-label {
+		margin-top: 12px;
+	}
+
+	.services-mega__stack-block--divided {
+		margin-top: 16px;
+		padding-top: 16px;
+		border-top: 1px solid var(--mega-stroke);
+	}
+
+	.services-mega__text-links {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.services-mega__text-link {
+		display: block;
+		padding: 3px 0;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--mega-text-soft);
+		text-decoration: none;
+	}
+
+	.services-mega__text-link:focus-visible {
+		outline: 2px solid var(--mega-amber);
+		outline-offset: 2px;
+		border-radius: 6px;
+	}
+
+	@media (hover: hover) {
+		.services-mega__text-link:hover {
+			color: var(--mega-amber);
+		}
+	}
+
+	.services-mega__footer {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		padding: 14px 32px;
+		border-top: 1px solid var(--mega-stroke);
+		background-color: rgba(0, 0, 0, 0.18);
+	}
+
+	.services-mega__all {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--mega-amber);
+		text-decoration: none;
+	}
+
+	.services-mega__all:focus-visible {
+		outline: 2px solid var(--mega-amber);
+		outline-offset: 2px;
+		border-radius: 6px;
+	}
+
+	.services-mega__all-arrow {
+		flex-shrink: 0;
+		transition: transform 0.15s ease;
+	}
+
+	@media (hover: hover) {
+		.services-mega__all:hover .services-mega__all-arrow {
+			transform: translateX(3px);
+		}
+	}
+
+	.services-mega__footer-right {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		min-width: 0;
+	}
+
+	.services-mega__cta-copy {
+		text-align: left;
+	}
+
+	.services-mega__cta-heading {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: #ffffff;
+	}
+
+	.services-mega__cta-text {
+		margin: 2px 0 0;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--mega-text-soft);
+	}
+
+	.services-mega__footer-right :global(.btn) {
+		flex-shrink: 0;
+	}
+
+	/* Floating panel only from lg; mobile uses accordion in Header */
+	@media (max-width: 1023px) {
+		.services-mega {
+			display: none !important;
+		}
+	}
+</style>
