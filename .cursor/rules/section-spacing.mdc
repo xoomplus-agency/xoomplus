@@ -1,0 +1,27 @@
+---
+description: Major page sections use 10px top and bottom margin
+alwaysApply: true
+---
+
+# Section spacing
+
+Every major page section uses **10px margin-top** and **10px margin-bottom** on its outer `<section>` only. This is the permanent standard unless the user specifies otherwise.
+
+## How to apply
+
+- Shared sections: `src/components/Section.astro` already adds `.page-section`. Do not add a second margin.
+- Raw outer `<section>` elements: add `page-section`.
+- Rule: `.page-section` in `src/styles/global.css`.
+- `main` is a column flex container when it directly contains `.page-section`, so adjacent 10px margins do not collapse. The visible gap between two sections is 20px.
+
+## Do not
+
+- Change section padding (`py-section`, `--section-padding-y`, or component padding).
+- Change internal spacing of headings, paragraphs, cards, buttons, or other nested elements.
+- Put `.page-section` on nested sections, cards, or components.
+- Use a broad `section` selector.
+
+## Exceptions
+
+- Heroes under the fixed header (`Hero`, `PageHero`, `LocationHero`, `ServiceHero`) also use `page-section--flush-top` (`margin-top: 0`). A top margin would show the page background above the full-bleed hero. Their bottom margin stays 10px.
+- `WhatHappensNext` keeps `margin-bottom: 0`. Its full-bleed map is a sibling meant to sit flush under the section and against the footer. Top margin stays 10px.

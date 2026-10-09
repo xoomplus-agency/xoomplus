@@ -162,7 +162,7 @@
 	--text-hero-h1--line-height: 1.08;
 	--text-hero-h1--font-weight: 500;
 
-	/* Section outer vertical spacing → py-section / pt-section / pb-section */
+	/* Section inner vertical padding → py-section / pt-section / pb-section */
 	--spacing-section: var(--section-padding-y);
 }
 
@@ -1159,6 +1159,51 @@
 @media (max-width: 639px) {
 	:root {
 		--section-padding-y: 56px;
+	}
+}
+
+/*
+ * Outer spacing for major page sections only.
+ * Apply .page-section on the outer <section> (shared Section.astro, or a raw section).
+ * Do not put it on nested sections, cards, or inner components.
+ * Padding (py-section / --section-padding-y) stays as designed.
+ *
+ * main is a column flex container so adjacent 10px margins do not collapse.
+ * Each section keeps 10px above and 10px below (20px between two sections).
+ * flex-shrink: 0 keeps section heights. Direct children use min-height: 0 so
+ * non-section siblings (contact map) keep their own height.
+ */
+@layer components {
+	main:has(> .page-section) {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/*
+	 * Column flex items default to min-height: auto, which would stretch
+	 * non-section children (the contact map) to their content size.
+	 * Sections opt out of shrinking via flex-shrink: 0 below.
+	 */
+	main:has(> .page-section) > * {
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.page-section {
+		flex-shrink: 0;
+		width: 100%;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+
+	/* Full-bleed heroes sit under the fixed header. A top margin would show the page background above them. */
+	.page-section--flush-top {
+		margin-top: 0;
+	}
+
+	/* Contact map is a sibling under this section and is meant to sit flush against it and the footer. */
+	.page-section.what-happens-next {
+		margin-bottom: 0;
 	}
 }
 
