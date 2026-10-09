@@ -1,0 +1,531 @@
+---
+/**
+ * Main service page hero — full-bleed, data-driven.
+ * Glass: Figma settings via HeroGlassPanel (Frost 15, Refraction 80, etc.).
+ */
+import Button from './Button.astro';
+import HeroGlassPanel from './HeroGlassPanel';
+import type { ServiceHeroData } from '../data/main-services';
+
+interface Props {
+	hero: ServiceHeroData;
+}
+
+const { hero } = Astro.props;
+
+const pillBrand = hero.pillBrand ?? 'XoomPlus';
+const bgImage = hero.bgImage ?? '/images/main-services-hero-bg.webp';
+const panelPlus = hero.panelPlus ?? '/images/plus-icon-main-service.svg';
+const headingId = 'service-hero-heading';
+const [titleLine1, titleLine2] = hero.titleLines;
+const [caption1, caption2, caption3] = hero.panelCaptions;
+---
+
+<section
+	class="service-hero"
+	data-bg="dark"
+	aria-labelledby={headingId}
+	style={`--service-hero-bg: url('${bgImage}')`}
+>
+	<div class="service-hero__inner">
+		<div class="service-hero__grid">
+			<div class="service-hero__copy">
+				<p class="pill-dark service-hero__pill m-0">
+					<span class="service-hero__pill-text">{hero.pill}</span>
+					<span class="service-hero__pill-sep" aria-hidden="true"> · </span>
+					<span class="service-hero__pill-brand">{pillBrand}</span>
+				</p>
+
+				<h1 id={headingId} class="text-hero-h1 service-hero__title">
+					<span class="service-hero__title-line">{titleLine1}</span>
+					<span class="service-hero__title-line">{titleLine2}</span>
+				</h1>
+
+				<p class="service-hero__text">{hero.text}</p>
+
+				<div class="service-hero__actions">
+					<Button href={hero.primaryButton.href}>{hero.primaryButton.label}</Button>
+					<a class="service-hero__secondary" href={hero.secondaryLink.href}>
+						{hero.secondaryLink.label}
+						<svg
+							class="service-hero__secondary-icon"
+							width="14"
+							height="14"
+							viewBox="0 0 14 14"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<path
+								d="M7 2.5v9M3.5 8.5 7 12l3.5-3.5"
+								stroke="currentColor"
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"></path>
+						</svg>
+					</a>
+				</div>
+			</div>
+
+			<div class="service-hero__panel">
+				{/* z0 glass → z1 plus (far right) → z2 devices image → z3 label/captions */}
+				<HeroGlassPanel client:visible />
+
+				<img
+					class="service-hero__panel-plus"
+					src={panelPlus}
+					alt=""
+					width="278"
+					height="277"
+					aria-hidden="true"
+					decoding="async"
+				/>
+
+				<p class="service-hero__panel-label">{hero.panelLabel}</p>
+
+				<img
+					class="service-hero__panel-image"
+					src={hero.panelImage.src}
+					alt={hero.panelImage.alt}
+					width="683"
+					height="544"
+					loading="eager"
+					fetchpriority="high"
+					decoding="async"
+				/>
+
+				<div class="service-hero__captions">
+					<span>{caption1}</span>
+					<span>{caption2}</span>
+					<span class="service-hero__caption-last">{caption3}</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="service-hero__footer">
+			<p class="service-hero__footer-left">{hero.footerLeft}</p>
+			<p class="service-hero__footer-right">{hero.footerRight}</p>
+		</div>
+	</div>
+</section>
+
+<style>
+	.service-hero {
+		position: relative;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		width: 100%;
+		height: auto;
+		min-height: clamp(480px, 70vh, 600px);
+		overflow: hidden;
+		/* Clear fixed nav + breathing room above the copy/panel */
+		padding-top: clamp(128px, 14vw, 168px);
+		padding-bottom: 32px;
+		/* Same horizontal inset as shared <Section> (Built around people, etc.) */
+		padding-inline: clamp(1rem, 12.3vw, 236px);
+		background-color: var(--color-primary-black);
+		background-image: var(--service-hero-bg);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	.service-hero__inner {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 1560px;
+		margin-inline: auto;
+	}
+
+	.service-hero__grid {
+		display: grid;
+		/* Wider text column so 72px titles (e.g. SEO) don’t spill under the panel */
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		gap: 64px;
+		align-items: center;
+	}
+
+	.service-hero__copy {
+		min-width: 0;
+		position: relative;
+		z-index: 1;
+	}
+
+	.service-hero__pill {
+		color: #ffffff;
+	}
+
+	.service-hero__pill-brand {
+		color: #ffa800;
+	}
+
+	.service-hero__title {
+		margin: 24px 0 0;
+		/* Brighter gradient so both lines stay readable on the copper bg */
+		background-image: linear-gradient(180deg, #ffffff 40%, #c8c8c8 100%);
+	}
+
+	.service-hero__title-line {
+		display: block;
+		/* One data line = one visual line (exactly 2 lines for titleLines) */
+		white-space: nowrap;
+	}
+
+	/* Service-hero heading sizes (override shared text-hero-h1 clamp) */
+	@media (min-width: 1280px) {
+		.service-hero__title {
+			font-size: 60px;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1279px) {
+		.service-hero__title {
+			font-size: 48px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.service-hero__title {
+			font-size: 40px;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.service-hero__title {
+			font-size: clamp(2.125rem, 8.5vw, 2.25rem); /* 34–36px */
+			line-height: 1.15;
+		}
+
+		.service-hero__title-line {
+			white-space: normal;
+		}
+	}
+
+	.service-hero__text {
+		margin: 24px 0 0;
+		max-width: 480px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.service-hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 24px;
+		margin-top: 32px;
+	}
+
+	.service-hero__secondary {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.25;
+		color: #ffffff;
+		text-decoration: none;
+		outline: none;
+	}
+
+	.service-hero__secondary:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 4px;
+		border-radius: 2px;
+	}
+
+	.service-hero__secondary-icon {
+		flex-shrink: 0;
+		transition: transform 0.2s ease;
+	}
+
+	@media (hover: hover) {
+		.service-hero__secondary:hover {
+			color: #ffa800;
+		}
+
+		.service-hero__secondary:hover .service-hero__secondary-icon {
+			transform: translateY(2px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.service-hero__secondary-icon {
+			transition: none;
+		}
+	}
+
+	/* —— Panel (scaled down from Figma 969 × 604) —— */
+	.service-hero__panel {
+		position: relative;
+		box-sizing: border-box;
+		width: min(100%, 640px);
+		height: 400px;
+		max-height: 400px;
+		aspect-ratio: 969 / 604;
+		border-radius: 21px;
+		overflow: hidden;
+		justify-self: end;
+		/* Very low-opacity base — glass mostly see-through */
+		background: rgba(12, 11, 10, 0.14);
+	}
+
+	:global(.hero-glass-layer) {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		border-radius: 21px;
+	}
+
+	:global(.hero-glass-layer .glass-surface) {
+		width: 100% !important;
+		height: 100% !important;
+	}
+
+	:global(.hero-glass-layer .glass-surface__content) {
+		padding: 0;
+	}
+
+	/*
+	 * Soft horizontal sheen — matches the brushed light streaks in the reference.
+	 * Sits above the glass filter, below plus/devices.
+	 */
+	.service-hero__panel::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		pointer-events: none;
+		border-radius: inherit;
+		background:
+			linear-gradient(
+				105deg,
+				rgba(255, 255, 255, 0) 0%,
+				rgba(255, 255, 255, 0.02) 30%,
+				rgba(255, 255, 255, 0) 48%,
+				rgba(255, 255, 255, 0.025) 62%,
+				rgba(255, 255, 255, 0) 80%
+			),
+			linear-gradient(
+				180deg,
+				rgba(255, 255, 255, 0.015) 0%,
+				rgba(0, 0, 0, 0.03) 40%,
+				rgba(0, 0, 0, 0.08) 100%
+			);
+	}
+
+	/* Dark frosted glass + soft NW rim (reference look) */
+	:global(.hero-glass-surface.glass-surface--svg) {
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		box-shadow:
+			inset 1px 1px 0 0 rgba(255, 255, 255, 0.06),
+			inset -1px -1px 0 0 rgba(0, 0, 0, 0.35),
+			inset 0 0 48px 0 rgba(0, 0, 0, 0.35);
+	}
+
+	/* Safari / Firefox: dark Frost 15 fallback */
+	:global(.hero-glass-surface.glass-surface--fallback) {
+		background: rgba(14, 13, 12, 0.14);
+		backdrop-filter: blur(15px) saturate(1) brightness(0.9);
+		-webkit-backdrop-filter: blur(15px) saturate(1) brightness(0.9);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		box-shadow:
+			inset 1px 1px 0 0 rgba(255, 255, 255, 0.06),
+			inset -1px -1px 0 0 rgba(0, 0, 0, 0.3);
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		:global(.hero-glass-surface.glass-surface--svg),
+		:global(.hero-glass-surface.glass-surface--fallback) {
+			background: rgba(20, 19, 18, 0.85) !important;
+			backdrop-filter: none !important;
+			-webkit-backdrop-filter: none !important;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			box-shadow: none;
+		}
+
+		.service-hero__panel::after {
+			display: none;
+		}
+	}
+
+	/* Amber plus — full height, flush right, behind devices */
+	.service-hero__panel-plus {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 2;
+		width: auto;
+		height: 100%;
+		max-width: 52%;
+		object-fit: contain;
+		object-position: right top;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	.service-hero__panel-label {
+		position: absolute;
+		top: 22px;
+		left: 28px;
+		z-index: 4;
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.3;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--text-body-dark);
+	}
+
+	.service-hero__panel-image {
+		position: absolute;
+		top: 18%;
+		left: 46%;
+		z-index: 3;
+		width: 78%;
+		height: auto;
+		max-height: 72%;
+		transform: translateX(-50%);
+		object-fit: contain;
+		pointer-events: none;
+	}
+
+	.service-hero__captions {
+		position: absolute;
+		left: 28px;
+		right: 28px;
+		bottom: 22px;
+		z-index: 4;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: var(--text-body-dark);
+	}
+
+	.service-hero__footer {
+		box-sizing: border-box;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+		height: 88px;
+		margin-top: 64px;
+		padding-top: 24px;
+		border-top: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.service-hero__footer-left,
+	.service-hero__footer-right {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.4;
+	}
+
+	.service-hero__footer-left {
+		color: var(--text-body-dark);
+	}
+
+	.service-hero__footer-right {
+		color: var(--text-body-dark);
+	}
+
+	/* Scroll target for secondary link (when a #details section exists) */
+	:global(#details) {
+		scroll-margin-top: 96px;
+	}
+
+	/* —— Responsive —— */
+	@media (max-width: 1023px) {
+		.service-hero {
+			padding-top: clamp(112px, 16vw, 140px);
+			align-items: flex-start;
+		}
+
+		.service-hero__grid {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.service-hero__panel {
+			justify-self: center;
+			width: min(100%, 480px);
+			/* Scale height with width so it never exceeds the column */
+			height: auto;
+			max-height: 300px;
+			aspect-ratio: 969 / 604;
+		}
+
+		.service-hero__footer {
+			margin-top: 40px;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.service-hero__pill {
+			flex-wrap: wrap;
+			height: auto;
+			min-height: 0;
+			padding-block: 6px;
+			text-align: center;
+		}
+
+		.service-hero__text {
+			font-size: 16px;
+		}
+
+		.service-hero__actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+		}
+
+		.service-hero__secondary {
+			justify-content: center;
+		}
+
+		.service-hero__panel-label {
+			top: 14px;
+			left: 16px;
+			font-size: 11px;
+		}
+
+		.service-hero__captions {
+			left: 16px;
+			right: 16px;
+			bottom: 12px;
+			font-size: 12px;
+			gap: 8px;
+		}
+
+		.service-hero__caption-last {
+			display: none;
+		}
+
+		.service-hero__footer {
+			margin-top: 32px;
+			padding-top: 20px;
+		}
+
+		.service-hero__footer-left,
+		.service-hero__footer-right {
+			font-size: 14px;
+		}
+	}
+</style>

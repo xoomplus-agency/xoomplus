@@ -1,0 +1,149 @@
+---
+/**
+ * Location page hero — full-bleed photo, top-right amber glow, centered copy.
+ * All text/image come from location data; no Section wrapper.
+ */
+import Button from './Button.astro';
+
+interface Props {
+	pill: string;
+	pillBrand: string;
+	title: string;
+	text: string;
+	button: { label: string; href: string };
+	image: string;
+}
+
+const { pill, pillBrand, title, text, button, image } = Astro.props;
+const headingId = 'location-hero-heading';
+---
+
+<section
+	class="location-hero"
+	data-bg="dark"
+	aria-labelledby={headingId}
+	style={`--location-hero-bg: url('${image}')`}
+>
+	{/* Decorative glow — aria-hidden via CSS pointer-events + empty ::before */}
+	<div class="location-hero__content">
+		<p class="pill-dark location-hero__pill m-0" aria-hidden="true">
+			<span class="location-hero__pill-text">{pill}</span>
+			<span class="location-hero__pill-sep"> · </span>
+			<span class="location-hero__pill-brand">{pillBrand}</span>
+		</p>
+
+		<h1 id={headingId} class="text-hero-h1 location-hero__title">{title}</h1>
+
+		<p class="location-hero__text">{text}</p>
+
+		<div class="location-hero__actions">
+			<Button href={button.href}>{button.label}</Button>
+		</div>
+	</div>
+</section>
+
+<style>
+	/*
+	 * Fixed height includes the area behind the fixed navbar (same as PageHero).
+	 * padding-top clears the nav so content centers in the space below it.
+	 */
+	.location-hero {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 100%;
+		height: 662px;
+		overflow: hidden;
+		padding-top: 80px; /* ~navbar height */
+		text-align: center;
+		background-color: var(--color-primary-black);
+		background-image: var(--location-hero-bg);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	/* Amber glow from top right — only added layer */
+	.location-hero::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			circle 640px at 100% 0%,
+			rgba(255, 168, 0, 0.4) 0%,
+			rgba(0, 0, 0, 0) 75%
+		);
+	}
+
+	.location-hero__content {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 640px;
+		margin-inline: auto;
+		padding-inline: 1rem;
+	}
+
+	.location-hero__pill {
+		color: #ffffff;
+	}
+
+	.location-hero__pill-brand {
+		color: #ffa800;
+	}
+
+	.location-hero__title {
+		margin: 20px 0 0;
+		font-size: 56px;
+	}
+
+	.location-hero__text {
+		margin: 16px 0 0;
+		max-width: 600px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.location-hero__actions {
+		margin-top: 28px;
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.location-hero {
+			height: 560px;
+		}
+
+		.location-hero__title {
+			font-size: 48px;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.location-hero {
+			height: auto;
+			min-height: 560px;
+			padding-top: 72px;
+			padding-bottom: 48px;
+		}
+
+		.location-hero__title {
+			font-size: clamp(2.125rem, 8.5vw, 2.25rem); /* 34–36px */
+			line-height: 1.15;
+		}
+
+		.location-hero__text {
+			font-size: 16px;
+		}
+	}
+</style>

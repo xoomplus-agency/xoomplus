@@ -14,12 +14,24 @@ const { variant = 'default', theme = 'dark' } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
-const nav = [
+const nav: {
+	label: string;
+	href: string;
+	hasDropdown?: boolean;
+	/** Extra path prefixes that also mark this item active (trailing slashes ignored). */
+	matchPrefixes?: string[];
+}[] = [
 	{ label: 'Home', href: '/' },
-	{ label: 'Services', href: '/services', hasDropdown: true },
+	{
+		label: 'Services',
+		href: '/our-services',
+		hasDropdown: true,
+		// Listing + legacy/detail service routes
+		matchPrefixes: ['/our-services', '/services'],
+	},
 	{ label: 'About', href: '/about' },
-	{ label: 'Industries', href: '#industries' },
-	{ label: 'Case Studies', href: '#case-studies' },
+	{ label: 'Industries', href: '/industries' },
+	{ label: 'Case Studies', href: '/case-studies' },
 	{ label: 'Contact', href: '/contact' },
 	{ label: 'Blog', href: '/blogs' },
 ];
@@ -27,12 +39,15 @@ const nav = [
 const servicesSections = getServicesMenuSections();
 const megaPanelId = 'services-mega-menu';
 
-function isActive(href: string) {
+function isActive(href: string, matchPrefixes?: string[]) {
 	if (href.startsWith('#')) return false;
 	const path = href.replace(/\/+$/, '') || '/';
 	// Home is exact-match only; other routes match themselves and nested paths
 	if (path === '/') return pathname === '/';
-	return pathname === path || pathname.startsWith(`${path}/`);
+	const prefixes = (matchPrefixes?.length ? matchPrefixes : [path]).map(
+		(p) => p.replace(/\/+$/, '') || '/',
+	);
+	return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 /** Glass: #FFFFFF 5% · blur 34.8px (no stroke — matches design) */
@@ -50,7 +65,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		Scrolled: one unified glass shell around logo + links + CTA
 	-->
 	<div
-		class="pointer-events-auto relative mx-auto hidden w-full max-w-[1920px] grid-cols-[1fr_auto_1fr] items-center gap-x-6 bg-transparent pl-16 pr-8 pt-6 lg:grid lg:pl-20 lg:pr-12"
+		class="pointer-events-auto relative mx-auto hidden w-full max-w-[1920px] grid-cols-[1fr_auto_1fr] items-center gap-x-6 bg-transparent pl-8 pr-8 pt-6 lg:grid lg:pl-12 lg:pr-12"
 		data-nav-desktop
 	>
 		<a
@@ -64,7 +79,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 				alt="Xoomplus"
 				width="132"
 				height="36"
-				class="logo logo--white h-auto w-[clamp(104px,10vw,132px)] transition-[width] duration-500 motion-reduce:transition-none"
+				class="logo logo--white transition-[width] duration-500 motion-reduce:transition-none"
 				loading="eager"
 				decoding="async"
 			/>
@@ -73,7 +88,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 				alt=""
 				width="132"
 				height="36"
-				class="logo logo--black h-auto w-[clamp(104px,10vw,132px)] transition-[width] duration-500 motion-reduce:transition-none"
+				class="logo logo--black transition-[width] duration-500 motion-reduce:transition-none"
 				loading="eager"
 				decoding="async"
 				aria-hidden="true"
@@ -88,7 +103,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 			<ul class="m-0 flex list-none items-center gap-0 p-1">
 				{
 					nav.map((item) => {
-						const active = isActive(item.href);
+						const active = isActive(item.href, item.matchPrefixes);
 						const isServices = Boolean(item.hasDropdown);
 
 						if (isServices) {
@@ -159,7 +174,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 
 	<!-- Mobile -->
 	<div
-		class="pointer-events-auto mx-auto w-full bg-transparent pl-7 pr-4 pt-6 sm:pl-9 sm:pr-6 lg:hidden"
+		class="pointer-events-auto mx-auto w-full bg-transparent pl-4 pr-4 pt-6 sm:pl-6 sm:pr-6 lg:hidden"
 		data-nav-mobile
 	>
 		<div class="flex items-center justify-between gap-3">
@@ -169,7 +184,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 					alt="Xoomplus"
 					width="132"
 					height="36"
-					class="logo logo--white h-auto w-[clamp(104px,10vw,132px)]"
+					class="logo logo--white"
 					loading="eager"
 					decoding="async"
 				/>
@@ -178,7 +193,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 					alt=""
 					width="132"
 					height="36"
-					class="logo logo--black h-auto w-[clamp(104px,10vw,132px)]"
+					class="logo logo--black"
 					loading="eager"
 					decoding="async"
 					aria-hidden="true"
@@ -211,7 +226,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 			<ul class="m-0 grid list-none gap-[0.35rem] p-0">
 				{
 					nav.map((item) => {
-						const active = isActive(item.href);
+						const active = isActive(item.href, item.matchPrefixes);
 						const isServices = Boolean(item.hasDropdown);
 
 						if (isServices) {
@@ -347,18 +362,31 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		background-color: var(--nav-pill-bg);
 	}
 
-	/* Navbar logo — crossfade with pill theme (data-theme on header) */
+	/*
+	 * Navbar logo — crossfade with pill theme (data-theme on header).
+	 * Assets: logo-xoomplus.webp 244×57, logo-black.webp 243×56.
+	 * Both place the "xoom" wordmark ~10px below the box center (amber "+" above),
+	 * so a -5px optical nudge aligns the wordmark with nav link / Home pill text.
+	 */
 	.nav-logo-link {
 		position: relative;
-		display: inline-flex;
+		display: flex;
 		align-items: center;
-		height: 48px; /* match nav CTA for vertical alignment */
-		margin-left: 0.75rem;
+		/* Fill the nav row height; inner flex centers the logo mark */
+		align-self: stretch;
+		line-height: 0;
+		margin-left: 0;
 	}
 
 	.nav-logo-link .logo {
 		display: block;
-		object-fit: contain;
+		/* Same box for both files (white asset aspect 244×57) — avoids letterbox shift */
+		width: clamp(104px, 10vw, 132px);
+		height: calc(clamp(104px, 10vw, 132px) * 57 / 244);
+		object-fit: fill;
+		object-position: center;
+		/* Optical: wordmark sits low in both assets because of the "+" ascender */
+		transform: translateY(-5px);
 		transition: opacity 0.35s ease;
 	}
 
@@ -366,9 +394,10 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		position: absolute;
 		left: 0;
 		top: 50%;
-		width: 100%;
-		height: auto;
-		transform: translateY(-50%);
+		width: clamp(104px, 10vw, 132px);
+		height: calc(clamp(104px, 10vw, 132px) * 57 / 244);
+		object-fit: fill;
+		transform: translateY(calc(-50% - 5px));
 	}
 
 	[data-site-header] .nav-logo-link .logo--white {
@@ -467,7 +496,12 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		width: min(94vw, 1100px);
 		max-width: 1100px;
 		margin-top: 0.75rem;
-		padding: 0.5rem 0.85rem 0.5rem 1.15rem;
+		/*
+		 * Equal L/R inset so left gap = right gap.
+		 * Was 0.85rem (13.6px) on the right — too tight for the logo against the pill
+		 * curve, so both sides use 16 / 20 / 24px (see media queries below).
+		 */
+		padding: 0.5rem 16px;
 		border: none;
 		border-radius: 9999px;
 		background-color: var(--nav-pill-bg);
@@ -476,9 +510,18 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		gap: 0.75rem;
 	}
 
-	[data-site-header][data-scrolled] [data-nav-desktop] .nav-logo-link,
-	[data-site-header][data-scrolled] [data-nav-mobile] .nav-logo-link {
-		margin-left: 0;
+	@media (min-width: 1024px) {
+		[data-site-header][data-scrolled] [data-nav-desktop] {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	@media (min-width: 1280px) {
+		[data-site-header][data-scrolled] [data-nav-desktop] {
+			padding-left: 24px;
+			padding-right: 24px;
+		}
 	}
 
 	[data-site-header][data-scrolled] [data-nav-mobile] {
@@ -486,7 +529,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		max-width: 100%;
 		margin-top: 0.65rem;
 		margin-inline: auto;
-		padding: 0.65rem 0.85rem 0.65rem 1.1rem;
+		padding: 0.65rem 16px;
 		border: none;
 		border-radius: 1.25rem;
 		background-color: var(--nav-pill-bg);

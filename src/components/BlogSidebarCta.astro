@@ -1,0 +1,88 @@
+---
+import Button from './Button.astro';
+
+interface Props {
+	heading?: string;
+	text?: string;
+	button?: { label: string; href: string };
+}
+
+const {
+	heading = 'Tell us about your project',
+	text = 'Get in touch with our team for a free consultation and quote today.',
+	button = { label: "Let's Talk", href: '/contact' },
+} = Astro.props;
+---
+
+<div class="blog-sidebar-cta">
+	<img
+		class="blog-sidebar-cta__icon"
+		src="/icons/phone-icon-blog.svg"
+		alt=""
+		aria-hidden="true"
+		width="36"
+		height="36"
+		decoding="async"
+	/>
+	<h3 class="blog-sidebar-cta__heading">{heading}</h3>
+	<p class="blog-sidebar-cta__text">{text}</p>
+	<Button size="nav" class="!w-full" href={button.href}>{button.label}</Button>
+</div>
+
+<style>
+	/*
+	 * Same dark glass recipe as ContactEnquiry .enquiry-glass
+	 * (white gradient over primary black + faint white border),
+	 * gradient directed from the top-right corner.
+	 */
+	.blog-sidebar-cta {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		overflow: hidden;
+		padding: 24px;
+		border-radius: 20px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		text-align: center;
+		background-color: var(--color-primary-black);
+		background-image: linear-gradient(
+			to bottom left,
+			rgba(255, 255, 255, 0.15) 0%,
+			rgba(255, 255, 255, 0.03) 50%,
+			rgba(255, 255, 255, 0.07) 100%
+		);
+	}
+
+	.blog-sidebar-cta__icon {
+		display: block;
+		width: 36px;
+		height: 36px;
+		flex-shrink: 0;
+	}
+
+	.blog-sidebar-cta__heading {
+		margin: 4px 0 0;
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 500;
+		line-height: 1.25;
+		color: #ffffff;
+	}
+
+	.blog-sidebar-cta__text {
+		margin: 0;
+		max-width: 240px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.blog-sidebar-cta :global(.btn) {
+		margin-top: 8px;
+	}
+</style>

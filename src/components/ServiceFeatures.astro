@@ -1,0 +1,159 @@
+---
+/**
+ * Service feature cards — data-driven.
+ * variant "default" = white bg (Built around people)
+ * variant "gray-plus" = #F7F7F5 + plus in card top row + optional footnote
+ */
+import Section from './Section.astro';
+import FeatureCard from './FeatureCard.astro';
+import type { ServiceFeatureItem } from '../data/main-services';
+
+interface Props {
+	type?: 'features';
+	/** Section + heading id prefix. Default keeps main service "Built around people" as #details. */
+	id?: string;
+	pill: string;
+	titleLines: [string, string];
+	text: string;
+	items: [ServiceFeatureItem, ServiceFeatureItem, ServiceFeatureItem] | ServiceFeatureItem[];
+	variant?: 'default' | 'gray-plus';
+	footnote?: string;
+}
+
+const {
+	id = 'details',
+	pill,
+	titleLines,
+	text,
+	items,
+	variant = 'default',
+	footnote,
+} = Astro.props;
+
+const headingId = `${id}-heading`;
+const [titleLine1, titleLine2] = titleLines;
+const isGrayPlus = variant === 'gray-plus';
+const sectionBg = isGrayPlus ? 'light-gray' : 'white';
+/** Default cards keep 28px icons; gray-plus uses 24px per design */
+const iconSize = isGrayPlus ? 24 : 28;
+---
+
+<Section
+	id={id}
+	aria-labelledby={headingId}
+	background={sectionBg}
+	class:list={['sf-section', isGrayPlus && 'sf-section--gray-plus']}
+>
+	<div class="sf-header">
+		<div class="sf-header__intro">
+			<p class="pill-light sf-pill m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="sf-header__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				<span class="sf-header__line">{titleLine1}</span>
+				<span class="sf-header__line">{titleLine2}</span>
+			</h2>
+		</div>
+		<p class="sf-header__aside text-on-light m-0">{text}</p>
+	</div>
+
+	<div class="sf-grid">
+		{
+			items.map((item) => (
+				<FeatureCard
+					icon={item.icon}
+					title={item.title}
+					text={item.text}
+					href={item.href}
+					showPlus={isGrayPlus}
+					iconSize={iconSize}
+					class={isGrayPlus ? 'feature-card--icon-sm' : undefined}
+				/>
+			))
+		}
+	</div>
+
+	{footnote ? <p class="sf-footnote text-on-light m-0">{footnote}</p> : null}
+</Section>
+
+<style>
+	/* scroll-margin: navbar (~80px) + 16px */
+	.sf-section {
+		scroll-margin-top: 96px;
+	}
+
+	.sf-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.sf-header__intro {
+		min-width: 0;
+	}
+
+	.sf-header__heading {
+		margin-top: 16px;
+	}
+
+	.sf-header__line {
+		display: block;
+	}
+
+	.sf-header__aside {
+		flex-shrink: 0;
+		max-width: 440px;
+		text-align: left;
+	}
+
+	/* Soft pill shadow only on gray background so the white pill stays visible */
+	.sf-section--gray-plus .sf-pill {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	}
+
+	/* pb leaves room so card shadows (Y 8 / blur 24) are not clipped */
+	.sf-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 24px;
+		align-items: stretch;
+		margin-top: 32px;
+		padding-bottom: 24px;
+	}
+
+	.sf-footnote {
+		margin-top: 24px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		/* Text / body — #555555 */
+		color: var(--color-text-on-light, #555555);
+		text-align: left;
+	}
+
+	@media (max-width: 1023px) {
+		.sf-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.sf-header__aside {
+			max-width: 100%;
+		}
+
+		/* 2 columns on tablet */
+		.sf-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 639px) {
+		.sf-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+</style>

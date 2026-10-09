@@ -1,0 +1,170 @@
+---
+import Section from './Section.astro';
+
+const cards = [
+	{
+		title: 'Find +',
+		subtitle: 'SEO + PPC & Google Ads',
+		text: 'Search content and paid messaging start with the same understanding of your audience.',
+	},
+	{
+		title: 'Engage +',
+		subtitle: 'Social Media Marketing + SEO',
+		text: 'Useful content and consistent creative carry your message across different moments.',
+	},
+	{
+		title: 'Act +',
+		subtitle: 'Web Design & Development',
+		text: 'The website turns those moments into a clear experience, with an obvious next step.',
+	},
+];
+---
+
+<Section aria-labelledby="better-together-heading">
+	<div class="bt-header">
+		<div class="bt-header__intro">
+			<p class="pill-light m-0">Better together</p>
+			<h2
+				id="better-together-heading"
+				class="bt-header__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				Your audience sees a journey.<br />
+				Not a list of services.
+			</h2>
+		</div>
+		<p class="bt-header__aside text-on-light m-0">
+			A great website should support your marketing. Your marketing should reflect your brand. And
+			every decision should start with your business.
+		</p>
+	</div>
+
+	<ul class="bt-grid m-0 list-none p-0" role="list">
+		{
+			cards.map((card) => (
+				<li class="bt-grid__item">
+					<article class="surface-card bt-card">
+						<h3 class="bt-card__title m-0">{card.title}</h3>
+						<span class="bt-card__divider" aria-hidden="true"></span>
+						<p class="bt-card__subtitle m-0">{card.subtitle}</p>
+						<p class="bt-card__text m-0">{card.text}</p>
+					</article>
+				</li>
+			))
+		}
+	</ul>
+</Section>
+
+<style>
+	.bt-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.bt-header__intro {
+		min-width: 0;
+	}
+
+	.bt-header__heading {
+		margin-top: 16px;
+	}
+
+	.bt-header__aside {
+		flex-shrink: 0;
+		max-width: 380px;
+		text-align: left;
+	}
+
+	/* pb leaves room so card shadows (Y 8 / blur 24) are not clipped */
+	.bt-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 24px;
+		align-items: stretch;
+		margin-top: 32px;
+		padding-bottom: 24px;
+	}
+
+	.bt-grid__item {
+		display: flex;
+		min-width: 0;
+		height: 100%;
+	}
+
+	.bt-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 100%;
+		height: 100%;
+		text-align: left;
+	}
+
+	.bt-card__title {
+		font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter',
+			sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+		line-height: 1.2;
+		color: var(--color-primary-black);
+	}
+
+	.bt-card__divider {
+		display: block;
+		width: 56px;
+		height: 2px;
+		margin-top: 12px;
+		border-radius: 2px;
+		background-color: var(--color-primary);
+	}
+
+	.bt-card__subtitle {
+		margin-top: 20px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--color-primary-black);
+	}
+
+	.bt-card__text {
+		margin-top: 10px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--color-text-on-light);
+	}
+
+	@media (max-width: 1023px) {
+		.bt-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.bt-header__aside {
+			max-width: 100%;
+		}
+
+		.bt-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 639px) {
+		.bt-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.bt-card__title {
+			font-size: clamp(1.625rem, 6vw, 1.875rem); /* ~26–30px */
+		}
+
+		.bt-card__subtitle,
+		.bt-card__text {
+			font-size: clamp(1rem, 4vw, 1.125rem); /* ~16–18px */
+		}
+	}
+</style>

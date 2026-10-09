@@ -1,0 +1,180 @@
+---
+import Section from './Section.astro';
+import { industryIntent } from '../data/industry-intent';
+
+const section = industryIntent;
+---
+
+<Section
+	background="dark"
+	aria-labelledby="local-intent-heading"
+	class="industry-intent section-glow-top-left"
+>
+	<div class="industry-intent__header">
+		<div class="industry-intent__heading-group">
+			<p class="pill-dark text-primary m-0">{section.pill}</p>
+			<h2
+				id="local-intent-heading"
+				class="text-hero-h1 dark-section-heading industry-intent__title m-0"
+			>
+				{section.title}
+			</h2>
+		</div>
+		<p class="industry-intent__intro m-0">{section.text}</p>
+	</div>
+
+	<div class="industry-intent__grid">
+		{
+			section.cards.map((card) => (
+				<article class="service-card industry-intent__card">
+					<p class="industry-intent__eyebrow m-0">{card.eyebrow}</p>
+					<h3 class="industry-intent__card-title m-0">{card.title}</h3>
+					<div class="industry-intent__divider" aria-hidden="true" />
+					<ul class="industry-intent__items m-0 list-none p-0">
+						{card.items.map((item) => (
+							<li class="industry-intent__item">
+								<p class="industry-intent__item-title m-0">{item.title}</p>
+								<p class="industry-intent__item-text m-0">{item.text}</p>
+							</li>
+						))}
+					</ul>
+				</article>
+			))
+		}
+	</div>
+</Section>
+
+<style>
+	.industry-intent__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.industry-intent__heading-group {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.industry-intent__title {
+		margin-top: 16px;
+	}
+
+	.industry-intent__intro {
+		flex: 0 0 auto;
+		max-width: 360px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+	}
+
+	.industry-intent__grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		align-items: stretch;
+		margin-top: 40px;
+	}
+
+	.industry-intent__card {
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
+	}
+
+	.industry-intent__eyebrow {
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.4;
+		color: #ffa800;
+	}
+
+	.industry-intent__card-title {
+		margin-top: 10px;
+		font-family: var(--font-inter);
+		font-size: 32px;
+		font-weight: 400;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+		color: #ffffff;
+	}
+
+	.industry-intent__divider {
+		width: 100%;
+		height: 0;
+		margin-top: 20px;
+		border: 0;
+		border-top: 1px solid rgb(255 255 255 / 0.15);
+	}
+
+	.industry-intent__items {
+		width: 100%;
+		margin-top: 16px;
+	}
+
+	.industry-intent__item {
+		padding: 12px 0;
+	}
+
+	.industry-intent__item-title {
+		font-family: var(--font-inter);
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: #ffffff;
+	}
+
+	.industry-intent__item-text {
+		margin-top: 6px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	/*
+	 * One-line title needs ~811px; with 360px intro + 48px gap that is ~1219px
+	 * content width. Side padding means that only fits from ~1700px viewport up.
+	 * Below that the title wraps instead of overflowing.
+	 */
+	@media (min-width: 1700px) {
+		.industry-intent__title {
+			white-space: nowrap;
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.industry-intent__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.industry-intent__intro {
+			max-width: none;
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.industry-intent__grid {
+			grid-template-columns: 1fr;
+		}
+
+		.industry-intent__card-title {
+			font-size: 26px;
+		}
+
+		.industry-intent__item-title {
+			font-size: 18px;
+		}
+	}
+</style>

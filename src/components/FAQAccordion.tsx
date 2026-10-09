@@ -3,7 +3,7 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
 
 export type FAQItem = {
 	id: string;
@@ -13,6 +13,8 @@ export type FAQItem = {
 
 type FAQAccordionProps = {
 	items: FAQItem[];
+	/** Index of item open on load; null = all closed. Default 0 (first item). */
+	defaultOpen?: number | null;
 };
 
 function ToggleIcon() {
@@ -21,7 +23,6 @@ function ToggleIcon() {
 			className="relative flex size-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,168,0,0.3)] transition-colors duration-[250ms] ease-in-out group-data-[state=open]:bg-[#FFA800]"
 			aria-hidden="true"
 		>
-			{/* Plus — visible when closed */}
 			<svg
 				className="absolute size-3 group-data-[state=open]:hidden"
 				viewBox="0 0 12 12"
@@ -36,7 +37,6 @@ function ToggleIcon() {
 					strokeLinecap="round"
 				/>
 			</svg>
-			{/* Minus — visible when open */}
 			<svg
 				className="absolute size-3 hidden group-data-[state=open]:block"
 				viewBox="0 0 12 12"
@@ -55,14 +55,17 @@ function ToggleIcon() {
 	);
 }
 
-export default function FAQAccordion({ items }: FAQAccordionProps) {
-	const defaultOpen = items[0]?.id;
+export default function FAQAccordion({ items, defaultOpen = 0 }: FAQAccordionProps) {
+	const defaultValue =
+		defaultOpen === null || defaultOpen === undefined
+			? undefined
+			: items[defaultOpen]?.id;
 
 	return (
 		<Accordion
 			type="single"
 			collapsible
-			defaultValue={defaultOpen}
+			defaultValue={defaultValue}
 			className="flex w-full flex-col gap-2.5"
 		>
 			{items.map((item) => (
@@ -75,8 +78,9 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
 						<span className="min-w-0 flex-1 pr-2">{item.question}</span>
 						<ToggleIcon />
 					</AccordionTrigger>
-					<AccordionContent className="px-[26px] pb-[26px] pt-0 font-[family-name:var(--font-inter)] text-[14.5px] leading-[1.6] text-[#555555] max-sm:px-[18px] max-sm:pb-[18px] max-sm:text-[14px]">
-						{item.answer}
+					<AccordionContent className="faq-answer px-[26px] pb-[26px] pt-0 font-[family-name:var(--font-inter)] text-[14.5px] leading-[1.6] text-[#555555] max-sm:px-[18px] max-sm:pb-[18px] max-sm:text-[14px]">
+						{/* Answers are trusted content from our data files only. */}
+						<div dangerouslySetInnerHTML={{ __html: item.answer }} />
 					</AccordionContent>
 				</AccordionItem>
 			))}

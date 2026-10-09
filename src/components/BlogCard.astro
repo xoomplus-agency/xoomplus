@@ -6,12 +6,27 @@ interface Props {
 	title: string;
 	excerpt: string;
 	href: string;
+	/** Smaller title/excerpt for narrow sidebar cards only */
+	size?: 'default' | 'compact';
+	/** When true, meta label shows "EDITORIAL DRAFT" */
+	draft?: boolean;
 }
 
-const { image, alt, category, title, excerpt, href } = Astro.props;
+const {
+	image,
+	alt,
+	category,
+	title,
+	excerpt,
+	href,
+	size = 'default',
+	draft = false,
+} = Astro.props;
+
+const metaLabel = draft ? 'Editorial draft' : 'From our blog';
 ---
 
-<article class="blog-card-wrap">
+<article class:list={['blog-card-wrap', size === 'compact' && 'blog-card-wrap--compact']}>
 	<a class="blog-card" href={href}>
 		<div class="blog-card__media">
 			<img
@@ -30,7 +45,7 @@ const { image, alt, category, title, excerpt, href } = Astro.props;
 				<span class="blog-card__dot" aria-hidden="true"></span>
 				{category}
 			</span>
-			<span class="blog-card__label">From our blog</span>
+			<span class="blog-card__label">{metaLabel}</span>
 		</div>
 
 		<h3 class="blog-card__title">{title}</h3>
@@ -166,6 +181,16 @@ const { image, alt, category, title, excerpt, href } = Astro.props;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+	}
+
+	/* Sidebar-only denser type — home /blogs listing unchanged */
+	.blog-card-wrap--compact .blog-card__title {
+		font-size: 18px;
+		min-height: calc(1.25em * 2);
+	}
+
+	.blog-card-wrap--compact .blog-card__excerpt {
+		font-size: 15px;
 	}
 
 	.blog-card__footer {

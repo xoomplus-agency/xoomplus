@@ -1,0 +1,297 @@
+---
+/**
+ * Dark "Development & commerce" bento — main ServiceCard + 4 small cards.
+ */
+import Section from './Section.astro';
+import ServiceCard from './ServiceCard.astro';
+import type { ServiceBentoCard, ServiceBentoMainCard } from '../data/main-services';
+
+interface Props {
+	type?: 'bento';
+	id: string;
+	pill: string;
+	title: string;
+	text: string;
+	mainCard: ServiceBentoMainCard;
+	cards: ServiceBentoCard[];
+	note?: string;
+}
+
+const { id, pill, title, text, mainCard, cards, note } = Astro.props;
+const headingId = `${id}-heading`;
+
+function iconSrc(name: string) {
+	return name.startsWith('/') ? name : `/icons/${name}.svg`;
+}
+---
+
+<Section
+	id={id}
+	background="dark"
+	aria-labelledby={headingId}
+	class="service-bento section-glow-top-left"
+>
+	<div class="sb-header">
+		<div class="sb-header__intro">
+			<p class="pill-dark text-primary m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="sb-header__heading text-hero-h1 dark-section-heading m-0"
+			>
+				{title}
+			</h2>
+		</div>
+		<p class="sb-header__aside m-0">{text}</p>
+	</div>
+
+	<div class="sb-grid">
+		<div class="sb-grid__main">
+			<ServiceCard
+				title={mainCard.title}
+				icon={mainCard.icon}
+				description={mainCard.description}
+				features={mainCard.items}
+				cta={{ label: mainCard.buttonLabel, href: mainCard.href }}
+				buttonLabel={mainCard.buttonLabel}
+				class="sb-main-card"
+			/>
+		</div>
+
+		{
+			cards.map((card) => (
+				<article class:list={['sb-card', card.href && 'sb-card--link']}>
+					<img
+						class="sb-card__icon"
+						src={iconSrc(card.icon)}
+						alt=""
+						width="22"
+						height="22"
+						aria-hidden="true"
+						decoding="async"
+					/>
+					<h3 class="sb-card__title m-0">{card.title}</h3>
+					<p class="sb-card__text m-0">{card.text}</p>
+					<p class="sb-card__tag m-0">{card.tag}</p>
+					{card.href ? (
+						<a class="sb-card__stretched" href={card.href} aria-label={card.title} />
+					) : null}
+				</article>
+			))
+		}
+	</div>
+
+	{
+		note ? (
+			<div class="sb-note">
+				<span class="sb-note__bar" aria-hidden="true" />
+				<p class="sb-note__text m-0">{note}</p>
+			</div>
+		) : null
+	}
+</Section>
+
+<style>
+	.service-bento {
+		scroll-margin-top: 96px;
+	}
+
+	.sb-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.sb-header__intro {
+		min-width: 0;
+	}
+
+	.sb-header__heading {
+		margin-top: 16px;
+	}
+
+	@media (min-width: 1024px) {
+		.sb-header__heading {
+			white-space: nowrap;
+		}
+	}
+
+	.sb-header__aside {
+		flex-shrink: 0;
+		max-width: 400px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+	}
+
+	.sb-grid {
+		display: grid;
+		grid-template-columns: 1.15fr 1fr 1fr;
+		grid-template-rows: auto auto;
+		gap: 16px;
+		align-items: stretch;
+		margin-top: 40px;
+	}
+
+	.sb-grid__main {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		display: flex;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.sb-grid__main :global(.sb-main-card) {
+		width: 100%;
+		height: 100%;
+	}
+
+	.sb-card {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		min-width: 0;
+		padding: 24px;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.0314);
+		transition: border-color 0.25s ease;
+	}
+
+	.sb-card__stretched {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		border-radius: inherit;
+	}
+
+	@media (hover: hover) {
+		.sb-card:hover {
+			border-color: rgba(255, 255, 255, 0.28);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sb-card {
+			transition: none;
+		}
+	}
+
+	.sb-card__icon {
+		display: block;
+		width: 22px;
+		height: 22px;
+		flex-shrink: 0;
+		object-fit: contain;
+	}
+
+	.sb-card__title {
+		margin-top: 20px;
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 400;
+		line-height: 1.2;
+		color: #ffffff;
+	}
+
+	.sb-card__text {
+		margin-top: 12px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.sb-card__tag {
+		margin-top: auto;
+		padding-top: 16px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--color-primary, #ffa800);
+	}
+
+	.sb-note {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 32px;
+		padding-top: 20px;
+		border-top: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.sb-note__bar {
+		display: block;
+		width: 3px;
+		height: 30px;
+		flex-shrink: 0;
+		border-radius: 2px;
+		background-color: var(--color-primary, #ffa800);
+	}
+
+	.sb-note__text {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	@media (max-width: 1023px) {
+		.sb-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.sb-header__aside {
+			max-width: 100%;
+		}
+
+		.sb-grid {
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: auto;
+		}
+
+		.sb-grid__main {
+			grid-column: 1 / -1;
+			grid-row: auto;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.sb-header__heading {
+			font-size: clamp(1.75rem, 7vw, 1.875rem); /* ~28–30px */
+			white-space: normal;
+		}
+
+		.sb-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.sb-card__title {
+			font-size: clamp(1.25rem, 5vw, 1.25rem); /* ~20px */
+		}
+
+		.sb-note {
+			align-items: stretch;
+		}
+
+		.sb-note__bar {
+			align-self: stretch;
+			height: auto;
+			min-height: 30px;
+		}
+
+		.sb-note__text {
+			font-size: 16px;
+		}
+	}
+</style>

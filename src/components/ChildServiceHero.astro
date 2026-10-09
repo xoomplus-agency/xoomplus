@@ -1,0 +1,117 @@
+---
+/**
+ * White two-column hero for nested child service pages.
+ * Text left / image right on desktop; stacks on tablet/mobile.
+ */
+import Section from './Section.astro';
+import Button from './Button.astro';
+import type { ChildServiceHeroData } from '../data/main-services';
+
+interface Props extends ChildServiceHeroData {}
+
+const { pill, titleLines, paragraphs, button, image } = Astro.props;
+const [titleLine1, titleLine2] = titleLines;
+const imageWidth = image.width ?? 708;
+const imageHeight = image.height ?? 458;
+---
+
+<Section aria-labelledby="child-hero-heading" class="child-service-hero">
+	<div class="csh">
+		<div class="csh__content">
+			<p class="pill-light m-0">{pill}</p>
+
+			<h1
+				id="child-hero-heading"
+				class="csh__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				<span class="csh__heading-line">{titleLine1}</span>
+				<span class="csh__heading-line">{titleLine2}</span>
+			</h1>
+
+			<div class="csh__copy">
+				{paragraphs.map((paragraph) => (
+					<p class="text-on-light m-0">{paragraph}</p>
+				))}
+			</div>
+
+			<div class="csh__cta">
+				<Button href={button.href} class="!w-[212px]">{button.label}</Button>
+			</div>
+		</div>
+
+		<div class="csh__media">
+			<img
+				class="csh__image"
+				src={image.src}
+				alt={image.alt}
+				width={imageWidth}
+				height={imageHeight}
+				loading="eager"
+				fetchpriority="high"
+				decoding="async"
+			/>
+		</div>
+	</div>
+</Section>
+
+<style>
+	.csh {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: center;
+		gap: 64px;
+	}
+
+	.csh__content {
+		min-width: 0;
+		text-align: left;
+	}
+
+	.csh__heading {
+		margin-top: 16px;
+	}
+
+	.csh__heading-line {
+		display: block;
+	}
+
+	.csh__copy {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		max-width: 680px;
+		margin-top: 20px;
+	}
+
+	.csh__cta {
+		margin-top: 24px;
+	}
+
+	.csh__media {
+		min-width: 0;
+		width: 100%;
+		overflow: hidden;
+		border-radius: 24px;
+	}
+
+	.csh__image {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 708 / 458;
+		border-radius: 24px;
+		object-fit: cover;
+	}
+
+	@media (max-width: 1023px) {
+		.csh {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.csh__media {
+			max-width: 560px;
+			margin-inline: auto;
+		}
+	}
+</style>

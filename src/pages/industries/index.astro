@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Industries from '@/components/Industries.astro';
+import IndustryIntent from '@/components/IndustryIntent.astro';
+import IndustryFeature from '@/components/IndustryFeature.astro';
+import IndustryClarity from '@/components/IndustryClarity.astro';
+import ServicesBehind from '@/components/ServicesBehind.astro';
+import IndustryFundamentals from '@/components/IndustryFundamentals.astro';
+import FAQ from '@/components/FAQ.astro';
+import CTASection from '@/components/CTASection.astro';
+---
+
+<Layout
+	title="Industries | Xoomplus"
+	description="See how Xoomplus supports businesses across different industries with web design, SEO, social media and paid search. A joined-up digital partner based in Blackburn."
+>
+	<main id="main-content" class="flex-1">
+		<PageHero title="Industries" />
+		<Industries />
+		<IndustryIntent />
+		<IndustryFeature id="retail-ecommerce" />
+		<IndustryClarity />
+		<IndustryFeature id="hospitality-leisure" />
+		<ServicesBehind />
+		<IndustryFeature id="industry-rows" />
+		<IndustryFundamentals />
+		<FAQ page="industries" id="industries-faq" />
+		<CTASection />
+	</main>
+</Layout>

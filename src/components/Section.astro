@@ -2,6 +2,7 @@
 interface Props {
 	id?: string;
 	'aria-labelledby'?: string;
+	'aria-label'?: string;
 	class?: string;
 	/** Default white; `dark` = primary black; `light-gray` = #F7F7F5 */
 	background?: 'white' | 'dark' | 'light-gray' | 'none';
@@ -10,6 +11,7 @@ interface Props {
 const {
 	id,
 	'aria-labelledby': labelledBy,
+	'aria-label': ariaLabel,
 	class: className = '',
 	background = 'white',
 } = Astro.props;
@@ -22,6 +24,7 @@ const dataBg =
 <section
 	id={id}
 	aria-labelledby={labelledBy}
+	aria-label={ariaLabel}
 	data-bg={dataBg}
 	class:list={[
 		'px-[clamp(1rem,12.3vw,236px)] py-section',

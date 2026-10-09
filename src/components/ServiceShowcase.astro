@@ -1,0 +1,226 @@
+---
+/**
+ * "One connected experience" — dark mockup panel + text/list column.
+ */
+import Section from './Section.astro';
+import type { ServiceShowcasePanel } from '../data/main-services';
+
+interface Props {
+	type?: 'showcase';
+	id: string;
+	pill: string;
+	titleLines: [string, string];
+	text: string;
+	panel: ServiceShowcasePanel;
+	items: string[];
+	icon: string;
+}
+
+const { id, pill, titleLines, text, panel, items, icon } = Astro.props;
+const headingId = `${id}-heading`;
+const [titleLine1, titleLine2] = titleLines;
+const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
+const imgW = panel.image.width ?? 960;
+const imgH = panel.image.height ?? 720;
+---
+
+<Section id={id} aria-labelledby={headingId} class="service-showcase">
+	<div class="ss-layout">
+		<div class="ss-panel">
+			<div class="ss-panel__top">
+				<p class="ss-panel__label m-0">{panel.label}</p>
+				<p class="ss-panel__note m-0">{panel.note}</p>
+			</div>
+
+			<img
+				class="ss-panel__image"
+				src={panel.image.src}
+				alt={panel.image.alt}
+				width={imgW}
+				height={imgH}
+				loading="lazy"
+				decoding="async"
+			/>
+
+			<p class="ss-panel__caption m-0">{panel.caption}</p>
+		</div>
+
+		<div class="ss-copy">
+			<p class="pill-light m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="ss-copy__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				<span class="ss-copy__line">{titleLine1}</span>
+				<span class="ss-copy__line">{titleLine2}</span>
+			</h2>
+			<p class="ss-copy__text text-on-light m-0">{text}</p>
+
+			<ul class="ss-list m-0 list-none p-0">
+				{
+					items.map((item) => (
+						<li class="ss-list__item">
+							<img
+								class="ss-list__icon"
+								src={iconSrc}
+								alt=""
+								width="18"
+								height="18"
+								aria-hidden="true"
+								decoding="async"
+							/>
+							<span class="ss-list__label">{item}</span>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</div>
+</Section>
+
+<style>
+	.service-showcase {
+		scroll-margin-top: 96px;
+	}
+
+	.ss-layout {
+		display: grid;
+		grid-template-columns: 1.05fr 1fr;
+		gap: 64px;
+		align-items: center;
+	}
+
+	.ss-panel {
+		box-sizing: border-box;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		overflow: hidden;
+		padding: 24px;
+		border-radius: 24px;
+		background-color: var(--color-primary-black);
+	}
+
+	.ss-panel__top {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.ss-panel__label {
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.3;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--color-primary, #ffa800);
+	}
+
+	.ss-panel__note {
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.3;
+		color: var(--text-body-dark);
+	}
+
+	.ss-panel__image {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 12px;
+		object-fit: contain;
+	}
+
+	.ss-panel__caption {
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.ss-copy {
+		min-width: 0;
+		text-align: left;
+	}
+
+	.ss-copy__heading {
+		margin-top: 20px;
+	}
+
+	.ss-copy__line {
+		display: block;
+	}
+
+	.ss-copy__text {
+		margin-top: 16px;
+		max-width: 420px;
+	}
+
+	.ss-list {
+		margin-top: 28px;
+		border-top: 1px solid #e9e9e7;
+	}
+
+	.ss-list__item {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 18px 0;
+		border-bottom: 1px solid #e9e9e7;
+	}
+
+	.ss-list__icon {
+		display: block;
+		width: 18px;
+		height: 18px;
+		flex-shrink: 0;
+		object-fit: contain;
+	}
+
+	.ss-list__label {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--color-primary-black);
+	}
+
+	@media (max-width: 1023px) {
+		.ss-layout {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		/* Text first, then dark showcase */
+		.ss-copy {
+			order: 1;
+		}
+
+		.ss-panel {
+			order: 2;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.ss-panel {
+			padding: 16px;
+			gap: 16px;
+		}
+
+		.ss-panel__top {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
+		}
+
+		.ss-list__label {
+			font-size: 16px;
+		}
+	}
+</style>

@@ -1,0 +1,148 @@
+---
+import Section from './Section.astro';
+import FeatureCard from './FeatureCard.astro';
+import Button from './Button.astro';
+import {
+	industryFundamentals,
+	type IndustryFundamentalsSection,
+} from '../data/industry-fundamentals';
+
+interface Props {
+	/** Defaults to Industries catalog so /industries stays unchanged. */
+	content?: IndustryFundamentalsSection;
+}
+
+const section = Astro.props.content ?? industryFundamentals;
+const headingId = `${section.id}-heading`;
+---
+
+<Section
+	id={section.id}
+	aria-labelledby={headingId}
+	class="industry-fundamentals"
+>
+	<div class="industry-fundamentals__header">
+		<div class="industry-fundamentals__heading-group">
+			<p class="pill-light m-0">{section.pill}</p>
+			<h2
+				id={headingId}
+				class="industry-fundamentals__title m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				{section.title}
+			</h2>
+		</div>
+		<p class="industry-fundamentals__intro text-on-light m-0">{section.text}</p>
+	</div>
+
+	<div class="industry-fundamentals__grid">
+		{
+			section.items.map((item) => (
+				<FeatureCard icon={item.icon} title={item.title} text={item.text} />
+			))
+		}
+	</div>
+
+	<div class="industry-fundamentals__bar">
+		<p class="industry-fundamentals__bar-text text-on-light m-0">{section.cta.text}</p>
+		<Button href={section.cta.href} class="industry-fundamentals__bar-btn shrink-0">
+			{section.cta.label}
+		</Button>
+	</div>
+</Section>
+
+<style>
+	.industry-fundamentals__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.industry-fundamentals__heading-group {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.industry-fundamentals__title {
+		margin-top: 16px;
+	}
+
+	.industry-fundamentals__intro {
+		flex: 0 0 auto;
+		max-width: 340px;
+		text-align: left;
+	}
+
+	/* pb leaves room so card shadows (Y 8 / blur 24) are not clipped */
+	.industry-fundamentals__grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 24px;
+		align-items: stretch;
+		margin-top: 32px;
+		padding-bottom: 24px;
+	}
+
+	.industry-fundamentals__bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		width: 100%;
+		margin-top: 24px;
+		padding: 20px 24px;
+		border-radius: 20px;
+		background: #f7f7f5;
+	}
+
+	.industry-fundamentals__bar-text {
+		min-width: 0;
+		font-size: 16px;
+	}
+
+	@media (min-width: 1280px) {
+		.industry-fundamentals__title {
+			white-space: nowrap;
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.industry-fundamentals__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.industry-fundamentals__intro {
+			max-width: none;
+			width: 100%;
+		}
+
+		.industry-fundamentals__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.industry-fundamentals__grid :global(.feature-card:last-child) {
+			grid-column: 1 / -1;
+			width: 100%;
+			max-width: calc((100% - 24px) / 2);
+			justify-self: center;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.industry-fundamentals__grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.industry-fundamentals__grid :global(.feature-card:last-child) {
+			grid-column: auto;
+			max-width: none;
+		}
+
+		.industry-fundamentals__bar {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+</style>

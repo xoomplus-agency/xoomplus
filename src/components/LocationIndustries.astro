@@ -1,0 +1,165 @@
+---
+/**
+ * Location “Industries we serve” — centered header + two-column story block.
+ * Content from location data. Structure differs from OurStory (centered header +
+ * rounded image), so this stays separate to keep About pixel-identical.
+ */
+import Section from './Section.astro';
+import Button from './Button.astro';
+import type { LocationIndustries } from '../data/locations';
+
+interface Props {
+	industries: LocationIndustries;
+}
+
+const { industries } = Astro.props;
+const headingId = 'industries-we-serve-heading';
+const [headingLine1, headingLine2] = industries.heading;
+const imgWidth = industries.image.width ?? 708;
+const imgHeight = industries.image.height ?? 458;
+---
+
+<Section id="industries-we-serve" aria-labelledby={headingId}>
+	<div class="loc-industries">
+		<header class="loc-industries__header">
+			<p class="pill-light m-0">{industries.pill}</p>
+			<h2
+				id={headingId}
+				class="loc-industries__title m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				{industries.title}
+			</h2>
+			<p class="loc-industries__intro text-on-light m-0">{industries.text}</p>
+		</header>
+
+		<div class="loc-industries__grid">
+			<div class="loc-industries__copy">
+				<h3 class="loc-industries__subheading m-0 text-primary-black">
+					<span class="loc-industries__subheading-line">{headingLine1}</span>
+					<span class="loc-industries__subheading-line">{headingLine2}</span>
+				</h3>
+
+				<div class="loc-industries__paragraphs">
+					{
+						industries.paragraphs.map((paragraph) => (
+							<p class="text-on-light m-0">{paragraph}</p>
+						))
+					}
+				</div>
+
+				<div class="loc-industries__cta">
+					<Button href={industries.button.href} class="!w-[212px]">{industries.button.label}</Button>
+				</div>
+			</div>
+
+			<div class="loc-industries__media">
+				<img
+					class="loc-industries__image"
+					src={industries.image.src}
+					alt={industries.image.alt}
+					width={imgWidth}
+					height={imgHeight}
+					loading="lazy"
+					decoding="async"
+				/>
+			</div>
+		</div>
+	</div>
+</Section>
+
+<style>
+	.loc-industries__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.loc-industries__title {
+		margin-top: 16px;
+	}
+
+	@media (min-width: 1024px) {
+		.loc-industries__title {
+			white-space: nowrap;
+		}
+	}
+
+	.loc-industries__intro {
+		margin-top: 16px;
+		max-width: 640px;
+	}
+
+	.loc-industries__grid {
+		display: grid;
+		grid-template-columns: 1.05fr 1fr;
+		gap: 64px;
+		align-items: center;
+		margin-top: 48px;
+	}
+
+	.loc-industries__copy {
+		min-width: 0;
+		text-align: left;
+	}
+
+	.loc-industries__subheading {
+		font-size: 32px;
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.03em;
+	}
+
+	.loc-industries__subheading-line {
+		display: block;
+	}
+
+	.loc-industries__paragraphs {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-top: 20px;
+	}
+
+	.loc-industries__paragraphs :global(p) {
+		font-size: 15px;
+	}
+
+	.loc-industries__cta {
+		margin-top: 24px;
+	}
+
+	.loc-industries__media {
+		min-width: 0;
+		overflow: hidden;
+		border-radius: 24px;
+	}
+
+	.loc-industries__image {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 708 / 458;
+		object-fit: cover;
+		border-radius: 24px;
+	}
+
+	@media (max-width: 1023px) {
+		.loc-industries__grid {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.loc-industries__media {
+			max-width: 560px;
+			width: 100%;
+			margin-inline: auto;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.loc-industries__subheading {
+			font-size: clamp(1.5rem, 5vw, 1.75rem);
+		}
+	}
+</style>

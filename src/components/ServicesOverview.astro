@@ -1,0 +1,158 @@
+---
+import Section from './Section.astro';
+import ServiceCard from './ServiceCard.astro';
+import { servicesOverview } from '../data/services-overview';
+import { getChildHrefByName } from '../data/main-services';
+
+/** Overview card id → main service slug for child capability links. */
+const overviewToMainSlug: Record<string, string> = {
+	seo: 'seo',
+	'web-design': 'web-design-development',
+	'social-media': 'social-media-marketing',
+	ppc: 'ppc-google-ads',
+};
+---
+
+<Section
+	background="dark"
+	aria-labelledby="services-overview-heading"
+	class="services-overview section-glow-top-left"
+>
+	<div class="so-header">
+		<div class="so-header__intro">
+			<p class="pill-dark text-primary m-0">Our services</p>
+			<h2
+				id="services-overview-heading"
+				class="so-header__heading text-hero-h1 dark-section-heading m-0"
+			>
+				Everything You Need to Build a<br />
+				Stronger Digital Presence
+			</h2>
+		</div>
+		<div class="so-header__aside">
+			<p class="so-header__p1 m-0">
+				Explore the full picture below. Start with one service or shape a connected programme around
+				your business.
+			</p>
+			<p class="so-header__p2 m-0">
+				Scope and deliverables are shaped together around your priorities.
+			</p>
+		</div>
+	</div>
+
+	<ul class="so-grid m-0 list-none p-0" role="list">
+		{
+			servicesOverview.map((service) => {
+				const mainSlug = overviewToMainSlug[service.id];
+				const features = service.items.map((label) => {
+					const href = mainSlug ? getChildHrefByName(mainSlug, label) : undefined;
+					return href ? { label, href } : label;
+				});
+				return (
+					<li class="so-grid__item">
+						<ServiceCard
+							title={service.title}
+							icon={service.icon}
+							description={service.description}
+							features={features}
+							cta={{ label: service.buttonLabel, href: service.href }}
+							buttonLabel={service.buttonLabel}
+							buttonIcon="down"
+						/>
+					</li>
+				);
+			})
+		}
+	</ul>
+
+	<p class="so-footer m-0">Four core services. A shared direction. All in one place.</p>
+</Section>
+
+<style>
+	.so-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.so-header__intro {
+		min-width: 0;
+	}
+
+	.so-header__heading {
+		margin-top: 16px;
+	}
+
+	.so-header__aside {
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		max-width: 400px;
+		text-align: left;
+	}
+
+	.so-header__p1,
+	.so-header__p2 {
+		font-family: var(--font-inter);
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	.so-header__p1 {
+		font-size: 14.5px;
+		color: var(--text-body-dark);
+	}
+
+	.so-header__p2 {
+		font-size: 13.5px;
+		color: var(--text-body-dark);
+	}
+
+	.so-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+		align-items: stretch;
+		margin-top: 40px;
+	}
+
+	.so-grid__item {
+		display: flex;
+		min-width: 0;
+		height: 100%;
+	}
+
+	.so-grid__item :global(.service-card) {
+		width: 100%;
+	}
+
+	.so-footer {
+		margin-top: 24px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		text-align: left;
+		color: var(--text-body-dark);
+	}
+
+	@media (max-width: 1023px) {
+		.so-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.so-header__aside {
+			max-width: 100%;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.so-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+</style>

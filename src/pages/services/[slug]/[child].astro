@@ -1,0 +1,195 @@
+---
+/**
+ * Nested child service page — one path per (main service, child) from data.
+ * Adding a child to mainServices[].children creates its page automatically.
+ */
+import Layout from '../../../layouts/Layout.astro';
+import ChildServiceHero from '../../../components/ChildServiceHero.astro';
+import ServiceFeatures from '../../../components/ServiceFeatures.astro';
+import ServiceProcess from '../../../components/ServiceProcess.astro';
+import IndustryClarity from '../../../components/IndustryClarity.astro';
+import OurProcess from '../../../components/OurProcess.astro';
+import IndustryFeature from '../../../components/IndustryFeature.astro';
+import HowWeWork from '../../../components/HowWeWork.astro';
+import ServicesBehind from '../../../components/ServicesBehind.astro';
+import FAQ from '../../../components/FAQ.astro';
+import {
+	defaultChildClarity,
+	defaultChildFaq,
+	defaultChildFeatures,
+	defaultChildHowWeWork,
+	defaultChildProcess,
+	defaultChildRows,
+	defaultChildServicesBehind,
+} from '../../../data/child-defaults';
+import { defaultProcess } from '../../../data/process';
+import {
+	childHowWeWorkImage,
+	childLetTheDetailsImage,
+	childProcessImage,
+	childTurnInterestImage,
+	getChildService,
+	mainServices,
+	type ChildService,
+	type MainService,
+} from '../../../data/main-services';
+import CTASection from '@/components/CTASection.astro';
+
+export function getStaticPaths() {
+	return mainServices.flatMap((service) =>
+		(service.children ?? []).map((child) => ({
+			params: { slug: service.slug, child: child.slug },
+			props: { service, child },
+		})),
+	);
+}
+
+interface Props {
+	service: MainService;
+	child: ChildService;
+}
+
+const { slug, child: childParam } = Astro.params;
+const fromProps = Astro.props as Props;
+const resolved =
+	fromProps.service && fromProps.child
+		? { service: fromProps.service, child: fromProps.child }
+		: slug && childParam
+			? getChildService(slug, childParam)
+			: undefined;
+
+if (!resolved) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const { service, child } = resolved;
+const canonicalPath = `/services/${service.slug}/${child.slug}/`;
+const site = Astro.site;
+const origin = site?.origin ?? '';
+
+/** Default process with build-time per-child image fallback. */
+const processData = child.process ?? {
+	...defaultChildProcess,
+	image: {
+		...defaultChildProcess.image,
+		src: childProcessImage(child.slug),
+	},
+};
+
+/**
+ * Rows with build-time per-child image fallbacks when using defaults.
+ * Full `child.rows` overrides keep their own image paths.
+ */
+const rowsData = (child.rows ?? defaultChildRows).map((row, index) => {
+	const src = child.rows
+		? row.image.src
+		: index === 0
+			? childTurnInterestImage(child.slug)
+			: index === 1
+				? childLetTheDetailsImage(child.slug)
+				: row.image.src;
+	return {
+		...row,
+		id: row.id ?? `child-row-${index + 1}`,
+		image: { ...row.image, src },
+	};
+});
+
+/** How we work with build-time per-child image fallbacks when using defaults. */
+const howWeWorkData = child.howWeWork ?? {
+	...defaultChildHowWeWork,
+	images: [
+		{
+			...defaultChildHowWeWork.images[0],
+			src: childHowWeWorkImage(child.slug, 1),
+		},
+		{
+			...defaultChildHowWeWork.images[1],
+			src: childHowWeWorkImage(child.slug, 2),
+		},
+	] as typeof defaultChildHowWeWork.images,
+};
+
+/** FAQ — override per child with `child.faq` when ready. */
+const faqData = child.faq ?? defaultChildFaq;
+
+const breadcrumbJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BreadcrumbList',
+	itemListElement: [
+		{
+			'@type': 'ListItem',
+			position: 1,
+			name: 'Home',
+			item: origin ? `${origin}/` : '/',
+		},
+		{
+			'@type': 'ListItem',
+			position: 2,
+			name: 'Services',
+			item: origin ? `${origin}/our-services/` : '/our-services/',
+		},
+		{
+			'@type': 'ListItem',
+			position: 3,
+			name: service.name,
+			item: origin ? `${origin}/services/${service.slug}/` : `/services/${service.slug}/`,
+		},
+		{
+			'@type': 'ListItem',
+			position: 4,
+			name: child.name,
+			item: origin ? `${origin}${canonicalPath}` : canonicalPath,
+		},
+	],
+};
+---
+
+<Layout
+	title={child.metaTitle}
+	description={child.metaDescription}
+	canonicalPath={canonicalPath}
+	image={child.hero.image.src}
+	headerTheme="light"
+>
+	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+
+	<main id="main-content" class="child-service-main flex-1">
+		<ChildServiceHero {...child.hero} />
+		<ServiceFeatures {...(child.features ?? defaultChildFeatures)} id="features" />
+		{/* id matches main service page — frees #process for home Our Process */}
+		<ServiceProcess {...processData} id="working-together" />
+		<IndustryClarity content={child.clarity ?? defaultChildClarity} />
+		{/* DEFAULT: replace per child service when real content is ready */}
+		<OurProcess content={child.ourProcess ?? defaultProcess} id="process" />
+		{/* DEFAULT: replace per child service when real content is ready */}
+		<IndustryFeature id="child-rows" rows={rowsData} />
+		{/* DEFAULT: replace per child service when real content is ready */}
+		<HowWeWork content={howWeWorkData} id="how-we-work" />
+		{/* DEFAULT: replace per child service when real content is ready */}
+		<ServicesBehind content={child.servicesBehind ?? defaultChildServicesBehind} />
+		{/* DEFAULT: replace per child via `child.faq` or `faqs['child-service']` */}
+		<FAQ
+			id={`${child.slug}-faq`}
+			pill={faqData.pill}
+			heading={faqData.heading}
+			text={faqData.text}
+			items={faqData.items}
+		/>
+		<CTASection />
+	</main>
+</Layout>
+
+<style>
+	/* Clears fixed navbar (same approach as blog detail) before Section py-section */
+	.child-service-main {
+		--child-nav-offset: 100px;
+		padding-top: var(--child-nav-offset);
+	}
+
+	@media (max-width: 639px) {
+		.child-service-main {
+			--child-nav-offset: 88px;
+		}
+	}
+</style>

@@ -1,0 +1,162 @@
+---
+/**
+ * "Working together" — left intro + image, right item list + note.
+ */
+import Section from './Section.astro';
+
+export type ServiceProcessItem = {
+	title: string;
+	text: string;
+};
+
+interface Props {
+	type?: 'process';
+	/** Section + heading id prefix. Default keeps main service block as #working-together. */
+	id?: string;
+	pill: string;
+	titleLines: [string, string];
+	image: { src: string; alt: string; width?: number; height?: number };
+	items: [ServiceProcessItem, ServiceProcessItem, ServiceProcessItem] | ServiceProcessItem[];
+	note?: string;
+}
+
+const { id = 'working-together', pill, titleLines, image, items, note } = Astro.props;
+const headingId = `${id}-heading`;
+const [titleLine1, titleLine2] = titleLines;
+const imgW = image.width ?? 960;
+const imgH = image.height ?? 540;
+---
+
+<Section id={id} aria-labelledby={headingId} class="sp-section">
+	<div class="sp-layout">
+		<div class="sp-left">
+			<p class="pill-light m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="sp-heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			>
+				<span class="sp-heading__line">{titleLine1}</span>
+				<span class="sp-heading__line">{titleLine2}</span>
+			</h2>
+			<div class="sp-media">
+				<img
+					class="sp-media__img"
+					src={image.src}
+					alt={image.alt}
+					width={imgW}
+					height={imgH}
+					loading="lazy"
+					decoding="async"
+				/>
+			</div>
+		</div>
+
+		<div class="sp-right">
+			<ul class="sp-list m-0 list-none p-0">
+				{
+					items.map((item) => (
+						<li class="sp-item">
+							<h3 class="sp-item__title m-0 text-h3 font-medium text-primary-black">
+								{item.title}
+							</h3>
+							<p class="sp-item__text m-0">{item.text}</p>
+						</li>
+					))
+				}
+			</ul>
+			{note ? <p class="sp-note m-0">{note}</p> : null}
+		</div>
+	</div>
+</Section>
+
+<style>
+	.sp-layout {
+		display: grid;
+		grid-template-columns: 0.9fr 1fr;
+		gap: 80px;
+		align-items: center;
+	}
+
+	.sp-heading {
+		margin-top: 16px;
+	}
+
+	.sp-heading__line {
+		display: block;
+	}
+
+	.sp-media {
+		margin-top: 20px;
+		overflow: hidden;
+		border-radius: 24px;
+	}
+
+	.sp-media__img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		border-radius: 24px;
+	}
+
+	.sp-list {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.sp-item {
+		padding: 24px 0;
+		border-bottom: 1px solid #e9e9e7;
+	}
+
+	.sp-item:first-child {
+		padding-top: 0;
+	}
+
+	.sp-item__title {
+		font-family: var(--font-inter);
+		font-size: var(--text-h3);
+		font-weight: var(--text-h3--font-weight);
+		line-height: var(--text-h3--line-height);
+	}
+
+	.sp-item__text,
+	.sp-note {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--color-text-on-light);
+	}
+
+	.sp-item__text {
+		margin-top: 10px;
+	}
+
+	.sp-note {
+		padding-top: 24px;
+	}
+
+	@media (max-width: 1023px) {
+		.sp-layout {
+			grid-template-columns: 1fr;
+			gap: 40px;
+			align-items: start;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.sp-media__img {
+			aspect-ratio: 4 / 3;
+		}
+
+		.sp-item__title {
+			font-size: clamp(1.125rem, 4.5vw, 1.25rem); /* 18–20px */
+		}
+
+		.sp-item__text,
+		.sp-note {
+			font-size: clamp(0.9375rem, 3.8vw, 1rem); /* 15–16px */
+		}
+	}
+</style>

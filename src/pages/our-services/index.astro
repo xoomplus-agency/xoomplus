@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import BetterTogether from '../../components/BetterTogether.astro';
+import ServicesOverview from '../../components/ServicesOverview.astro';
+import ServiceDetail from '../../components/ServiceDetail.astro';
+import ServiceDetailPair from '../../components/ServiceDetailPair.astro';
+import FAQ from '@/components/FAQ.astro';
+import CTASection from '@/components/CTASection.astro';
+---
+
+<Layout
+	title="Our Services | Xoomplus"
+	description="Explore Xoomplus services: SEO, web design and development, social media marketing and PPC & Google Ads. A joined-up digital partner based in Blackburn."
+>
+	<main id="main-content" class="flex-1">
+		<PageHero title="Our services" />
+		<BetterTogether />
+		<ServicesOverview />
+		<ServiceDetail serviceId="seo" />
+		<ServiceDetailPair serviceId="social-paid-media" />
+		<FAQ page="our-services" id="our-services-faq" />
+		<CTASection />
+	</main>
+</Layout>

@@ -1,0 +1,529 @@
+---
+import Section from './Section.astro';
+import {
+	getIndustryFeature,
+	type IndustryFeatureRow,
+} from '../data/industry-features';
+
+interface Props {
+	/**
+	 * Catalog id (panel / image-list / industry-rows) or section id when passing `rows`.
+	 * Child pages use `child-rows`.
+	 */
+	id?: string;
+	/** Override `reverse` from the data entry (panel / image-list only). */
+	reverse?: boolean;
+	/**
+	 * Pass rows directly (location / child pages).
+	 * Defaults to Industries `industry-rows` when `id` is omitted or unknown and no rows given.
+	 */
+	rows?: IndustryFeatureRow[];
+	/** Prefer over aria-labelledby when set (location rows). */
+	'aria-label'?: string;
+}
+
+const {
+	id = 'industry-rows',
+	reverse: reverseProp,
+	rows: rowsProp,
+	'aria-label': ariaLabel,
+} = Astro.props;
+const feature = getIndustryFeature(id);
+const industryRowsFallback = getIndustryFeature('industry-rows')?.rows;
+
+if (!feature && !rowsProp && !industryRowsFallback) {
+	throw new Error(`Unknown industry feature id: ${id}`);
+}
+
+const variant = rowsProp
+	? 'image-text-rows'
+	: (feature?.variant ?? (industryRowsFallback ? 'image-text-rows' : 'panel'));
+const reverse = reverseProp ?? feature?.reverse ?? false;
+const isImageList = variant === 'image-list';
+const isImageTextRows = variant === 'image-text-rows';
+const isPanel = !isImageList && !isImageTextRows;
+
+/** Prefer the explicit `id` prop so child/location section ids stay unique. */
+const sectionId = rowsProp ? id : (feature?.id ?? id);
+const headingId = `${sectionId}-heading`;
+const titleLines = feature?.titleLines ?? (['', ''] as [string, string]);
+const [titleLine1, titleLine2] = titleLines;
+const image = feature?.image;
+const imgW = image?.width ?? 680;
+const imgH = image?.height ?? 460;
+const rows = rowsProp ?? feature?.rows ?? industryRowsFallback ?? [];
+const firstRowId = rows[0]?.id ?? 'row-1';
+const firstRowHeadingId = `${firstRowId}-heading`;
+---
+
+{
+	isImageTextRows ? (
+		<Section
+			id={sectionId}
+			aria-labelledby={ariaLabel ? undefined : firstRowHeadingId}
+			aria-label={ariaLabel}
+			class="industry-feature industry-feature--rows"
+		>
+			<div class="industry-feature__rows">
+				{rows.map((row, index) => {
+					const rowId = row.id ?? `row-${index + 1}`;
+					const [line1, line2] = row.titleLines;
+					const para1 = row.paragraphs[0];
+					const para2 = row.paragraphs[1];
+					const rowImgW = row.image.width ?? 600;
+					const rowImgH = row.image.height ?? 390;
+					const imageOnRight = Boolean(row.reverse);
+					const caption = row.image.caption;
+					const imgEl = (
+						<img
+							class="industry-feature__image"
+							src={row.image.src}
+							alt={row.image.alt}
+							width={rowImgW}
+							height={rowImgH}
+							loading="lazy"
+							decoding="async"
+						/>
+					);
+
+					return (
+						<div
+							id={rowId}
+							class:list={[
+								'industry-feature__layout',
+								'industry-feature__layout--rows',
+								imageOnRight
+									? 'industry-feature__layout--image-right'
+									: 'industry-feature__layout--image-left',
+							]}
+						>
+							<div class="industry-feature__copy">
+								<h2
+									id={`${rowId}-heading`}
+									class="industry-feature__heading industry-feature__heading--flush m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+								>
+									<span class="industry-feature__line">{line1}</span>
+									<span class="industry-feature__line">{line2}</span>
+								</h2>
+								{para1 ? (
+									<p class="industry-feature__row-p1 text-on-light m-0">{para1}</p>
+								) : null}
+								{para2 ? (
+									<p class="industry-feature__row-p2 m-0">{para2}</p>
+								) : null}
+								{row.tag ? (
+									<p class="industry-feature__row-tag m-0">{row.tag}</p>
+								) : null}
+							</div>
+							{caption ? (
+								<figure class="industry-feature__figure m-0">
+									<div class="industry-feature__media">{imgEl}</div>
+									<figcaption class="industry-feature__caption">{caption}</figcaption>
+								</figure>
+							) : (
+								<div class="industry-feature__media">{imgEl}</div>
+							)}
+						</div>
+					);
+				})}
+			</div>
+		</Section>
+	) : (
+		<Section aria-labelledby={headingId} class="industry-feature">
+			<div
+				class:list={[
+					'industry-feature__layout',
+					isImageList ? 'industry-feature__layout--image-list' : 'industry-feature__layout--panel',
+					reverse && 'industry-feature__layout--reverse',
+				]}
+			>
+				<div class="industry-feature__copy">
+					{feature?.pill ? <p class="pill-light m-0">{feature.pill}</p> : null}
+					<h2
+						id={headingId}
+						class:list={[
+							'industry-feature__heading',
+							'm-0',
+							'text-h1',
+							'font-medium',
+							'tracking-[-0.03em]',
+							'text-primary-black',
+							!feature?.pill && 'industry-feature__heading--flush',
+						]}
+					>
+						{isImageList ? (
+							`${titleLine1} ${titleLine2}`
+						) : (
+							[
+								<span class="industry-feature__line">{titleLine1}</span>,
+								<span class="industry-feature__line">{titleLine2}</span>,
+							]
+						)}
+					</h2>
+					<p class="industry-feature__paragraphs text-on-light m-0">
+						{(feature?.paragraphs ?? []).map((line) => (
+							<span class="industry-feature__p-line">{line}</span>
+						))}
+					</p>
+					{isPanel ? <span class="industry-feature__accent" aria-hidden="true" /> : null}
+					{isImageList && feature?.list ? (
+						<ul class="industry-feature__plain-list m-0 list-none p-0">
+							{feature.list.map((item) => (
+								<li class="industry-feature__plain-item text-on-light">{item}</li>
+							))}
+						</ul>
+					) : null}
+				</div>
+
+				{isImageList && image ? (
+					<div class="industry-feature__media">
+						<img
+							class="industry-feature__image"
+							src={image.src}
+							alt={image.alt}
+							width={imgW}
+							height={imgH}
+							loading="lazy"
+							decoding="async"
+						/>
+					</div>
+				) : (
+					<div class="industry-feature__panel">
+						<ul class="industry-feature__list m-0 list-none p-0">
+							{(feature?.items ?? []).map((item) => (
+								<li class="industry-feature__card">
+									<span class="industry-feature__icon" aria-hidden="true">
+										<img
+											src={`/icons/${item.icon}.svg`}
+											alt=""
+											width="44"
+											height="44"
+											decoding="async"
+											loading="lazy"
+										/>
+									</span>
+									<div class="industry-feature__card-text">
+										<h3 class="industry-feature__card-title m-0">{item.title}</h3>
+										<p class="industry-feature__card-desc m-0">{item.text}</p>
+										<p class="industry-feature__card-tag m-0">{item.tag}</p>
+									</div>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+			</div>
+		</Section>
+	)
+}
+
+<style>
+	.industry-feature__rows {
+		display: flex;
+		flex-direction: column;
+		gap: 64px;
+	}
+
+	.industry-feature__layout {
+		display: grid;
+		align-items: center;
+	}
+
+	.industry-feature__layout--panel {
+		grid-template-columns: 0.9fr 1fr;
+		gap: 80px;
+	}
+
+	.industry-feature__layout--image-list {
+		grid-template-columns: 1.05fr 1fr;
+		gap: 56px;
+	}
+
+	.industry-feature__layout--rows {
+		grid-template-columns: 1.05fr 1fr;
+		gap: 64px;
+	}
+
+	/* panel / image-list: reverse = visual LEFT */
+	.industry-feature__layout--reverse .industry-feature__copy {
+		order: 2;
+	}
+
+	.industry-feature__layout--reverse .industry-feature__panel,
+	.industry-feature__layout--reverse .industry-feature__media {
+		order: 1;
+	}
+
+	/*
+	 * image-text-rows: DOM is always copy then media.
+	 * image-left (reverse false): media first via order.
+	 * image-right (reverse true): natural DOM order.
+	 */
+	.industry-feature__layout--image-left .industry-feature__copy {
+		order: 2;
+	}
+
+	.industry-feature__layout--image-left .industry-feature__media {
+		order: 1;
+	}
+
+	.industry-feature__copy {
+		min-width: 0;
+		text-align: left;
+	}
+
+	.industry-feature__heading {
+		margin-top: 20px;
+	}
+
+	.industry-feature__heading--flush {
+		margin-top: 0;
+	}
+
+	.industry-feature__layout--image-list .industry-feature__heading {
+		max-width: 520px;
+	}
+
+	.industry-feature__line {
+		display: block;
+	}
+
+	.industry-feature__paragraphs {
+		margin-top: 20px;
+	}
+
+	.industry-feature__layout--image-list .industry-feature__paragraphs {
+		max-width: 480px;
+	}
+
+	.industry-feature__p-line {
+		display: block;
+	}
+
+	.industry-feature__p-line:not(:last-child) {
+		margin-bottom: 16px;
+	}
+
+	.industry-feature__row-p1 {
+		max-width: 520px;
+		margin-top: 20px;
+	}
+
+	.industry-feature__row-p2 {
+		max-width: 520px;
+		margin-top: 24px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: rgb(11 10 11 / 0.85);
+	}
+
+	.industry-feature__row-tag {
+		margin-top: 12px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.4;
+		color: #ffa800;
+	}
+
+	.industry-feature__accent {
+		display: block;
+		width: 72px;
+		height: 3px;
+		margin-top: 28px;
+		border-radius: 2px;
+		background: #ffa800;
+	}
+
+	.industry-feature__plain-list {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		margin-top: 20px;
+	}
+
+	.industry-feature__plain-item {
+		margin: 0;
+	}
+
+	.industry-feature__figure {
+		min-width: 0;
+	}
+
+	.industry-feature__media {
+		min-width: 0;
+		overflow: hidden;
+		border-radius: 24px;
+	}
+
+	.industry-feature__image {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 3 / 2;
+		object-fit: cover;
+		border-radius: 24px;
+	}
+
+	.industry-feature__caption {
+		margin-top: 8px;
+		font-family: var(--font-inter);
+		font-size: 11px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #888888;
+		text-align: left;
+	}
+
+	/* Figure owns the grid cell so order still works for image-left / image-right */
+	.industry-feature__layout--image-left .industry-feature__figure {
+		order: 1;
+	}
+
+	.industry-feature__layout--image-right .industry-feature__figure {
+		order: 2;
+	}
+
+	.industry-feature__panel {
+		box-sizing: border-box;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 16px;
+		padding: 36px;
+		border-radius: 24px;
+		background: #f7f7f5;
+	}
+
+	.industry-feature__list {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.industry-feature__card {
+		display: flex;
+		align-items: flex-start;
+		gap: 16px;
+		padding: 20px;
+		border: 1px solid #ededeb;
+		border-radius: 10px;
+		background: #ffffff;
+	}
+
+	/*
+	 * Assets already include the pale amber rounded rect + #FFA800 glyph,
+	 * so the wrapper is a 44px slot without a second background fill.
+	 */
+	.industry-feature__icon {
+		display: flex;
+		width: 44px;
+		height: 44px;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		border-radius: 10px;
+	}
+
+	.industry-feature__icon img {
+		display: block;
+		width: 44px;
+		height: 44px;
+		object-fit: contain;
+	}
+
+	.industry-feature__card-text {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.industry-feature__card-title {
+		font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter',
+			sans-serif;
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: var(--color-primary-black);
+	}
+
+	.industry-feature__card-desc {
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #555555;
+	}
+
+	.industry-feature__card-tag {
+		margin-top: 4px;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #555555;
+	}
+
+	@media (max-width: 1023px) {
+		.industry-feature__rows {
+			gap: 48px;
+		}
+
+		.industry-feature__layout--panel {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.industry-feature__layout--image-list {
+			grid-template-columns: 1fr;
+			gap: 32px;
+		}
+
+		.industry-feature__layout--rows {
+			grid-template-columns: 1fr;
+			gap: 32px;
+		}
+
+		/* Both rows: image (or figure) first on mobile */
+		.industry-feature__layout--rows .industry-feature__media,
+		.industry-feature__layout--rows .industry-feature__figure {
+			order: 1;
+		}
+
+		.industry-feature__layout--rows .industry-feature__copy {
+			order: 2;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.industry-feature__panel {
+			padding: 20px;
+		}
+
+		.industry-feature__card {
+			padding: 16px;
+		}
+
+		.industry-feature__icon {
+			width: 40px;
+			height: 40px;
+		}
+
+		.industry-feature__icon img {
+			width: 40px;
+			height: 40px;
+		}
+
+		.industry-feature__card-title {
+			font-size: 18px;
+		}
+
+		.industry-feature__image {
+			aspect-ratio: 4 / 3;
+		}
+	}
+</style>

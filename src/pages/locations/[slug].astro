@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LocationHero from '../../components/LocationHero.astro';
+import LocationIndustries from '../../components/LocationIndustries.astro';
+import LocationIntent from '../../components/LocationIntent.astro';
+import IndustryFeature from '../../components/IndustryFeature.astro';
+import IndustryClarity from '../../components/IndustryClarity.astro';
+import IndustryFundamentals from '../../components/IndustryFundamentals.astro';
+import FAQ from '../../components/FAQ.astro';
+import { industryFundamentals } from '../../data/industry-fundamentals';
+import { getLocationBySlug, locations, type Location } from '../../data/locations';
+import CTASection from '@/components/CTASection.astro';
+
+export function getStaticPaths() {
+	return locations.map((location) => ({
+		params: { slug: location.slug },
+		props: { location },
+	}));
+}
+
+interface Props {
+	location: Location;
+}
+
+const { slug } = Astro.params;
+const locationFromProps = Astro.props.location;
+const location =
+	locationFromProps ?? (slug ? getLocationBySlug(slug) : undefined);
+
+if (!location) {
+	return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const canonicalPath = `/locations/${location.slug}`;
+const {
+	hero,
+	industries,
+	intent,
+	rows,
+	clarity,
+	clarityLight,
+	fundamentals,
+	faq,
+} = location;
+---
+
+<Layout
+	title={location.metaTitle}
+	description={location.metaDescription}
+	canonicalPath={canonicalPath}
+	image={hero.image}
+>
+	<main id="main-content" class="flex-1">
+		<LocationHero
+			pill={hero.pill}
+			pillBrand={hero.pillBrand}
+			title={hero.title}
+			text={hero.text}
+			button={hero.button}
+			image={hero.image}
+		/>
+		{industries ? <LocationIndustries industries={industries} /> : null}
+		{intent ? <LocationIntent intent={intent} /> : null}
+		{rows ? (
+			<IndustryFeature
+				id="location-rows"
+				rows={rows}
+				aria-label="Location highlights"
+			/>
+		) : null}
+		{clarity ? <IndustryClarity section={clarity} /> : null}
+		{clarityLight ? <IndustryClarity section={clarityLight} /> : null}
+		{/* Falls back to Industries fundamentals when location has no fundamentals */}
+		<IndustryFundamentals content={fundamentals ?? industryFundamentals} />
+		{faq ? (
+			<FAQ
+				id={`${location.slug}-faq`}
+				pill={faq.pill}
+				heading={faq.heading}
+				text={faq.text}
+				items={faq.items}
+			/>
+		) : null}
+		<CTASection />
+		<!-- Location page sections will be added here -->
+	</main>
+</Layout>

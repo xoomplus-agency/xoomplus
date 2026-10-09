@@ -1,0 +1,169 @@
+---
+/**
+ * Location “Local intent” — dark section, header row + one static glass card.
+ * Content from location data. Reuses .service-card / .section-glow-top-left.
+ */
+import Section from './Section.astro';
+import type { LocationIntent } from '../data/locations';
+
+interface Props {
+	intent: LocationIntent;
+}
+
+const { intent } = Astro.props;
+const headingId = 'local-intent-heading';
+const [titleLine1, titleLine2] = intent.titleLines;
+---
+
+<Section
+	id="local-intent"
+	background="dark"
+	aria-labelledby={headingId}
+	class="location-intent section-glow-top-left"
+>
+	<div class="location-intent__header">
+		<div class="location-intent__heading-group">
+			<p class="pill-dark text-primary m-0">{intent.pill}</p>
+			<h2
+				id={headingId}
+				class="text-hero-h1 dark-section-heading location-intent__title m-0"
+			>
+				<span class="location-intent__title-line">{titleLine1}</span>
+				<span class="location-intent__title-line">{titleLine2}</span>
+			</h2>
+		</div>
+		<p class="location-intent__intro m-0">{intent.text}</p>
+	</div>
+
+	<article class="service-card service-card--static location-intent__card">
+		<h3 class="location-intent__card-title m-0">{intent.card.title}</h3>
+		<div class="location-intent__divider" aria-hidden="true"></div>
+		<ul class="location-intent__items m-0 list-none p-0" role="list">
+			{
+				intent.card.items.map((item) => (
+					<li class="location-intent__item">
+						<p class="location-intent__item-title m-0">{item.title}</p>
+						<p class="location-intent__item-text m-0">{item.text}</p>
+					</li>
+				))
+			}
+		</ul>
+	</article>
+</Section>
+
+<style>
+	.location-intent__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.location-intent__heading-group {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.location-intent__title {
+		margin-top: 16px;
+	}
+
+	.location-intent__title-line {
+		display: block;
+	}
+
+	.location-intent__intro {
+		flex: 0 0 auto;
+		max-width: 340px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+	}
+
+	.location-intent__card {
+		width: 100%;
+		max-width: 100%;
+		margin-top: 40px;
+		padding: 24px 18px;
+	}
+
+	.location-intent__card-title {
+		font-family: var(--font-inter);
+		font-size: 32px;
+		font-weight: 400;
+		line-height: 1.2;
+		color: #ffffff;
+	}
+
+	.location-intent__divider {
+		width: 100%;
+		height: 0;
+		margin-top: 20px;
+		border: 0;
+		border-top: 1px solid rgb(255 255 255 / 0.15);
+	}
+
+	.location-intent__items {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		column-gap: 32px;
+		row-gap: 20px;
+		width: 100%;
+		margin-top: 20px;
+	}
+
+	.location-intent__item-title {
+		font-family: var(--font-inter);
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: #ffffff;
+	}
+
+	.location-intent__item-text {
+		margin-top: 6px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	@media (max-width: 1023px) {
+		.location-intent__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.location-intent__intro {
+			max-width: none;
+			width: 100%;
+		}
+
+		.location-intent__items {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 639px) {
+		.location-intent__title {
+			font-size: clamp(1.75rem, 8vw, 1.875rem); /* ~28–30px */
+		}
+
+		.location-intent__items {
+			grid-template-columns: 1fr;
+		}
+
+		.location-intent__card-title {
+			font-size: 26px;
+		}
+
+		.location-intent__item-title {
+			font-size: 18px;
+		}
+	}
+</style>

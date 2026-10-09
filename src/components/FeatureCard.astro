@@ -1,0 +1,164 @@
+---
+/**
+ * Shared light feature card (ServiceFeatures "Built around people" + IndustryFundamentals).
+ * Surface: global `.surface-card`. Hover lift disabled to match Built around people.
+ */
+interface Props {
+	icon: string;
+	title: string;
+	text: string;
+	/** Optional child-service URL — stretched link over the card. */
+	href?: string;
+	/** When true, show amber plus opposite the icon (gray-plus ServiceFeatures variant). */
+	showPlus?: boolean;
+	/** Default 28; gray-plus uses 24. */
+	iconSize?: number;
+	class?: string;
+}
+
+const {
+	icon,
+	title,
+	text,
+	href,
+	showPlus = false,
+	iconSize = 28,
+	class: className = '',
+} = Astro.props;
+
+const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
+---
+
+<article class:list={['surface-card', 'feature-card', href && 'feature-card--link', className]}>
+	{
+		showPlus ? (
+			<div class="feature-card__top">
+				<img
+					class="feature-card__icon"
+					src={iconSrc}
+					alt=""
+					width={iconSize}
+					height={iconSize}
+					aria-hidden="true"
+					decoding="async"
+					loading="lazy"
+				/>
+				<svg
+					class="feature-card__plus"
+					width="16"
+					height="16"
+					viewBox="0 0 16 16"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+					aria-hidden="true"
+				>
+					<path
+						d="M8 3v10M3 8h10"
+						stroke="currentColor"
+						stroke-width="1.75"
+						stroke-linecap="round"
+					/>
+				</svg>
+			</div>
+		) : (
+			<img
+				class="feature-card__icon"
+				src={iconSrc}
+				alt=""
+				width={iconSize}
+				height={iconSize}
+				aria-hidden="true"
+				decoding="async"
+				loading="lazy"
+			/>
+		)
+	}
+	<h3 class="feature-card__title m-0">{title}</h3>
+	<p class="feature-card__text m-0">{text}</p>
+	{href ? <a class="feature-card__stretched" href={href} aria-label={title} /> : null}
+</article>
+
+<style>
+	.feature-card {
+		position: relative;
+		display: flex;
+		width: 100%;
+		height: 100%;
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 32px 24px;
+		text-align: left;
+		transition: none;
+	}
+
+	.feature-card__stretched {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		border-radius: inherit;
+	}
+
+	@media (hover: hover) {
+		.feature-card.surface-card:hover {
+			transform: none;
+		}
+	}
+
+	.feature-card__top {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.feature-card__icon {
+		display: block;
+		width: 28px;
+		height: 28px;
+		flex-shrink: 0;
+	}
+
+	.feature-card--icon-sm .feature-card__icon,
+	:global(.sf-section--gray-plus) .feature-card__icon {
+		width: 24px;
+		height: 24px;
+	}
+
+	.feature-card__plus {
+		display: block;
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+		color: #ffa800;
+		pointer-events: none;
+	}
+
+	.feature-card__title {
+		margin-top: 24px;
+		font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter',
+			sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+		line-height: 1.2;
+		color: var(--color-primary-black);
+	}
+
+	.feature-card__text {
+		margin-top: 12px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: #555555;
+	}
+
+	@media (max-width: 639px) {
+		.feature-card__title {
+			font-size: clamp(1.5rem, 5.5vw, 1.875rem); /* ~24–30px */
+		}
+
+		.feature-card__text {
+			font-size: clamp(1rem, 4vw, 1.125rem); /* ~16–18px */
+		}
+	}
+</style>

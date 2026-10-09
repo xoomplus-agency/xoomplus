@@ -1,0 +1,423 @@
+---
+/**
+ * Clarity section — dark (industries / location centered) or light (#F7F7F5).
+ * Dark variants stay pixel-identical; light styles are scoped under --light.
+ */
+import Section from './Section.astro';
+import {
+	industryClarity,
+	type IndustryClaritySection,
+} from '../data/industry-clarity';
+
+interface Props {
+	/** Preferred prop name (child service pages). Defaults to industries catalog. */
+	content?: IndustryClaritySection;
+	/** Alias used by location pages — same as `content`. */
+	section?: IndustryClaritySection;
+}
+
+const section = Astro.props.content ?? Astro.props.section ?? industryClarity;
+const isCentered = section.variant === 'centered';
+const isLight = section.theme === 'light';
+const headingId = `${section.id}-heading`;
+const [titleLine1, titleLine2] = section.titleLines ?? (['', ''] as [string, string]);
+const hasTitleLines = Boolean(section.titleLines?.[0]);
+---
+
+<Section
+	id={section.id}
+	background={isLight ? 'light-gray' : 'dark'}
+	aria-labelledby={headingId}
+	class:list={!isLight && 'section-glow-top-left'}
+>
+	{/* Theme/variant classes must live on an element in THIS component so scoped CSS matches */}
+	<div
+		class:list={[
+			'industry-clarity',
+			isCentered && 'industry-clarity--centered',
+			isLight && 'industry-clarity--light',
+		]}
+	>
+		<div class="industry-clarity__header">
+			<div class="industry-clarity__heading-group">
+				{
+					isLight ? (
+						<p class="pill-light m-0">{section.pill}</p>
+					) : (
+						<p class="pill-dark text-primary m-0">{section.pill}</p>
+					)
+				}
+				<h2
+					id={headingId}
+					class:list={[
+						'industry-clarity__title',
+						'm-0',
+						isLight
+							? 'text-h1 font-medium tracking-[-0.03em] text-primary-black'
+							: 'text-hero-h1 dark-section-heading',
+					]}
+				>
+					{
+						hasTitleLines ? (
+							[
+								<span class="industry-clarity__title-line">{titleLine1}</span>,
+								<span class="industry-clarity__title-line">{titleLine2}</span>,
+							]
+						) : (
+							section.title
+						)
+					}
+				</h2>
+			</div>
+			<p class="industry-clarity__intro m-0">{section.text}</p>
+		</div>
+
+		<div class="industry-clarity__columns">
+			{
+				section.columns.map((column) => (
+					<div class="industry-clarity__column">
+						{isLight && column.eyebrow ? (
+							<p class="industry-clarity__eyebrow m-0">{column.eyebrow}</p>
+						) : null}
+						<h3 class="industry-clarity__column-title m-0">{column.title}</h3>
+						{!isLight && column.eyebrow ? (
+							<p class="industry-clarity__eyebrow m-0">{column.eyebrow}</p>
+						) : null}
+						<p class="industry-clarity__column-text m-0">{column.text}</p>
+						<div class="industry-clarity__divider" aria-hidden="true" />
+						<ul class="industry-clarity__items m-0 list-none p-0">
+							{column.items.map((item) => (
+								<li class="industry-clarity__item">
+									<h4 class="industry-clarity__item-title m-0">{item.title}</h4>
+									<p class="industry-clarity__item-text m-0">{item.text}</p>
+									{item.tag ? (
+										<p class="industry-clarity__item-tag m-0">{item.tag}</p>
+									) : null}
+								</li>
+							))}
+						</ul>
+					</div>
+				))
+			}
+		</div>
+
+		{
+			section.note ? (
+				isLight ? (
+					<div class="industry-clarity__note-row">
+						<span class="industry-clarity__note-bar" aria-hidden="true" />
+						<p class="industry-clarity__note m-0">{section.note}</p>
+					</div>
+				) : (
+					<p class="industry-clarity__note m-0">{section.note}</p>
+				)
+			) : null
+		}
+	</div>
+</Section>
+
+<style>
+	.industry-clarity__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.industry-clarity__heading-group {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.industry-clarity__title {
+		margin-top: 16px;
+	}
+
+	.industry-clarity__title-line {
+		display: block;
+	}
+
+	.industry-clarity__intro {
+		flex: 0 0 auto;
+		max-width: 380px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+	}
+
+	/* Location centered header — industries default stays side-by-side */
+	.industry-clarity--centered .industry-clarity__header {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.industry-clarity--centered .industry-clarity__heading-group {
+		flex: none;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.industry-clarity--centered .industry-clarity__intro {
+		max-width: 520px;
+		text-align: center;
+	}
+
+	.industry-clarity__columns {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		column-gap: 48px;
+		align-items: start;
+		margin-top: 48px;
+	}
+
+	.industry-clarity__column {
+		min-width: 0;
+	}
+
+	.industry-clarity__column-title {
+		font-family: var(--font-inter);
+		font-size: 32px;
+		font-weight: 500;
+		line-height: 1.2;
+		color: #ffffff;
+	}
+
+	.industry-clarity__eyebrow {
+		margin-top: 16px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #ffa800;
+	}
+
+	.industry-clarity__column-text {
+		margin-top: 16px;
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.industry-clarity--centered .industry-clarity__column-text {
+		font-size: 16px;
+	}
+
+	.industry-clarity__divider {
+		width: 100%;
+		height: 0;
+		margin-top: 24px;
+		border: 0;
+		border-top: 1px solid rgb(255 255 255 / 0.15);
+	}
+
+	.industry-clarity--centered .industry-clarity__divider {
+		margin-top: 20px;
+	}
+
+	.industry-clarity__items {
+		width: 100%;
+	}
+
+	.industry-clarity__item {
+		padding: 24px 0;
+	}
+
+	.industry-clarity--centered .industry-clarity__item {
+		padding: 20px 0;
+	}
+
+	.industry-clarity__item:not(:last-child) {
+		border-bottom: 1px solid rgb(255 255 255 / 0.15);
+	}
+
+	.industry-clarity__item-title {
+		font-family: var(--font-inter);
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: #ffffff;
+	}
+
+	.industry-clarity__item-text {
+		margin-top: 8px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.industry-clarity__item-tag {
+		margin-top: 12px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #ffa800;
+	}
+
+	.industry-clarity__note {
+		margin-top: 48px;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+	}
+
+	/* —— Light theme (#F7F7F5) — does not affect dark variants —— */
+	.industry-clarity--light {
+		color: #555555;
+	}
+
+	.industry-clarity--light .industry-clarity__intro {
+		max-width: 340px;
+		color: #555555;
+	}
+
+	.industry-clarity--light .industry-clarity__title,
+	.industry-clarity--light .industry-clarity__column-title,
+	.industry-clarity--light .industry-clarity__item-title {
+		color: var(--color-primary-black);
+	}
+
+	.industry-clarity--light .industry-clarity__eyebrow {
+		margin-top: 0;
+		margin-bottom: 12px;
+		font-size: 14px;
+		color: #555555;
+	}
+
+	.industry-clarity--light .industry-clarity__column-text {
+		font-size: 16px;
+		color: #555555;
+	}
+
+	.industry-clarity--light .industry-clarity__divider {
+		margin-top: 20px;
+		border-top-color: #e9e9e7;
+	}
+
+	.industry-clarity--light .industry-clarity__item {
+		padding: 10px 0;
+	}
+
+	.industry-clarity--light .industry-clarity__item:not(:last-child) {
+		border-bottom: 0;
+	}
+
+	.industry-clarity--light .industry-clarity__item-text {
+		margin-top: 4px;
+		color: #555555;
+	}
+
+	.industry-clarity--light .industry-clarity__note-row {
+		display: flex;
+		align-items: stretch;
+		gap: 12px;
+		margin-top: 48px;
+	}
+
+	.industry-clarity--light .industry-clarity__note-bar {
+		display: block;
+		width: 3px;
+		flex-shrink: 0;
+		border-radius: 2px;
+		background: #ffa800;
+	}
+
+	.industry-clarity--light .industry-clarity__note {
+		margin-top: 0;
+		flex: 1 1 auto;
+		min-width: 0;
+		max-width: none;
+		color: #555555;
+	}
+
+	/*
+	 * One-line title needs ~720px; with 380px intro + 48px gap that is ~1148px
+	 * content width. Side padding means that only fits from ~1536px viewport up.
+	 */
+	@media (min-width: 1536px) {
+		.industry-clarity:not(.industry-clarity--light) .industry-clarity__title {
+			white-space: nowrap;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.industry-clarity--centered .industry-clarity__title {
+			white-space: nowrap;
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.industry-clarity__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.industry-clarity--centered .industry-clarity__header {
+			align-items: center;
+		}
+
+		.industry-clarity__intro {
+			max-width: none;
+			width: 100%;
+		}
+
+		.industry-clarity--centered .industry-clarity__intro {
+			max-width: 520px;
+		}
+
+		.industry-clarity--light .industry-clarity__intro {
+			max-width: none;
+		}
+
+		.industry-clarity__columns {
+			grid-template-columns: 1fr;
+			row-gap: 0;
+		}
+
+		.industry-clarity__column:not(:last-child) {
+			padding-bottom: 48px;
+			margin-bottom: 48px;
+			border-bottom: 1px solid rgb(255 255 255 / 0.15);
+		}
+
+		.industry-clarity--light .industry-clarity__column:not(:last-child) {
+			border-bottom-color: #e9e9e7;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.industry-clarity--centered .industry-clarity__title,
+		.industry-clarity--light .industry-clarity__title {
+			font-size: clamp(1.75rem, 8vw, 1.875rem); /* ~28–30px */
+		}
+
+		.industry-clarity__column-title {
+			font-size: 26px;
+		}
+
+		.industry-clarity__column-text {
+			font-size: 16px;
+		}
+
+		.industry-clarity__item-title {
+			font-size: 18px;
+		}
+
+		.industry-clarity--light .industry-clarity__note {
+			font-size: 13px;
+		}
+	}
+</style>

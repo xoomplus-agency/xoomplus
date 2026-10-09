@@ -1,0 +1,144 @@
+---
+/**
+ * "The services behind the possibilities" — dark section, 3 ServiceCards.
+ * Content from props / servicesBehind (Industries default).
+ */
+import Section from './Section.astro';
+import ServiceCard from './ServiceCard.astro';
+import {
+	servicesBehind,
+	type ServicesBehindSection,
+} from '../data/services-behind';
+
+interface Props {
+	/** Full section content. Defaults to Industries `servicesBehind`. */
+	content?: ServicesBehindSection;
+}
+
+const section = Astro.props.content ?? servicesBehind;
+const headingId = `${section.id}-heading`;
+---
+
+<Section
+	id={section.id}
+	background="dark"
+	aria-labelledby={headingId}
+	class="services-behind section-glow-top-left"
+>
+	<div class="services-behind__header">
+		<div class="services-behind__heading-group">
+			<p class="pill-dark text-primary m-0">{section.pill}</p>
+			<h2
+				id={headingId}
+				class="text-hero-h1 dark-section-heading services-behind__title m-0"
+			>
+				{section.title}
+			</h2>
+		</div>
+		<p class="services-behind__intro m-0">{section.text}</p>
+	</div>
+
+	<div class="services-behind__grid">
+		{
+			section.cards.map((card) => (
+				<ServiceCard
+					title={card.title}
+					icon={card.icon}
+					description={card.description}
+					features={card.items}
+					cta={{ label: card.buttonLabel, href: card.href }}
+					buttonLabel={card.buttonLabel}
+					buttonIcon="right"
+				/>
+			))
+		}
+	</div>
+</Section>
+
+<style>
+	.services-behind__header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.services-behind__heading-group {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.services-behind__title {
+		margin-top: 16px;
+	}
+
+	.services-behind__intro {
+		flex: 0 0 auto;
+		max-width: 380px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+	}
+
+	.services-behind__grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 24px;
+		align-items: stretch;
+		margin-top: 40px;
+	}
+
+	.services-behind__grid :global(.service-card) {
+		height: 100%;
+		min-width: 0;
+	}
+
+	/*
+	 * One-line title needs ~780px; with 380px intro + 48px gap that is ~1208px
+	 * content width. Side padding means that only fits from ~1600px viewport up.
+	 */
+	@media (min-width: 1600px) {
+		.services-behind__title {
+			white-space: nowrap;
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.services-behind__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.services-behind__intro {
+			max-width: none;
+			width: 100%;
+		}
+
+		.services-behind__grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		/* Third card centered under the first row */
+		.services-behind__grid :global(.service-card:last-child) {
+			grid-column: 1 / -1;
+			width: 100%;
+			max-width: calc((100% - 24px) / 2);
+			justify-self: center;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.services-behind__grid {
+			grid-template-columns: 1fr;
+		}
+
+		.services-behind__grid :global(.service-card:last-child) {
+			grid-column: auto;
+			max-width: none;
+		}
+	}
+</style>

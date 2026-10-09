@@ -2,67 +2,60 @@
 import Section from './Section.astro';
 import FAQAccordion from './FAQAccordion';
 import type { FAQItem } from './FAQAccordion';
+import { FAQ_DEFAULTS, getFaqSet, type FaqItem } from '../data/faqs';
 
 interface Props {
-	items?: FAQItem[];
+	items?: FaqItem[];
+	page?: string;
 	pill?: string;
 	heading?: string;
-	paragraph?: string;
+	text?: string;
+	defaultOpen?: number | null;
 	id?: string;
+	/** Output FAQPage JSON-LD (default true). Set false if a second FAQ section exists on the same page. */
+	jsonLd?: boolean;
 }
 
-const defaultItems: FAQItem[] = [
-	{
-		id: 'item-1',
-		question: 'Are these examples of industries you have worked in?',
-		answer:
-			"This page describes possible uses of XoomPlus's services across the listed sectors. It is not a portfolio of sector projects or a claim of specialist experience. We would discuss suitability and any relevant experience in your first conversation.",
-	},
-	{
-		id: 'item-2',
-		question: 'What if my industry is not listed?',
-		answer:
-			'We work with businesses across many sectors. If yours is not listed, get in touch — we will tell you honestly whether we are a good fit and how we can help.',
-	},
-	{
-		id: 'item-3',
-		question: 'Do I need a whole new website?',
-		answer:
-			'Not always. Some clients need a full rebuild; others only need targeted improvements to pages, SEO, or lead generation. We recommend what matches your goals and budget.',
-	},
-	{
-		id: 'item-4',
-		question: 'Can I start with just one service?',
-		answer:
-			'Yes. Many clients begin with a single service such as SEO, Google Ads, or a website refresh, then expand once they see results.',
-	},
-	{
-		id: 'item-5',
-		question: 'How do you handle specialist or regulated content?',
-		answer:
-			'We follow your compliance requirements and work with your team or advisors on sensitive copy. Accuracy and approval processes come first in regulated industries.',
-	},
-	{
-		id: 'item-6',
-		question: 'What should I include in my enquiry?',
-		answer:
-			'A short overview of your business, your main goals, your current website or marketing setup, and any timeline or budget range helps us prepare a useful first conversation.',
-	},
-];
-
 const {
-	items = defaultItems,
-	pill = 'FAQ',
-	heading = 'Frequently Asked Questions',
-	paragraph = 'Hear directly from the businesses we work with about their experience working with Xoomplus.',
+	items: itemsProp,
+	page,
+	pill: pillProp,
+	heading: headingProp,
+	text: textProp,
+	defaultOpen = 0,
 	id = 'faq',
+	jsonLd = true,
 } = Astro.props;
 
-const faqItems: FAQItem[] = items.map((item, index) => ({
-	id: item.id || `item-${index + 1}`,
+const set = page ? getFaqSet(page) : undefined;
+const sourceItems: FaqItem[] = itemsProp?.length
+	? itemsProp
+	: set?.items?.length
+		? set.items
+		: [];
+
+if (sourceItems.length === 0) {
+	return;
+}
+
+const pill = pillProp ?? set?.pill ?? FAQ_DEFAULTS.pill;
+const heading = headingProp ?? set?.heading ?? FAQ_DEFAULTS.heading;
+const text = textProp ?? set?.text ?? FAQ_DEFAULTS.text;
+const headingId = `${id}-heading`;
+
+const faqItems: FAQItem[] = sourceItems.map((item, index) => ({
+	id: `${id}-item-${index}`,
 	question: item.question,
 	answer: item.answer,
 }));
+
+/** Plain text for schema.org — strip HTML from trusted answers. */
+function stripHtml(html: string): string {
+	return html
+		.replace(/<[^>]*>/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
 
 const faqJsonLd = {
 	'@context': 'https://schema.org',
@@ -72,31 +65,56 @@ const faqJsonLd = {
 		name: item.question,
 		acceptedAnswer: {
 			'@type': 'Answer',
-			text: item.answer,
+			text: stripHtml(item.answer),
 		},
 	})),
 };
 ---
 
-{
-	faqItems.length > 0 && (
-		<>
-			<Section id={id} aria-labelledby="faq-heading">
-				<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
-					<p class="pill-light mb-5">{pill}</p>
-					<h2
-						id="faq-heading"
-						class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
-					>
-						{heading}
-					</h2>
-					<p class="text-on-light mx-auto max-w-[640px]">{paragraph}</p>
-				</div>
+<Section id={id} aria-labelledby={headingId}>
+	<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+		<p class="pill-light mb-5">{pill}</p>
+		<h2
+			id={headingId}
+			class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+		>
+			{heading}
+		</h2>
+		<p class="text-on-light mx-auto max-w-[640px]">{text}</p>
+	</div>
 
-				<FAQAccordion client:load items={faqItems} />
-			</Section>
+	<FAQAccordion client:load items={faqItems} defaultOpen={defaultOpen} />
+</Section>
 
-			<script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
-		</>
-	)
-}
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />}
+
+<style is:global>
+	/* Answer HTML from trusted FAQ data only */
+	.faq-answer a {
+		color: var(--color-primary-black);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.faq-answer a:hover {
+		color: #ffa800;
+	}
+
+	.faq-answer ul,
+	.faq-answer ol {
+		margin: 0.75em 0 0;
+		padding-left: 1.25em;
+	}
+
+	.faq-answer li {
+		margin-top: 0.35em;
+	}
+
+	.faq-answer ul {
+		list-style-type: disc;
+	}
+
+	.faq-answer ol {
+		list-style-type: decimal;
+	}
+</style>

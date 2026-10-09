@@ -1,0 +1,62 @@
+---
+/**
+ * Fixed main-service template — every service renders the same section order.
+ * Content and images come from `src/data/services/<slug>.ts`.
+ *
+ * Optional future escape hatch (not implemented):
+ * // if (service.overrides?.hide?.includes('bento')) ...
+ */
+import Layout from '../../layouts/Layout.astro';
+import ServiceHero from '../../components/ServiceHero.astro';
+import ServiceFeatures from '../../components/ServiceFeatures.astro';
+import ServiceBento from '../../components/ServiceBento.astro';
+import ServiceShowcase from '../../components/ServiceShowcase.astro';
+import ServiceProcess from '../../components/ServiceProcess.astro';
+import FAQ from '../../components/FAQ.astro';
+import CTASection from '../../components/CTASection.astro';
+import {
+	getMainServiceBySlug,
+	mainServices,
+	type MainService,
+} from '../../data/main-services';
+
+export function getStaticPaths() {
+	return mainServices.map((service) => ({
+		params: { slug: service.slug },
+		props: { service },
+	}));
+}
+
+interface Props {
+	service: MainService;
+}
+
+const { slug } = Astro.params;
+const serviceFromProps = Astro.props.service;
+const service =
+	serviceFromProps ?? (slug ? getMainServiceBySlug(slug) : undefined);
+
+if (!service) {
+	return Astro.redirect('/our-services');
+}
+
+const canonicalPath = `/services/${service.slug}`;
+---
+
+<Layout title={service.metaTitle} description={service.metaDescription} canonicalPath={canonicalPath}>
+	<main id="main-content" class="flex-1">
+		<ServiceHero hero={service.hero} />
+		<ServiceFeatures {...service.features} id="details" />
+		<ServiceFeatures
+			variant="gray-plus"
+			{...service.experience}
+			id="experience-design"
+		/>
+		<ServiceBento {...service.bento} id="development-commerce" />
+		<ServiceShowcase {...service.showcase} id="connected-experience" />
+		<ServiceProcess {...service.process} id="working-together" />
+		{service.faqKey ? <FAQ page={service.faqKey} /> : null}
+		{/* Shared home-page CTA — no service-specific variant chosen yet */}
+		<CTASection />
+	</main>
+</Layout>

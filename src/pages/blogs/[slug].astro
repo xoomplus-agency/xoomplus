@@ -7,7 +7,8 @@
 import Layout from '../../layouts/Layout.astro';
 import Section from '../../components/Section.astro';
 import FAQ from '../../components/FAQ.astro';
-import RelatedBlogs from '../../components/RelatedBlogs.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import BlogSidebarCta from '../../components/BlogSidebarCta.astro';
 import CTASection from '../../components/CTASection.astro';
 import { blogs, getBlogBySlug, getRelatedPosts } from '../../data/blogs';
 import '../../styles/prose-blog.css';
@@ -48,12 +49,6 @@ const articleJsonLd = {
 		jobTitle: post.author.role,
 	},
 };
-
-const faqItems = post.faqs.map((faq, index) => ({
-	id: `faq-${index + 1}`,
-	question: faq.question,
-	answer: faq.answer,
-}));
 ---
 
 <Layout
@@ -161,43 +156,73 @@ const faqItems = post.faqs.map((faq, index) => ({
 					</div>
 				</div>
 
-				<img
-					class="blog-article__feature"
-					src={post.featureImage.src}
-					alt={post.featureImage.alt}
-					width="1196"
-					height="539"
-					loading="eager"
-					fetchpriority="high"
-					decoding="async"
-				/>
+				<div class="blog-article__layout">
+					<div class="blog-article__content">
+						<img
+							class="blog-article__feature"
+							src={post.featureImage.src}
+							alt={post.featureImage.alt}
+							width="1196"
+							height="539"
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+						/>
 
-				{/* Real content later: Markdown/MDX or CMS HTML into post.content */}
-				<div class="prose-blog blog-article__body" set:html={post.content} />
-				<div class="prose-blog blog-article__body" set:html={post.content} />
+						{/* Real content later: Markdown/MDX or CMS HTML into post.content */}
+						<div class="prose-blog blog-article__body" set:html={post.content} />
+					</div>
+
+					<aside class="blog-sidebar" aria-label="Sidebar">
+						<div class="blog-sidebar__cta">
+							<BlogSidebarCta />
+						</div>
+
+						{
+							related.length > 0 && (
+								<div class="blog-sidebar__related">
+									<h2 class="blog-sidebar__related-heading">Related Blogs</h2>
+									<ul class="blog-sidebar__list m-0 list-none p-0" role="list">
+										{related.map((item) => (
+											<li class="blog-sidebar__item">
+												<BlogCard
+													image={item.image}
+													alt={item.alt}
+													category={item.category}
+													title={item.title}
+													excerpt={item.excerpt}
+													href={item.href}
+													size="compact"
+													draft={item.draft}
+												/>
+											</li>
+										))}
+									</ul>
+								</div>
+							)
+						}
+					</aside>
+				</div>
 			</article>
 		</Section>
 
-		<!-- {
-			faqItems.length > 0 && (
-				<FAQ
-					items={faqItems}
-					pill="FAQ"
-					heading="Frequently Asked Questions"
-					paragraph="Quick answers to common questions about this topic."
-				/>
-			)
-		} -->
+		<FAQ
+			items={post.faqs}
+			pill="FAQ"
+			heading="Frequently Asked Questions"
+			text="Quick answers to common questions about this topic."
+			id="blog-faq"
+		/>
 
-		<RelatedBlogs posts={related} />
 		<CTASection />
 	</main>
 </Layout>
 
 <style>
-	/* Clear fixed navbar — no dark hero on this page */
+	/* Matches existing header clear on this page (fixed navbar) */
 	.blog-detail-main {
-		padding-top: 100px;
+		--blog-nav-offset: 100px;
+		padding-top: var(--blog-nav-offset);
 	}
 
 	.blog-article {
@@ -316,13 +341,23 @@ const faqItems = post.faqs.map((faq, index) => ({
 		display: block;
 	}
 
+	.blog-article__layout {
+		display: grid;
+		grid-template-columns: 1fr;
+		align-items: start;
+		gap: 32px;
+		margin-top: 24px;
+	}
+
+	.blog-article__content {
+		min-width: 0;
+	}
+
 	.blog-article__feature {
 		display: block;
 		width: 100%;
-		max-width: 1196px;
 		height: auto;
 		aspect-ratio: 1196 / 539;
-		margin-top: 24px;
 		border-radius: 20px;
 		object-fit: cover;
 	}
@@ -331,9 +366,78 @@ const faqItems = post.faqs.map((faq, index) => ({
 		margin-top: 32px;
 	}
 
+	.blog-sidebar {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		min-width: 0;
+	}
+
+	.blog-sidebar__related-heading {
+		margin: 0 0 16px;
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 500;
+		line-height: 1.25;
+		color: var(--color-primary-black);
+	}
+
+	.blog-sidebar__list {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.blog-sidebar__item {
+		min-width: 0;
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.blog-sidebar__list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.blog-sidebar__cta {
+			width: 100%;
+			max-width: 480px;
+			margin-inline: auto;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.blog-article__layout {
+			grid-template-columns: minmax(0, 1fr) 320px;
+			column-gap: 32px;
+			row-gap: 0;
+		}
+
+		.blog-sidebar {
+			position: sticky;
+			top: calc(var(--blog-nav-offset) + 24px);
+			align-self: start;
+			max-height: calc(100vh - var(--blog-nav-offset) - 48px);
+			overflow-y: auto;
+			/* Allow wheel to chain to the page once the sidebar hits top/bottom */
+			overscroll-behavior: auto;
+			/* Scrollable, but no visible scrollbar */
+			scrollbar-width: none;
+			-ms-overflow-style: none;
+		}
+
+		.blog-sidebar::-webkit-scrollbar {
+			display: none;
+			width: 0;
+			height: 0;
+		}
+
+		.blog-sidebar__list {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	@media (max-width: 639px) {
 		.blog-detail-main {
-			padding-top: 88px;
+			--blog-nav-offset: 88px;
 		}
 
 		.blog-article__meta {

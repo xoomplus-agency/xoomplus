@@ -1,57 +1,36 @@
 ---
-const intro =
-	'We keep the process straightforward so you always know what happens next. From the first conversation through strategy, implementation, and reporting, every stage has a clear purpose.';
+/**
+ * Home "Our Process" — white section, 4 staggered steps + connector graphic.
+ * Content from props / defaultProcess; CSS float animations only (no JS).
+ */
+import { defaultProcess, type OurProcessContent } from '../data/process';
 
-const steps = [
-	{
-		icon: '/icons/discovery-call.svg',
-		width: 214,
-		height: 190,
-		title: 'Discovery Call',
-		description:
-			'We start by understanding your business, goals, audience, current challenges, and what you want to achieve.',
-	},
-	{
-		icon: '/icons/audit-and-opportunity-review.svg',
-		width: 214,
-		height: 190,
-		title: 'Audit & Opportunity Review',
-		description:
-			'We start by understanding your business, goals, audience, current challenges, and what you want to achieve.',
-	},
-	{
-		icon: '/icons/strategy-and-implementation.svg',
-		width: 212,
-		height: 184,
-		title: 'Strategy & Implementation',
-		description:
-			'We turn the findings into a clear strategy and begin implementing the work across the agreed digital services.',
-	},
-	{
-		icon: '/icons/reporting-and-refinement.svg',
-		width: 201,
-		height: 171,
-		title: 'Reporting & Refinement',
-		description:
-			'We track progress, review performance, and refine the work based on what we learn.',
-	},
-];
+interface Props {
+	/** Full section content. Defaults to home `defaultProcess`. */
+	content?: OurProcessContent;
+	/** Section + heading id prefix. Home keeps `process`; child uses `our-process`. */
+	id?: string;
+}
+
+const { content = defaultProcess, id = 'process' } = Astro.props;
+const { pill, title, intro, steps, bgImage } = content;
+const headingId = `${id}-heading`;
 ---
 
 <section
-	id="process"
+	id={id}
 	data-bg="light"
 	class="bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-section"
-	aria-labelledby="process-heading"
+	aria-labelledby={headingId}
 >
 	<div class="mx-auto w-full max-w-[1560px]">
 		<div class="mx-auto mb-12 w-full text-center lg:mb-16">
-			<p class="pill-light mb-5">OUR PROCESS</p>
+			<p class="pill-light mb-5">{pill}</p>
 			<h2
-				id="process-heading"
+				id={headingId}
 				class="mb-4 whitespace-nowrap text-h1 font-medium tracking-[-0.03em] text-primary-black max-[1100px]:whitespace-normal"
 			>
-				A Clear Process From First Conversation to Ongoing Improvement
+				{title}
 			</h2>
 			<p class="process-intro mx-auto max-w-[640px]">
 				{intro}
@@ -61,7 +40,7 @@ const steps = [
 		<div class="process-visual">
 			<img
 				class="process-bg"
-				src="/icons/our-process-svgs-bg-image.svg"
+				src={bgImage}
 				alt=""
 				width="1183"
 				height="90"
@@ -72,23 +51,28 @@ const steps = [
 
 			<ol class="process-steps m-0 list-none p-0" role="list">
 				{
-					steps.map((step, index) => (
-						<li class={`process-step process-step--${index + 1}`}>
-							<div class="process-icon" aria-hidden="true">
-								<img
-									src={step.icon}
-									alt=""
-									width={step.width}
-									height={step.height}
-									class="process-icon-img"
-									decoding="async"
-									loading="lazy"
-								/>
-							</div>
-							<h3 class="process-title m-0">{step.title}</h3>
-							<p class="process-desc m-0">{step.description}</p>
-						</li>
-					))
+					steps.map((step, index) => {
+						const iconSrc = step.icon.startsWith('/') ? step.icon : `/icons/${step.icon}.svg`;
+						const width = step.width ?? 214;
+						const height = step.height ?? 190;
+						return (
+							<li class={`process-step process-step--${index + 1}`}>
+								<div class="process-icon" aria-hidden="true">
+									<img
+										src={iconSrc}
+										alt=""
+										width={width}
+										height={height}
+										class="process-icon-img"
+										decoding="async"
+										loading="lazy"
+									/>
+								</div>
+								<h3 class="process-title m-0">{step.title}</h3>
+								<p class="process-desc m-0">{step.description}</p>
+							</li>
+						);
+					})
 				}
 			</ol>
 		</div>

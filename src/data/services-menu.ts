@@ -55,17 +55,17 @@ function slugify(label: string): string {
 		.replace(/^-+|-+$/g, '');
 }
 
-function link(label: string, parentSlug?: string): MenuLink {
-	const slug = slugify(label);
+function link(label: string, parentSlug?: string, childSlug?: string): MenuLink {
+	const slug = childSlug ?? slugify(label);
 	return {
 		label,
 		href: parentSlug ? `/services/${parentSlug}/${slug}` : `/services/${slug}`,
 	};
 }
 
-/** Text links in stacked columns point at the parent service page (placeholders). */
-function textLink(label: string, parentHref: string): MenuLink {
-	return { label, href: parentHref };
+/** Text links in stacked columns — prefer child page when `childSlug` is set. */
+function textLink(label: string, parentSlug: string, childSlug: string): MenuLink {
+	return { label, href: `/services/${parentSlug}/${childSlug}` };
 }
 
 export const servicesMenu: ServicesMenu = {
@@ -94,7 +94,8 @@ export const servicesMenu: ServicesMenu = {
 				{
 					label: 'Experience and design',
 					links: [
-						link('UI/UX Design', 'web-design-development'),
+						// Explicit slug: slash in "UI/UX" must not become a hyphen
+						link('UI/UX Design', 'web-design-development', 'uiux-design'),
 						link('Landing Page Design', 'web-design-development'),
 						link('Website Redesign', 'web-design-development'),
 					],
@@ -118,9 +119,17 @@ export const servicesMenu: ServicesMenu = {
 					href: '/services/social-media-marketing',
 					description: 'Connect your message with the right people.',
 					textLinks: [
-						textLink('Content & creative direction', '/services/social-media-marketing'),
-						textLink('Campaign planning', '/services/social-media-marketing'),
-						textLink('Reporting & refinement', '/services/social-media-marketing'),
+						textLink(
+							'Content & creative direction',
+							'social-media-marketing',
+							'content-creative-direction',
+						),
+						textLink('Campaign planning', 'social-media-marketing', 'campaign-planning'),
+						textLink(
+							'Reporting & refinement',
+							'social-media-marketing',
+							'reporting-refinement',
+						),
 					],
 				},
 				{
@@ -128,16 +137,20 @@ export const servicesMenu: ServicesMenu = {
 					href: '/services/ppc-google-ads',
 					description: 'Focused campaigns. A clearer path from click to conversion.',
 					textLinks: [
-						textLink('Audience & keyword research', '/services/ppc-google-ads'),
-						textLink('Landing page alignment', '/services/ppc-google-ads'),
-						textLink('Reporting & refinement', '/services/ppc-google-ads'),
+						textLink(
+							'Audience & keyword research',
+							'ppc-google-ads',
+							'audience-keyword-research',
+						),
+						textLink('Landing page alignment', 'ppc-google-ads', 'landing-page-alignment'),
+						textLink('Reporting & refinement', 'ppc-google-ads', 'reporting-refinement'),
 					],
 				},
 			],
 		},
 	],
 	footer: {
-		allServicesHref: '/services',
+		allServicesHref: '/our-services',
 		heading: 'Not sure where to start?',
 		text: "Tell us what you're working towards.",
 		buttonLabel: 'Discuss your project',

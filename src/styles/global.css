@@ -117,8 +117,10 @@
 	--color-secondary-white: #ffffff;
 	--color-muted: #6b6b6b;
 	--color-hero-muted: rgba(255, 255, 255, 0.78);
-	/* Body/paragraph on section backgrounds */
-	--color-text-on-dark: #ffffff;
+	/* Body/paragraph on dark section backgrounds (single source of truth) */
+	--text-body-dark: #b8b8b8;
+	--color-text-body-dark: var(--text-body-dark);
+	--color-text-on-dark: var(--text-body-dark);
 	--color-text-on-light: #555555;
 
 	--font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -465,7 +467,7 @@
 	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.5;
-	color: rgba(255, 255, 255, 0.85);
+	color: var(--text-body-dark);
 }
 
 .dark-glass-card__text {
@@ -540,6 +542,27 @@
 .service-card--wide {
 	max-width: 708px;
 	height: auto;
+}
+
+/* No hover chrome — location intent (and similar static glass surfaces) */
+.service-card--static:hover::before {
+	opacity: 0;
+}
+
+.service-card--static:hover .service-feature {
+	color: rgb(247 247 245 / 0.5);
+}
+
+.service-card--static:hover .service-check {
+	background-color: rgb(255 168 0 / 0.5);
+}
+
+.service-card--static:hover .service-card-btn {
+	color: #ffa800;
+}
+
+.service-card--static:hover .service-card-btn::before {
+	opacity: 0;
 }
 
 .service-feature {
@@ -833,6 +856,36 @@
 	box-shadow:
 		inset 0 1px 0 0 rgb(255 255 255 / 0.22),
 		inset 0 -8px 16px 0 rgb(0 0 0 / 0.12);
+}
+
+/*
+ * Shared light card surface — About stats / Better Together (and similar).
+ * Layout (flex, align, text) stays on the consuming component.
+ */
+.surface-card {
+	box-sizing: border-box;
+	padding: 40px 24px;
+	border: 1px solid #e9e9e7;
+	border-radius: 24px;
+	background-color: #ffffff;
+	box-shadow: 0 8px 24px 0 rgba(149, 157, 165, 0.2);
+	transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+	.surface-card:hover {
+		transform: translateY(-4px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.surface-card {
+		transition: none;
+	}
+
+	.surface-card:hover {
+		transform: none;
+	}
 }
 
 /*

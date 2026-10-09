@@ -16,6 +16,10 @@ export default defineConfig({
 
   integrations: [react()],
 
+  redirects: {
+    '/services': '/our-services',
+  },
+
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
