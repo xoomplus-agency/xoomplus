@@ -74,11 +74,11 @@ export default function FAQAccordion({ items, defaultOpen = 0 }: FAQAccordionPro
 					value={item.id}
 					className="overflow-hidden rounded-lg border border-solid border-[#E9E9E7] bg-white transition-[background-color] duration-[250ms] ease-in-out data-[state=closed]:bg-white data-[state=open]:bg-[#F7F7F5] max-sm:max-w-full [@media(hover:hover)]:data-[state=closed]:hover:border-[#DEDEDC] [@media(hover:hover)]:data-[state=closed]:hover:bg-[#FCFCFB]"
 				>
-					<AccordionTrigger className="w-full gap-4 p-[26px] text-left font-[family-name:var(--font-inter)] text-base font-medium text-primary-black max-sm:p-[18px] max-sm:text-[15px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#FFA800]">
+					<AccordionTrigger className="text-h4 w-full gap-4 p-[clamp(1rem,0.8rem+1vw,1.625rem)] text-left font-[family-name:var(--font-inter)] text-primary-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#FFA800]">
 						<span className="min-w-0 flex-1 pr-2">{item.question}</span>
 						<ToggleIcon />
 					</AccordionTrigger>
-					<AccordionContent className="faq-answer px-[26px] pb-[26px] pt-0 font-[family-name:var(--font-inter)] text-[14.5px] leading-[1.6] text-[#555555] max-sm:px-[18px] max-sm:pb-[18px] max-sm:text-[14px]">
+					<AccordionContent className="faq-answer text-small px-[clamp(1rem,0.8rem+1vw,1.625rem)] pb-[clamp(1rem,0.8rem+1vw,1.625rem)] pt-0 font-[family-name:var(--font-inter)] text-[#555555]">
 						{/* Answers are trusted content from our data files only. */}
 						<div dangerouslySetInnerHTML={{ __html: item.answer }} />
 					</AccordionContent>

@@ -17,18 +17,19 @@ const storyImage = {
 <Section aria-labelledby="our-story-heading">
 	<div class="our-story">
 		<div class="our-story__content">
-			<p class="pill-light">Our story</p>
+			<div data-reveal="up">
+				<p class="pill-light">Our story</p>
 
-			<h2
-				id="our-story-heading"
-				class="our-story__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
-			>
-				Built around your business.
-				<br />
-				Not around silos.
-			</h2>
+				<h2
+					id="our-story-heading"
+					class="our-story__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+				>
+					Built around your business.
+					<br />
+					Not around silos.
+				</h2>
 
-			<div class="our-story__copy">
+				<div class="our-story__copy">
 				<p class="text-on-light m-0">
 					A great website should support your marketing. Your marketing should reflect your brand.
 					And every decision should start with your business.
@@ -42,6 +43,7 @@ const storyImage = {
 					We see ourselves as a digital partner: curious about your challenges, clear about our
 					thinking and invested in building something useful together.
 				</p>
+				</div>
 			</div>
 
 			<div class="our-story__cta">
@@ -49,7 +51,7 @@ const storyImage = {
 			</div>
 		</div>
 
-		<div class="our-story__media">
+		<div class="our-story__media" data-reveal="fade">
 			<img
 				class="our-story__image"
 				src={storyImage.src}
@@ -92,7 +94,7 @@ const storyImage = {
 
 	.our-story__copy p {
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.5;
 	}

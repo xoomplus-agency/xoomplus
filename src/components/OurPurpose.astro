@@ -28,17 +28,17 @@ const cards = [
 	aria-labelledby="purpose-heading"
 	class="our-purpose section-glow-top-left"
 >
-	<div class="purpose-header">
-		<h2 id="purpose-heading" class="text-hero-h1 dark-section-heading purpose-heading m-0">
+	<div class="purpose-header" data-reveal="up">
+		<h2 id="purpose-heading" class="text-heading-dark dark-section-heading purpose-heading m-0">
 			Our purpose
 		</h2>
 		<p class="dark-section-intro purpose-intro m-0">{intro}</p>
 	</div>
 
-	<div class="purpose-grid">
+	<div class="purpose-grid" data-reveal-group>
 		{
 			cards.map((card) => (
-				<article class="service-card service-card--wide purpose-card">
+				<article class="service-card service-card--wide purpose-card" data-reveal="up">
 					<p class="pill-dark text-primary m-0">{card.pill}</p>
 					<h3 class="purpose-card__title m-0">{card.title}</h3>
 					<p class="dark-glass-card__text purpose-card__text m-0">{card.text}</p>

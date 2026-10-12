@@ -31,12 +31,12 @@ function iconSrc(name: string) {
 	aria-labelledby={headingId}
 	class="service-bento section-glow-top-left"
 >
-	<div class="sb-header">
+	<div class="sb-header" data-reveal="up">
 		<div class="sb-header__intro">
 			<p class="pill-dark text-primary m-0">{pill}</p>
 			<h2
 				id={headingId}
-				class="sb-header__heading text-hero-h1 dark-section-heading m-0"
+				class="sb-header__heading text-heading-dark dark-section-heading m-0"
 			>
 				{title}
 			</h2>
@@ -44,8 +44,8 @@ function iconSrc(name: string) {
 		<p class="sb-header__aside m-0">{text}</p>
 	</div>
 
-	<div class="sb-grid">
-		<div class="sb-grid__main">
+	<div class="sb-grid" data-reveal-group>
+		<div class="sb-grid__main" data-reveal="up">
 			<ServiceCard
 				title={mainCard.title}
 				icon={mainCard.icon}
@@ -59,7 +59,7 @@ function iconSrc(name: string) {
 
 		{
 			cards.map((card) => (
-				<article class:list={['sb-card', card.href && 'sb-card--link']}>
+				<article class:list={['sb-card', card.href && 'sb-card--link']} data-reveal="up">
 					<img
 						class="sb-card__icon"
 						src={iconSrc(card.icon)}
@@ -120,7 +120,7 @@ function iconSrc(name: string) {
 		flex-shrink: 0;
 		max-width: 400px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
@@ -193,7 +193,7 @@ function iconSrc(name: string) {
 	.sb-card__title {
 		margin-top: 20px;
 		font-family: var(--font-inter);
-		font-size: 24px;
+		font-size: var(--text-h3);
 		font-weight: 400;
 		line-height: 1.2;
 		color: #ffffff;
@@ -202,7 +202,7 @@ function iconSrc(name: string) {
 	.sb-card__text {
 		margin-top: 12px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
@@ -212,7 +212,7 @@ function iconSrc(name: string) {
 		margin-top: auto;
 		padding-top: 16px;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.4;
 		color: var(--color-primary, #ffa800);
@@ -238,7 +238,7 @@ function iconSrc(name: string) {
 
 	.sb-note__text {
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
@@ -291,7 +291,7 @@ function iconSrc(name: string) {
 		}
 
 		.sb-note__text {
-			font-size: 16px;
+			font-size: var(--text-body);
 		}
 	}
 </style>

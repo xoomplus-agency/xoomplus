@@ -138,29 +138,44 @@
 	--size-btn-hero-w: 233px;
 	--size-btn-hero-h: 56px;
 
-	/* Typography scale (visual tokens — keep semantic HTML separate) */
-	--text-h1: 40px;
-	--text-h1--line-height: 1.15;
-	--text-h1--font-weight: 500;
-	--text-h2: 32px;
+	/* Fluid typography scale (role tokens — semantic HTML stays separate) */
+	--text-h1: clamp(2rem, 1.4rem + 2.8vw, 4.5rem);
+	--text-h1--line-height: 1.1;
+	--text-h1--font-weight: 600;
+	--text-display: clamp(1.75rem, 1.35rem + 1.9vw, 3.5rem);
+	--text-display--line-height: 1.15;
+	--text-display--font-weight: 600;
+	--text-h2: clamp(1.625rem, 1.35rem + 1.2vw, 2.75rem);
 	--text-h2--line-height: 1.2;
-	--text-h2--font-weight: 500;
-	--text-h3: 24px;
+	--text-h2--font-weight: 600;
+	--text-h3: clamp(1.25rem, 1.15rem + 0.45vw, 1.75rem);
 	--text-h3--line-height: 1.3;
-	--text-h3--font-weight: 500;
-	--text-lead: 20px;
-	--text-lead--line-height: 1.5;
+	--text-h3--font-weight: 600;
+	--text-h3-sm: clamp(1.125rem, 1.08rem + 0.2vw, 1.375rem);
+	--text-h3-sm--line-height: 1.35;
+	--text-h3-sm--font-weight: 600;
+	--text-h4: clamp(1rem, 0.98rem + 0.1vw, 1.125rem);
+	--text-h4--line-height: 1.4;
+	--text-h4--font-weight: 500;
+	--text-small-heading: clamp(0.9375rem, 0.92rem + 0.08vw, 1rem);
+	--text-small-heading--line-height: 1.4;
+	--text-small-heading--font-weight: 600;
+	--text-lead: clamp(1.0625rem, 1rem + 0.25vw, 1.25rem);
+	--text-lead--line-height: 1.6;
 	--text-lead--font-weight: 400;
-	--text-body: 16px;
-	--text-body--line-height: 1.5;
+	--text-body: clamp(1rem, 0.98rem + 0.1vw, 1.125rem);
+	--text-body--line-height: 1.65;
 	--text-body--font-weight: 400;
+	--text-small: clamp(0.875rem, 0.86rem + 0.05vw, 0.9375rem);
+	--text-small--line-height: 1.5;
+	--text-small--font-weight: 400;
 	--text-caption: 12px;
 	--text-caption--line-height: 1.4;
 	--text-caption--font-weight: 500;
-	/* Hero exception */
-	--text-hero-h1: 72px;
-	--text-hero-h1--line-height: 1.08;
-	--text-hero-h1--font-weight: 500;
+	/* Hero H1 uses the h1 scale */
+	--text-hero-h1: var(--text-h1);
+	--text-hero-h1--line-height: var(--text-h1--line-height);
+	--text-hero-h1--font-weight: var(--text-h1--font-weight);
 
 	/* Section inner vertical padding → py-section / pt-section / pb-section */
 	--spacing-section: var(--section-padding-y);
@@ -192,6 +207,7 @@
 	font-size: var(--text-lead);
 	font-weight: var(--text-lead--font-weight);
 	line-height: var(--text-lead--line-height);
+	text-wrap: pretty;
 	color: var(--color-text-on-dark);
 }
 
@@ -200,7 +216,38 @@
 	font-size: var(--text-body);
 	font-weight: var(--text-body--font-weight);
 	line-height: var(--text-body--line-height);
+	text-wrap: pretty;
 	color: var(--color-text-on-light);
+}
+
+@utility text-display {
+	font-size: var(--text-display);
+	font-weight: var(--text-display--font-weight);
+	line-height: var(--text-display--line-height);
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+@utility text-h3-sm {
+	font-size: var(--text-h3-sm);
+	font-weight: var(--text-h3-sm--font-weight);
+	line-height: var(--text-h3-sm--line-height);
+	letter-spacing: -0.01em;
+	text-wrap: balance;
+}
+
+@utility text-h4 {
+	font-size: var(--text-h4);
+	font-weight: var(--text-h4--font-weight);
+	line-height: var(--text-h4--line-height);
+	text-wrap: balance;
+}
+
+@utility text-small-heading {
+	font-size: var(--text-small-heading);
+	font-weight: var(--text-small-heading--font-weight);
+	line-height: var(--text-small-heading--line-height);
+	text-wrap: balance;
 }
 
 /*
@@ -209,12 +256,13 @@
  */
 .btn {
 	position: relative;
-	overflow: hidden;
+	/* visible so motion.css ::after hover shadow is not clipped; ::before still inset+radius */
+	overflow: visible;
 	isolation: isolate;
 	background-color: #ffa800;
 	background-image: linear-gradient(100deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
 	font-family: var(--font-inter);
-	font-size: 15px;
+	font-size: var(--text-small);
 	font-weight: 500;
 	line-height: 1;
 	letter-spacing: -0.01em;
@@ -398,37 +446,26 @@
 	color: transparent;
 }
 
-/* Hero-only H1 visual: 72px / 700 + top→bottom gradient (light → dark) */
+/* Hero H1 + top→bottom gradient (light → dark) */
 @utility text-hero-h1 {
-	font-size: clamp(1.65rem, 5vw + 0.75rem, var(--text-hero-h1));
+	font-size: var(--text-h1);
 	font-weight: var(--text-hero-h1--font-weight);
 	line-height: var(--text-hero-h1--line-height);
-	letter-spacing: -0.03em;
+	letter-spacing: -0.02em;
+	text-wrap: balance;
 	background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
 }
 
-@media (max-width: 720px) {
-	.text-hero-h1 {
-		font-size: 1.75rem; /* 28px — mobile */
-		line-height: 1.15;
-	}
-}
-
-@media (min-width: 721px) and (max-width: 1024px) {
-	.text-hero-h1 {
-		font-size: clamp(2rem, 4.2vw, 3rem);
-	}
-}
-
-/* Dark-section heading visual (apply to semantic h2): 40px / 500 + top→bottom gradient */
+/* Dark-section section title (semantic h2) — h2 scale + gradient */
 @utility text-heading-dark {
-	font-size: clamp(1.75rem, 3.5vw, var(--text-h1));
-	font-weight: var(--text-h1--font-weight);
-	line-height: var(--text-h1--line-height);
-	letter-spacing: -0.03em;
+	font-size: var(--text-h2);
+	font-weight: var(--text-h2--font-weight);
+	line-height: var(--text-h2--line-height);
+	letter-spacing: -0.02em;
+	text-wrap: balance;
 	background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
 	background-clip: text;
 	-webkit-background-clip: text;
@@ -453,42 +490,31 @@
 	);
 }
 
-/* Dark-section centered header (Our Purpose / What happens next) */
+/* Dark-section centered header — use .text-heading-dark for size; layout only here */
 .dark-section-heading {
-	font-size: 40px;
-	line-height: 1.15;
+	margin-inline: auto;
+	text-wrap: balance;
 }
 
 .dark-section-intro {
-	max-width: 600px;
-	margin-top: 16px;
+	max-width: 65ch;
+	margin-top: 0.5em;
 	margin-inline: auto;
 	font-family: var(--font-inter);
-	font-size: 16px;
-	font-weight: 400;
-	line-height: 1.5;
+	font-size: var(--text-body);
+	font-weight: var(--text-body--font-weight);
+	line-height: var(--text-body--line-height);
+	text-wrap: pretty;
 	color: var(--text-body-dark);
 }
 
 .dark-glass-card__text {
 	font-family: var(--font-inter);
-	font-size: 16px;
-	font-weight: 400;
-	line-height: 1.6;
+	font-size: var(--text-body);
+	font-weight: var(--text-body--font-weight);
+	line-height: var(--text-body--line-height);
+	text-wrap: pretty;
 	color: #888888;
-}
-
-@media (max-width: 1023px) {
-	.dark-section-heading {
-		font-size: clamp(2rem, 6vw, 2.5rem); /* ~32–40px */
-	}
-}
-
-@media (max-width: 720px) {
-	.dark-section-heading {
-		font-size: 1.75rem; /* match text-hero-h1 mobile */
-		line-height: 1.15;
-	}
 }
 
 /*
@@ -508,7 +534,7 @@
 		rgb(255 255 255 / 0.03) 50%,
 		rgb(255 255 255 / 0.07) 100%
 	);
-	padding: 1.5rem 1.35rem 1.35rem;
+	padding: var(--card-padding, clamp(1rem, 0.8rem + 1vw, 2rem));
 	-webkit-backdrop-filter: blur(40px);
 	backdrop-filter: blur(40px);
 }
@@ -679,10 +705,11 @@
 
 .contact-card__title {
 	font-family: var(--font-inter);
-	font-size: clamp(1.375rem, 3vw, 1.75rem);
-	font-weight: 500;
+	font-size: var(--text-h4);
+	font-weight: var(--text-h4--font-weight);
 	letter-spacing: -0.01em;
-	line-height: 1.25;
+	line-height: var(--text-h4--line-height);
+	text-wrap: balance;
 	color: var(--color-primary-black);
 }
 
@@ -846,7 +873,7 @@
 	border: 1px solid rgb(255 255 255 / 0.12);
 	background-color: rgb(255 255 255 / 0.1);
 	font-family: var(--font-inter);
-	font-size: 16px;
+	font-size: var(--text-body);
 	font-weight: 500;
 	line-height: 1.25;
 	letter-spacing: 0.01em;
@@ -864,7 +891,7 @@
  */
 .surface-card {
 	box-sizing: border-box;
-	padding: 40px 24px;
+	padding: var(--card-padding);
 	border: 1px solid #e9e9e7;
 	border-radius: 24px;
 	background-color: #ffffff;
@@ -898,6 +925,7 @@
 	box-sizing: border-box;
 	overflow: visible;
 	height: 43px;
+	max-width: 100%;
 	align-items: center;
 	justify-content: center;
 	padding: 12px 16px;
@@ -907,7 +935,7 @@
 		linear-gradient(#ffffff, #ffffff) padding-box,
 		linear-gradient(180deg, #d6d6d6 0%, #4a4a4a 100%) border-box;
 	font-family: var(--font-inter);
-	font-size: 16px;
+	font-size: var(--text-body);
 	font-weight: 500;
 	line-height: 1;
 	letter-spacing: 0.02em;
@@ -916,6 +944,18 @@
 	color: #ffa800;
 	box-shadow: none;
 	outline: none;
+}
+
+/* Long pills (e.g. Industries fundamentals) must not force horizontal page scroll */
+@media (max-width: 639px) {
+	.pill-light {
+		height: auto;
+		min-height: 43px;
+		white-space: normal;
+		text-align: center;
+		text-wrap: balance;
+		line-height: 1.25;
+	}
 }
 
 @utility btn-size-nav {
@@ -1113,8 +1153,14 @@
 }
 
 :root {
+	--gutter: clamp(1rem, 0.6rem + 1.8vw, 2.5rem);
+	--container-max: 1320px;
+	--container-max-wide: 1440px;
+	--container-max-prose: 760px;
+	--card-padding: clamp(1rem, 0.8rem + 1vw, 2rem);
+	--card-gap: clamp(1rem, 0.7rem + 1.2vw, 2rem);
 	/* Shared outer vertical padding for all page sections */
-	--section-padding-y: 96px;
+	--section-padding-y: clamp(3rem, 2rem + 4vw, 7rem);
 
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.145 0 0);
@@ -1150,15 +1196,18 @@
 	--sidebar-ring: oklch(0.708 0 0);
 }
 
-@media (max-width: 1023px) {
-	:root {
-		--section-padding-y: 72px;
+@layer base {
+	h1,
+	h2,
+	h3,
+	h4,
+	:where(.text-h1, .text-h2, .text-h3, .text-h3-sm, .text-h4, .text-display, .text-heading-dark, .text-hero-h1) {
+		text-wrap: balance;
+		overflow-wrap: anywhere;
 	}
-}
 
-@media (max-width: 639px) {
-	:root {
-		--section-padding-y: 56px;
+	p {
+		text-wrap: pretty;
 	}
 }
 
@@ -1174,6 +1223,23 @@
  * non-section siblings (contact map) keep their own height.
  */
 @layer components {
+	.container {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: var(--container-max);
+		margin-inline: auto;
+		padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px))
+			max(var(--gutter), env(safe-area-inset-right, 0px));
+	}
+
+	.container--wide {
+		max-width: var(--container-max-wide);
+	}
+
+	.container--prose {
+		max-width: var(--container-max-prose);
+	}
+
 	main:has(> .page-section) {
 		display: flex;
 		flex-direction: column;

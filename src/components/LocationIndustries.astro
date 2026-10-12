@@ -21,11 +21,11 @@ const imgHeight = industries.image.height ?? 458;
 
 <Section id="industries-we-serve" aria-labelledby={headingId}>
 	<div class="loc-industries">
-		<header class="loc-industries__header">
+		<header class="loc-industries__header" data-reveal="up">
 			<p class="pill-light m-0">{industries.pill}</p>
 			<h2
 				id={headingId}
-				class="loc-industries__title m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="loc-industries__title m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				{industries.title}
 			</h2>
@@ -52,7 +52,7 @@ const imgHeight = industries.image.height ?? 458;
 				</div>
 			</div>
 
-			<div class="loc-industries__media">
+			<div class="loc-industries__media" data-reveal="fade">
 				<img
 					class="loc-industries__image"
 					src={industries.image.src}
@@ -104,7 +104,7 @@ const imgHeight = industries.image.height ?? 458;
 	}
 
 	.loc-industries__subheading {
-		font-size: 32px;
+		font-size: var(--text-h3);
 		font-weight: 500;
 		line-height: 1.2;
 		letter-spacing: -0.03em;
@@ -122,7 +122,7 @@ const imgHeight = industries.image.height ?? 458;
 	}
 
 	.loc-industries__paragraphs :global(p) {
-		font-size: 15px;
+		font-size: var(--text-small);
 	}
 
 	.loc-industries__cta {

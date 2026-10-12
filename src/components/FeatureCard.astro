@@ -134,31 +134,23 @@ const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
 	}
 
 	.feature-card__title {
-		margin-top: 24px;
-		font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter',
-			sans-serif;
-		font-size: 30px;
-		font-weight: 700;
-		line-height: 1.2;
+		margin-top: 1.5rem;
+		font-family: var(--font-sans);
+		font-size: var(--text-h3-sm);
+		font-weight: var(--text-h3-sm--font-weight);
+		line-height: var(--text-h3-sm--line-height);
+		letter-spacing: -0.01em;
+		text-wrap: balance;
 		color: var(--color-primary-black);
 	}
 
 	.feature-card__text {
-		margin-top: 12px;
+		margin-top: 0.75rem;
 		font-family: var(--font-inter);
-		font-size: 18px;
-		font-weight: 500;
-		line-height: 1.5;
+		font-size: var(--text-body);
+		font-weight: var(--text-body--font-weight);
+		line-height: var(--text-body--line-height);
+		text-wrap: pretty;
 		color: #555555;
-	}
-
-	@media (max-width: 639px) {
-		.feature-card__title {
-			font-size: clamp(1.5rem, 5.5vw, 1.875rem); /* ~24–30px */
-		}
-
-		.feature-card__text {
-			font-size: clamp(1rem, 4vw, 1.125rem); /* ~16–18px */
-		}
 	}
 </style>

@@ -17,17 +17,17 @@ const filters = [
 <Section aria-labelledby="blogs-heading">
 	<div data-blog-listing>
 	<div class="blog-listing__header">
-		<div class="blog-listing__intro">
+		<div class="blog-listing__intro" data-reveal="up">
 			<p class="pill-light">Explore the blog</p>
 			<h2
 				id="blogs-heading"
-				class="blog-listing__heading text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="blog-listing__heading text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				The latest thinking.
 			</h2>
 		</div>
 
-		<div class="blog-listing__search">
+		<div class="blog-listing__search" data-blog-search-wrap>
 			<label class="sr-only" for="blog-search">Search articles</label>
 			<svg
 				class="blog-listing__search-icon"
@@ -57,8 +57,19 @@ const filters = [
 				name="q"
 				placeholder="Search articles"
 				autocomplete="off"
+				aria-autocomplete="list"
+				aria-controls="blog-search-results"
+				aria-expanded="false"
 				data-blog-search
 			/>
+			<div
+				id="blog-search-results"
+				class="blog-listing__search-results"
+				role="listbox"
+				aria-label="Search results"
+				hidden
+				data-blog-search-results
+			></div>
 		</div>
 	</div>
 
@@ -100,15 +111,23 @@ const filters = [
 	</p>
 
 	<!-- data-page-size reserved for future Load more pagination -->
-	<ul class="blog-listing__grid m-0 list-none p-0" role="list" data-page-size="9" data-blog-grid>
+	<ul class="blog-listing__grid m-0 list-none p-0" role="list" data-page-size="9" data-blog-grid data-reveal-group>
 		{
 			blogs.map((post) => (
 				<li
 					class="blog-listing__item"
+					data-reveal="up"
 					data-blog-card
 					data-category={post.category}
 					data-title={post.title}
 					data-excerpt={post.excerpt}
+					data-href={post.href}
+					data-image={post.image}
+					data-alt={post.alt}
+					data-author-name={post.author.name}
+					data-author-role={post.author.role}
+					data-date={post.date}
+					data-read-time={String(post.readTime)}
 				>
 					<BlogCard
 						image={post.image}
@@ -147,6 +166,7 @@ const filters = [
 		align-items: flex-end;
 		justify-content: space-between;
 		gap: 24px;
+		overflow: visible;
 	}
 
 	.blog-listing__intro {
@@ -159,16 +179,18 @@ const filters = [
 
 	.blog-listing__search {
 		position: relative;
-		flex-shrink: 0;
-		width: 260px;
-		max-width: 100%;
+		z-index: 20;
+		flex: 1 1 360px;
+		width: auto;
+		min-width: min(280px, 100%);
+		max-width: min(640px, 100%);
 	}
 
 	.blog-listing__search-icon {
 		position: absolute;
-		top: 50%;
+		top: 20px;
 		left: 14px;
-		z-index: 1;
+		z-index: 2;
 		display: block;
 		transform: translateY(-50%);
 		pointer-events: none;
@@ -176,6 +198,8 @@ const filters = [
 
 	.blog-listing__search-input {
 		box-sizing: border-box;
+		position: relative;
+		z-index: 1;
 		width: 100%;
 		height: 40px;
 		padding: 0 14px 0 38px;
@@ -183,14 +207,15 @@ const filters = [
 		border-radius: 8px;
 		background: #ffffff;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.4;
 		color: var(--color-primary-black);
 		outline: none;
 		transition:
 			border-color 0.2s ease,
-			box-shadow 0.2s ease;
+			box-shadow 0.2s ease,
+			border-radius 0.15s ease;
 	}
 
 	.blog-listing__search-input::placeholder {
@@ -200,6 +225,204 @@ const filters = [
 	.blog-listing__search-input:focus {
 		border-color: #ffa800;
 		box-shadow: 0 0 0 3px rgba(255, 168, 0, 0.18);
+	}
+
+	.blog-listing__search.is-open .blog-listing__search-input {
+		border-color: #e9e9e7;
+		border-bottom-color: transparent;
+		border-radius: 8px 8px 0 0;
+		box-shadow: none;
+	}
+
+	.blog-listing__search.is-open .blog-listing__search-input:focus {
+		border-color: #e9e9e7;
+		border-bottom-color: transparent;
+		box-shadow: none;
+	}
+
+	.blog-listing__search-results {
+		/* ~4 result rows (media 66px + gap/padding) before scrolling */
+		--blog-search-row: 86px;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		z-index: 30;
+		box-sizing: border-box;
+		max-height: calc(12px + (var(--blog-search-row) * 4));
+		padding: 12px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		border: 1px solid #e9e9e7;
+		border-top: 1px solid #eeeeee;
+		border-radius: 0 0 8px 8px;
+		background: #ffffff;
+		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+	}
+
+	.blog-listing__search-results::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.blog-listing__search-results::-webkit-scrollbar-thumb {
+		border-radius: 9999px;
+		background: rgba(0, 0, 0, 0.25);
+	}
+
+	.blog-listing__search-results[hidden] {
+		display: none;
+	}
+
+	/*
+	 * Result rows are injected via innerHTML — they lack Astro scoped attrs.
+	 * Scope under the static .blog-listing__search-results parent with :global().
+	 */
+	.blog-listing__search-results :global(.blog-listing__search-option) {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+		gap: 12px;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 10px 0;
+		border: 0;
+		border-bottom: 1px solid #e9e9e7;
+		border-radius: 0;
+		background: transparent;
+		color: inherit;
+		text-align: left;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-option:last-child) {
+		border-bottom: 0;
+		padding-bottom: 0;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-option:first-child) {
+		padding-top: 0;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-option.is-active),
+	.blog-listing__search-results :global(.blog-listing__search-option:focus-visible) {
+		background: #f7f7f5;
+		outline: none;
+	}
+
+	@media (hover: hover) {
+		.blog-listing__search-results :global(.blog-listing__search-option:hover) {
+			background: #f7f7f5;
+		}
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-media) {
+		flex: 0 0 88px;
+		width: 88px;
+		height: 66px;
+		overflow: hidden;
+		border-radius: 10px;
+		background: #f3f3f1;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-thumb) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		border-radius: 10px;
+		object-fit: cover;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-body) {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-title) {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--color-primary-black);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-excerpt) {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #555555;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-meta) {
+		margin: 2px 0 0;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #888888;
+	}
+
+	.blog-listing__search-results :global(.blog-listing__search-empty) {
+		margin: 0;
+		padding: 4px 2px;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #888888;
+	}
+
+	@media (max-width: 639px) {
+		.blog-listing__search-results {
+			--blog-search-row: 74px;
+			max-height: calc(10px + (var(--blog-search-row) * 4));
+			padding: 10px;
+		}
+
+		.blog-listing__search-results :global(.blog-listing__search-option) {
+			display: flex;
+			flex-direction: row;
+			gap: 10px;
+		}
+
+		.blog-listing__search-results :global(.blog-listing__search-media) {
+			flex: 0 0 72px;
+			width: 72px;
+			height: 54px;
+			border-radius: 8px;
+		}
+
+		.blog-listing__search-results :global(.blog-listing__search-thumb) {
+			border-radius: 8px;
+		}
+
+		.blog-listing__search-results :global(.blog-listing__search-title) {
+			font-size: 13px;
+		}
+
+		.blog-listing__search-results :global(.blog-listing__search-excerpt) {
+			font-size: 12px;
+			-webkit-line-clamp: 2;
+		}
 	}
 
 	.blog-listing__filters {
@@ -224,7 +447,8 @@ const filters = [
 		transition:
 			background-color 0.2s ease,
 			border-color 0.2s ease,
-			color 0.2s ease;
+			color 0.2s ease,
+			transform var(--dur-fast) var(--ease-out);
 	}
 
 	.blog-listing__chip.is-active {
@@ -272,7 +496,7 @@ const filters = [
 	.blog-listing__empty {
 		margin: 20px 0 0;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.5;
 		color: #888888;
@@ -318,7 +542,9 @@ const filters = [
 		}
 
 		.blog-listing__search {
+			flex: 1 1 100%;
 			width: 100%;
+			max-width: 100%;
 		}
 	}
 
@@ -356,6 +582,8 @@ const filters = [
 	if (root instanceof HTMLElement) {
 		const chips = root.querySelectorAll('[data-filter-chip]');
 		const search = root.querySelector('[data-blog-search]');
+		const searchWrap = root.querySelector('[data-blog-search-wrap]');
+		const resultsEl = root.querySelector('[data-blog-search-results]');
 		const cards = root.querySelectorAll('[data-blog-card]');
 		const perspectiveEl = root.querySelector('[data-blog-perspective]');
 		const countEl = root.querySelector('[data-blog-count]');
@@ -364,20 +592,154 @@ const filters = [
 		let activeCategory = 'All articles';
 		let query = '';
 		let debounceId = 0;
+		let activeIndex = -1;
 
-		function applyFilters() {
+		function escapeHtml(value) {
+			return String(value)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;');
+		}
+
+		function matchesQuery(card, q) {
+			const title = card.getAttribute('data-title') || '';
+			const excerpt = card.getAttribute('data-excerpt') || '';
+			return title.toLowerCase().includes(q) || excerpt.toLowerCase().includes(q);
+		}
+
+		function formatDate(iso) {
+			if (!iso) return '';
+			const date = new Date(iso);
+			if (Number.isNaN(date.getTime())) return '';
+			return new Intl.DateTimeFormat('en-US', {
+				month: 'long',
+				day: '2-digit',
+				year: 'numeric',
+			}).format(date);
+		}
+
+		function getMatches(q) {
+			const matches = [];
+			cards.forEach((card) => {
+				if (!(card instanceof HTMLElement)) return;
+				if (!q || !matchesQuery(card, q)) return;
+				matches.push({
+					title: card.getAttribute('data-title') || '',
+					excerpt: card.getAttribute('data-excerpt') || '',
+					href: card.getAttribute('data-href') || '#',
+					image: card.getAttribute('data-image') || '',
+					alt: card.getAttribute('data-alt') || '',
+					authorName: card.getAttribute('data-author-name') || '',
+					authorRole: card.getAttribute('data-author-role') || '',
+					date: card.getAttribute('data-date') || '',
+					readTime: card.getAttribute('data-read-time') || '',
+				});
+			});
+			return matches;
+		}
+
+		function buildResultMeta(item) {
+			const parts = [];
+			const authorBits = [item.authorName, item.authorRole].filter(Boolean);
+			if (authorBits.length) parts.push(authorBits.join(' · '));
+			const dateLabel = formatDate(item.date);
+			const readLabel = item.readTime ? `${item.readTime} min read` : '';
+			const dateRead = [dateLabel, readLabel].filter(Boolean).join(' · ');
+			if (dateRead) parts.push(dateRead);
+			return parts;
+		}
+
+		function renderResultItem(item, i) {
+			const metaLines = buildResultMeta(item)
+				.map((line) => `<p class="blog-listing__search-meta">${escapeHtml(line)}</p>`)
+				.join('');
+			const excerpt = item.excerpt
+				? `<p class="blog-listing__search-excerpt">${escapeHtml(item.excerpt)}</p>`
+				: '';
+			const image = item.image
+				? `<span class="blog-listing__search-media"><img class="blog-listing__search-thumb" src="${escapeHtml(item.image)}" alt="" width="88" height="66" loading="lazy" decoding="async" /></span>`
+				: `<span class="blog-listing__search-media" aria-hidden="true"></span>`;
+
+			return `<a id="blog-search-option-${i}" class="blog-listing__search-option" role="option" aria-selected="false" href="${escapeHtml(item.href)}" data-search-option>${image}<span class="blog-listing__search-body"><span class="blog-listing__search-title">${escapeHtml(item.title)}</span>${excerpt}${metaLines}</span></a>`;
+		}
+
+		function closeResults() {
+			if (!(searchWrap instanceof HTMLElement) || !(resultsEl instanceof HTMLElement)) return;
+			if (!(search instanceof HTMLInputElement)) return;
+			searchWrap.classList.remove('is-open');
+			resultsEl.hidden = true;
+			resultsEl.innerHTML = '';
+			search.setAttribute('aria-expanded', 'false');
+			activeIndex = -1;
+		}
+
+		function setActiveOption(index) {
+			if (!(resultsEl instanceof HTMLElement)) return;
+			const options = resultsEl.querySelectorAll('[data-search-option]');
+			if (!options.length) {
+				activeIndex = -1;
+				return;
+			}
+			activeIndex = ((index % options.length) + options.length) % options.length;
+			options.forEach((option, i) => {
+				const isActive = i === activeIndex;
+				option.classList.toggle('is-active', isActive);
+				option.setAttribute('aria-selected', isActive ? 'true' : 'false');
+				if (isActive && option instanceof HTMLElement) {
+					option.scrollIntoView({ block: 'nearest' });
+					const id = option.id;
+					if (search instanceof HTMLInputElement && id) {
+						search.setAttribute('aria-activedescendant', id);
+					}
+				}
+			});
+		}
+
+		function openSelected() {
+			if (!(resultsEl instanceof HTMLElement)) return;
+			const options = resultsEl.querySelectorAll('[data-search-option]');
+			const target =
+				activeIndex >= 0 ? options[activeIndex] : options[0];
+			if (target instanceof HTMLAnchorElement && target.href) {
+				window.location.assign(target.href);
+			}
+		}
+
+		function renderResults() {
+			if (!(searchWrap instanceof HTMLElement) || !(resultsEl instanceof HTMLElement)) return;
+			if (!(search instanceof HTMLInputElement)) return;
+
 			const q = query.trim().toLowerCase();
+			if (!q) {
+				closeResults();
+				return;
+			}
+
+			const matches = getMatches(q);
+			searchWrap.classList.add('is-open');
+			resultsEl.hidden = false;
+			search.setAttribute('aria-expanded', 'true');
+			activeIndex = -1;
+			search.removeAttribute('aria-activedescendant');
+
+			if (matches.length === 0) {
+				resultsEl.innerHTML =
+					'<p class="blog-listing__search-empty" role="status">No articles match your search.</p>';
+				return;
+			}
+
+			resultsEl.innerHTML = matches.map(renderResultItem).join('');
+		}
+
+		function applyCategoryFilters() {
 			let visible = 0;
 
 			cards.forEach((card) => {
 				if (!(card instanceof HTMLElement)) return;
 				const category = card.getAttribute('data-category') || '';
-				const title = card.getAttribute('data-title') || '';
-				const excerpt = card.getAttribute('data-excerpt') || '';
-				const catMatch = activeCategory === 'All articles' || category === activeCategory;
-				const searchMatch =
-					!q || title.toLowerCase().includes(q) || excerpt.toLowerCase().includes(q);
-				const show = catMatch && searchMatch;
+				const show =
+					activeCategory === 'All articles' || category === activeCategory;
 				card.toggleAttribute('hidden', !show);
 				if (show) visible += 1;
 			});
@@ -390,6 +752,12 @@ const filters = [
 			if (emptyEl instanceof HTMLElement) emptyEl.hidden = visible !== 0;
 		}
 
+		function clearSearch() {
+			if (search instanceof HTMLInputElement) search.value = '';
+			query = '';
+			closeResults();
+		}
+
 		chips.forEach((chip) => {
 			chip.addEventListener('click', () => {
 				if (!(chip instanceof HTMLElement)) return;
@@ -399,7 +767,7 @@ const filters = [
 					other.setAttribute('aria-pressed', other === chip ? 'true' : 'false');
 				});
 				activeCategory = chip.getAttribute('data-filter') || 'All articles';
-				applyFilters();
+				applyCategoryFilters();
 			});
 		});
 
@@ -408,9 +776,46 @@ const filters = [
 				window.clearTimeout(debounceId);
 				debounceId = window.setTimeout(() => {
 					query = search.value;
-					applyFilters();
+					renderResults();
 				}, 150);
 			});
+
+			search.addEventListener('focus', () => {
+				if (query.trim()) renderResults();
+			});
+
+			search.addEventListener('keydown', (event) => {
+				if (!(resultsEl instanceof HTMLElement) || resultsEl.hidden) {
+					if (event.key === 'Escape') clearSearch();
+					return;
+				}
+
+				if (event.key === 'ArrowDown') {
+					event.preventDefault();
+					setActiveOption(activeIndex + 1);
+				} else if (event.key === 'ArrowUp') {
+					event.preventDefault();
+					setActiveOption(activeIndex <= 0 ? 0 : activeIndex - 1);
+				} else if (event.key === 'Enter') {
+					const options = resultsEl.querySelectorAll('[data-search-option]');
+					if (options.length) {
+						event.preventDefault();
+						openSelected();
+					}
+				} else if (event.key === 'Escape') {
+					event.preventDefault();
+					clearSearch();
+					search.blur();
+				}
+			});
 		}
+
+		document.addEventListener('pointerdown', (event) => {
+			if (!(searchWrap instanceof HTMLElement)) return;
+			const target = event.target;
+			if (target instanceof Node && !searchWrap.contains(target)) {
+				closeResults();
+			}
+		});
 	}
 </script>

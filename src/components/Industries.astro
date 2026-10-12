@@ -37,15 +37,15 @@ const industries = [
 <section
 	id="industries"
 	data-bg="light"
-	class="page-section bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-section"
+	class="page-section bg-secondary-white py-section"
 	aria-labelledby="industries-heading"
 >
-	<div class="mx-auto w-full max-w-[1560px]">
-		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+	<div class="container">
+		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14" data-reveal="up">
 			<p class="pill-light mb-5">INDUSTRIES WE SERVE</p>
 			<h2
 				id="industries-heading"
-				class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				Digital Solutions Built Around Your Industry
 			</h2>
@@ -55,10 +55,10 @@ const industries = [
 			</p>
 		</div>
 
-		<ul class="industry-grid m-0 list-none p-0" role="list">
+		<ul class="industry-grid m-0 list-none p-0" role="list" data-reveal-group>
 			{
 				industries.map((item) => (
-					<li class="industry-card">
+					<li class="industry-card" data-reveal="up">
 						<div class="industry-card-icon" aria-hidden="true">
 							<img
 								src={item.icon}

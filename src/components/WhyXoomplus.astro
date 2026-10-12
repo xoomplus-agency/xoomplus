@@ -1,0 +1,135 @@
+---
+import Button from './Button.astro';
+import { defaultWhyXoomplus, type WhyXoomplusContent } from '../data/why-xoomplus';
+
+interface Props {
+	content?: WhyXoomplusContent;
+	/** Section element id. Home keeps default `why-xoomplus`. */
+	id?: string;
+	/** Optional fixed button width (e.g. `"212px"`). Home omits this (uses `size="nav"`). */
+	buttonWidth?: string;
+}
+
+const { content = defaultWhyXoomplus, id, buttonWidth } = Astro.props;
+
+const sectionId = id ?? content.id;
+/** Preserve home heading id `why-heading`; other usages derive from content.id */
+const headingId = content.id === 'why-xoomplus' ? 'why-heading' : `${content.id}-heading`;
+---
+
+<section
+	id={sectionId}
+	data-bg="light"
+	class="page-section bg-secondary-white py-section"
+	aria-labelledby={headingId}
+>
+	<div class="container">
+		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14" data-reveal="up">
+			<p class="pill-light mb-5">{content.pill}</p>
+			<h2
+				id={headingId}
+				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+			>
+				{content.title}
+			</h2>
+			<p class="text-on-light mx-auto max-w-[640px]">
+				{content.text}
+			</p>
+		</div>
+
+		<ul class="why-grid m-0 list-none p-0" role="list" data-reveal-group>
+			{
+				content.cards.map((item) => (
+					<li class="why-card" data-reveal="up">
+						<div class="why-card-icon" aria-hidden="true">
+							<img
+								src={item.icon}
+								alt=""
+								width="28"
+								height="28"
+								class="size-7 object-contain"
+								decoding="async"
+								loading="lazy"
+							/>
+						</div>
+						<h3 class="m-0 text-[1.25rem] font-bold tracking-[-0.02em] text-primary-black">
+							{item.title}
+						</h3>
+						<p class="m-0 text-[15px] leading-[1.5] text-[var(--color-text-on-light)] [font-family:var(--font-inter)]">
+							{item.text}
+						</p>
+					</li>
+				))
+			}
+		</ul>
+
+		{
+			content.button ? (
+				<div
+					class="mt-12 flex justify-center lg:mt-14"
+					style={buttonWidth ? `--why-btn-width: ${buttonWidth}` : undefined}
+				>
+					<Button
+						size={buttonWidth ? 'default' : 'nav'}
+						href={content.button.href}
+						class={buttonWidth ? 'why-xoomplus__btn' : undefined}
+					>
+						{content.button.label}
+					</Button>
+				</div>
+			) : null
+		}
+	</div>
+</section>
+
+<style>
+	.why-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 464px));
+		justify-content: center;
+		gap: 1.25rem;
+	}
+
+	/* Size / centering only — chrome lives in global.css (.why-card) */
+	.why-card {
+		max-width: 464px;
+		height: 238px;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		padding: 1.75rem 1.5rem;
+		text-align: center;
+	}
+
+	.why-card-icon {
+		display: inline-flex;
+		width: 3rem;
+		height: 3rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.75rem;
+		background: linear-gradient(180deg, #fbfbfe 0%, rgb(211 211 211 / 0.45) 100%);
+	}
+
+	/* Width from --why-btn-width on the wrapper (layout only; not new button chrome) */
+	:global(.why-xoomplus__btn) {
+		width: var(--why-btn-width);
+	}
+
+	@media (max-width: 1280px) {
+		.why-grid {
+			grid-template-columns: repeat(2, minmax(0, 464px));
+		}
+	}
+
+	@media (max-width: 720px) {
+		.why-grid {
+			grid-template-columns: minmax(0, 464px);
+		}
+
+		.why-card {
+			height: auto;
+			min-height: 238px;
+		}
+	}
+</style>

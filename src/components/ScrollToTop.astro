@@ -1,0 +1,152 @@
+---
+import ButtonOutline from './ButtonOutline.astro';
+---
+
+<div class="scroll-to-top" data-scroll-to-top inert>
+	<ButtonOutline
+		type="button"
+		class="scroll-to-top__btn"
+		id="scroll-to-top"
+		aria-label="Scroll to top"
+	>
+		<svg
+			class="btn-outline__icon scroll-to-top__icon"
+			width="16"
+			height="16"
+			viewBox="0 0 16 16"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			aria-hidden="true"
+		>
+			<path
+				d="M8 12V4M4 8l4-4 4 4"
+				stroke="currentColor"
+				stroke-width="1.75"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	</ButtonOutline>
+</div>
+
+<style>
+	.scroll-to-top {
+		position: fixed;
+		z-index: 40;
+		bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+		left: max(1.25rem, env(safe-area-inset-left, 0px));
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateY(0.5rem);
+		transition:
+			opacity 200ms ease,
+			visibility 200ms ease,
+			transform 200ms ease;
+	}
+
+	.scroll-to-top.is-visible {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transform: none;
+	}
+
+	.scroll-to-top :global(.scroll-to-top__btn) {
+		width: 40px;
+		min-width: 40px;
+		padding: 0;
+	}
+
+	@media (hover: hover) {
+		.scroll-to-top :global(.scroll-to-top__btn:hover:not(:disabled) .scroll-to-top__icon) {
+			transform: translateY(-2px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.scroll-to-top {
+			transition: none;
+			transform: none;
+		}
+
+		.scroll-to-top :global(.scroll-to-top__btn:hover:not(:disabled) .scroll-to-top__icon) {
+			transform: none;
+		}
+	}
+</style>
+
+<script>
+	const TOP_THRESHOLD = 48;
+	const REDUCE = '(prefers-reduced-motion: reduce)';
+
+	function prefersReducedMotion(): boolean {
+		return window.matchMedia(REDUCE).matches;
+	}
+
+	function initScrollToTop(): void {
+		const root = document.querySelector<HTMLElement>('[data-scroll-to-top]');
+		const button = document.getElementById('scroll-to-top');
+		if (!root || !(button instanceof HTMLButtonElement)) return;
+		if (root.dataset.bound === 'true') return;
+		root.dataset.bound = 'true';
+
+		let lastY = window.scrollY;
+		let visible = false;
+		let ticking = false;
+
+		const setVisible = (next: boolean) => {
+			if (next === visible) return;
+			visible = next;
+			root.classList.toggle('is-visible', next);
+			if (next) {
+				root.removeAttribute('inert');
+			} else {
+				root.setAttribute('inert', '');
+			}
+		};
+
+		const update = () => {
+			const y = window.scrollY;
+			const atTop = y <= TOP_THRESHOLD;
+
+			if (atTop) {
+				setVisible(false);
+			} else if (y < lastY) {
+				setVisible(true);
+			} else if (y > lastY) {
+				setVisible(false);
+			}
+
+			lastY = y;
+			ticking = false;
+		};
+
+		const onScroll = () => {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(update);
+		};
+
+		const onClick = () => {
+			window.scrollTo({
+				top: 0,
+				behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+			});
+		};
+
+		const cleanup = () => {
+			window.removeEventListener('scroll', onScroll);
+			button.removeEventListener('click', onClick);
+			root.dataset.bound = 'false';
+		};
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		button.addEventListener('click', onClick);
+		document.addEventListener('astro:before-swap', cleanup, { once: true });
+		update();
+	}
+
+	initScrollToTop();
+	document.addEventListener('astro:page-load', initScrollToTop);
+</script>

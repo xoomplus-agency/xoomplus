@@ -12,19 +12,19 @@ const { posts } = Astro.props;
 
 {
 	posts.length > 0 && (
-		<Section aria-labelledby="related-blogs-heading" class="!px-12">
-			<div class="mx-auto mb-12  lg:mb-14">
+		<Section aria-labelledby="related-blogs-heading">
+			<div class="mx-auto mb-12  lg:mb-14" data-reveal="up">
 				<h2
 					id="related-blogs-heading"
-					class="mb-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+					class="mb-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 				>
 					Related blogs
 				</h2>
 			</div>
 
-			<ul class="related-blogs__grid m-0 list-none p-0" role="list">
+			<ul class="related-blogs__grid m-0 list-none p-0" role="list" data-reveal-group>
 				{posts.map((post) => (
-					<li class="related-blogs__item">
+					<li class="related-blogs__item" data-reveal="up">
 						<BlogCard
 							image={post.image}
 							alt={post.alt}

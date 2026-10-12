@@ -35,9 +35,17 @@ if (!feature && !rowsProp && !industryRowsFallback) {
 	throw new Error(`Unknown industry feature id: ${id}`);
 }
 
+/**
+ * Rows fallback is only for unknown ids / omitted catalog entries.
+ * Known panel entries (e.g. Retail) omit `variant` — do not treat that as rows.
+ */
 const variant = rowsProp
 	? 'image-text-rows'
-	: (feature?.variant ?? (industryRowsFallback ? 'image-text-rows' : 'panel'));
+	: feature
+		? (feature.variant ?? 'panel')
+		: industryRowsFallback
+			? 'image-text-rows'
+			: 'panel';
 const reverse = reverseProp ?? feature?.reverse ?? false;
 const isImageList = variant === 'image-list';
 const isImageTextRows = variant === 'image-text-rows';
@@ -51,7 +59,7 @@ const [titleLine1, titleLine2] = titleLines;
 const image = feature?.image;
 const imgW = image?.width ?? 680;
 const imgH = image?.height ?? 460;
-const rows = rowsProp ?? feature?.rows ?? industryRowsFallback ?? [];
+const rows = rowsProp ?? feature?.rows ?? (!feature ? industryRowsFallback : undefined) ?? [];
 const firstRowId = rows[0]?.id ?? 'row-1';
 const firstRowHeadingId = `${firstRowId}-heading`;
 ---
@@ -97,10 +105,10 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 									: 'industry-feature__layout--image-left',
 							]}
 						>
-							<div class="industry-feature__copy">
+							<div class="industry-feature__copy" data-reveal="up">
 								<h2
 									id={`${rowId}-heading`}
-									class="industry-feature__heading industry-feature__heading--flush m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+									class="industry-feature__heading industry-feature__heading--flush m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 								>
 									<span class="industry-feature__line">{line1}</span>
 									<span class="industry-feature__line">{line2}</span>
@@ -116,12 +124,12 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 								) : null}
 							</div>
 							{caption ? (
-								<figure class="industry-feature__figure m-0">
+								<figure class="industry-feature__figure m-0" data-reveal="fade">
 									<div class="industry-feature__media">{imgEl}</div>
 									<figcaption class="industry-feature__caption">{caption}</figcaption>
 								</figure>
 							) : (
-								<div class="industry-feature__media">{imgEl}</div>
+								<div class="industry-feature__media" data-reveal="fade">{imgEl}</div>
 							)}
 						</div>
 					);
@@ -129,7 +137,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 			</div>
 		</Section>
 	) : (
-		<Section aria-labelledby={headingId} class="industry-feature">
+		<Section id={sectionId} aria-labelledby={headingId} class="industry-feature">
 			<div
 				class:list={[
 					'industry-feature__layout',
@@ -137,7 +145,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 					reverse && 'industry-feature__layout--reverse',
 				]}
 			>
-				<div class="industry-feature__copy">
+				<div class="industry-feature__copy" data-reveal="up">
 					{feature?.pill ? <p class="pill-light m-0">{feature.pill}</p> : null}
 					<h2
 						id={headingId}
@@ -176,7 +184,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 				</div>
 
 				{isImageList && image ? (
-					<div class="industry-feature__media">
+					<div class="industry-feature__media" data-reveal="fade">
 						<img
 							class="industry-feature__image"
 							src={image.src}
@@ -189,9 +197,9 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 					</div>
 				) : (
 					<div class="industry-feature__panel">
-						<ul class="industry-feature__list m-0 list-none p-0">
+						<ul class="industry-feature__list m-0 list-none p-0" data-reveal-group>
 							{(feature?.items ?? []).map((item) => (
-								<li class="industry-feature__card">
+								<li class="industry-feature__card" data-reveal="up">
 									<span class="industry-feature__icon" aria-hidden="true">
 										<img
 											src={`/icons/${item.icon}.svg`}
@@ -313,7 +321,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 		max-width: 520px;
 		margin-top: 24px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		color: rgb(11 10 11 / 0.85);
@@ -322,7 +330,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 	.industry-feature__row-tag {
 		margin-top: 12px;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 500;
 		line-height: 1.4;
 		color: #ffa800;
@@ -445,7 +453,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 	.industry-feature__card-title {
 		font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter',
 			sans-serif;
-		font-size: 20px;
+		font-size: var(--text-h3-sm);
 		font-weight: 500;
 		line-height: 1.3;
 		color: var(--color-primary-black);
@@ -453,7 +461,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 
 	.industry-feature__card-desc {
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.5;
 		color: #555555;
@@ -519,7 +527,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 		}
 
 		.industry-feature__card-title {
-			font-size: 18px;
+			font-size: var(--text-lead);
 		}
 
 		.industry-feature__image {

@@ -38,7 +38,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 			isLight && 'industry-clarity--light',
 		]}
 	>
-		<div class="industry-clarity__header">
+		<div class="industry-clarity__header" data-reveal="up">
 			<div class="industry-clarity__heading-group">
 				{
 					isLight ? (
@@ -53,8 +53,8 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 						'industry-clarity__title',
 						'm-0',
 						isLight
-							? 'text-h1 font-medium tracking-[-0.03em] text-primary-black'
-							: 'text-hero-h1 dark-section-heading',
+							? 'text-h2 font-semibold tracking-[-0.02em] text-primary-black'
+							: 'text-heading-dark dark-section-heading',
 					]}
 				>
 					{
@@ -72,10 +72,10 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 			<p class="industry-clarity__intro m-0">{section.text}</p>
 		</div>
 
-		<div class="industry-clarity__columns">
+		<div class="industry-clarity__columns" data-reveal-group>
 			{
 				section.columns.map((column) => (
-					<div class="industry-clarity__column">
+					<div class="industry-clarity__column" data-reveal="up">
 						{isLight && column.eyebrow ? (
 							<p class="industry-clarity__eyebrow m-0">{column.eyebrow}</p>
 						) : null}
@@ -141,7 +141,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 		flex: 0 0 auto;
 		max-width: 380px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
@@ -181,7 +181,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 
 	.industry-clarity__column-title {
 		font-family: var(--font-inter);
-		font-size: 32px;
+		font-size: var(--text-h3);
 		font-weight: 500;
 		line-height: 1.2;
 		color: #ffffff;
@@ -190,7 +190,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 	.industry-clarity__eyebrow {
 		margin-top: 16px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.4;
 		color: #ffa800;
@@ -199,14 +199,14 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 	.industry-clarity__column-text {
 		margin-top: 16px;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
 	}
 
 	.industry-clarity--centered .industry-clarity__column-text {
-		font-size: 16px;
+		font-size: var(--text-body);
 	}
 
 	.industry-clarity__divider {
@@ -239,7 +239,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 
 	.industry-clarity__item-title {
 		font-family: var(--font-inter);
-		font-size: 20px;
+		font-size: var(--text-h3-sm);
 		font-weight: 500;
 		line-height: 1.3;
 		color: #ffffff;
@@ -248,7 +248,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 	.industry-clarity__item-text {
 		margin-top: 8px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
@@ -257,7 +257,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 	.industry-clarity__item-tag {
 		margin-top: 12px;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.4;
 		color: #ffa800;
@@ -266,7 +266,7 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 	.industry-clarity__note {
 		margin-top: 48px;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);
@@ -292,12 +292,12 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 	.industry-clarity--light .industry-clarity__eyebrow {
 		margin-top: 0;
 		margin-bottom: 12px;
-		font-size: 14px;
+		font-size: var(--text-small);
 		color: #555555;
 	}
 
 	.industry-clarity--light .industry-clarity__column-text {
-		font-size: 16px;
+		font-size: var(--text-body);
 		color: #555555;
 	}
 
@@ -409,11 +409,11 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 		}
 
 		.industry-clarity__column-text {
-			font-size: 16px;
+			font-size: var(--text-body);
 		}
 
 		.industry-clarity__item-title {
-			font-size: 18px;
+			font-size: var(--text-lead);
 		}
 
 		.industry-clarity--light .industry-clarity__note {

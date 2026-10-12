@@ -44,12 +44,12 @@ const iconSize = isGrayPlus ? 24 : 28;
 	background={sectionBg}
 	class:list={['sf-section', isGrayPlus && 'sf-section--gray-plus']}
 >
-	<div class="sf-header">
+	<div class="sf-header" data-reveal="up">
 		<div class="sf-header__intro">
 			<p class="pill-light sf-pill m-0">{pill}</p>
 			<h2
 				id={headingId}
-				class="sf-header__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="sf-header__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				<span class="sf-header__line">{titleLine1}</span>
 				<span class="sf-header__line">{titleLine2}</span>
@@ -58,10 +58,11 @@ const iconSize = isGrayPlus ? 24 : 28;
 		<p class="sf-header__aside text-on-light m-0">{text}</p>
 	</div>
 
-	<div class="sf-grid">
+	<div class="sf-grid" data-reveal-group>
 		{
 			items.map((item) => (
-				<FeatureCard
+				<div data-reveal="up">
+					<FeatureCard
 					icon={item.icon}
 					title={item.title}
 					text={item.text}
@@ -69,7 +70,8 @@ const iconSize = isGrayPlus ? 24 : 28;
 					showPlus={isGrayPlus}
 					iconSize={iconSize}
 					class={isGrayPlus ? 'feature-card--icon-sm' : undefined}
-				/>
+					/>
+				</div>
 			))
 		}
 	</div>
@@ -126,7 +128,7 @@ const iconSize = isGrayPlus ? 24 : 28;
 	.sf-footnote {
 		margin-top: 24px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		/* Text / body — #555555 */

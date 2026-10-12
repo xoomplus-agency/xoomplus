@@ -31,20 +31,22 @@ const logos = [
 
 <section
 	data-bg="light"
-	class="page-section overflow-x-clip bg-secondary-white px-4 py-section sm:px-6 lg:px-10"
+	class="page-section overflow-x-clip bg-secondary-white py-section"
 	aria-labelledby="brands-heading"
 >
-	<div class="mx-auto w-full max-w-[1366px] text-center">
-		<h2
-			id="brands-heading"
-			class="mb-[0.85rem] text-h2 font-medium tracking-[-0.03em] text-primary-black"
-		>
-			Brands That Believe in Us
-		</h2>
-		<p class="text-on-light mx-auto mb-11 max-w-[640px]">
-			Illustrated stand-ins: logos, review counts, quotes, screens and photos are examples to swap
-			for real client assets at launch.
-		</p>
+	<div class="container container--wide text-center">
+		<div data-reveal="up">
+			<h2
+				id="brands-heading"
+				class="text-h2 mb-[0.5em] font-semibold tracking-[-0.02em] text-primary-black"
+			>
+				Brands That Believe in Us
+			</h2>
+			<p class="text-on-light mx-auto mb-11 max-w-[640px]">
+				Illustrated stand-ins: logos, review counts, quotes, screens and photos are examples to swap
+				for real client assets at launch.
+			</p>
+		</div>
 		<div class="brands-logo-loop mx-auto w-full max-w-full">
 			<LogoLoop
 				client:load

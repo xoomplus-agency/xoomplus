@@ -1,0 +1,604 @@
+---
+import Section from './Section.astro';
+import Button from './Button.astro';
+import ServiceCard from './ServiceCard.astro';
+import { pricingPlans } from '../data/pricing-plans';
+
+const { pill, pillBrand, title, text, tabs, packages, adhoc } = pricingPlans;
+const headingId = 'pricing-plans-heading';
+const defaultTab = 'packages';
+---
+
+<Section
+	id="pricing-plans"
+	background="dark"
+	aria-labelledby={headingId}
+	class="pricing-plans"
+>
+	<div class="pricing-plans__header" data-reveal="up">
+		<p class="pill-dark m-0">
+			<span class="pricing-plans__pill-label">{pill} · </span>
+			<span class="text-primary">{pillBrand}</span>
+		</p>
+		<h2 id={headingId} class="pricing-plans__title text-heading-dark m-0">
+			{title}
+		</h2>
+		<p class="pricing-plans__intro m-0">{text}</p>
+	</div>
+
+	<div class="pricing-plans__tabs-wrap">
+		<div
+			class="pricing-plans__tabs"
+			role="tablist"
+			aria-label="Pricing type"
+			data-pricing-tabs
+		>
+			{
+				tabs.map((tab) => {
+					const selected = tab.id === defaultTab;
+					return (
+						<button
+							type="button"
+							role="tab"
+							id={`tab-${tab.id}`}
+							class="pricing-plans__tab"
+							aria-selected={selected ? 'true' : 'false'}
+							aria-controls={`panel-${tab.id}`}
+							tabindex={selected ? 0 : -1}
+							data-tab={tab.id}
+						>
+							{tab.label}
+						</button>
+					);
+				})
+			}
+		</div>
+	</div>
+
+	{/* Packages — visible by default (no flash before script) */}
+	<div
+		role="tabpanel"
+		id="panel-packages"
+		class="pricing-plans__panel"
+		aria-labelledby="tab-packages"
+		data-panel="packages"
+	>
+		<div class="pricing-plans__packages" data-reveal-group>
+			{
+				packages.cards.map((card, index) => (
+					<div
+						class:list={['pricing-plans__pkg-slot', `pricing-plans__pkg-slot--${index + 1}`]}
+						data-reveal="up"
+					>
+						<ServiceCard
+							title={card.title}
+							icon={card.icon}
+							showIcon={false}
+							description={card.text}
+							features={card.items}
+							cta={{ label: card.buttonLabel, href: card.href }}
+							price={card.price}
+							period={card.period}
+							class="pricing-plans__pkg-card"
+						/>
+					</div>
+				))
+			}
+			<article class="service-card pricing-plans__help" data-reveal="up">
+				<div class="pricing-plans__help-body">
+					<h3 class="pricing-plans__help-title m-0">{packages.help.title}</h3>
+					<p class="pricing-plans__help-text m-0">{packages.help.text}</p>
+					<a class="service-card-btn" href={packages.help.href}>
+						{packages.help.buttonLabel}
+						<span aria-hidden="true">→</span>
+					</a>
+				</div>
+			</article>
+		</div>
+	</div>
+
+	{/* Ad Hoc — in HTML at build time; hidden until selected */}
+	<div
+		role="tabpanel"
+		id="panel-adhoc"
+		class="pricing-plans__panel"
+		aria-labelledby="tab-adhoc"
+		data-panel="adhoc"
+		hidden
+	>
+		<div class="pricing-plans__adhoc">
+			{
+				adhoc.cards.map((card) => (
+					<article
+						class:list={[
+							'service-card',
+							'pricing-plans__adhoc-card',
+							card.featured && 'pricing-plans__adhoc-card--featured',
+						]}
+					>
+						<div class="pricing-plans__adhoc-header">
+							<h3 class="pricing-plans__adhoc-name m-0">{card.name}</h3>
+							{card.badge ? (
+								<p class="pill-dark pricing-plans__badge m-0 text-primary">{card.badge}</p>
+							) : null}
+						</div>
+						<p class="pricing-plans__adhoc-price m-0">
+							<span class="pricing-plans__adhoc-amount">{card.price}</span>
+							<span class="pricing-plans__adhoc-period">{card.period}</span>
+						</p>
+						<p class="pricing-plans__adhoc-text m-0">{card.text}</p>
+						<div class="pricing-plans__divider" aria-hidden="true" />
+						<p class="pricing-plans__included m-0">{card.includedLabel}</p>
+						<ul class="pricing-plans__list m-0 list-none p-0">
+							{card.items.map((item) => (
+								<li class="service-feature flex items-start gap-2.5 text-[14px] leading-snug [font-family:var(--font-inter)]">
+									<span
+										class="service-check mt-0.5 inline-flex size-[18px] shrink-0 items-center justify-center rounded-full"
+										aria-hidden="true"
+									>
+										<svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+											<path
+												d="M1 4l2.5 2.5L9 1"
+												stroke="#0B0A0B"
+												stroke-width="1.6"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</span>
+									{item}
+								</li>
+							))}
+						</ul>
+						<a class="service-card-btn mt-auto" href={card.href}>
+							{card.buttonLabel}
+							<span class="pricing-plans__btn-arrow" aria-hidden="true">
+								→
+							</span>
+						</a>
+					</article>
+				))
+			}
+		</div>
+
+		<div class="pricing-plans__cta">
+			<p class="pricing-plans__cta-text m-0">{adhoc.cta.text}</p>
+			<Button href={adhoc.cta.href} class="pricing-plans__cta-btn">
+				{adhoc.cta.buttonLabel}
+			</Button>
+		</div>
+	</div>
+</Section>
+
+<script>
+	const root = document.getElementById('pricing-plans');
+	if (root) {
+		const tablist = root.querySelector('[data-pricing-tabs]');
+		const tabs = tablist ? Array.from(tablist.querySelectorAll('[role="tab"]')) : [];
+		const panels = Array.from(root.querySelectorAll('[data-panel]'));
+
+		function activate(id, focus) {
+			for (const tab of tabs) {
+				const selected = tab.dataset.tab === id;
+				tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+				tab.tabIndex = selected ? 0 : -1;
+				if (selected && focus) tab.focus();
+			}
+			for (const panel of panels) {
+				panel.hidden = panel.dataset.panel !== id;
+			}
+		}
+
+		tablist?.addEventListener('click', (event) => {
+			const target = event.target.closest('[role="tab"]');
+			if (!target?.dataset.tab) return;
+			activate(target.dataset.tab, false);
+			history.replaceState(null, '', '#' + target.dataset.tab);
+		});
+
+		tablist?.addEventListener('keydown', (event) => {
+			const key = event.key;
+			if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) return;
+			event.preventDefault();
+			const current = tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true');
+			let next = current;
+			if (key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+			if (key === 'ArrowRight') next = (current + 1) % tabs.length;
+			if (key === 'Home') next = 0;
+			if (key === 'End') next = tabs.length - 1;
+			const id = tabs[next]?.dataset.tab;
+			if (id) {
+				activate(id, true);
+				history.replaceState(null, '', '#' + id);
+			}
+		});
+
+		const hash = window.location.hash.replace(/^#/, '');
+		if (hash === 'adhoc' || hash === 'packages') activate(hash, false);
+	}
+</script>
+
+<style>
+	/*
+	 * Dual amber glow — same treatment as home Our Services (.services-glow).
+	 * :global — class is on shared <Section> root (different Astro scope).
+	 */
+	:global(.pricing-plans)::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		background:
+			radial-gradient(
+				ellipse 48% 50% at 6% 8%,
+				rgb(255 211 108 / 0.22) 0%,
+				rgb(255 168 0 / 0.12) 45%,
+				rgb(255 117 72 / 0) 100%
+			),
+			radial-gradient(ellipse 48% 52% at 94% 78%, rgb(255 168 0 / 0.28) 0%, rgb(0 0 0 / 0) 100%);
+	}
+
+	.pricing-plans__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.pricing-plans__pill-label {
+		color: #ffffff;
+	}
+
+	.pricing-plans__title {
+		margin-top: 16px;
+		font-size: clamp(1.875rem, 4vw, 2.5rem); /* ~30–40px */
+		line-height: 1.15;
+	}
+
+	@media (min-width: 1024px) {
+		.pricing-plans__title {
+			white-space: nowrap;
+		}
+	}
+
+	.pricing-plans__intro {
+		max-width: 640px;
+		margin-top: 16px;
+		font-family: var(--font-inter);
+		font-size: var(--text-body);
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: center;
+	}
+
+	.pricing-plans__tabs-wrap {
+		display: flex;
+		justify-content: center;
+		margin-top: 32px;
+	}
+
+	.pricing-plans__tabs {
+		display: flex;
+		width: min(100%, 420px);
+		padding: 4px;
+		gap: 0;
+		border-radius: 9999px;
+		background: rgb(255 255 255 / 0.06);
+	}
+
+	.pricing-plans__tab {
+		flex: 1 1 0;
+		padding: 10px 0;
+		border: 0;
+		border-radius: 9999px;
+		background: transparent;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 1;
+		color: #ffffff;
+		cursor: pointer;
+		transition:
+			background-color 0.25s ease,
+			color 0.25s ease;
+	}
+
+	.pricing-plans__tab[aria-selected='true'] {
+		background: #ffffff;
+		color: var(--color-primary-black);
+	}
+
+	.pricing-plans__tab:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 2px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pricing-plans__tab {
+			transition: none;
+		}
+	}
+
+	.pricing-plans__panel {
+		margin-top: 32px;
+		text-align: left;
+	}
+
+	.pricing-plans__packages {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 20px;
+		align-items: stretch;
+	}
+
+	.pricing-plans__pkg-slot {
+		display: flex;
+		min-width: 0;
+		grid-column: span 2;
+	}
+
+	.pricing-plans__pkg-slot--4 {
+		grid-column: 2 / span 2;
+	}
+
+	.pricing-plans__pkg-slot :global(.pricing-plans__pkg-card) {
+		width: 100%;
+	}
+
+	.pricing-plans__help {
+		display: flex;
+		grid-column: 4 / span 2;
+		flex-direction: column;
+		justify-content: flex-end;
+		min-width: 0;
+		height: 100%;
+		text-align: left;
+	}
+
+	.pricing-plans__help-body {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	/* Shared ServiceCard titles are solid white — Hero silver gradient applied here */
+	.pricing-plans__packages :global(.pricing-plans__pkg-card > h3),
+	.pricing-plans__help-title,
+	.pricing-plans__adhoc-card:not(.pricing-plans__adhoc-card--featured) .pricing-plans__adhoc-name {
+		background-image: linear-gradient(180deg, #ffffff 30%, #999999 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		color: transparent;
+	}
+
+	.pricing-plans__packages :global(.pricing-plans__pkg-card > p:not(.service-card__price)) {
+		font-size: var(--text-small);
+	}
+
+	.pricing-plans__help-title {
+		font-size: 28px;
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+	}
+
+	.pricing-plans__help-text {
+		font-family: var(--font-inter);
+		font-size: var(--text-small);
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.pricing-plans__adhoc {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+		align-items: stretch;
+	}
+
+	.pricing-plans__adhoc-card {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		height: 100%;
+		text-align: left;
+	}
+
+	.pricing-plans__adhoc-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.pricing-plans__adhoc-name {
+		font-size: var(--text-h3);
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+	}
+
+	.pricing-plans__badge {
+		flex-shrink: 0;
+		font-size: 13px;
+	}
+
+	.pricing-plans__adhoc-price {
+		display: flex;
+		align-items: baseline;
+		gap: 0.2em;
+		margin-top: 16px;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #ffffff;
+	}
+
+	.pricing-plans__adhoc-amount {
+		font-size: 36px;
+		font-weight: 500;
+	}
+
+	.pricing-plans__adhoc-period {
+		font-size: var(--text-body);
+		font-weight: 500;
+		color: rgb(255 255 255 / 0.7);
+	}
+
+	.pricing-plans__adhoc-card--featured .pricing-plans__adhoc-name,
+	.pricing-plans__adhoc-card--featured .pricing-plans__adhoc-amount,
+	.pricing-plans__adhoc-card--featured .pricing-plans__adhoc-period {
+		background-image: linear-gradient(90deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		color: transparent;
+	}
+
+	.pricing-plans__adhoc-text {
+		margin-top: 12px;
+		font-family: var(--font-inter);
+		font-size: var(--text-small);
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+	}
+
+	.pricing-plans__divider {
+		height: 0;
+		margin: 16px 0;
+		border: 0;
+		border-top: 1px solid rgb(255 255 255 / 0.24);
+	}
+
+	.pricing-plans__included {
+		font-family: var(--font-inter);
+		font-size: var(--text-body);
+		font-weight: 600;
+		line-height: 1.4;
+		color: #ffffff;
+	}
+
+	.pricing-plans__list {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 12px;
+		margin-bottom: 32px;
+	}
+
+	.pricing-plans__btn-arrow {
+		display: inline-block;
+		transition: transform 0.25s ease;
+	}
+
+	@media (hover: hover) {
+		.pricing-plans__adhoc-card:hover .pricing-plans__btn-arrow,
+		.pricing-plans__adhoc-card .service-card-btn:focus-visible .pricing-plans__btn-arrow {
+			transform: translateX(4px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pricing-plans__btn-arrow {
+			transition: none;
+		}
+
+		.pricing-plans__adhoc-card:hover .pricing-plans__btn-arrow,
+		.pricing-plans__adhoc-card .service-card-btn:focus-visible .pricing-plans__btn-arrow {
+			transform: none;
+		}
+	}
+
+	.pricing-plans__cta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		max-width: 720px;
+		margin: 24px auto 0;
+		padding: 16px 24px;
+		border-radius: 20px;
+		background: linear-gradient(135deg, #2d2d2d 0%, #202020 43%, #2e2e2e 100%);
+	}
+
+	.pricing-plans__cta-text {
+		font-family: var(--font-inter);
+		font-size: var(--text-lead);
+		font-weight: 500;
+		line-height: 1.4;
+		color: #ffffff;
+		text-align: left;
+	}
+
+	.pricing-plans__cta-btn {
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 1023px) {
+		.pricing-plans__packages {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		.pricing-plans__pkg-slot,
+		.pricing-plans__pkg-slot--4,
+		.pricing-plans__help {
+			grid-column: auto;
+		}
+
+		.pricing-plans__adhoc {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		/* Tablet: 2 columns, third card centered under the row */
+		.pricing-plans__adhoc-card:last-child {
+			grid-column: 1 / -1;
+			width: 100%;
+			max-width: calc(50% - 10px);
+			justify-self: center;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.pricing-plans__tabs {
+			width: 100%;
+		}
+
+		.pricing-plans__packages,
+		.pricing-plans__adhoc {
+			grid-template-columns: 1fr;
+		}
+
+		.pricing-plans__adhoc-card:last-child {
+			grid-column: auto;
+			max-width: none;
+		}
+
+		.pricing-plans__packages :global(.pricing-plans__pkg-card > h3),
+		.pricing-plans__adhoc-name {
+			font-size: 26px !important;
+		}
+
+		.pricing-plans__help-title {
+			font-size: var(--text-h3);
+		}
+
+		.pricing-plans__packages :global(.service-card__price-amount),
+		.pricing-plans__adhoc-amount {
+			font-size: var(--text-h3);
+		}
+
+		.pricing-plans__cta {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 16px;
+		}
+
+		.pricing-plans__cta-btn {
+			width: 100%;
+		}
+	}
+</style>

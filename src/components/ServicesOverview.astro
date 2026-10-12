@@ -18,12 +18,12 @@ const overviewToMainSlug: Record<string, string> = {
 	aria-labelledby="services-overview-heading"
 	class="services-overview section-glow-top-left"
 >
-	<div class="so-header">
+	<div class="so-header" data-reveal="up">
 		<div class="so-header__intro">
 			<p class="pill-dark text-primary m-0">Our services</p>
 			<h2
 				id="services-overview-heading"
-				class="so-header__heading text-hero-h1 dark-section-heading m-0"
+				class="so-header__heading text-heading-dark dark-section-heading m-0"
 			>
 				Everything You Need to Build a<br />
 				Stronger Digital Presence
@@ -40,7 +40,7 @@ const overviewToMainSlug: Record<string, string> = {
 		</div>
 	</div>
 
-	<ul class="so-grid m-0 list-none p-0" role="list">
+	<ul class="so-grid m-0 list-none p-0" role="list" data-reveal-group>
 		{
 			servicesOverview.map((service) => {
 				const mainSlug = overviewToMainSlug[service.id];
@@ -49,7 +49,7 @@ const overviewToMainSlug: Record<string, string> = {
 					return href ? { label, href } : label;
 				});
 				return (
-					<li class="so-grid__item">
+					<li class="so-grid__item" data-reveal="up">
 						<ServiceCard
 							title={service.title}
 							icon={service.icon}
@@ -131,7 +131,7 @@ const overviewToMainSlug: Record<string, string> = {
 	.so-footer {
 		margin-top: 24px;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		line-height: 1.5;
 		text-align: left;

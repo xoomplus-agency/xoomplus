@@ -1,0 +1,27 @@
+---
+import Section from './Section.astro';
+import ContactForm from './ContactForm.astro';
+---
+
+<Section id="pricing-form" aria-label="Contact form" class="pricing-form">
+	<div class="pricing-form__wrap">
+		<ContactForm
+			idPrefix="pricing"
+			align="center"
+			source="pricing"
+			headingLevel={2}
+		/>
+	</div>
+</Section>
+
+<style>
+	/* :global — class is on shared <Section> root (different Astro scope) */
+	:global(.pricing-form) {
+		overflow: visible;
+	}
+
+	.pricing-form__wrap {
+		max-width: 952px;
+		margin-inline: auto;
+	}
+</style>

@@ -1,0 +1,54 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PricingIntro from '../../components/PricingIntro.astro';
+import PricingPlans from '../../components/PricingPlans.astro';
+import PricingSteps from '../../components/PricingSteps.astro';
+import WhyXoomplus from '../../components/WhyXoomplus.astro';
+import PricingForm from '../../components/PricingForm.astro';
+import FAQ from '../../components/FAQ.astro';
+import { pricingWhy } from '../../data/pricing-why';
+import CTASection from '@/components/CTASection.astro';
+---
+
+<Layout
+	title="Pricing | Xoomplus"
+	description="Clear, flexible pricing for web design, SEO, social media and paid search from Xoomplus, a digital marketing agency in Blackburn."
+>
+	<main id="main-content" class="page-pricing flex-1">
+		<PageHero title="Pricing" />
+		<PricingIntro />
+		<PricingPlans />
+		<PricingSteps />
+		<WhyXoomplus content={pricingWhy} id="why-xoomplus" buttonWidth="212px" />
+		<PricingForm />
+		<FAQ page="pricing" id="pricing-faq" />
+		<CTASection />
+	</main>
+</Layout>
+
+<style is:global>
+	/* Pricing-only intro wrapping — scoped under .page-pricing */
+
+	@media (min-width: 1024px) {
+		/* Pricing plans intro — 2 lines */
+		.page-pricing .pricing-plans__intro {
+			max-width: min(100%, 860px);
+		}
+
+		/* Why Xoomplus heading — 1 line when space permits */
+		.page-pricing #why-xoomplus .container > [data-reveal='up'] {
+			max-width: min(100%, 1100px);
+		}
+
+		.page-pricing #pricing-why-heading {
+			text-wrap: wrap;
+			overflow-wrap: normal;
+		}
+
+		/* Why Xoomplus paragraph — 2 lines */
+		.page-pricing #why-xoomplus .text-on-light {
+			max-width: min(100%, 820px);
+		}
+	}
+</style>

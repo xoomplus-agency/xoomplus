@@ -27,7 +27,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 	aria-labelledby={headingId}
 	style={`--service-hero-bg: url('${bgImage}')`}
 >
-	<div class="service-hero__inner">
+	<div class="service-hero__inner container container--wide">
 		<div class="service-hero__grid">
 			<div class="service-hero__copy">
 				<p class="pill-dark service-hero__pill m-0">
@@ -123,7 +123,6 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		padding-top: clamp(128px, 14vw, 168px);
 		padding-bottom: 32px;
 		/* Same horizontal inset as shared <Section> (Built around people, etc.) */
-		padding-inline: clamp(1rem, 12.3vw, 236px);
 		background-color: var(--color-primary-black);
 		background-image: var(--service-hero-bg);
 		background-size: cover;
@@ -134,8 +133,6 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 	.service-hero__inner {
 		box-sizing: border-box;
 		width: 100%;
-		max-width: 1560px;
-		margin-inline: auto;
 	}
 
 	.service-hero__grid {
@@ -168,47 +165,16 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 
 	.service-hero__title-line {
 		display: block;
-		/* One data line = one visual line (exactly 2 lines for titleLines) */
-		white-space: nowrap;
-	}
-
-	/* Service-hero heading sizes (override shared text-hero-h1 clamp) */
-	@media (min-width: 1280px) {
-		.service-hero__title {
-			font-size: 60px;
-		}
-	}
-
-	@media (min-width: 1024px) and (max-width: 1279px) {
-		.service-hero__title {
-			font-size: 48px;
-		}
-	}
-
-	@media (min-width: 640px) and (max-width: 1023px) {
-		.service-hero__title {
-			font-size: 40px;
-		}
-	}
-
-	@media (max-width: 639px) {
-		.service-hero__title {
-			font-size: clamp(2.125rem, 8.5vw, 2.25rem); /* 34–36px */
-			line-height: 1.15;
-		}
-
-		.service-hero__title-line {
-			white-space: normal;
-		}
 	}
 
 	.service-hero__text {
-		margin: 24px 0 0;
-		max-width: 480px;
+		margin: 1.25rem 0 0;
+		max-width: 65ch;
 		font-family: var(--font-inter);
-		font-size: 18px;
-		font-weight: 400;
-		line-height: 1.5;
+		font-size: var(--text-lead);
+		font-weight: var(--text-lead--font-weight);
+		line-height: var(--text-lead--line-height);
+		text-wrap: pretty;
 		color: var(--text-body-dark);
 	}
 
@@ -225,9 +191,9 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		align-items: center;
 		gap: 6px;
 		font-family: var(--font-inter);
-		font-size: 16px;
-		font-weight: 400;
-		line-height: 1.25;
+		font-size: var(--text-body);
+		font-weight: var(--text-body--font-weight);
+		line-height: var(--text-body--line-height);
 		color: #ffffff;
 		text-decoration: none;
 		outline: none;
@@ -410,7 +376,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		justify-content: space-between;
 		gap: 12px;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 500;
 		line-height: 1.3;
 		color: var(--text-body-dark);
@@ -433,7 +399,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 	.service-hero__footer-right {
 		margin: 0;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.4;
 	}
@@ -487,7 +453,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		}
 
 		.service-hero__text {
-			font-size: 16px;
+			font-size: var(--text-body);
 		}
 
 		.service-hero__actions {
@@ -525,7 +491,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 
 		.service-hero__footer-left,
 		.service-hero__footer-right {
-			font-size: 14px;
+			font-size: var(--text-small);
 		}
 	}
 </style>

@@ -6,6 +6,8 @@ interface Props {
 	class?: string;
 	/** Default white; `dark` = primary black; `light-gray` = #F7F7F5 */
 	background?: 'white' | 'dark' | 'light-gray' | 'none';
+	/** Scroll reveal for header slot / descendants. Pass false to opt out. */
+	reveal?: boolean;
 }
 
 const {
@@ -14,11 +16,14 @@ const {
 	'aria-label': ariaLabel,
 	class: className = '',
 	background = 'white',
+	reveal = true,
 } = Astro.props;
 
 /** For fixed-nav theme observer — light = white / #F7F7F5, dark = primary black */
 const dataBg =
 	background === 'dark' ? 'dark' : background === 'none' ? undefined : 'light';
+
+const hasHeader = Astro.slots.has('header');
 ---
 
 <section
@@ -26,15 +31,26 @@ const dataBg =
 	aria-labelledby={labelledBy}
 	aria-label={ariaLabel}
 	data-bg={dataBg}
+	data-reveal-off={reveal ? undefined : ''}
 	class:list={[
-		'page-section px-[clamp(1rem,12.3vw,236px)] py-section',
+		'page-section py-section',
 		background === 'white' && 'bg-secondary-white',
 		background === 'dark' && 'relative overflow-hidden bg-[var(--color-primary-black)]',
 		background === 'light-gray' && 'bg-[#F7F7F5]',
 		className,
 	]}
 >
-	<div class="relative z-[1] mx-auto w-full max-w-[1560px]">
+	<div class="container relative z-[1]">
+		{
+			hasHeader &&
+				(reveal ? (
+					<div data-reveal="up">
+						<slot name="header" />
+					</div>
+				) : (
+					<slot name="header" />
+				))
+		}
 		<slot />
 	</div>
 </section>

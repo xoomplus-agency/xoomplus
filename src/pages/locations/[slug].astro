@@ -50,7 +50,7 @@ const {
 	canonicalPath={canonicalPath}
 	image={hero.image}
 >
-	<main id="main-content" class="flex-1">
+	<main id="main-content" class="page-locations flex-1">
 		<LocationHero
 			pill={hero.pill}
 			pillBrand={hero.pillBrand}
@@ -85,3 +85,64 @@ const {
 		<!-- Location page sections will be added here -->
 	</main>
 </Layout>
+
+<style is:global>
+	/* Location pages only — scoped under .page-locations */
+
+	/* Built around your business — 40px */
+	.page-locations .loc-industries__subheading {
+		font-size: 40px;
+		line-height: 1.15;
+	}
+
+	/* Story paragraphs — 18px */
+	.page-locations .loc-industries__paragraphs p {
+		font-size: 18px;
+		line-height: 1.65;
+	}
+
+	@media (min-width: 1024px) {
+		/* Industries intro — 2 lines */
+		.page-locations .loc-industries__intro {
+			max-width: min(100%, 820px);
+		}
+
+		/* Widen copy column so 18px story paragraphs can hit their line targets */
+		.page-locations .loc-industries__grid {
+			grid-template-columns: 1.3fr 1fr;
+		}
+
+		/* Local intent intro — 3 lines */
+		.page-locations .location-intent__intro {
+			max-width: 400px;
+		}
+
+		/* Clarity intro — 3 lines (beat scoped .industry-clarity--light rule) */
+		.page-locations#main-content .industry-clarity__intro,
+		.page-locations#main-content .industry-clarity--light .industry-clarity__intro {
+			max-width: 380px;
+		}
+
+		/* Fundamentals intro — 2 lines */
+		.page-locations .industry-fundamentals__intro {
+			max-width: 460px;
+		}
+
+		/* Image-text rows — widen copy for 2-line body paragraphs */
+		.page-locations
+			#location-rows
+			.industry-feature__layout--rows.industry-feature__layout--image-left {
+			grid-template-columns: 1fr 1.35fr;
+		}
+
+		.page-locations
+			#location-rows
+			.industry-feature__layout--rows.industry-feature__layout--image-right {
+			grid-template-columns: 1.35fr 1fr;
+		}
+
+		.page-locations #location-rows .industry-feature__row-p1 {
+			max-width: 640px;
+		}
+	}
+</style>

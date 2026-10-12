@@ -69,7 +69,7 @@ const legalLinks = [
 		decoding="async"
 	/>
 
-	<div class="site-footer__inner">
+	<div class="site-footer__inner container container--wide">
 		<div class="site-footer__grid">
 			<div class="site-footer__brand">
 				<a href="/" aria-label="Xoomplus home" class="site-footer__logo-link">
@@ -175,7 +175,7 @@ const legalLinks = [
 		position: relative;
 		overflow: hidden;
 		width: 100%;
-		padding: 44px 48px 24px;
+		padding-block: 2.75rem 1.5rem;
 		background-color: var(--color-primary-black);
 		font-family: var(--font-inter);
 		/* Unitless so children inherit 150% of their own font-size */
@@ -199,9 +199,7 @@ const legalLinks = [
 	.site-footer__inner {
 		position: relative;
 		z-index: 1;
-		margin-inline: auto;
 		width: 100%;
-		max-width: 1560px;
 	}
 
 	.site-footer__grid {
@@ -225,8 +223,9 @@ const legalLinks = [
 	.site-footer__tagline {
 		margin: 20px 0 0;
 		font-family: var(--font-inter);
-		font-size: 20px;
-		font-weight: 400;
+		font-size: var(--text-lead);
+		font-weight: var(--text-lead--font-weight);
+		line-height: var(--text-lead--line-height);
 		color: #888888;
 	}
 
@@ -237,8 +236,9 @@ const legalLinks = [
 	.site-footer__heading {
 		margin: 0 0 18px;
 		font-family: var(--font-inter);
-		font-size: 16px;
-		font-weight: 600;
+		font-size: var(--text-small-heading);
+		font-weight: var(--text-small-heading--font-weight);
+		line-height: var(--text-small-heading--line-height);
 		color: #ffffff;
 	}
 
@@ -253,8 +253,8 @@ const legalLinks = [
 
 	.site-footer__link {
 		font-family: var(--font-inter);
-		font-size: 16px;
-		font-weight: 400;
+		font-size: var(--text-body);
+		font-weight: var(--text-body--font-weight);
 		color: #888888;
 		text-decoration: none;
 		transition: color 0.2s ease;
@@ -317,7 +317,7 @@ const legalLinks = [
 	.site-footer__copy,
 	.site-footer__legal-link {
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 400;
 		color: #888888;
 	}

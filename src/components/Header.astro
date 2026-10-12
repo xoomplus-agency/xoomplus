@@ -1,6 +1,7 @@
 ---
 import Button from './Button.astro';
 import ServicesMegaMenu from './ServicesMegaMenu.astro';
+import { isNavActive, navItems } from '../data/nav';
 import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
 
 interface Props {
@@ -13,45 +14,17 @@ interface Props {
 const { variant = 'default', theme = 'dark' } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-
-const nav: {
-	label: string;
-	href: string;
-	hasDropdown?: boolean;
-	/** Extra path prefixes that also mark this item active (trailing slashes ignored). */
-	matchPrefixes?: string[];
-}[] = [
-	{ label: 'Home', href: '/' },
-	{
-		label: 'Services',
-		href: '/our-services',
-		hasDropdown: true,
-		// Listing + legacy/detail service routes
-		matchPrefixes: ['/our-services', '/services'],
-	},
-	{ label: 'About', href: '/about' },
-	{ label: 'Industries', href: '/industries' },
-	{ label: 'Case Studies', href: '/case-studies' },
-	{ label: 'Contact', href: '/contact' },
-	{ label: 'Blog', href: '/blogs' },
-];
-
-const servicesSections = getServicesMenuSections();
+const nav = navItems;
 const megaPanelId = 'services-mega-menu';
+const mobileDrawerId = 'mobile-nav-drawer';
+const mobileServicesId = 'mobile-services-sheet';
+const servicesSections = getServicesMenuSections();
 
 function isActive(href: string, matchPrefixes?: string[]) {
 	if (href.startsWith('#')) return false;
-	const path = href.replace(/\/+$/, '') || '/';
-	// Home is exact-match only; other routes match themselves and nested paths
-	if (path === '/') return pathname === '/';
-	const prefixes = (matchPrefixes?.length ? matchPrefixes : [path]).map(
-		(p) => p.replace(/\/+$/, '') || '/',
-	);
-	return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+	return isNavActive(pathname, href, matchPrefixes);
 }
 
-/** Glass: #FFFFFF 5% · blur 34.8px (no stroke — matches design) */
-const glassFill = 'rgb(255 255 255 / 0.05)';
 ---
 
 <header
@@ -61,7 +34,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 	data-theme={theme === 'light' ? 'light' : undefined}
 >
 	<!--
-		Default (screenshot): Logo left · glass nav (links only) center · CTA right
+		Default: Logo left · glass nav (links only) center · CTA right
 		Scrolled: one unified glass shell around logo + links + CTA
 	-->
 	<div
@@ -79,7 +52,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 				alt="Xoomplus"
 				width="132"
 				height="36"
-				class="logo logo--white transition-[width] duration-500 motion-reduce:transition-none"
+				class="logo logo--white"
 				loading="eager"
 				decoding="async"
 			/>
@@ -88,7 +61,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 				alt=""
 				width="132"
 				height="36"
-				class="logo logo--black transition-[width] duration-500 motion-reduce:transition-none"
+				class="logo logo--black"
 				loading="eager"
 				decoding="async"
 				aria-hidden="true"
@@ -96,11 +69,18 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		</a>
 
 		<nav
-			class="min-w-0 justify-self-center rounded-full"
+			class="nav-glass relative min-w-0 justify-self-center rounded-full"
 			aria-label="Primary"
 			data-nav-cluster
 		>
-			<ul class="m-0 flex list-none items-center gap-0 p-1">
+			{/* Shared hover / active indicator — plain CSS, no backdrop-filter */}
+			<div
+				class="nav-indicator"
+				data-nav-indicator
+				aria-hidden="true"
+				style="--nav-ind-opacity: 0; --nav-ind-x: 0px; --nav-ind-w: 0px;"
+			></div>
+			<ul class="nav-pill-links relative z-[1] m-0 flex list-none items-center gap-0 p-1" data-nav-links>
 				{
 					nav.map((item) => {
 						const active = isActive(item.href, item.matchPrefixes);
@@ -111,10 +91,8 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 								<li class="services-nav-item" data-services-nav>
 									<a
 										class:list={[
-											'inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full text-[0.875rem] font-medium tracking-[-0.01em] transition-colors',
-											active
-												? 'nav-link-active font-semibold text-primary-black'
-												: 'px-3.5 py-2.5 text-secondary-white hover:bg-white/10',
+											'nav-pill-link inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full px-3.5 py-2.5 text-[0.875rem] font-medium tracking-[-0.01em]',
+											active && 'nav-link-active font-semibold',
 										]}
 										href={item.href}
 										aria-current={active ? 'page' : undefined}
@@ -122,6 +100,7 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 										aria-expanded="false"
 										aria-controls={megaPanelId}
 										data-services-trigger
+										data-nav-link
 									>
 										{item.label}
 										<svg
@@ -147,16 +126,15 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 						}
 
 						return (
-							<li class:list={[active && 'min-w-0']}>
+							<li>
 								<a
 									class:list={[
-										'inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full text-[0.875rem] font-medium tracking-[-0.01em] transition-colors',
-										active
-											? 'nav-link-active font-semibold text-primary-black'
-											: 'px-3.5 py-2.5 text-secondary-white hover:bg-white/10',
+										'nav-pill-link inline-flex items-center justify-center gap-[0.3rem] whitespace-nowrap rounded-full px-3.5 py-2.5 text-[0.875rem] font-medium tracking-[-0.01em]',
+										active && 'nav-link-active font-semibold',
 									]}
 									href={item.href}
 									aria-current={active ? 'page' : undefined}
+									data-nav-link
 								>
 									{item.label}
 								</a>
@@ -172,184 +150,334 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		</div>
 	</div>
 
-	<!-- Mobile -->
+	<!-- Mobile top: Logo ………… Menu (<1024px); glass shell when scrolled -->
 	<div
-		class="pointer-events-auto mx-auto w-full bg-transparent pl-4 pr-4 pt-6 sm:pl-6 sm:pr-6 lg:hidden"
+		class="pointer-events-auto mx-auto flex w-full items-center justify-between gap-3 bg-transparent pl-4 pr-4 pt-[calc(1.5rem+env(safe-area-inset-top,0px))] sm:pl-6 sm:pr-6 lg:hidden"
 		data-nav-mobile
 	>
-		<div class="flex items-center justify-between gap-3">
-			<a class="nav-logo-link shrink-0" href="/" aria-label="Xoomplus home" data-nav-logo-mobile>
-				<img
-					src="/images/logo-xoomplus.webp"
-					alt="Xoomplus"
-					width="132"
-					height="36"
-					class="logo logo--white"
-					loading="eager"
-					decoding="async"
-				/>
-				<img
-					src="/images/logo-black.webp"
-					alt=""
-					width="132"
-					height="36"
-					class="logo logo--black"
-					loading="eager"
-					decoding="async"
-					aria-hidden="true"
-				/>
-			</a>
+		<a class="nav-logo-link shrink-0" href="/" aria-label="Xoomplus home" data-nav-logo-mobile>
+			<img
+				src="/images/logo-xoomplus.webp"
+				alt="Xoomplus"
+				width="132"
+				height="36"
+				class="logo logo--white"
+				loading="eager"
+				decoding="async"
+			/>
+			<img
+				src="/images/logo-black.webp"
+				alt=""
+				width="132"
+				height="36"
+				class="logo logo--black"
+				loading="eager"
+				decoding="async"
+				aria-hidden="true"
+			/>
+		</a>
 
-			<button
-				class="inline-flex size-11 items-center justify-center rounded-full"
-				type="button"
-				aria-expanded="false"
-				aria-controls="mobile-nav"
-				data-menu-toggle
-			>
-				<span class="sr-only">Menu</span>
-				<span
-					class="relative block h-0.5 w-[1.1rem] rounded-sm bg-secondary-white before:absolute before:left-0 before:top-[-6px] before:block before:h-0.5 before:w-[1.1rem] before:rounded-sm before:bg-secondary-white before:content-[''] after:absolute after:left-0 after:top-[6px] after:block after:h-0.5 after:w-[1.1rem] after:rounded-sm after:bg-secondary-white after:content-['']"
-					aria-hidden="true"
-					data-menu-icon
-				></span>
-			</button>
-		</div>
-
-		<nav
-			id="mobile-nav"
-			class="mt-3 hidden origin-top rounded-2xl border border-white/10 bg-[rgba(12,12,12,0.92)] p-4 backdrop-blur-2xl transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none"
-			aria-label="Mobile"
-			hidden
-			data-mobile-nav
+		<button
+			class="mobile-menu-btn shrink-0"
+			type="button"
+			aria-expanded="false"
+			aria-controls={mobileDrawerId}
+			aria-label="Open menu"
+			data-mobile-menu-toggle
 		>
-			<ul class="m-0 grid list-none gap-[0.35rem] p-0">
-				{
-					nav.map((item) => {
-						const active = isActive(item.href, item.matchPrefixes);
-						const isServices = Boolean(item.hasDropdown);
+			<span class="mobile-menu-btn__icon" aria-hidden="true"></span>
+			<span class="mobile-menu-btn__label">Menu</span>
+		</button>
+	</div>
 
-						if (isServices) {
-							return (
-								<li class="mobile-services" data-mobile-services>
-									<button
-										class="mobile-services__trigger flex w-full items-center justify-between rounded-xl px-[0.9rem] py-3 text-left font-medium text-secondary-white"
-										type="button"
-										aria-expanded="false"
-										aria-controls="mobile-services-panel"
-										data-mobile-services-toggle
-									>
-										<span>{item.label}</span>
-										<svg
-											class="mobile-services__chevron opacity-85"
-											width="10"
-											height="6"
-											viewBox="0 0 10 6"
-											aria-hidden="true"
+	<!-- Right drawer (full links) -->
+	<div class="mobile-drawer-root lg:hidden" data-mobile-drawer-root hidden inert>
+		<button
+			class="mobile-drawer__backdrop"
+			type="button"
+			tabindex="-1"
+			aria-label="Close menu"
+			data-mobile-drawer-backdrop
+		></button>
+		<aside
+			id={mobileDrawerId}
+			class="mobile-drawer"
+			role="dialog"
+			aria-modal="true"
+			aria-label="Site menu"
+			data-mobile-drawer
+		>
+			<div class="mobile-drawer__head">
+				<p class="mobile-drawer__title">Menu</p>
+				<button
+					class="mobile-drawer__close"
+					type="button"
+					aria-label="Close menu"
+					data-mobile-drawer-close
+				>
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<nav aria-label="Mobile menu">
+				<ul class="mobile-drawer__list">
+					{
+						nav.map((item) => {
+							const active = isActive(item.href, item.matchPrefixes);
+							const isServices = Boolean(item.hasDropdown);
+
+							if (isServices) {
+								return (
+									<li>
+										<button
+											class:list={['mobile-drawer__link', active && 'is-active']}
+											type="button"
+											aria-expanded="false"
+											aria-controls={mobileServicesId}
+											aria-haspopup="dialog"
+											data-mobile-drawer-services
 										>
-											<path
-												d="M1 1l4 4 4-4"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="1.5"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</button>
-									<div
-										id="mobile-services-panel"
-										class="mobile-services__panel"
-										hidden
-										data-mobile-services-panel
+											{item.label}
+											<svg
+												class="mobile-drawer__chevron"
+												width="10"
+												height="6"
+												viewBox="0 0 10 6"
+												aria-hidden="true"
+											>
+												<path
+													d="M1 1l4 4 4-4"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="1.5"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												/>
+											</svg>
+										</button>
+									</li>
+								);
+							}
+
+							return (
+								<li>
+									<a
+										class:list={['mobile-drawer__link', active && 'is-active']}
+										href={item.href}
+										aria-current={active ? 'page' : undefined}
+										data-mobile-drawer-link
 									>
-										<ul class="m-0 grid list-none gap-1 p-0 pl-2">
-											<li>
-												<a
-													class="block rounded-lg px-[0.9rem] py-2 text-sm font-semibold text-secondary-white"
-													href={servicesMenu.footer.allServicesHref}
-													data-mobile-link
-												>
-													All Services
-												</a>
-											</li>
-											{servicesSections.map((section) => (
-												<li class="mobile-services__section">
-													<a
-														class="block rounded-lg px-[0.9rem] py-2 text-sm font-semibold text-secondary-white"
-														href={section.href}
-														data-mobile-link
-													>
-														{section.title}
-													</a>
-													<ul class="m-0 grid list-none gap-0.5 p-0">
-														{section.links.map((link) => (
-															<li>
-																<a
-																	class="block rounded-lg px-[0.9rem] py-1.5 text-sm font-normal text-white/70"
-																	href={link.href}
-																	data-mobile-link
-																>
-																	{link.label}
-																</a>
-															</li>
-														))}
-													</ul>
-												</li>
-											))}
-										</ul>
-									</div>
+										{item.label}
+									</a>
 								</li>
 							);
-						}
+						})
+					}
+				</ul>
+			</nav>
+			<div class="mobile-drawer__cta">
+				<Button size="nav" class="!w-full" href="#contact">Let’s Talk</Button>
+			</div>
+		</aside>
+	</div>
 
-						return (
-							<li>
-								<a
-									class="block rounded-xl px-[0.9rem] py-3 font-medium text-secondary-white"
-									href={item.href}
-									aria-current={active ? 'page' : undefined}
-									data-mobile-link
-								>
-									{item.label}
-								</a>
-							</li>
-						);
-					})
+	<!-- Mobile Services mega sheet (from bottom nav) -->
+	<div class="mobile-services-root lg:hidden" data-mobile-services-root hidden inert>
+		<button
+			class="mobile-services__backdrop"
+			type="button"
+			tabindex="-1"
+			aria-label="Close services menu"
+			data-mobile-services-backdrop
+		></button>
+		<div
+			id={mobileServicesId}
+			class="mobile-services-sheet"
+			role="dialog"
+			aria-modal="true"
+			aria-label="Services"
+			data-mobile-services-sheet
+		>
+			<div class="mobile-services-sheet__head">
+				<button
+					class="mobile-services-sheet__back"
+					type="button"
+					data-mobile-services-close
+				>
+					<span aria-hidden="true">←</span>
+					<span>Back</span>
+				</button>
+				<p class="mobile-services-sheet__title">Services</p>
+				<button
+					class="mobile-services-sheet__close"
+					type="button"
+					aria-label="Close services menu"
+					data-mobile-services-close
+				>
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="mobile-services-sheet__body">
+				<a
+					class="mobile-services-sheet__all"
+					href={servicesMenu.footer.allServicesHref}
+					data-mobile-services-link
+				>
+					All Services
+				</a>
+				{
+					servicesSections.map((section) => (
+						<details class="mobile-services-acc">
+							<summary class="mobile-services-acc__summary">
+								<span>{section.title}</span>
+								<svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+									<path
+										d="M1 1l4 4 4-4"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
+							</summary>
+							<ul class="mobile-services-acc__list">
+								<li>
+									<a
+										class="mobile-services-acc__parent"
+										href={section.href}
+										data-mobile-services-link
+									>
+										Overview
+									</a>
+								</li>
+								{section.links.map((link) => (
+									<li>
+										<a href={link.href} data-mobile-services-link>
+											{link.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						</details>
+					))
 				}
-				<li class="mt-1">
-					<Button size="nav" class="!w-full" href="#contact">Let’s Talk</Button>
-				</li>
-			</ul>
-		</nav>
+			</div>
+			<div class="mobile-services-sheet__footer">
+				<p class="mobile-services-sheet__footer-heading">{servicesMenu.footer.heading}</p>
+				<p class="mobile-services-sheet__footer-text">{servicesMenu.footer.text}</p>
+				<Button size="nav" class="!w-full" href={servicesMenu.footer.buttonHref}>
+					{servicesMenu.footer.buttonLabel}
+				</Button>
+			</div>
+		</div>
 	</div>
 </header>
 
-<style define:vars={{ glassFill }}>
-	/* Menu pill bg — dark/hero (current glass) vs light sections */
-	@property --nav-pill-bg {
-		syntax: '<color>';
-		inherits: true;
-		initial-value: rgb(255 255 255 / 0.05);
-	}
-
+<style>
+	/* Instant theme tokens — no fade (duration kept at 0ms for optional later fade) */
 	[data-site-header] {
-		/* Same value as glassFill / prior pill fill — keep in sync */
-		--nav-pill-bg: rgb(255 255 255 / 0.05);
+		--nav-theme-duration: 0ms;
+		--nav-shrink-duration: 250ms;
+		--nav-shrink-ease: cubic-bezier(0.23, 1, 0.32, 1);
+		--nav-pill-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+		--nav-pill-blur: 10px;
+		--nav-pill-saturate: 1.3;
+		--nav-link: #ffffff;
+		--nav-link-active: #ffffff;
+		--nav-indicator: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
+		--nav-indicator-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+		--nav-rim: linear-gradient(
+			150deg,
+			rgba(255, 255, 255, 0.65),
+			rgba(255, 255, 255, 0.08) 45%,
+			rgba(255, 255, 255, 0.06) 60%,
+			rgba(255, 255, 255, 0.35)
+		);
+		--nav-glass-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.35),
+			inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+			inset 0 0 10px rgba(255, 255, 255, 0.06),
+			0 4px 16px rgba(0, 0, 0, 0.14);
+		color-scheme: dark;
 	}
 
 	[data-site-header][data-theme='light'] {
 		--nav-pill-bg: rgba(0, 0, 0, 0.05);
+		--nav-pill-blur: 10px;
+		--nav-pill-saturate: 1.3;
+		--nav-link: #111111;
+		--nav-link-active: #111111;
+		--nav-indicator: linear-gradient(135deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.04));
+		--nav-indicator-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		--nav-rim: linear-gradient(
+			150deg,
+			rgba(255, 255, 255, 0.6),
+			rgba(255, 255, 255, 0.2) 45%,
+			rgba(255, 255, 255, 0.12) 60%,
+			rgba(255, 255, 255, 0.4)
+		);
+		--nav-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.06);
+		color-scheme: light;
 	}
 
-	/* Light theme: inactive pill links readable on white / 5% black fill */
-	[data-site-header][data-theme='light'] [data-nav-desktop] a:not(.nav-link-active) {
-		color: #555555;
+	/* Single pure-CSS glass surface (exactly one backdrop-filter host at a time) */
+	.nav-glass {
+		border: none;
+		background: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		box-shadow: var(--nav-glass-shadow);
 	}
 
-	[data-site-header][data-theme='light'] [data-nav-desktop] a:not(.nav-link-active):hover,
-	[data-site-header][data-theme='light'] [data-nav-desktop] a:not(.nav-link-active)[data-mega-open] {
-		background-color: rgba(0, 0, 0, 0.05);
+	.nav-glass::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: var(--nav-rim);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box exclude,
+			linear-gradient(#000 0 0);
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	@media (max-width: 1023px), (prefers-reduced-transparency: reduce) {
+		.nav-glass {
+			background: rgba(20, 19, 18, 0.78);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+			box-shadow: none;
+		}
+		.nav-glass::before {
+			display: none;
+		}
+	}
+
+	@media (prefers-contrast: more) {
+		.nav-glass {
+			background: rgba(20, 19, 18, 0.9);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+			box-shadow: none;
+		}
+		.nav-glass::before {
+			display: none;
+		}
+	}
+
+	[data-nav-desktop] .nav-pill-link {
+		color: var(--nav-link);
+	}
+
+	[data-nav-desktop] .nav-link-active {
+		color: var(--nav-link-active);
+		background-color: transparent;
 	}
 
 	[data-site-header][data-theme='light'] [data-menu-icon],
@@ -358,21 +486,67 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		background-color: #555555;
 	}
 
-	[data-site-header][data-theme='light'] [data-menu-toggle] {
-		background-color: var(--nav-pill-bg);
+	/* Indicator — plain CSS, NO backdrop-filter */
+	.nav-indicator {
+		position: absolute;
+		top: 3px;
+		left: 0;
+		z-index: 0;
+		width: var(--nav-ind-w, 0px);
+		height: calc(100% - 6px);
+		transform: translate3d(var(--nav-ind-x, 0px), 0, 0);
+		border-radius: 9999px;
+		background: var(--nav-indicator);
+		box-shadow: var(--nav-indicator-shadow);
+		backface-visibility: hidden;
+		transform-style: flat;
+		pointer-events: none;
+		opacity: var(--nav-ind-opacity, 0);
+		transition:
+			transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+			width 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+			opacity 0.15s ease;
 	}
 
-	/*
-	 * Navbar logo — crossfade with pill theme (data-theme on header).
-	 * Assets: logo-xoomplus.webp 244×57, logo-black.webp 243×56.
-	 * Both place the "xoom" wordmark ~10px below the box center (amber "+" above),
-	 * so a -5px optical nudge aligns the wordmark with nav link / Home pill text.
-	 */
+	.nav-indicator::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: var(--nav-rim);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box exclude,
+			linear-gradient(#000 0 0);
+		pointer-events: none;
+	}
+
+	.nav-indicator.nav-indicator--gliding {
+		will-change: transform;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.nav-indicator {
+			transition:
+				opacity 0.1s ease,
+				width 0s,
+				transform 0s;
+		}
+	}
+
+	.nav-pill-link:focus-visible {
+		outline: 2px solid light-dark(#0a84ff, #5ac8fa);
+		outline-offset: 2px;
+	}
+
 	.nav-logo-link {
 		position: relative;
 		display: flex;
 		align-items: center;
-		/* Fill the nav row height; inner flex centers the logo mark */
 		align-self: stretch;
 		line-height: 0;
 		margin-left: 0;
@@ -380,14 +554,12 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 
 	.nav-logo-link .logo {
 		display: block;
-		/* Same box for both files (white asset aspect 244×57) — avoids letterbox shift */
 		width: clamp(104px, 10vw, 132px);
 		height: calc(clamp(104px, 10vw, 132px) * 57 / 244);
 		object-fit: fill;
 		object-position: center;
-		/* Optical: wordmark sits low in both assets because of the "+" ascender */
 		transform: translateY(-5px);
-		transition: opacity 0.35s ease;
+		transition: none;
 	}
 
 	.nav-logo-link .logo--black {
@@ -416,7 +588,6 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		opacity: 1;
 	}
 
-	/* Solid navbar — primary black bar for light pages without a dark hero */
 	[data-site-header][data-variant='solid'] {
 		background-color: var(--color-primary-black);
 	}
@@ -426,88 +597,54 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		background-color: transparent;
 	}
 
-	[data-site-header][data-variant='solid'][data-scrolled] [data-nav-desktop],
-	[data-site-header][data-variant='solid'][data-scrolled] [data-nav-mobile] {
-		background-color: var(--nav-pill-bg);
-		-webkit-backdrop-filter: blur(34.8px);
-		backdrop-filter: blur(34.8px);
-	}
-
-	/* Active link — Figma: 117.57×43, #FFF / #0A0A0A */
-	[data-nav-desktop] .nav-link-active {
-		box-sizing: border-box;
-		width: 117.57px;
-		max-width: 100%;
-		height: 43px;
-		flex-shrink: 1;
-		padding: 0;
-		background-color: #ffffff;
-		color: #0a0a0a;
-	}
-
 	[data-nav-desktop],
-	[data-nav-mobile],
-	[data-nav-cluster],
-	[data-menu-toggle] {
+	[data-nav-mobile] {
 		transition:
-			width 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			max-width 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			margin 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			padding 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			background-color 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			gap 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+			width var(--nav-shrink-duration) var(--nav-shrink-ease),
+			max-width var(--nav-shrink-duration) var(--nav-shrink-ease),
+			margin-top var(--nav-shrink-duration) var(--nav-shrink-ease),
+			margin-inline var(--nav-shrink-duration) var(--nav-shrink-ease),
+			padding var(--nav-shrink-duration) var(--nav-shrink-ease),
+			border-radius var(--nav-shrink-duration) var(--nav-shrink-ease),
+			gap var(--nav-shrink-duration) var(--nav-shrink-ease);
 	}
 
-	/* Pill: theme fade uses 0.35s ease; keep other transitioned props unchanged */
 	[data-nav-cluster] {
-		transition:
-			width 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			max-width 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			margin 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			padding 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			background-color 0.35s ease,
-			gap 500ms cubic-bezier(0.22, 1, 0.36, 1),
-			transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+		position: relative;
+		transition: none;
 	}
 
-	/*
-	 * Glass blur — literal px (not var) + -webkit first.
-	 * LightningCSS prod minify can drop unprefixed backdrop-filter when it comes first.
-	 */
-	[data-nav-cluster] {
-		border: none;
-		background-color: var(--nav-pill-bg);
-		-webkit-backdrop-filter: blur(34.8px);
-		backdrop-filter: blur(34.8px);
-	}
-
-	[data-menu-toggle] {
-		border: none;
-		background-color: var(--glassFill);
-		-webkit-backdrop-filter: blur(34.8px);
-		backdrop-filter: blur(34.8px);
-	}
-
-	/* Scrolled: same glass on unified shell; nav cluster clears */
+	/* Scrolled: move the ONE glass surface to the unified shell */
 	[data-site-header][data-scrolled] [data-nav-desktop] {
 		width: min(94vw, 1100px);
 		max-width: 1100px;
 		margin-top: 0.75rem;
-		/*
-		 * Equal L/R inset so left gap = right gap.
-		 * Was 0.85rem (13.6px) on the right — too tight for the logo against the pill
-		 * curve, so both sides use 16 / 20 / 24px (see media queries below).
-		 */
 		padding: 0.5rem 16px;
 		border: none;
 		border-radius: 9999px;
-		background-color: var(--nav-pill-bg);
-		-webkit-backdrop-filter: blur(34.8px);
-		backdrop-filter: blur(34.8px);
 		gap: 0.75rem;
+		background: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		box-shadow: var(--nav-glass-shadow);
+	}
+
+	[data-site-header][data-scrolled] [data-nav-desktop]::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: var(--nav-rim);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box exclude,
+			linear-gradient(#000 0 0);
+		pointer-events: none;
+		z-index: 0;
 	}
 
 	@media (min-width: 1024px) {
@@ -524,101 +661,739 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 		}
 	}
 
-	[data-site-header][data-scrolled] [data-nav-mobile] {
-		width: min(94vw, 100%);
-		max-width: 100%;
-		margin-top: 0.65rem;
-		margin-inline: auto;
-		padding: 0.65rem 16px;
-		border: none;
-		border-radius: 1.25rem;
-		background-color: var(--nav-pill-bg);
-		-webkit-backdrop-filter: blur(34.8px);
-		backdrop-filter: blur(34.8px);
-	}
-
 	[data-site-header][data-scrolled] [data-nav-cluster] {
-		background-color: transparent;
+		background: transparent;
 		-webkit-backdrop-filter: none;
 		backdrop-filter: none;
+		box-shadow: none;
 	}
 
-	[data-site-header][data-scrolled] [data-menu-toggle] {
-		background-color: transparent;
-		-webkit-backdrop-filter: none;
-		backdrop-filter: none;
+	[data-site-header][data-scrolled] [data-nav-cluster]::before {
+		display: none;
 	}
 
-	/* Services mega: position against the desktop nav bar (not the link) */
+	[data-site-header][data-scrolled] [data-nav-desktop] > .nav-logo-link,
+	[data-site-header][data-scrolled] [data-nav-desktop] > [data-nav-cluster],
+	[data-site-header][data-scrolled] [data-nav-desktop] > [data-nav-cta] {
+		position: relative;
+		z-index: 1;
+	}
+
+	@media (max-width: 1023px), (prefers-reduced-transparency: reduce) {
+		[data-site-header][data-scrolled] [data-nav-desktop] {
+			background: rgba(20, 19, 18, 0.78);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+			box-shadow: none;
+		}
+		[data-site-header][data-scrolled] [data-nav-desktop]::before {
+			display: none;
+		}
+	}
+
+	@media (prefers-contrast: more) {
+		[data-site-header][data-scrolled] [data-nav-desktop] {
+			background: rgba(20, 19, 18, 0.9);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+		}
+		[data-site-header][data-scrolled] [data-nav-desktop]::before {
+			display: none;
+		}
+	}
+
 	.services-nav-item {
 		position: static;
 	}
 
-	/* Keep the Services pill in its hover look while the mega menu is open */
-	[data-nav-desktop] [data-services-trigger][data-mega-open]:not(.nav-link-active) {
-		background-color: rgb(255 255 255 / 0.1);
+	/* ── Mobile top: scroll glass behind logo + menu ── */
+	[data-site-header][data-scrolled] [data-nav-mobile] {
+		width: min(94vw, 100%);
+		max-width: 100%;
+		margin-top: 0.5rem;
+		margin-inline: auto;
+		padding: 0.5rem 14px;
+		padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
+		border-radius: 9999px;
+		background: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		box-shadow: var(--nav-glass-shadow);
 	}
 
-	.mobile-services__panel {
-		padding-bottom: 0.35rem;
+	[data-site-header][data-scrolled] [data-nav-mobile]::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: var(--nav-rim);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box exclude,
+			linear-gradient(#000 0 0);
+		pointer-events: none;
+		z-index: 0;
 	}
 
-	.mobile-services__trigger[aria-expanded='true'] .mobile-services__chevron {
+	[data-nav-mobile] {
+		position: relative;
+	}
+
+	[data-nav-mobile] > * {
+		position: relative;
+		z-index: 1;
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		[data-site-header][data-scrolled] [data-nav-mobile] {
+			background: rgba(20, 19, 18, 0.85);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+			box-shadow: none;
+		}
+		[data-site-header][data-scrolled] [data-nav-mobile]::before {
+			display: none;
+		}
+		[data-site-header][data-theme='light'][data-scrolled] [data-nav-mobile] {
+			background: rgba(247, 247, 245, 0.95);
+		}
+	}
+
+	/* ── Mobile menu button (top header; same control as before) ── */
+	.mobile-menu-btn {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		min-height: 40px;
+		min-width: 40px;
+		margin: 0;
+		padding: 0.45rem 0.85rem;
+		border: none;
+		border-radius: 9999px;
+		background: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		box-shadow: var(--nav-glass-shadow);
+		color: var(--nav-link);
+		font: inherit;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.mobile-menu-btn::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: var(--nav-rim);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box exclude,
+			linear-gradient(#000 0 0);
+		pointer-events: none;
+	}
+
+	.mobile-menu-btn__icon,
+	.mobile-menu-btn__icon::before,
+	.mobile-menu-btn__icon::after {
+		display: block;
+		width: 1.05rem;
+		height: 2px;
+		border-radius: 1px;
+		background: currentColor;
+	}
+
+	.mobile-menu-btn__icon {
+		position: relative;
+		z-index: 1;
+		flex-shrink: 0;
+	}
+
+	.mobile-menu-btn__icon::before,
+	.mobile-menu-btn__icon::after {
+		content: '';
+		position: absolute;
+		left: 0;
+	}
+
+	.mobile-menu-btn__icon::before {
+		top: -6px;
+	}
+
+	.mobile-menu-btn__icon::after {
+		top: 6px;
+	}
+
+	.mobile-menu-btn__label {
+		position: relative;
+		z-index: 1;
+		line-height: 1;
+	}
+
+	.mobile-menu-btn:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 2px;
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		.mobile-menu-btn {
+			background: rgba(20, 19, 18, 0.85);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+			box-shadow: none;
+		}
+		.mobile-menu-btn::before {
+			display: none;
+		}
+		[data-site-header][data-theme='light'] .mobile-menu-btn {
+			background: rgba(247, 247, 245, 0.95);
+		}
+	}
+
+	/* ── Right drawer ── */
+	.mobile-drawer-root {
+		position: fixed;
+		inset: 0;
+		z-index: 60;
+		pointer-events: none;
+	}
+
+	.mobile-drawer-root[data-open] {
+		pointer-events: auto;
+	}
+
+	.mobile-drawer__backdrop {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: rgba(0, 0, 0, 0.45);
+		opacity: 0;
+		cursor: pointer;
+		transition: opacity 0.22s ease;
+	}
+
+	.mobile-drawer-root[data-open] .mobile-drawer__backdrop {
+		opacity: 1;
+	}
+
+	.mobile-drawer {
+		position: absolute;
+		top: 0;
+		right: 0;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		width: min(100vw - 2.5rem, 22rem);
+		height: 100%;
+		padding:
+			calc(1.25rem + env(safe-area-inset-top, 0px))
+			1.25rem
+			calc(1.25rem + env(safe-area-inset-bottom, 0px));
+		background: rgba(20, 19, 18, 0.96);
+		color: #ffffff;
+		box-shadow: -12px 0 40px rgba(0, 0, 0, 0.28);
+		transform: translateX(100%);
+		transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	[data-site-header][data-theme='light'] .mobile-drawer {
+		background: rgba(247, 247, 245, 0.98);
+		color: #111111;
+		box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
+	}
+
+	.mobile-drawer-root[data-open] .mobile-drawer {
+		transform: translateX(0);
+	}
+
+	.mobile-drawer__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.mobile-drawer__title {
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		opacity: 0.7;
+	}
+
+	.mobile-drawer__close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-radius: 9999px;
+		background: rgba(255, 255, 255, 0.08);
+		color: inherit;
+		font-size: 1.5rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	[data-site-header][data-theme='light'] .mobile-drawer__close {
+		background: rgba(0, 0, 0, 0.06);
+	}
+
+	.mobile-drawer__list {
+		display: grid;
+		gap: 0.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.mobile-drawer__link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		width: 100%;
+		min-height: 48px;
+		padding: 0.85rem 1rem;
+		border: none;
+		border-radius: 0.85rem;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		font-size: 1.05rem;
+		font-weight: 500;
+		letter-spacing: -0.02em;
+		text-align: left;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.mobile-drawer__link.is-active {
+		background: var(--nav-indicator);
+		color: var(--nav-link-active);
+		font-weight: 600;
+	}
+
+	.mobile-drawer__link:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 2px;
+	}
+
+	.mobile-drawer__chevron {
+		opacity: 0.85;
+		flex-shrink: 0;
+	}
+
+	.mobile-drawer__cta {
+		margin-top: auto;
+		padding-top: 1.5rem;
+	}
+
+	/* ── Mobile Services sheet ── */
+	.mobile-services-root {
+		position: fixed;
+		inset: 0;
+		z-index: 55;
+		pointer-events: none;
+	}
+
+	.mobile-services-root[data-open] {
+		pointer-events: auto;
+	}
+
+	.mobile-services__backdrop {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: rgba(0, 0, 0, 0.45);
+		opacity: 0;
+		cursor: pointer;
+		transition: opacity 0.22s ease;
+	}
+
+	.mobile-services-root[data-open] .mobile-services__backdrop {
+		opacity: 1;
+	}
+
+	.mobile-services-sheet {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		max-height: min(85dvh, 100dvh);
+		padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+		border-radius: 1.25rem 1.25rem 0 0;
+		background: rgba(20, 19, 18, 0.97);
+		color: #ffffff;
+		box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.28);
+		transform: translateY(100%);
+		transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+		overflow: hidden;
+	}
+
+	[data-site-header][data-theme='light'] .mobile-services-sheet {
+		background: rgba(247, 247, 245, 0.98);
+		color: #111111;
+		box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.12);
+	}
+
+	.mobile-services-root[data-open] .mobile-services-sheet {
+		transform: translateY(0);
+	}
+
+	.mobile-services-sheet__head {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.85rem 1rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		flex-shrink: 0;
+	}
+
+	[data-site-header][data-theme='light'] .mobile-services-sheet__head {
+		border-bottom-color: rgba(0, 0, 0, 0.08);
+	}
+
+	.mobile-services-sheet__back {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		justify-self: start;
+		margin: 0;
+		padding: 0.4rem 0.55rem;
+		border: none;
+		border-radius: 0.5rem;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	.mobile-services-sheet__title {
+		margin: 0;
+		justify-self: center;
+		font-size: 0.95rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+
+	.mobile-services-sheet__close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		justify-self: end;
+		width: 40px;
+		height: 40px;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-radius: 9999px;
+		background: rgba(255, 255, 255, 0.08);
+		color: inherit;
+		font-size: 1.5rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	[data-site-header][data-theme='light'] .mobile-services-sheet__close {
+		background: rgba(0, 0, 0, 0.06);
+	}
+
+	.mobile-services-sheet__body {
+		flex: 1 1 auto;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		padding: 0.75rem 1rem 1rem;
+	}
+
+	.mobile-services-sheet__all {
+		display: flex;
+		align-items: center;
+		min-height: 44px;
+		margin-bottom: 0.5rem;
+		padding: 0.65rem 0.85rem;
+		border-radius: 0.75rem;
+		background: var(--nav-indicator);
+		color: inherit;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.mobile-services-acc {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	[data-site-header][data-theme='light'] .mobile-services-acc {
+		border-bottom-color: rgba(0, 0, 0, 0.08);
+	}
+
+	.mobile-services-acc__summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		min-height: 48px;
+		padding: 0.75rem 0.25rem;
+		cursor: pointer;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		list-style: none;
+	}
+
+	.mobile-services-acc__summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.mobile-services-acc[open] .mobile-services-acc__summary svg {
 		transform: rotate(180deg);
 	}
 
-	.mobile-services__chevron {
-		transition: transform 0.2s ease;
+	.mobile-services-acc__list {
+		display: grid;
+		gap: 0.15rem;
+		margin: 0 0 0.75rem;
+		padding: 0 0 0 0.35rem;
+		list-style: none;
+	}
+
+	.mobile-services-acc__list a {
+		display: flex;
+		align-items: center;
+		min-height: 40px;
+		padding: 0.45rem 0.65rem;
+		border-radius: 0.55rem;
+		color: inherit;
+		opacity: 0.85;
+		text-decoration: none;
+		font-size: 0.9rem;
+	}
+
+	.mobile-services-acc__parent {
+		font-weight: 600;
+		opacity: 1 !important;
+	}
+
+	.mobile-services-sheet__footer {
+		flex-shrink: 0;
+		padding: 1rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	[data-site-header][data-theme='light'] .mobile-services-sheet__footer {
+		border-top-color: rgba(0, 0, 0, 0.08);
+	}
+
+	.mobile-services-sheet__footer-heading {
+		margin: 0 0 0.25rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	.mobile-services-sheet__footer-text {
+		margin: 0 0 0.85rem;
+		font-size: 0.85rem;
+		opacity: 0.75;
+	}
+
+	@media (min-width: 1024px) {
+		.mobile-drawer-root,
+		.mobile-services-root,
+		.mobile-menu-btn {
+			display: none !important;
+		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		[data-site-header] [data-nav-desktop],
 		[data-site-header] [data-nav-mobile],
-		[data-site-header] [data-nav-cluster],
-		[data-site-header] [data-menu-toggle],
-		[data-mobile-nav],
-		.mobile-services__chevron,
-		[data-site-header] .nav-logo-link .logo {
+		.mobile-drawer,
+		.mobile-drawer__backdrop,
+		.mobile-services-sheet,
+		.mobile-services__backdrop {
 			transition-duration: 0s !important;
 			transition: none !important;
 		}
 	}
 </style>
 
+
 <script>
 	const header = document.querySelector('[data-site-header]');
-	const toggle = document.querySelector('[data-menu-toggle]');
-	const panel = document.querySelector('[data-mobile-nav]');
 
 	const SCROLL_THRESHOLD = 100;
-	let ticking = false;
+	const desktop = document.querySelector('[data-nav-desktop]');
+	const mobile = document.querySelector('[data-nav-mobile]');
 
-	function setScrolled(scrolled) {
+	/** Shrink trigger — 1px sentinel at scroll threshold (no scroll listener). */
+	function initNavScrollSentinel() {
 		if (!(header instanceof HTMLElement)) return;
-		header.toggleAttribute('data-scrolled', scrolled);
+
+		let sentinel = document.querySelector('[data-nav-scroll-sentinel]');
+		if (!(sentinel instanceof HTMLElement)) {
+			sentinel = document.createElement('div');
+			sentinel.setAttribute('data-nav-scroll-sentinel', '');
+			sentinel.setAttribute('aria-hidden', 'true');
+			Object.assign(sentinel.style, {
+				position: 'absolute',
+				top: `${SCROLL_THRESHOLD}px`,
+				left: '0',
+				width: '1px',
+				height: '1px',
+				pointerEvents: 'none',
+				visibility: 'hidden',
+			});
+			document.body.prepend(sentinel);
+		}
+
+		let scrollRaf = 0;
+		let pendingScrolled = null;
+
+		function applyScrolledState(scrolled) {
+			if (pendingScrolled === scrolled) return;
+			pendingScrolled = scrolled;
+			if (scrollRaf) return;
+			scrollRaf = requestAnimationFrame(() => {
+				scrollRaf = 0;
+				if (!(header instanceof HTMLElement)) return;
+				const next = pendingScrolled;
+				pendingScrolled = null;
+				if (next === null) return;
+				const was = header.hasAttribute('data-scrolled');
+				if (was === next) return;
+
+				header.toggleAttribute('data-scrolled', next);
+				header.classList.add('is-shrinking');
+				for (const el of [desktop, mobile]) {
+					if (el instanceof HTMLElement) el.style.willChange = 'width';
+				}
+			});
+		}
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (!entry) return;
+				applyScrolledState(!entry.isIntersecting);
+			},
+			{ root: null, threshold: 0, rootMargin: '0px' },
+		);
+
+		observer.observe(sentinel);
 	}
 
-	function onScroll() {
-		if (ticking) return;
-		ticking = true;
-		requestAnimationFrame(() => {
-			setScrolled(window.scrollY > SCROLL_THRESHOLD);
-			ticking = false;
+	initNavScrollSentinel();
+
+	function finishNavShrinkTransition() {
+		if (!(header instanceof HTMLElement)) return;
+		if (!header.classList.contains('is-shrinking')) return;
+		header.classList.remove('is-shrinking');
+		for (const el of [desktop, mobile]) {
+			if (el instanceof HTMLElement) el.style.removeProperty('will-change');
+		}
+	}
+
+	for (const el of [desktop, mobile]) {
+		if (!(el instanceof HTMLElement)) continue;
+		el.addEventListener('transitionend', (event) => {
+			if (event.target !== el || event.propertyName !== 'width') return;
+			finishNavShrinkTransition();
 		});
 	}
 
-	setScrolled(window.scrollY > SCROLL_THRESHOLD);
-	window.addEventListener('scroll', onScroll, { passive: true });
-
-	/** Case B: pill theme from section under the fixed navbar (no scroll listeners) */
+	/** Theme from section under the top nav midpoint (no scroll listener). */
 	function initNavPillThemeObserver() {
 		if (!(header instanceof HTMLElement)) return;
 		const sections = document.querySelectorAll('[data-bg]');
 		if (!sections.length) return;
 
 		const intersecting = new Map();
+		let themeObserver;
+		let themeRaf = 0;
+		let pendingTheme = null;
+		let resizeTimer = 0;
 
-		function applyThemeFromBand() {
+		function probeY() {
+			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+			const topBar = isMobile ? mobile : desktop;
+			const navH =
+				(topBar instanceof HTMLElement && topBar.offsetHeight) ||
+				header.offsetHeight ||
+				80;
+			return Math.max(1, Math.round(navH / 2));
+		}
+
+		function themeRootMargin() {
+			const y = Math.round(probeY());
+			const bottom = Math.max(0, window.innerHeight - y - 1);
+			return `-${y}px 0px -${bottom}px 0px`;
+		}
+
+		function applyTheme(wantLight) {
+			if (!(header instanceof HTMLElement)) return;
+			const hasLight = header.getAttribute('data-theme') === 'light';
+			if (wantLight === hasLight) return;
+			if (wantLight) header.setAttribute('data-theme', 'light');
+			else header.removeAttribute('data-theme');
+		}
+
+		function scheduleTheme(wantLight) {
+			pendingTheme = wantLight;
+			if (themeRaf) return;
+			themeRaf = requestAnimationFrame(() => {
+				themeRaf = 0;
+				if (pendingTheme === null) return;
+				const next = pendingTheme;
+				pendingTheme = null;
+				applyTheme(next);
+			});
+		}
+
+		function bgFromPoint(y) {
+			const stack = document.elementsFromPoint(window.innerWidth / 2, y);
+			for (const el of stack) {
+				if (!(el instanceof Element)) continue;
+				if (
+					el.closest(
+						'[data-site-header], [data-mobile-drawer-root], [data-mobile-services-root]',
+					)
+				) {
+					continue;
+				}
+				const section = el.closest('[data-bg]');
+				if (section) return section.getAttribute('data-bg') === 'light';
+			}
+			return null;
+		}
+
+		function resolveThemeFromBand() {
 			if (!(header instanceof HTMLElement)) return;
 			let chosen = null;
 			let chosenTop = -Infinity;
@@ -629,90 +1404,321 @@ const glassFill = 'rgb(255 255 255 / 0.05)';
 					chosen = el;
 				}
 			}
-			if (!chosen) return;
-			const bg = chosen.getAttribute('data-bg');
-			if (bg === 'light') {
-				header.setAttribute('data-theme', 'light');
-			} else {
-				header.removeAttribute('data-theme');
+			if (chosen) {
+				scheduleTheme(chosen.getAttribute('data-bg') === 'light');
+				return;
 			}
+			const fromPoint = bgFromPoint(probeY());
+			if (fromPoint !== null) scheduleTheme(fromPoint);
 		}
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const entry of entries) {
-					if (entry.isIntersecting) {
-						intersecting.set(entry.target, entry);
-					} else {
-						intersecting.delete(entry.target);
+		function bindThemeObserver() {
+			themeObserver?.disconnect();
+			intersecting.clear();
+			themeObserver = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries) {
+						if (entry.isIntersecting) intersecting.set(entry.target, entry);
+						else intersecting.delete(entry.target);
 					}
-				}
-				applyThemeFromBand();
-			},
-			{
-				root: null,
-				rootMargin: '-40px 0px -90% 0px',
-				threshold: 0,
-			},
-		);
+					resolveThemeFromBand();
+				},
+				{
+					root: null,
+					rootMargin: themeRootMargin(),
+					threshold: 0,
+				},
+			);
+			sections.forEach((section) => themeObserver.observe(section));
+			resolveThemeFromBand();
+		}
 
-		sections.forEach((section) => observer.observe(section));
+		bindThemeObserver();
+
+		window.addEventListener(
+			'resize',
+			() => {
+				window.clearTimeout(resizeTimer);
+				resizeTimer = window.setTimeout(bindThemeObserver, 120);
+			},
+			{ passive: true },
+		);
 	}
 
 	initNavPillThemeObserver();
 
-	function setMenuOpen(open) {
-		if (!(toggle instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) return;
-		toggle.setAttribute('aria-expanded', String(open));
-		panel.hidden = !open;
-		panel.classList.toggle('hidden', !open);
-		if (!open) setMobileServicesOpen(false);
+	function snapDevicePx(value) {
+		const dpr = window.devicePixelRatio || 1;
+		return Math.round(value * dpr) / dpr;
 	}
 
-	if (toggle instanceof HTMLButtonElement && panel instanceof HTMLElement) {
-		toggle.addEventListener('click', () => {
-			const open = toggle.getAttribute('aria-expanded') !== 'true';
-			setMenuOpen(open);
-		});
+	/** Shared glass indicator — rests on active link; glides on hover/focus */
+	function initNavIndicator() {
+		const cluster = document.querySelector('[data-nav-cluster]');
+		const indicator = document.querySelector('[data-nav-indicator]');
+		if (!(cluster instanceof HTMLElement) || !(indicator instanceof HTMLElement)) return;
 
-		panel.querySelectorAll('[data-mobile-link]').forEach((link) => {
-			link.addEventListener('click', () => setMenuOpen(false));
-		});
+		const links = Array.from(cluster.querySelectorAll('[data-nav-link]')).filter(
+			(el) => el instanceof HTMLElement,
+		);
+		if (!links.length) return;
 
-		document.addEventListener('keydown', (event) => {
-			if (event.key === 'Escape') {
-				if (isMegaOpen()) {
-					closeMega({ returnFocus: true });
-					return;
-				}
-				setMenuOpen(false);
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const activeLink =
+			links.find((link) => link.getAttribute('aria-current') === 'page') || null;
+
+		function measure(link) {
+			if (!(link instanceof HTMLElement)) return null;
+			const cRect = cluster.getBoundingClientRect();
+			const lRect = link.getBoundingClientRect();
+			return {
+				x: snapDevicePx(lRect.left - cRect.left),
+				w: snapDevicePx(lRect.width),
+			};
+		}
+
+		function setGliding(on) {
+			indicator.classList.toggle('nav-indicator--gliding', on);
+		}
+
+		indicator.addEventListener('transitionend', (event) => {
+			if (event.target !== indicator) return;
+			if (event.propertyName === 'transform' || event.propertyName === 'width') {
+				setGliding(false);
 			}
 		});
+
+		function apply(link, { immediate = false } = {}) {
+			const m = measure(link);
+			if (!m) {
+				indicator.style.setProperty('--nav-ind-opacity', '0');
+				setGliding(false);
+				return;
+			}
+			const skipMotion = immediate || reduceMotion.matches;
+			if (skipMotion) indicator.style.transition = 'none';
+			else setGliding(true);
+			indicator.style.setProperty('--nav-ind-x', `${m.x}px`);
+			indicator.style.setProperty('--nav-ind-w', `${m.w}px`);
+			indicator.style.setProperty('--nav-ind-opacity', '1');
+			if (skipMotion) {
+				void indicator.offsetWidth;
+				indicator.style.transition = '';
+				setGliding(false);
+			}
+		}
+
+		function goRest({ immediate = false } = {}) {
+			if (activeLink) apply(activeLink, { immediate });
+			else indicator.style.setProperty('--nav-ind-opacity', '0');
+		}
+
+		function remasure() {
+			const focused = links.find((link) => link.matches(':focus-visible'));
+			if (focused) {
+				apply(focused, { immediate: true });
+				return;
+			}
+			const hovered = links.find((link) => link.matches(':hover'));
+			if (hovered) {
+				apply(hovered, { immediate: true });
+				return;
+			}
+			goRest({ immediate: true });
+		}
+
+		goRest({ immediate: true });
+
+		for (const link of links) {
+			link.addEventListener('pointerenter', () => {
+				apply(link);
+			});
+			link.addEventListener('focusin', () => {
+				if (link.matches(':focus-visible')) apply(link);
+			});
+		}
+
+		cluster.addEventListener('pointerleave', () => goRest());
+		cluster.addEventListener('focusout', (event) => {
+			const next = event.relatedTarget;
+			if (next instanceof Node && cluster.contains(next)) return;
+			goRest();
+		});
+
+		/* Remeasure after shrink transition ends — never in a scroll loop */
+		if (desktop instanceof HTMLElement) {
+			desktop.addEventListener('transitionend', (event) => {
+				if (event.target !== desktop || event.propertyName !== 'width') return;
+				remasure();
+			});
+		}
+
+		window.addEventListener(
+			'resize',
+			() => {
+				remasure();
+			},
+			{ passive: true },
+		);
 	}
 
-	/* ── Mobile Services accordion ── */
-	const mobileServicesToggle = document.querySelector('[data-mobile-services-toggle]');
-	const mobileServicesPanel = document.querySelector('[data-mobile-services-panel]');
+	initNavIndicator();
 
-	function setMobileServicesOpen(open) {
+	/* ── Mobile right drawer + Services sheet ── */
+	const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
+	const mobileDrawerRoot = document.querySelector('[data-mobile-drawer-root]');
+	const mobileDrawer = document.querySelector('[data-mobile-drawer]');
+	const mobileDrawerBackdrop = document.querySelector('[data-mobile-drawer-backdrop]');
+	const mobileDrawerClose = document.querySelector('[data-mobile-drawer-close]');
+	const mobileDrawerServices = document.querySelector('[data-mobile-drawer-services]');
+	const mobileServicesRoot = document.querySelector('[data-mobile-services-root]');
+	const mobileServicesSheet = document.querySelector('[data-mobile-services-sheet]');
+	const mobileServicesBackdrop = document.querySelector('[data-mobile-services-backdrop]');
+	let mobileDrawerOpen = false;
+	let mobileServicesOpen = false;
+
+	function isMobileNav() {
+		return window.matchMedia('(max-width: 1023px)').matches;
+	}
+
+	function lockPageScroll(lock) {
+		document.documentElement.style.overflow = lock ? 'hidden' : '';
+	}
+
+	function setMobileDrawerOpen(open) {
 		if (
-			!(mobileServicesToggle instanceof HTMLButtonElement) ||
-			!(mobileServicesPanel instanceof HTMLElement)
-		)
+			!(mobileMenuToggle instanceof HTMLButtonElement) ||
+			!(mobileDrawerRoot instanceof HTMLElement) ||
+			!(mobileDrawer instanceof HTMLElement)
+		) {
 			return;
-		mobileServicesToggle.setAttribute('aria-expanded', String(open));
-		mobileServicesPanel.hidden = !open;
+		}
+
+		if (!isMobileNav() && open) open = false;
+
+		mobileDrawerOpen = open;
+		mobileMenuToggle.setAttribute('aria-expanded', String(open));
+		mobileMenuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+
+		if (open) {
+			if (mobileServicesOpen) setMobileServicesOpen(false, { skipFocus: true });
+			mobileDrawerRoot.hidden = false;
+			mobileDrawerRoot.removeAttribute('inert');
+			requestAnimationFrame(() => {
+				mobileDrawerRoot.setAttribute('data-open', '');
+			});
+			lockPageScroll(true);
+			mobileDrawerClose instanceof HTMLButtonElement
+				? mobileDrawerClose.focus()
+				: mobileDrawer.focus();
+		} else {
+			mobileDrawerRoot.removeAttribute('data-open');
+			mobileDrawerRoot.setAttribute('inert', '');
+			if (!mobileServicesOpen) lockPageScroll(false);
+			const finish = () => {
+				if (mobileDrawerOpen) return;
+				mobileDrawerRoot.hidden = true;
+			};
+			mobileDrawer.addEventListener('transitionend', finish, { once: true });
+			window.setTimeout(finish, 320);
+			mobileMenuToggle.focus();
+		}
 	}
 
-	if (
-		mobileServicesToggle instanceof HTMLButtonElement &&
-		mobileServicesPanel instanceof HTMLElement
-	) {
-		mobileServicesToggle.addEventListener('click', () => {
-			const open = mobileServicesToggle.getAttribute('aria-expanded') !== 'true';
-			setMobileServicesOpen(open);
+	function setMobileServicesOpen(open, { skipFocus = false } = {}) {
+		if (!(mobileServicesRoot instanceof HTMLElement) || !(mobileServicesSheet instanceof HTMLElement)) {
+			return;
+		}
+
+		if (!isMobileNav() && open) open = false;
+
+		mobileServicesOpen = open;
+		if (mobileDrawerServices instanceof HTMLButtonElement) {
+			mobileDrawerServices.setAttribute('aria-expanded', String(open));
+		}
+
+		if (open) {
+			if (mobileDrawerOpen) setMobileDrawerOpen(false);
+			mobileServicesRoot.hidden = false;
+			mobileServicesRoot.removeAttribute('inert');
+			requestAnimationFrame(() => {
+				mobileServicesRoot.setAttribute('data-open', '');
+			});
+			lockPageScroll(true);
+			if (!skipFocus) {
+				const back = mobileServicesRoot.querySelector('[data-mobile-services-close]');
+				if (back instanceof HTMLButtonElement) back.focus();
+			}
+		} else {
+			mobileServicesRoot.removeAttribute('data-open');
+			mobileServicesRoot.setAttribute('inert', '');
+			if (!mobileDrawerOpen) lockPageScroll(false);
+			const finish = () => {
+				if (mobileServicesOpen) return;
+				mobileServicesRoot.hidden = true;
+			};
+			mobileServicesSheet.addEventListener('transitionend', finish, { once: true });
+			window.setTimeout(finish, 320);
+			if (!skipFocus && mobileDrawerServices instanceof HTMLButtonElement) {
+				/* Re-open drawer so Services remains reachable after closing the sheet */
+				setMobileDrawerOpen(true);
+			}
+		}
+	}
+
+	if (mobileMenuToggle instanceof HTMLButtonElement) {
+		mobileMenuToggle.addEventListener('click', () => {
+			setMobileDrawerOpen(!mobileDrawerOpen);
 		});
 	}
+	if (mobileDrawerBackdrop instanceof HTMLElement) {
+		mobileDrawerBackdrop.addEventListener('click', () => setMobileDrawerOpen(false));
+	}
+	if (mobileDrawerClose instanceof HTMLButtonElement) {
+		mobileDrawerClose.addEventListener('click', () => setMobileDrawerOpen(false));
+	}
+	document.querySelectorAll('[data-mobile-drawer-link]').forEach((link) => {
+		link.addEventListener('click', () => setMobileDrawerOpen(false));
+	});
+
+	if (mobileDrawerServices instanceof HTMLButtonElement) {
+		mobileDrawerServices.addEventListener('click', () => {
+			setMobileServicesOpen(true);
+		});
+	}
+	if (mobileServicesBackdrop instanceof HTMLElement) {
+		mobileServicesBackdrop.addEventListener('click', () => setMobileServicesOpen(false));
+	}
+	document.querySelectorAll('[data-mobile-services-close]').forEach((btn) => {
+		btn.addEventListener('click', () => setMobileServicesOpen(false));
+	});
+	document.querySelectorAll('[data-mobile-services-link]').forEach((link) => {
+		link.addEventListener('click', () => setMobileServicesOpen(false));
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key !== 'Escape') return;
+		if (mobileServicesOpen) {
+			setMobileServicesOpen(false);
+			return;
+		}
+		if (mobileDrawerOpen) {
+			setMobileDrawerOpen(false);
+			return;
+		}
+		if (isMegaOpen()) closeMega({ returnFocus: true });
+	});
+
+	window.addEventListener(
+		'resize',
+		() => {
+			if (!isMobileNav()) {
+				if (mobileDrawerOpen) setMobileDrawerOpen(false);
+				if (mobileServicesOpen) setMobileServicesOpen(false, { skipFocus: true });
+			}
+		},
+		{ passive: true },
+	);
 
 	/* ── Desktop Services mega menu ── */
 	const servicesNav = document.querySelector('[data-services-nav]');

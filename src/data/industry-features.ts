@@ -94,6 +94,7 @@ export const industryImageTextRows: IndustryFeatureRow[] = [
 export const industryFeatures: IndustryFeature[] = [
 	{
 		id: 'retail-ecommerce',
+		variant: 'panel',
 		pill: 'Retail & E-commerce',
 		titleLines: ['Make discovery feel like the start', 'of a better shop.'],
 		paragraphs: [

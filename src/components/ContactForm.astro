@@ -1,0 +1,495 @@
+---
+import Button from './Button.astro';
+import FormSelect from './FormSelect';
+
+interface Props {
+	/** Prefix for every field/control id (default `"contact"`). Use `"enquiry"` on /contact. */
+	idPrefix?: string;
+	/** Heading + helper alignment only (fields stay left). */
+	align?: 'left' | 'center';
+	/** Hidden `source` field value. */
+	source?: string;
+	heading?: string;
+	text?: string;
+	/** Card title heading level. /contact keeps `3`; Pricing uses `2`. */
+	headingLevel?: 2 | 3;
+}
+
+const {
+	idPrefix = 'contact',
+	align = 'left',
+	source = 'contact',
+	heading = 'Tell us about your project',
+	text = 'A few details help us understand the right next step. * Required fields',
+	headingLevel = 3,
+} = Astro.props;
+
+const HeadingTag = headingLevel === 2 ? 'h2' : 'h3';
+
+const serviceOptions = [
+	{ label: 'SEO', value: 'seo' },
+	{ label: 'Web Design & Development', value: 'web-design-development' },
+	{ label: 'Social Media Marketing', value: 'social-media-marketing' },
+	{ label: 'PPC & Google Ads', value: 'ppc-google-ads' },
+	{ label: 'Not sure yet', value: 'not-sure' },
+] as const;
+
+const budgetOptions = [
+	'Under £1,000',
+	'£1,000 - £3,000',
+	'£3,000 - £5,000',
+	'£5,000 - £10,000',
+	'£10,000+',
+	'Not sure yet',
+] as const;
+
+const timelineOptions = [
+	'As soon as possible',
+	'Within 1 month',
+	'1-3 months',
+	'3+ months',
+	'Just exploring',
+] as const;
+
+const ids = {
+	form: `${idPrefix}-form`,
+	hp: `${idPrefix}-hp-website`,
+	name: `${idPrefix}-name`,
+	email: `${idPrefix}-email`,
+	company: `${idPrefix}-company`,
+	website: `${idPrefix}-website`,
+	services: `${idPrefix}-services`,
+	servicesHelp: `${idPrefix}-services-help`,
+	budget: `${idPrefix}-budget`,
+	timeline: `${idPrefix}-timeline`,
+	details: `${idPrefix}-details`,
+	detailsHelp: `${idPrefix}-details-help`,
+	submit: `${idPrefix}-submit`,
+	status: `${idPrefix}-status`,
+};
+---
+
+<div
+	class:list={[
+		'contact-card',
+		'enquiry__card',
+		align === 'center' && 'enquiry__card--align-center',
+	]}
+>
+	<div data-reveal="up">
+		<HeadingTag class="contact-card__title m-0">{heading}</HeadingTag>
+		<p class="contact-card__subtitle enquiry__card-subtitle m-0">{text}</p>
+	</div>
+
+	<form
+		class="contact-form"
+		id={ids.form}
+		data-contact-form
+		data-enquiry-form
+		novalidate
+	>
+		<input type="hidden" name="source" value={source} />
+
+		<div class="contact-honeypot" aria-hidden="true">
+			<label for={ids.hp}>Website</label>
+			<input
+				type="text"
+				id={ids.hp}
+				name="hp_website"
+				tabindex="-1"
+				autocomplete="off"
+			/>
+		</div>
+
+		<div class="enquiry__row">
+			<div class="contact-field">
+				<label for={ids.name}>
+					Your name <span aria-hidden="true">*</span>
+				</label>
+				<input
+					type="text"
+					id={ids.name}
+					name="name"
+					placeholder="Full name"
+					autocomplete="name"
+					required
+				/>
+			</div>
+			<div class="contact-field">
+				<label for={ids.email}>
+					Email address <span aria-hidden="true">*</span>
+				</label>
+				<input
+					type="email"
+					id={ids.email}
+					name="email"
+					placeholder="Your email address"
+					autocomplete="email"
+					required
+				/>
+			</div>
+		</div>
+
+		<div class="enquiry__row">
+			<div class="contact-field">
+				<label for={ids.company}>
+					Company <span class="contact-field__optional">(optional)</span>
+				</label>
+				<input
+					type="text"
+					id={ids.company}
+					name="company"
+					placeholder="Your business name"
+					autocomplete="organization"
+				/>
+			</div>
+			<div class="contact-field">
+				<label for={ids.website}>
+					Website <span class="contact-field__optional">(optional)</span>
+				</label>
+				<input
+					type="url"
+					id={ids.website}
+					name="website"
+					placeholder="Your website URL"
+					autocomplete="url"
+				/>
+			</div>
+		</div>
+
+		<fieldset
+			class="enquiry-services contact-field"
+			id={ids.services}
+			aria-describedby={ids.servicesHelp}
+		>
+			<legend>What can we help with?</legend>
+			<p class="enquiry-services__help m-0" id={ids.servicesHelp}>
+				Select all that apply. It's okay if you're not sure yet.
+			</p>
+			<div class="enquiry-chips">
+				{
+					serviceOptions.map((option) => (
+						<label class="enquiry-chip">
+							<input type="checkbox" name="services" value={option.value} />
+							<span class="enquiry-chip__text">{option.label}</span>
+						</label>
+					))
+				}
+			</div>
+		</fieldset>
+
+		<div class="enquiry__row">
+			<div class="contact-field">
+				<label for={ids.budget}>
+					Budget <span class="contact-field__optional">(optional)</span>
+				</label>
+				{/*
+					client:load — client:visible left islands unhydrated (SSR button inert).
+					Trigger still SSRs at 44px so layout does not jump.
+				*/}
+				<FormSelect
+					client:load
+					id={ids.budget}
+					name="budget"
+					placeholder="Select a budget range"
+					ariaLabel="Budget (optional)"
+					options={[...budgetOptions]}
+				/>
+				<noscript>
+					<select class="form-select__noscript" name="budget" id={`${ids.budget}-noscript`}>
+						<option value="" disabled selected>Select a budget range</option>
+						{budgetOptions.map((option) => <option value={option}>{option}</option>)}
+					</select>
+				</noscript>
+			</div>
+			<div class="contact-field">
+				<label for={ids.timeline}>
+					Ideal timeline <span class="contact-field__optional">(optional)</span>
+				</label>
+				<FormSelect
+					client:load
+					id={ids.timeline}
+					name="timeline"
+					placeholder="When would you like to start?"
+					ariaLabel="Ideal timeline (optional)"
+					options={[...timelineOptions]}
+				/>
+				<noscript>
+					<select class="form-select__noscript" name="timeline" id={`${ids.timeline}-noscript`}>
+						<option value="" disabled selected>When would you like to start?</option>
+						{timelineOptions.map((option) => <option value={option}>{option}</option>)}
+					</select>
+				</noscript>
+			</div>
+		</div>
+
+		<div class="contact-field">
+			<label for={ids.details}>
+				Project details <span aria-hidden="true">*</span>
+			</label>
+			<textarea
+				id={ids.details}
+				name="details"
+				rows="5"
+				placeholder="What are you working on? Share your goals, the challenges you're facing and anything else we should know."
+				required
+				aria-describedby={ids.detailsHelp}
+			></textarea>
+			<p class="enquiry-field-help m-0" id={ids.detailsHelp}>
+				No polished brief needed. A few sentences is a good start.
+			</p>
+		</div>
+
+		<label class="enquiry-consent">
+			<input type="checkbox" name="consent" value="yes" required />
+			<span class="enquiry-consent__text">
+				I agree to XoomPlus using my details to respond to this enquiry.
+				<a class="enquiry-consent__link" href="/privacy-policy">Privacy Policy</a>
+			</span>
+		</label>
+
+		<div class="enquiry__actions">
+			<Button type="submit" id={ids.submit}>
+				Send enquiry
+				<svg
+					class="contact-submit__arrow"
+					width="16"
+					height="16"
+					viewBox="0 0 16 16"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+					aria-hidden="true"
+				>
+					<path
+						d="M3 8h10M9 4l4 4-4 4"
+						stroke="currentColor"
+						stroke-width="1.75"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</Button>
+		</div>
+
+		<p class="contact-status" id={ids.status} role="status" aria-live="polite" hidden></p>
+	</form>
+</div>
+
+<style>
+	.enquiry__card--align-center .contact-card__title,
+	.enquiry__card--align-center .enquiry__card-subtitle {
+		text-align: center;
+	}
+
+	.enquiry__card-subtitle {
+		font-size: 0.8125rem;
+		font-weight: 400;
+		color: var(--color-text-on-light);
+	}
+
+	.enquiry__row {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.enquiry-services {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		min-width: 0;
+	}
+
+	.enquiry-services legend {
+		padding: 0;
+	}
+
+	.enquiry-services__help,
+	.enquiry-field-help {
+		margin-top: 0;
+		margin-bottom: 10px;
+		font-family: var(--font-inter);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--color-text-on-light);
+	}
+
+	.enquiry-field-help {
+		margin-top: 8px;
+		margin-bottom: 0;
+	}
+
+	.enquiry-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.enquiry-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		box-sizing: border-box;
+		cursor: pointer;
+		border: 1px solid transparent;
+		border-radius: 10px;
+		background: #f7f7f5;
+		padding: 12px 16px;
+		transition:
+			border-color 0.2s ease,
+			background-color 0.2s ease,
+			transform var(--dur-fast) var(--ease-out);
+	}
+
+	.enquiry-chip input[type='checkbox'],
+	.enquiry-consent input[type='checkbox'] {
+		-webkit-appearance: none;
+		appearance: none;
+		display: block;
+		box-sizing: border-box;
+		flex: 0 0 12px;
+		width: 12px;
+		min-width: 12px;
+		max-width: 12px;
+		height: 12px;
+		min-height: 12px;
+		aspect-ratio: 1 / 1;
+		margin: 0;
+		padding: 0;
+		border: 1px solid #bdbdbd;
+		border-radius: 2px;
+		background-color: #ffffff;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 8px;
+		cursor: pointer;
+		outline: none;
+		transition:
+			background-color 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.enquiry-chip__text {
+		font-family: var(--font-inter);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		line-height: 1.3;
+		color: var(--color-text-on-light);
+		transition: color 0.2s ease;
+	}
+
+	.enquiry-chip:has(input:checked),
+	.enquiry-chip.enquiry-chip--checked {
+		border-color: var(--color-primary);
+	}
+
+	.enquiry-chip input[type='checkbox']:checked,
+	.enquiry-consent input[type='checkbox']:checked {
+		border-color: var(--color-primary);
+		background-color: var(--color-primary);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' fill='none'%3E%3Cpath d='M2 5.2L4.1 7.3L8 2.8' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	}
+
+	.enquiry-chip:has(input:checked) .enquiry-chip__text,
+	.enquiry-chip.enquiry-chip--checked .enquiry-chip__text {
+		color: var(--color-primary-black);
+	}
+
+	.enquiry-chip input[type='checkbox']:focus-visible,
+	.enquiry-consent input[type='checkbox']:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	.enquiry-consent {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		cursor: pointer;
+	}
+
+	.enquiry-consent input[type='checkbox'] {
+		margin-top: 2px;
+	}
+
+	.enquiry-consent__text {
+		font-family: var(--font-inter);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--color-text-on-light);
+	}
+
+	.enquiry-consent__link {
+		color: var(--color-primary-black);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.enquiry-consent__link:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	.enquiry__actions {
+		display: flex;
+		justify-content: flex-start;
+	}
+
+	@media (min-width: 640px) {
+		.enquiry__row {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.enquiry__card {
+			padding: 24px 20px;
+		}
+	}
+</style>
+
+<script>
+	import { initContactForms } from '../scripts/contact-form';
+
+	initContactForms();
+
+	const NOT_SURE = 'not-sure';
+
+	document.querySelectorAll<HTMLFormElement>('[data-enquiry-form]').forEach((form) => {
+		if (form.dataset.enquiryChipsBound) return;
+		form.dataset.enquiryChipsBound = 'true';
+
+		const serviceInputs = [
+			...form.querySelectorAll<HTMLInputElement>(
+				'.enquiry-chips input[type="checkbox"][name="services"]',
+			),
+		];
+
+		function syncChip(input: HTMLInputElement) {
+			input.closest('.enquiry-chip')?.classList.toggle('enquiry-chip--checked', input.checked);
+		}
+
+		serviceInputs.forEach((input) => {
+			input.addEventListener('change', () => {
+				if (input.value === NOT_SURE && input.checked) {
+					serviceInputs.forEach((other) => {
+						if (other === input) return;
+						other.checked = false;
+						syncChip(other);
+					});
+				} else if (input.value !== NOT_SURE && input.checked) {
+					const notSure = serviceInputs.find((el) => el.value === NOT_SURE);
+					if (notSure?.checked) {
+						notSure.checked = false;
+						syncChip(notSure);
+					}
+				}
+				syncChip(input);
+			});
+			syncChip(input);
+		});
+	});
+</script>

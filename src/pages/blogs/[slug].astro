@@ -6,7 +6,7 @@
  */
 import Layout from '../../layouts/Layout.astro';
 import Section from '../../components/Section.astro';
-import FAQ from '../../components/FAQ.astro';
+import FAQAccordion from '../../components/FAQAccordion';
 import BlogCard from '../../components/BlogCard.astro';
 import BlogSidebarCta from '../../components/BlogSidebarCta.astro';
 import CTASection from '../../components/CTASection.astro';
@@ -49,6 +49,36 @@ const articleJsonLd = {
 		jobTitle: post.author.role,
 	},
 };
+
+const faqItems = post.faqs.map((item, index) => ({
+	id: `blog-faq-item-${index}`,
+	question: item.question,
+	answer: item.answer,
+}));
+
+/** Plain text for schema.org — strip HTML from trusted answers. */
+function stripHtml(html: string): string {
+	return html
+		.replace(/<[^>]*>/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
+const faqJsonLd =
+	faqItems.length > 0
+		? {
+				'@context': 'https://schema.org',
+				'@type': 'FAQPage',
+				mainEntity: faqItems.map((item) => ({
+					'@type': 'Question',
+					name: item.question,
+					acceptedAnswer: {
+						'@type': 'Answer',
+						text: stripHtml(item.answer),
+					},
+				})),
+			}
+		: null;
 ---
 
 <Layout
@@ -60,6 +90,15 @@ const articleJsonLd = {
 	headerTheme="light"
 >
 	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+	{
+		faqJsonLd && (
+			<script
+				slot="json-ld"
+				type="application/ld+json"
+				set:html={JSON.stringify(faqJsonLd)}
+			/>
+		)
+	}
 
 	<main id="main-content" class="blog-detail-main flex-1">
 		<Section aria-labelledby="article-title">
@@ -84,7 +123,7 @@ const articleJsonLd = {
 
 				<h1
 					id="article-title"
-					class="blog-article__title text-h1 font-medium tracking-[-0.03em] text-primary-black"
+					class="blog-article__title text-h1 font-semibold tracking-[-0.02em] text-primary-black"
 				>
 					{post.title}
 				</h1>
@@ -171,6 +210,24 @@ const articleJsonLd = {
 
 						{/* Real content later: Markdown/MDX or CMS HTML into post.content */}
 						<div class="prose-blog blog-article__body" set:html={post.content} />
+
+						{
+							faqItems.length > 0 && (
+								<section
+									class="blog-article__faqs"
+									aria-labelledby="blog-faqs-heading"
+									id="blog-faq"
+								>
+									<h2
+										id="blog-faqs-heading"
+										class="blog-article__faqs-heading"
+									>
+										FAQs
+									</h2>
+									<FAQAccordion client:load items={faqItems} defaultOpen={0} />
+								</section>
+							)
+						}
 					</div>
 
 					<aside class="blog-sidebar" aria-label="Sidebar">
@@ -181,10 +238,10 @@ const articleJsonLd = {
 						{
 							related.length > 0 && (
 								<div class="blog-sidebar__related">
-									<h2 class="blog-sidebar__related-heading">Related Blogs</h2>
-									<ul class="blog-sidebar__list m-0 list-none p-0" role="list">
+									<h2 class="blog-sidebar__related-heading" data-reveal="up">Related Blogs</h2>
+									<ul class="blog-sidebar__list m-0 list-none p-0" role="list" data-reveal-group>
 										{related.map((item) => (
-											<li class="blog-sidebar__item">
+											<li class="blog-sidebar__item" data-reveal="up">
 												<BlogCard
 													image={item.image}
 													alt={item.alt}
@@ -205,14 +262,6 @@ const articleJsonLd = {
 				</div>
 			</article>
 		</Section>
-
-		<FAQ
-			items={post.faqs}
-			pill="FAQ"
-			heading="Frequently Asked Questions"
-			text="Quick answers to common questions about this topic."
-			id="blog-faq"
-		/>
 
 		<CTASection />
 	</main>
@@ -304,7 +353,7 @@ const articleJsonLd = {
 
 	.blog-article__author-name {
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		font-weight: 600;
 		line-height: 1.3;
 		color: #ffa800;
@@ -366,6 +415,20 @@ const articleJsonLd = {
 		margin-top: 32px;
 	}
 
+	.blog-article__faqs {
+		margin-top: 48px;
+	}
+
+	.blog-article__faqs-heading {
+		margin: 0 0 20px;
+		font-family: var(--font-inter);
+		font-size: var(--text-h2, 32px);
+		font-weight: 600;
+		line-height: 1.25;
+		letter-spacing: -0.02em;
+		color: var(--color-primary-black);
+	}
+
 	.blog-sidebar {
 		display: flex;
 		flex-direction: column;
@@ -376,7 +439,7 @@ const articleJsonLd = {
 	.blog-sidebar__related-heading {
 		margin: 0 0 16px;
 		font-family: var(--font-inter);
-		font-size: 24px;
+		font-size: var(--text-h3);
 		font-weight: 500;
 		line-height: 1.25;
 		color: var(--color-primary-black);
@@ -411,23 +474,11 @@ const articleJsonLd = {
 			row-gap: 0;
 		}
 
+		/* Sticky sidebar — natural height, no internal scroll */
 		.blog-sidebar {
 			position: sticky;
 			top: calc(var(--blog-nav-offset) + 24px);
 			align-self: start;
-			max-height: calc(100vh - var(--blog-nav-offset) - 48px);
-			overflow-y: auto;
-			/* Allow wheel to chain to the page once the sidebar hits top/bottom */
-			overscroll-behavior: auto;
-			/* Scrollable, but no visible scrollbar */
-			scrollbar-width: none;
-			-ms-overflow-style: none;
-		}
-
-		.blog-sidebar::-webkit-scrollbar {
-			display: none;
-			width: 0;
-			height: 0;
 		}
 
 		.blog-sidebar__list {
@@ -444,5 +495,36 @@ const articleJsonLd = {
 			flex-direction: column;
 			align-items: flex-start;
 		}
+	}
+</style>
+
+{/* Same answer HTML chrome as FAQ.astro — scoped to this page only */}
+<style is:global>
+	.blog-article__faqs .faq-answer a {
+		color: var(--color-primary-black);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.blog-article__faqs .faq-answer a:hover {
+		color: #ffa800;
+	}
+
+	.blog-article__faqs .faq-answer ul,
+	.blog-article__faqs .faq-answer ol {
+		margin: 0.75em 0 0;
+		padding-left: 1.25em;
+	}
+
+	.blog-article__faqs .faq-answer li {
+		margin-top: 0.35em;
+	}
+
+	.blog-article__faqs .faq-answer ul {
+		list-style-type: disc;
+	}
+
+	.blog-article__faqs .faq-answer ol {
+		list-style-type: decimal;
 	}
 </style>

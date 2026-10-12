@@ -9,9 +9,23 @@ import WhatHappensNext from '../components/WhatHappensNext.astro';
 	title="Contact Us | Xoomplus"
 	description="Get in touch with Xoomplus, a digital marketing agency in Blackburn. Tell us about your project and let's discuss web design, SEO, social media or paid search."
 >
-	<main id="main-content" class="flex-1">
+	<main id="main-content" class="page-contact flex-1">
 		<PageHero title="Contact us" />
 		<ContactEnquiry />
 		<WhatHappensNext />
 	</main>
 </Layout>
+
+<style is:global>
+	/* Contact-only intro wrapping — scoped under .page-contact */
+	.page-contact .enquiry__intro {
+		max-width: min(100%, 680px);
+	}
+
+	/* Laptop+ : give the info column enough width for a natural 2-line wrap */
+	@media (min-width: 1280px) {
+		.page-contact .enquiry {
+			grid-template-columns: 1.25fr 1fr;
+		}
+	}
+</style>

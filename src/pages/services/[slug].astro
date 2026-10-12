@@ -19,6 +19,8 @@ import {
 	mainServices,
 	type MainService,
 } from '../../data/main-services';
+import OurProcess from '@/components/OurProcess.astro';
+import { defaultProcess } from '@/data/process';
 
 export function getStaticPaths() {
 	return mainServices.map((service) => ({
@@ -55,6 +57,7 @@ const canonicalPath = `/services/${service.slug}`;
 		<ServiceBento {...service.bento} id="development-commerce" />
 		<ServiceShowcase {...service.showcase} id="connected-experience" />
 		<ServiceProcess {...service.process} id="working-together" />
+		<OurProcess content={defaultProcess} id="process" />
 		{service.faqKey ? <FAQ page={service.faqKey} /> : null}
 		{/* Shared home-page CTA — no service-specific variant chosen yet */}
 		<CTASection />

@@ -21,12 +21,12 @@ const headingId = `${section.id}-heading`;
 	aria-labelledby={headingId}
 	class="industry-fundamentals"
 >
-	<div class="industry-fundamentals__header">
+	<div class="industry-fundamentals__header" data-reveal="up">
 		<div class="industry-fundamentals__heading-group">
 			<p class="pill-light m-0">{section.pill}</p>
 			<h2
 				id={headingId}
-				class="industry-fundamentals__title m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="industry-fundamentals__title m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				{section.title}
 			</h2>
@@ -34,10 +34,12 @@ const headingId = `${section.id}-heading`;
 		<p class="industry-fundamentals__intro text-on-light m-0">{section.text}</p>
 	</div>
 
-	<div class="industry-fundamentals__grid">
+	<div class="industry-fundamentals__grid" data-reveal-group>
 		{
 			section.items.map((item) => (
-				<FeatureCard icon={item.icon} title={item.title} text={item.text} />
+				<div data-reveal="up">
+					<FeatureCard icon={item.icon} title={item.title} text={item.text} />
+				</div>
 			))
 		}
 	</div>
@@ -60,11 +62,13 @@ const headingId = `${section.id}-heading`;
 
 	.industry-fundamentals__heading-group {
 		min-width: 0;
+		max-width: 100%;
 		flex: 1 1 auto;
 	}
 
 	.industry-fundamentals__title {
 		margin-top: 16px;
+		overflow-wrap: anywhere;
 	}
 
 	.industry-fundamentals__intro {
@@ -97,7 +101,7 @@ const headingId = `${section.id}-heading`;
 
 	.industry-fundamentals__bar-text {
 		min-width: 0;
-		font-size: 16px;
+		font-size: var(--text-body);
 	}
 
 	@media (min-width: 1280px) {

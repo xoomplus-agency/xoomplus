@@ -72,15 +72,15 @@ const faqJsonLd = {
 ---
 
 <Section id={id} aria-labelledby={headingId}>
-	<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+	<div class="mx-auto mb-12 max-w-[900px] text-center lg:mb-14" data-reveal="up">
 		<p class="pill-light mb-5">{pill}</p>
 		<h2
 			id={headingId}
-			class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 		>
 			{heading}
 		</h2>
-		<p class="text-on-light mx-auto max-w-[640px]">{text}</p>
+		<p class="text-on-light mx-auto max-w-[860px]">{text}</p>
 	</div>
 
 	<FAQAccordion client:load items={faqItems} defaultOpen={defaultOpen} />

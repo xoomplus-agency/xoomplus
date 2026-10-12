@@ -4,7 +4,7 @@ import Hero from '../components/Hero.astro';
 import Brands from '../components/Brands.astro';
 import Services from '../components/Services.astro';
 import OurGrowth from '../components/OurGrowth.astro';
-import WhyChooseUs from '../components/WhyChooseUs.astro';
+import WhyXoomplus from '../components/WhyXoomplus.astro';
 import OurProcess from '../components/OurProcess.astro';
 import Industries from '../components/Industries.astro';
 import CaseStudies from '../components/CaseStudies.astro';
@@ -17,11 +17,11 @@ import CTASection from '../components/CTASection.astro';
 ---
 
 <Layout>
-	<main class="flex-1">
+	<main class="page-home flex-1">
 		<Hero />
 		<Brands />
 		<Services />
-		<WhyChooseUs />
+		<WhyXoomplus />
 		<OurProcess />
 		<OurGrowth />
 		<CaseStudies />
@@ -29,8 +29,50 @@ import CTASection from '../components/CTASection.astro';
 		<OurLocations />
 		<Testimonials />
 		<Blogs />
-		<FAQ page="home" />
+		<!-- <FAQ page="home" /> -->
 		<ContactSection />
 		<CTASection />
 	</main>
 </Layout>
+
+<style is:global>
+	/* Homepage-only intro wrapping — scoped under .page-home so shared sections stay unchanged elsewhere */
+	/* Long section titles — let the intro block use more of the container */
+	.page-home #why-xoomplus .container > [data-reveal='up'],
+	.page-home #case-studies .container > [data-reveal='up'],
+	.page-home #locations .container > [data-reveal='up'] {
+		max-width: min(100%, 1100px);
+	}
+
+	.page-home #why-heading,
+	.page-home #case-studies-heading,
+	.page-home #locations-heading {
+		text-wrap: wrap;
+		overflow-wrap: normal;
+	}
+
+	/* Two-line intros when the container is wide enough */
+	.page-home #why-xoomplus .text-on-light,
+	.page-home #case-studies .text-on-light,
+	.page-home #industries .text-on-light,
+	.page-home #locations .text-on-light,
+	.page-home #process .process-intro {
+		max-width: min(100%, 820px);
+	}
+
+	/* One-line support copy when width permits */
+	.page-home #testimonials .container > [data-reveal='up'],
+	.page-home #blogs .container > [data-reveal='up'] {
+		max-width: min(100%, 900px);
+	}
+
+	.page-home #testimonials .text-on-light,
+	.page-home #blogs .text-on-light {
+		max-width: min(100%, 860px);
+	}
+
+	/* Use the full contact column so copy can wrap to two lines */
+	.page-home #contact .contact-intro {
+		max-width: none;
+	}
+</style>

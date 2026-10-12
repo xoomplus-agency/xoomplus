@@ -10,9 +10,9 @@ import { expertiseServices } from '../data/services';
 	aria-labelledby="our-expertise-heading"
 	class="our-expertise"
 >
-	<div class="expertise-header">
+	<div class="expertise-header" data-reveal="up">
 		<p class="pill-dark text-primary m-0">OUR EXPERTISE</p>
-		<h2 id="our-expertise-heading" class="text-hero-h1 expertise-heading m-0">
+		<h2 id="our-expertise-heading" class="text-heading-dark dark-section-heading expertise-heading m-0">
 			Different disciplines. A joined-up view.
 		</h2>
 		<p class="expertise-intro m-0">
@@ -21,16 +21,18 @@ import { expertiseServices } from '../data/services';
 		</p>
 	</div>
 
-	<div class="expertise-grid">
+	<div class="expertise-grid" data-reveal-group>
 		{
 			expertiseServices.map((service) => (
-				<ServiceCard
+				<div data-reveal="up">
+					<ServiceCard
 					title={service.title}
 					icon={service.icon}
 					description={service.description}
 					features={service.features}
 					cta={service.cta}
-				/>
+					/>
+				</div>
 			))
 		}
 	</div>
@@ -73,19 +75,18 @@ import { expertiseServices } from '../data/services';
 	}
 
 	.expertise-heading {
-		margin-top: 20px;
-		font-size: 40px;
-		line-height: 1.15;
+		margin-top: 1.25rem;
 	}
 
 	.expertise-intro {
-		max-width: 640px;
-		margin-top: 16px;
+		max-width: 65ch;
+		margin-top: 0.5em;
 		margin-inline: auto;
 		font-family: var(--font-inter);
-		font-size: 16px;
-		font-weight: 400;
-		line-height: 1.5;
+		font-size: var(--text-body);
+		font-weight: var(--text-body--font-weight);
+		line-height: var(--text-body--line-height);
+		text-wrap: pretty;
 		color: var(--text-body-dark);
 	}
 
@@ -95,7 +96,7 @@ import { expertiseServices } from '../data/services';
 		grid-template-columns: repeat(3, minmax(0, 463px));
 		justify-content: center;
 		align-items: stretch;
-		gap: 24px;
+		gap: var(--card-gap);
 		margin-top: 40px;
 	}
 
@@ -106,12 +107,13 @@ import { expertiseServices } from '../data/services';
 	}
 
 	.expertise-footer {
-		margin-top: 32px;
+		margin-top: 2rem;
 		text-align: center;
 		font-family: var(--font-inter);
-		font-size: 16px;
-		font-weight: 400;
-		line-height: 1.5;
+		font-size: var(--text-body);
+		font-weight: var(--text-body--font-weight);
+		line-height: var(--text-body--line-height);
+		text-wrap: pretty;
 		color: var(--text-body-dark);
 	}
 

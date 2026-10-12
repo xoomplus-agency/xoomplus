@@ -35,15 +35,15 @@ const testimonials = [
 <section
 	id="testimonials"
 	data-bg="light"
-	class="page-section bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-section"
+	class="page-section bg-secondary-white py-section"
 	aria-labelledby="testimonials-heading"
 >
-	<div class="mx-auto w-full max-w-[1560px]">
-		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+	<div class="container">
+		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14" data-reveal="up">
 			<p class="pill-light mb-5">TESTIMONIALS</p>
 			<h2
 				id="testimonials-heading"
-				class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				What Our Clients Say
 			</h2>
@@ -57,6 +57,7 @@ const testimonials = [
 			style="--marquee-duration: 50s; --marquee-gap: 24px;"
 			role="region"
 			aria-label="Client testimonials"
+			data-reveal="fade"
 		>
 			<div class="infinite-marquee__track">
 				{
@@ -162,7 +163,7 @@ const testimonials = [
 		width: 405px;
 		max-width: 100%;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		line-height: 1.5;
 		color: #888888;
 		position: relative;
@@ -201,7 +202,7 @@ const testimonials = [
 	.testimonial-card__name {
 		margin: 10px 0 0;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.3;
 		color: var(--color-primary-black);
@@ -210,7 +211,7 @@ const testimonials = [
 	.testimonial-card__role {
 		margin: 4px 0 0;
 		font-family: var(--font-inter);
-		font-size: 14px;
+		font-size: var(--text-small);
 		line-height: 1.4;
 		color: #888888;
 	}

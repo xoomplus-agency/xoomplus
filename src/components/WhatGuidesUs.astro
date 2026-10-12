@@ -30,11 +30,11 @@ const principles = [
 ---
 
 <Section aria-labelledby="guides-heading">
-	<div class="guides-header">
+	<div class="guides-header" data-reveal="up">
 		<p class="pill-light mb-5">What guides us</p>
 		<h2
 			id="guides-heading"
-			class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 		>
 			Good work starts with good principles.
 		</h2>
@@ -43,10 +43,10 @@ const principles = [
 		</p>
 	</div>
 
-	<ul class="guides-grid m-0 list-none p-0" role="list">
+	<ul class="guides-grid m-0 list-none p-0" role="list" data-reveal-group>
 		{
 			principles.map((item) => (
-				<li class="why-card guides-card">
+				<li class="why-card guides-card" data-reveal="up">
 					<div class="guides-card__icon" aria-hidden="true">
 						<img
 							src={item.icon}
@@ -113,7 +113,7 @@ const principles = [
 	.guides-card__title {
 		margin-top: 20px;
 		font-family: var(--font-inter);
-		font-size: 24px;
+		font-size: var(--text-h3);
 		font-weight: 700;
 		line-height: 1.25;
 		color: var(--color-primary-black);
@@ -122,7 +122,7 @@ const principles = [
 	.guides-card__text {
 		margin-top: 10px;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.5;
 		color: #555555;

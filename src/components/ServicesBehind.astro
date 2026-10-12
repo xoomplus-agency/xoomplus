@@ -25,12 +25,12 @@ const headingId = `${section.id}-heading`;
 	aria-labelledby={headingId}
 	class="services-behind section-glow-top-left"
 >
-	<div class="services-behind__header">
+	<div class="services-behind__header" data-reveal="up">
 		<div class="services-behind__heading-group">
 			<p class="pill-dark text-primary m-0">{section.pill}</p>
 			<h2
 				id={headingId}
-				class="text-hero-h1 dark-section-heading services-behind__title m-0"
+				class="text-heading-dark dark-section-heading services-behind__title m-0"
 			>
 				{section.title}
 			</h2>
@@ -38,10 +38,11 @@ const headingId = `${section.id}-heading`;
 		<p class="services-behind__intro m-0">{section.text}</p>
 	</div>
 
-	<div class="services-behind__grid">
+	<div class="services-behind__grid" data-reveal-group>
 		{
 			section.cards.map((card) => (
-				<ServiceCard
+				<div data-reveal="up">
+					<ServiceCard
 					title={card.title}
 					icon={card.icon}
 					description={card.description}
@@ -49,7 +50,8 @@ const headingId = `${section.id}-heading`;
 					cta={{ label: card.buttonLabel, href: card.href }}
 					buttonLabel={card.buttonLabel}
 					buttonIcon="right"
-				/>
+					/>
+				</div>
 			))
 		}
 	</div>
@@ -76,7 +78,7 @@ const headingId = `${section.id}-heading`;
 		flex: 0 0 auto;
 		max-width: 380px;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 400;
 		line-height: 1.5;
 		color: var(--text-body-dark);

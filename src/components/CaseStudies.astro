@@ -10,15 +10,15 @@ const intro =
 <section
 	id="case-studies"
 	data-bg="light"
-	class="page-section case-studies bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-section"
+	class="page-section case-studies bg-secondary-white py-section"
 	aria-labelledby="case-studies-heading"
 >
-	<div class="mx-auto w-full max-w-[1560px]">
-		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14">
+	<div class="container">
+		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14" data-reveal="up">
 			<p class="pill-light mb-5">Case Studies</p>
 			<h2
 				id="case-studies-heading"
-				class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				Real Projects. Clear Challenges. Measurable Outcomes.
 			</h2>
@@ -27,7 +27,7 @@ const intro =
 			</p>
 		</div>
 
-		<ul class="case-grid m-0 list-none p-0" role="list">
+		<ul class="case-grid m-0 list-none p-0" role="list" data-reveal-group>
 			{
 				homeProjects.map((project) => {
 					const category = project.homeCategory ?? project.category;
@@ -35,7 +35,7 @@ const intro =
 					const title = `${project.name} | ${category}`;
 
 					return (
-						<li class="case-grid__item">
+						<li class="case-grid__item" data-reveal="up">
 							<ProjectCard
 								category={category}
 								name={project.name}

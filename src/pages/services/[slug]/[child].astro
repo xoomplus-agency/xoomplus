@@ -154,7 +154,14 @@ const breadcrumbJsonLd = {
 >
 	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
 
-	<main id="main-content" class="child-service-main flex-1">
+	<main
+		id="main-content"
+		class:list={[
+			'child-service-main',
+			'flex-1',
+			service.slug === 'web-design-development' ? 'child-service-main--web-design-development' : null,
+		]}
+	>
 		<ChildServiceHero {...child.hero} />
 		<ServiceFeatures {...(child.features ?? defaultChildFeatures)} id="features" />
 		{/* id matches main service page — frees #process for home Our Process */}
@@ -190,6 +197,58 @@ const breadcrumbJsonLd = {
 	@media (max-width: 639px) {
 		.child-service-main {
 			--child-nav-offset: 88px;
+		}
+	}
+</style>
+
+{/* Global so selectors reach nested section components; limited by WDD modifier class */}
+<style is:global>
+	@media (min-width: 1024px) {
+		/* Higher specificity than scoped component rules (class + data-astro-cid) */
+		.child-service-main.child-service-main--web-design-development .csh {
+			grid-template-columns: 1.85fr 1fr;
+		}
+
+		.child-service-main.child-service-main--web-design-development .csh__heading {
+			text-wrap: wrap;
+			overflow-wrap: normal;
+		}
+
+		.child-service-main.child-service-main--web-design-development .sf-header__aside {
+			max-width: 560px;
+		}
+
+		.child-service-main.child-service-main--web-design-development .industry-clarity__intro {
+			max-width: 530px;
+		}
+
+		.child-service-main.child-service-main--web-design-development #process .process-intro {
+			max-width: min(100%, 820px);
+		}
+
+		/* Widen the copy column whichever side it sits on */
+		.child-service-main.child-service-main--web-design-development
+			.industry-feature__layout--rows.industry-feature__layout--image-left {
+			grid-template-columns: 1fr 1.35fr;
+		}
+
+		.child-service-main.child-service-main--web-design-development
+			.industry-feature__layout--rows.industry-feature__layout--image-right {
+			grid-template-columns: 1.35fr 1fr;
+		}
+
+		.child-service-main.child-service-main--web-design-development .industry-feature__row-p1 {
+			max-width: 640px;
+		}
+
+		.child-service-main.child-service-main--web-design-development .hww-intro {
+			flex: 0 0 660px;
+			width: 660px;
+			max-width: 660px;
+		}
+
+		.child-service-main.child-service-main--web-design-development .services-behind__intro {
+			max-width: 450px;
 		}
 	}
 </style>

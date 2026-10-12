@@ -10,11 +10,11 @@ const stats = [
 ---
 
 <Section aria-labelledby="expertise-heading">
-	<div class="expertise-header">
+	<div class="expertise-header" data-reveal="up">
 		<p class="pill-light mb-5">Our Expertise & Impact</p>
 		<h2
 			id="expertise-heading"
-			class="mb-4 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+			class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 		>
 			Driving Digital Success with Proven Strategies
 		</h2>
@@ -26,10 +26,10 @@ const stats = [
 		</p>
 	</div>
 
-	<ul class="expertise-grid m-0 list-none p-0" role="list">
+	<ul class="expertise-grid m-0 list-none p-0" role="list" data-reveal-group>
 		{
 			stats.map((stat) => (
-				<li class="surface-card expertise-card">
+				<li class="surface-card expertise-card" data-reveal="up">
 					<span class="expertise-card__value">{stat.value}</span>
 					<span class="expertise-card__label">{stat.label}</span>
 				</li>
@@ -74,17 +74,17 @@ const stats = [
 
 	.expertise-card__value {
 		font-family: var(--font-inter);
-		font-size: 52px;
+		font-size: var(--text-display);
 		font-weight: 700;
-		line-height: 1.1;
+		line-height: var(--text-display--line-height);
 		color: #ffa800;
 	}
 
 	.expertise-card__label {
 		font-family: var(--font-inter);
-		font-size: 20px;
-		font-weight: 700;
-		line-height: 1.25;
+		font-size: var(--text-h3-sm);
+		font-weight: var(--text-h3-sm--font-weight);
+		line-height: var(--text-h3-sm--line-height);
 		color: var(--color-primary-black);
 	}
 
@@ -103,12 +103,5 @@ const stats = [
 			padding: 32px 20px;
 		}
 
-		.expertise-card__value {
-			font-size: clamp(2.5rem, 10vw, 2.75rem); /* ~40–44px */
-		}
-
-		.expertise-card__label {
-			font-size: clamp(1.125rem, 4.5vw, 1.25rem); /* ~18–20px */
-		}
 	}
 </style>

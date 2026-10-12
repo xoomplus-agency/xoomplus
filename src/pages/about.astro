@@ -18,7 +18,7 @@ import CTASection from '@/components/CTASection.astro';
 	title="About Us | Xoomplus"
 	description="Learn about Xoomplus, a digital marketing agency based in Blackburn helping businesses grow through web design, SEO, social media and paid search."
 >
-	<main id="main-content" class="flex-1">
+	<main id="main-content" class="page-about flex-1">
 		<PageHero title="About us" />
 		<OurStory />
 		<ExpertiseImpact />
@@ -33,3 +33,40 @@ import CTASection from '@/components/CTASection.astro';
 		<CTASection />
 	</main>
 </Layout>
+
+<style is:global>
+	/* About-only intro wrapping — scoped under .page-about so shared sections stay unchanged elsewhere */
+
+	/* Our Purpose — two lines when width permits */
+	.page-about .purpose-header {
+		max-width: min(100%, 760px);
+	}
+
+	.page-about .purpose-intro {
+		max-width: min(100%, 760px);
+	}
+
+	/* Our Expertise — one line when width permits */
+	.page-about .our-expertise .expertise-intro {
+		max-width: min(100%, 820px);
+	}
+
+	/* Our Process — two lines when width permits */
+	.page-about #process .process-intro {
+		max-width: min(100%, 820px);
+	}
+
+	/* How we work — keep the existing 3 desktop line breaks on one line each */
+	@media (min-width: 1024px) {
+		.page-about .hww-intro {
+			flex: 0 0 660px;
+			width: 660px;
+			max-width: 660px;
+		}
+	}
+
+	/* Contact — use the full contact column for two-line wrap */
+	.page-about #contact .contact-intro {
+		max-width: none;
+	}
+</style>

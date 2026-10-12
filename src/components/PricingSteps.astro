@@ -1,0 +1,179 @@
+---
+import Section from './Section.astro';
+import { pricingSteps } from '../data/pricing-steps';
+
+const { id, title, steps, line } = pricingSteps;
+const headingId = 'pricing-steps-heading';
+---
+
+<Section id={id} aria-labelledby={headingId}>
+	<div data-reveal="up">
+		<h2
+			id={headingId}
+			class="pricing-steps__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+		>
+			{title}
+		</h2>
+	</div>
+
+	<div class="pricing-steps__row">
+		<img
+			class="pricing-steps__line"
+			data-reveal="fade"
+			src={line.src}
+			alt=""
+			width={line.width}
+			height={line.height}
+			decoding="async"
+			loading="lazy"
+			aria-hidden="true"
+		/>
+
+		<ol class="pricing-steps__list m-0 list-none p-0" data-reveal-group>
+			{
+				steps.map((step) => (
+					<li class="pricing-steps__item" data-reveal="up">
+						<div class="pricing-steps__badge" aria-hidden="true">
+							<span class="pricing-steps__number">{step.number}</span>
+						</div>
+						<h3 class="pricing-steps__title m-0">{step.title}</h3>
+						<p class="pricing-steps__text text-on-light m-0">{step.text}</p>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</Section>
+
+<style>
+	.pricing-steps__heading {
+		text-align: center;
+	}
+
+	@media (min-width: 1024px) {
+		.pricing-steps__heading {
+			white-space: nowrap;
+		}
+	}
+
+	.pricing-steps__row {
+		position: relative;
+		margin-top: 56px;
+		/* Room for badge drop shadow (Y 32px) so it is not clipped */
+		padding-bottom: 40px;
+		overflow: visible;
+	}
+
+	/*
+	 * Dashed wave: spans badge-1 center → badge-4 center (12.5% … 87.5%).
+	 * SVG path endpoints sit at y≈40.53 in a 43-tall viewBox (near the bottom),
+	 * so translateY aligns that endpoint line with the badge vertical center (40px).
+	 * Final: left/right 12.5%, width 75%, top 40px, translateY(-94.256%).
+	 */
+	.pricing-steps__line {
+		position: absolute;
+		top: 40px;
+		left: 12.5%;
+		width: 75%;
+		height: auto;
+		z-index: 0;
+		pointer-events: none;
+		transform: translateY(calc(-40.53 / 43 * 100%));
+	}
+
+	.pricing-steps__list {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		column-gap: 24px;
+		align-items: start;
+	}
+
+	.pricing-steps__item {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.pricing-steps__badge {
+		display: flex;
+		box-sizing: border-box;
+		width: 80px;
+		height: 80px;
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+		border-radius: 24px;
+		background-color: #f7f7f5;
+		box-shadow:
+			inset 0 -23px 23px 0 rgba(0, 0, 0, 0.17),
+			0 2px 1px 0 rgba(0, 0, 0, 0.06),
+			0 16px 8px 0 rgba(0, 0, 0, 0.09),
+			0 32px 16px 0 rgba(0, 0, 0, 0.09);
+	}
+
+	.pricing-steps__number {
+		font-family: var(--font-inter);
+		font-size: 36px;
+		font-weight: 700;
+		line-height: 1;
+		color: transparent;
+		background: linear-gradient(90deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+	}
+
+	@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+		.pricing-steps__number {
+			color: #ffa800;
+			background: none;
+		}
+	}
+
+	.pricing-steps__title {
+		max-width: 260px;
+		margin-top: 48px;
+		font-family:
+			'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+		font-size: var(--text-h3);
+		font-weight: 700;
+		line-height: 1.25;
+		color: var(--color-primary-black);
+	}
+
+	.pricing-steps__text {
+		max-width: 250px;
+		margin-top: 12px;
+		font-size: var(--text-small);
+	}
+
+	@media (max-width: 1023px) {
+		.pricing-steps__line {
+			display: none;
+		}
+
+		.pricing-steps__list {
+			grid-template-columns: repeat(2, 1fr);
+			row-gap: 40px;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.pricing-steps__list {
+			grid-template-columns: 1fr;
+			row-gap: 40px;
+		}
+
+		.pricing-steps__title {
+			font-size: var(--text-h3-sm);
+		}
+
+		.pricing-steps__text {
+			font-size: var(--text-small);
+		}
+	}
+</style>

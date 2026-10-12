@@ -15,12 +15,12 @@ import { projects } from '../../data/projects';
 		<PageHero title="Case studies" />
 
 		<Section aria-labelledby="case-studies-heading">
-			<div class="cs-listing__header">
+			<div class="cs-listing__header" data-reveal="up">
 				<div class="cs-listing__intro">
 					<p class="pill-light">Selected work</p>
 					<h2
 						id="case-studies-heading"
-						class="cs-listing__heading text-h1 font-medium tracking-[-0.03em] text-primary-black"
+						class="cs-listing__heading text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 					>
 						Clear challenges.<br />
 						Considered directions.
@@ -32,10 +32,10 @@ import { projects } from '../../data/projects';
 				</p>
 			</div>
 
-			<ul class="cs-listing__grid m-0 list-none p-0" role="list">
+			<ul class="cs-listing__grid m-0 list-none p-0" role="list" data-reveal-group>
 				{
 					projects.map((project) => (
-						<li class="cs-listing__item">
+						<li class="cs-listing__item" data-reveal="up">
 							<ProjectCard
 								category={project.category}
 								name={project.name}
@@ -80,7 +80,7 @@ import { projects } from '../../data/projects';
 		flex-shrink: 0;
 		max-width: 360px;
 		margin: 0;
-		font-size: 14px;
+		font-size: 18px;
 		line-height: 1.5;
 		text-align: left;
 		color: var(--color-text-on-light);

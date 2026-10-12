@@ -24,47 +24,49 @@ const contactItems = [
 <section
 	id="contact"
 	data-bg="light"
-	class="page-section bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-section"
+	class="page-section bg-secondary-white py-section"
 	aria-labelledby="contact-heading"
 >
-	<div class="contact-grid mx-auto w-full max-w-[1560px]">
+	<div class="contact-grid container">
 		<div class="contact-info">
-			<h2
-				id="contact-heading"
-				class="contact-heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
-			>
-				<span class="contact-heading__accent">Let's Start</span>
-				<br />
-				the Conversation
-			</h2>
+			<div data-reveal="up">
+				<h2
+					id="contact-heading"
+					class="contact-heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+				>
+					<span class="contact-heading__accent">Let's Start</span>
+					<br />
+					the Conversation
+				</h2>
 
-			<p class="contact-intro text-on-light m-0 mt-4 max-w-[540px]">
-				Tell us what you are looking to achieve and let's discuss how Xoomplus can help with your
-				digital marketing, website, SEO, social media, or paid search needs.
-			</p>
+				<p class="contact-intro text-on-light m-0 mt-4 max-w-[540px]">
+					Tell us what you are looking to achieve and let's discuss how Xoomplus can help with your
+					digital marketing, website, SEO, social media, or paid search needs.
+				</p>
 
-			<ul class="contact-list m-0 list-none p-0" role="list">
-				{
-					contactItems.map((item) => (
-						<li class="contact-list__item">
-							<span class="contact-list__icon" aria-hidden="true">
-								{/*
-									SVGs already include the circular badge + amber (#FFA800) icon.
-									Rendered at 36px — no nested badge wrapper needed.
-								*/}
-								<img src={item.icon} alt="" width="36" height="36" decoding="async" />
-							</span>
-							{item.href ? (
-								<a class="contact-list__text" href={item.href}>
-									{item.label}
-								</a>
-							) : (
-								<span class="contact-list__text">{item.label}</span>
-							)}
-						</li>
-					))
-				}
-			</ul>
+				<ul class="contact-list m-0 list-none p-0" role="list">
+					{
+						contactItems.map((item) => (
+							<li class="contact-list__item">
+								<span class="contact-list__icon" aria-hidden="true">
+									{/*
+										SVGs already include the circular badge + amber (#FFA800) icon.
+										Rendered at 36px — no nested badge wrapper needed.
+									*/}
+									<img src={item.icon} alt="" width="36" height="36" decoding="async" />
+								</span>
+								{item.href ? (
+									<a class="contact-list__text" href={item.href}>
+										{item.label}
+									</a>
+								) : (
+									<span class="contact-list__text">{item.label}</span>
+								)}
+							</li>
+						))
+					}
+				</ul>
+			</div>
 
 			<LocationMap class="contact-map" radius={20} />
 		</div>
@@ -173,9 +175,7 @@ const contactItems = [
 	}
 
 	.contact-heading {
-		font-size: clamp(1.75rem, 4vw, var(--text-h1));
 		letter-spacing: -0.02em;
-		line-height: 1.15;
 	}
 
 	.contact-heading__accent {

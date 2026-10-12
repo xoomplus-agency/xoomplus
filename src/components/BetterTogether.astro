@@ -21,12 +21,12 @@ const cards = [
 ---
 
 <Section aria-labelledby="better-together-heading">
-	<div class="bt-header">
+	<div class="bt-header" data-reveal="up">
 		<div class="bt-header__intro">
 			<p class="pill-light m-0">Better together</p>
 			<h2
 				id="better-together-heading"
-				class="bt-header__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="bt-header__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				Your audience sees a journey.<br />
 				Not a list of services.
@@ -38,10 +38,10 @@ const cards = [
 		</p>
 	</div>
 
-	<ul class="bt-grid m-0 list-none p-0" role="list">
+	<ul class="bt-grid m-0 list-none p-0" role="list" data-reveal-group>
 		{
 			cards.map((card) => (
-				<li class="bt-grid__item">
+				<li class="bt-grid__item" data-reveal="up">
 					<article class="surface-card bt-card">
 						<h3 class="bt-card__title m-0">{card.title}</h3>
 						<span class="bt-card__divider" aria-hidden="true"></span>
@@ -122,7 +122,7 @@ const cards = [
 	.bt-card__subtitle {
 		margin-top: 20px;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.4;
 		color: var(--color-primary-black);
@@ -131,7 +131,7 @@ const cards = [
 	.bt-card__text {
 		margin-top: 10px;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.5;
 		color: var(--color-text-on-light);

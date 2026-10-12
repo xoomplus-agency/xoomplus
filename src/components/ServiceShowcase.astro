@@ -26,7 +26,7 @@ const imgH = panel.image.height ?? 720;
 
 <Section id={id} aria-labelledby={headingId} class="service-showcase">
 	<div class="ss-layout">
-		<div class="ss-panel">
+		<div class="ss-panel" data-reveal="fade">
 			<div class="ss-panel__top">
 				<p class="ss-panel__label m-0">{panel.label}</p>
 				<p class="ss-panel__note m-0">{panel.note}</p>
@@ -46,20 +46,22 @@ const imgH = panel.image.height ?? 720;
 		</div>
 
 		<div class="ss-copy">
+			<div data-reveal="up">
 			<p class="pill-light m-0">{pill}</p>
 			<h2
 				id={headingId}
-				class="ss-copy__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="ss-copy__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				<span class="ss-copy__line">{titleLine1}</span>
 				<span class="ss-copy__line">{titleLine2}</span>
 			</h2>
 			<p class="ss-copy__text text-on-light m-0">{text}</p>
+			</div>
 
-			<ul class="ss-list m-0 list-none p-0">
+			<ul class="ss-list m-0 list-none p-0" data-reveal-group>
 				{
 					items.map((item) => (
-						<li class="ss-list__item">
+						<li class="ss-list__item" data-reveal="up">
 							<img
 								class="ss-list__icon"
 								src={iconSrc}
@@ -185,7 +187,7 @@ const imgH = panel.image.height ?? 720;
 
 	.ss-list__label {
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 400;
 		line-height: 1.4;
 		color: var(--color-primary-black);
@@ -220,7 +222,7 @@ const imgH = panel.image.height ?? 720;
 		}
 
 		.ss-list__label {
-			font-size: 16px;
+			font-size: var(--text-body);
 		}
 	}
 </style>

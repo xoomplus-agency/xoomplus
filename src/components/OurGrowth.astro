@@ -21,14 +21,15 @@ const stats = [
 <section
 	id="growth"
 	data-bg="dark"
-	class="page-section growth relative isolate overflow-hidden px-[clamp(1rem,12.3vw,236px)] py-section"
+	class="page-section growth relative isolate overflow-hidden py-section"
 	aria-labelledby="growth-heading"
 >
 	<div class="growth-glow pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
 
-	<div class="relative mx-auto w-full max-w-[1560px]">
-		<p class="growth-pill mb-5">OUR GROWTH</p>
-		<div class="growth-header">
+	<div class="relative container">
+		<div data-reveal="up">
+			<p class="growth-pill mb-5">OUR GROWTH</p>
+			<div class="growth-header">
 			<h2 id="growth-heading" class="text-heading-dark growth-heading m-0">
 				Everything You Need to Build a Stronger Digital
 				<br />
@@ -39,12 +40,13 @@ const stats = [
 				<br />
 				tech companies grow smarter and faster.
 			</p>
+			</div>
 		</div>
 
-		<ul class="growth-grid m-0 list-none p-0" role="list">
+		<ul class="growth-grid m-0 list-none p-0" role="list" data-reveal-group>
 			{
 				stats.map((stat) => (
-					<li class="growth-card">
+					<li class="growth-card" data-reveal="up">
 						<div class="growth-card-copy">
 							<p class="growth-stat m-0">{stat.value}</p>
 							<p class="growth-label m-0">{stat.label}</p>
@@ -118,7 +120,7 @@ const stats = [
 		border: 1px solid var(--growth-accent);
 		background: transparent;
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 600;
 		line-height: 1.25;
 		letter-spacing: 0.01em;

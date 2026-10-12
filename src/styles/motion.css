@@ -1,0 +1,186 @@
+/**
+ * Site motion tokens + ADD-only reveal / card-hover / press feedback.
+ * Existing hover systems (nav, service-card, BlogCard, etc.) are untouched.
+ */
+
+:root {
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--dur-fast: 150ms;
+	--dur-base: 250ms;
+	--dur-reveal: 600ms;
+	--reveal-distance: 20px;
+	--reveal-stagger: 70ms;
+	--lift: -4px;
+}
+
+/* Anchor clearance under fixed navbar (service pages already set ~96px locally) */
+[id] {
+	scroll-margin-top: 96px;
+}
+
+/* ── Scroll reveals (hidden only after html.js) ── */
+
+.js [data-reveal] {
+	opacity: 0;
+	transform: translate3d(0, var(--reveal-distance), 0);
+	transition:
+		opacity var(--dur-reveal) var(--ease-out),
+		transform var(--dur-reveal) var(--ease-out);
+	transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
+}
+
+.js [data-reveal='fade'] {
+	transform: none;
+}
+
+.js [data-reveal='left'] {
+	transform: translate3d(calc(var(--reveal-distance) * -1), 0, 0);
+}
+
+.js [data-reveal='right'] {
+	transform: translate3d(var(--reveal-distance), 0, 0);
+}
+
+.js [data-reveal='scale'] {
+	transform: scale(0.97);
+}
+
+.js [data-reveal].is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+/* ── Card hover (ADD only where class is applied) ── */
+
+.card-hover {
+	position: relative;
+	transition: transform var(--dur-base) var(--ease-out);
+}
+
+.card-hover::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: 0 12px 28px 0 rgba(149, 157, 165, 0.28);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.card-hover:hover,
+	.card-hover:focus-visible {
+		transform: translate3d(0, var(--lift), 0);
+	}
+
+	.card-hover:hover::after,
+	.card-hover:focus-visible::after {
+		opacity: 1;
+	}
+}
+
+/* ── Primary .btn — lift + shadow via ::after (gradient keeps ::before) ── */
+
+.btn:not(.btn--light) {
+	overflow: visible;
+	/* allow ::after shadow to paint outside; label/::before still z-index ordered */
+	isolation: auto;
+	transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:not(.btn--light)::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	box-shadow: 0 8px 20px rgba(255, 168, 0, 0.3);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.btn:not(.btn--light):hover:not(:disabled):not([aria-busy='true']) {
+		transform: translateY(-2px);
+	}
+
+	.btn:not(.btn--light):hover:not(:disabled):not([aria-busy='true'])::after {
+		opacity: 1;
+	}
+}
+
+.btn:not(.btn--light):active:not(:disabled):not([aria-busy='true']) {
+	transform: scale(0.97);
+	transition-duration: var(--dur-fast);
+}
+
+.btn:not(.btn--light):active:not(:disabled):not([aria-busy='true'])::after {
+	opacity: 0;
+	transition-duration: var(--dur-fast);
+}
+
+.btn:not(.btn--light):disabled::after,
+.btn:not(.btn--light)[aria-busy='true']::after {
+	opacity: 0;
+	transition: none;
+}
+
+/* ── Light / outline — press only (existing hover KEEP) ── */
+
+.btn--light:active:not(:disabled):not([aria-busy='true']) {
+	transform: scale(0.97);
+	transition-duration: var(--dur-fast);
+}
+
+.btn-outline:active:not(:disabled):not([aria-disabled='true']) {
+	transform: scale(0.97);
+	transition-duration: var(--dur-fast);
+}
+
+/* ── Chips — press scale only (transform listed on chip rules in components) ── */
+
+.blog-listing__chip:active,
+.enquiry-chip:active {
+	transform: scale(0.97);
+}
+
+/* ── Reduced motion: no new hide / motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+	.js [data-reveal],
+	.js [data-reveal].is-visible {
+		opacity: 1;
+		transform: none;
+		transition: none;
+		transition-delay: 0s;
+	}
+
+	.card-hover,
+	.card-hover::after,
+	.btn:not(.btn--light),
+	.btn:not(.btn--light)::after,
+	.blog-listing__chip,
+	.enquiry-chip {
+		transition: none;
+	}
+
+	.card-hover:hover,
+	.card-hover:focus-visible,
+	.btn:not(.btn--light):hover:not(:disabled):not([aria-busy='true']),
+	.btn:not(.btn--light):active:not(:disabled):not([aria-busy='true']),
+	.btn--light:active:not(:disabled):not([aria-busy='true']),
+	.btn-outline:active:not(:disabled):not([aria-disabled='true']),
+	.blog-listing__chip:active,
+	.enquiry-chip:active {
+		transform: none;
+	}
+
+	.card-hover:hover::after,
+	.card-hover:focus-visible::after,
+	.btn:not(.btn--light):hover:not(:disabled):not([aria-busy='true'])::after {
+		opacity: 0;
+	}
+}

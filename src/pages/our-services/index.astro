@@ -13,7 +13,7 @@ import CTASection from '@/components/CTASection.astro';
 	title="Our Services | Xoomplus"
 	description="Explore Xoomplus services: SEO, web design and development, social media marketing and PPC & Google Ads. A joined-up digital partner based in Blackburn."
 >
-	<main id="main-content" class="flex-1">
+	<main id="main-content" class="page-our-services flex-1">
 		<PageHero title="Our services" />
 		<BetterTogether />
 		<ServicesOverview />
@@ -23,3 +23,25 @@ import CTASection from '@/components/CTASection.astro';
 		<CTASection />
 	</main>
 </Layout>
+
+<style is:global>
+	/* Our-services-only intro wrapping — scoped under .page-our-services */
+
+	@media (min-width: 1024px) {
+		/* Better together — 3 lines when width permits */
+		.page-our-services .bt-header__aside {
+			max-width: 420px;
+		}
+
+		/* SEO service detail — 3 lines when width permits */
+		.page-our-services .service-detail .sd-header__aside {
+			max-width: 620px;
+		}
+
+		/* Social & paid media — 2 lines when width permits */
+		.page-our-services .service-detail-pair .sdp-header__aside {
+			max-width: 560px;
+		}
+	}
+
+</style>

@@ -30,15 +30,17 @@ const imgH = image.height ?? 540;
 <Section id={id} aria-labelledby={headingId} class="sp-section">
 	<div class="sp-layout">
 		<div class="sp-left">
-			<p class="pill-light m-0">{pill}</p>
-			<h2
-				id={headingId}
-				class="sp-heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
-			>
-				<span class="sp-heading__line">{titleLine1}</span>
-				<span class="sp-heading__line">{titleLine2}</span>
-			</h2>
-			<div class="sp-media">
+			<div data-reveal="up">
+				<p class="pill-light m-0">{pill}</p>
+				<h2
+					id={headingId}
+					class="sp-heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+				>
+					<span class="sp-heading__line">{titleLine1}</span>
+					<span class="sp-heading__line">{titleLine2}</span>
+				</h2>
+			</div>
+			<div class="sp-media" data-reveal="fade">
 				<img
 					class="sp-media__img"
 					src={image.src}
@@ -52,10 +54,10 @@ const imgH = image.height ?? 540;
 		</div>
 
 		<div class="sp-right">
-			<ul class="sp-list m-0 list-none p-0">
+			<ul class="sp-list m-0 list-none p-0" data-reveal-group>
 				{
 					items.map((item) => (
-						<li class="sp-item">
+						<li class="sp-item" data-reveal="up">
 							<h3 class="sp-item__title m-0 text-h3 font-medium text-primary-black">
 								{item.title}
 							</h3>
@@ -123,7 +125,7 @@ const imgH = image.height ?? 540;
 	.sp-item__text,
 	.sp-note {
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.5;
 		color: var(--color-text-on-light);

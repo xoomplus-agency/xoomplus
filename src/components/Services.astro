@@ -10,17 +10,17 @@ const intro =
 <section
 	id="services"
 	data-bg="dark"
-	class="page-section services relative isolate overflow-hidden bg-[#0B0A0B] px-[clamp(1rem,12.3vw,236px)] py-section text-secondary-white"
+	class="page-section services relative isolate overflow-hidden bg-[#0B0A0B] py-section text-secondary-white"
 	aria-labelledby="services-heading"
 >
 	<div class="services-glow pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
 
-	<div class="relative mx-auto w-full max-w-[1560px]">
-		<div class="mx-auto mb-12 w-full text-center lg:mb-14">
+	<div class="relative container">
+		<div class="mx-auto mb-12 w-full text-center lg:mb-14" data-reveal="up">
 			<p class="pill-dark mb-5 text-primary">OUR SERVICES</p>
 			<h2
 				id="services-heading"
-				class="text-heading-dark mb-4 whitespace-nowrap max-[1280px]:whitespace-normal"
+				class="text-heading-dark mb-4"
 			>
 				Everything You Need to Build a Stronger Digital Presence
 			</h2>
@@ -29,25 +29,27 @@ const intro =
 			</p>
 		</div>
 
-		<div class="services-grid">
+		<div class="services-grid" data-reveal-group>
 			{
 				services.map((service) => (
-					<ServiceCard
-						title={service.title}
-						icon={service.icon}
-						description={service.description}
-						features={service.features}
-						cta={service.cta}
-					/>
+					<div data-reveal="up">
+						<ServiceCard
+							title={service.title}
+							icon={service.icon}
+							description={service.description}
+							features={service.features}
+							cta={service.cta}
+						/>
+					</div>
 				))
 			}
 
-			<article class="service-card service-card--help flex h-full flex-col justify-between text-center">
+			<article class="service-card service-card--help flex h-full flex-col justify-between text-center" data-reveal="up">
 				<div class="flex flex-1 flex-col items-center justify-center px-2 py-6">
-					<h3 class="mb-4 text-[32px] font-medium leading-[1.2] tracking-[-0.02em] text-secondary-white">
+					<h3 class="text-h3 mb-4 font-semibold tracking-[-0.02em] text-secondary-white">
 						{helpCard.title}
 					</h3>
-					<p class="mx-auto max-w-[320px] text-[15px] leading-[1.5] text-[var(--text-body-dark)] [font-family:var(--font-inter)]">
+					<p class="text-small mx-auto max-w-[320px] text-[var(--text-body-dark)] [font-family:var(--font-inter)]">
 						{helpCard.description}
 					</p>
 				</div>
@@ -59,7 +61,7 @@ const intro =
 		</div>
 
 		<div class="services-cta-bar mt-8 flex flex-col items-center justify-between gap-5 rounded-[1.25rem] bg-[rgb(255_255_255_/_0.06)] px-6 py-5 sm:flex-row sm:px-8">
-			<p class="m-0 text-center text-[18px] font-medium tracking-[-0.01em] text-[var(--text-body-dark)] sm:text-left">
+			<p class="text-h3-sm m-0 text-center font-semibold tracking-[-0.01em] text-[var(--text-body-dark)] sm:text-left">
 				Ready to find the right service for your business?
 			</p>
 			<Button size="nav" href="#contact">Get in touch</Button>

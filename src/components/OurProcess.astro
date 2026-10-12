@@ -20,15 +20,15 @@ const headingId = `${id}-heading`;
 <section
 	id={id}
 	data-bg="light"
-	class="page-section bg-secondary-white px-[clamp(1rem,12.3vw,236px)] py-section"
+	class="page-section bg-secondary-white py-section"
 	aria-labelledby={headingId}
 >
-	<div class="mx-auto w-full max-w-[1560px]">
-		<div class="mx-auto mb-12 w-full text-center lg:mb-16">
+	<div class="container">
+		<div class="mx-auto mb-12 w-full text-center lg:mb-16" data-reveal="up">
 			<p class="pill-light mb-5">{pill}</p>
 			<h2
 				id={headingId}
-				class="mb-4 whitespace-nowrap text-h1 font-medium tracking-[-0.03em] text-primary-black max-[1100px]:whitespace-normal"
+				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				{title}
 			</h2>
@@ -40,6 +40,7 @@ const headingId = `${id}-heading`;
 		<div class="process-visual">
 			<img
 				class="process-bg"
+				data-reveal="fade"
 				src={bgImage}
 				alt=""
 				width="1183"
@@ -49,14 +50,14 @@ const headingId = `${id}-heading`;
 				aria-hidden="true"
 			/>
 
-			<ol class="process-steps m-0 list-none p-0" role="list">
+			<ol class="process-steps m-0 list-none p-0" role="list" data-reveal-group>
 				{
 					steps.map((step, index) => {
 						const iconSrc = step.icon.startsWith('/') ? step.icon : `/icons/${step.icon}.svg`;
 						const width = step.width ?? 214;
 						const height = step.height ?? 190;
 						return (
-							<li class={`process-step process-step--${index + 1}`}>
+							<li class={`process-step process-step--${index + 1}`} data-reveal="up">
 								<div class="process-icon" aria-hidden="true">
 									<img
 										src={iconSrc}
@@ -92,13 +93,15 @@ const headingId = `${id}-heading`;
 		position: absolute;
 		z-index: 0;
 		top: 72px;
-		left: 50%;
+		/* left/right + margin — do not use transform (scroll-reveal sets transform: none) */
+		left: 0;
+		right: 0;
 		width: 100%;
 		max-width: 1183px;
 		height: auto;
+		margin-inline: auto;
 		pointer-events: none;
 		user-select: none;
-		transform: translateX(-50%);
 	}
 
 	.process-steps {
@@ -158,7 +161,7 @@ const headingId = `${id}-heading`;
 
 	.process-desc {
 		max-width: 260px;
-		font-size: 15px;
+		font-size: var(--text-small);
 		line-height: 1.5;
 	}
 

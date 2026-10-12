@@ -35,11 +35,11 @@ const cards = [
 		aria-labelledby="what-next-heading"
 		class="what-happens-next section-glow-top-left"
 	>
-		<div class="what-next-header">
+		<div class="what-next-header" data-reveal="up">
 			<p class="pill-dark text-primary m-0">What happens next</p>
 			<h2
 				id="what-next-heading"
-				class="text-hero-h1 dark-section-heading what-next-heading m-0"
+				class="text-heading-dark dark-section-heading what-next-heading m-0"
 			>
 				A clear path from hello.
 			</h2>
@@ -48,10 +48,10 @@ const cards = [
 			</p>
 		</div>
 
-		<ul class="what-next-grid m-0 list-none p-0" role="list">
+		<ul class="what-next-grid m-0 list-none p-0" role="list" data-reveal-group>
 			{
 				cards.map((card) => (
-					<li>
+					<li data-reveal="up">
 						<article class="service-card what-next-card">
 							<div class="what-next-card__top">
 								<span class="what-next-card__number">{card.number}</span>

@@ -25,7 +25,7 @@ const headingId = 'location-hero-heading';
 	style={`--location-hero-bg: url('${image}')`}
 >
 	{/* Decorative glow — aria-hidden via CSS pointer-events + empty ::before */}
-	<div class="location-hero__content">
+	<div class="location-hero__content container container--prose">
 		<p class="pill-dark location-hero__pill m-0" aria-hidden="true">
 			<span class="location-hero__pill-text">{pill}</span>
 			<span class="location-hero__pill-sep"> · </span>
@@ -87,9 +87,8 @@ const headingId = 'location-hero-heading';
 		align-items: center;
 		box-sizing: border-box;
 		width: 100%;
-		max-width: 640px;
+		max-width: min(100%, 40rem);
 		margin-inline: auto;
-		padding-inline: 1rem;
 	}
 
 	.location-hero__pill {
@@ -101,17 +100,17 @@ const headingId = 'location-hero-heading';
 	}
 
 	.location-hero__title {
-		margin: 20px 0 0;
-		font-size: 56px;
+		margin: 1.25rem 0 0;
 	}
 
 	.location-hero__text {
-		margin: 16px 0 0;
-		max-width: 600px;
+		margin: 1rem 0 0;
+		max-width: 65ch;
 		font-family: var(--font-inter);
-		font-size: 18px;
-		font-weight: 400;
-		line-height: 1.5;
+		font-size: var(--text-lead);
+		font-weight: var(--text-lead--font-weight);
+		line-height: var(--text-lead--line-height);
+		text-wrap: pretty;
 		color: var(--text-body-dark);
 	}
 
@@ -124,9 +123,6 @@ const headingId = 'location-hero-heading';
 			height: 560px;
 		}
 
-		.location-hero__title {
-			font-size: 48px;
-		}
 	}
 
 	@media (max-width: 639px) {
@@ -137,13 +133,5 @@ const headingId = 'location-hero-heading';
 			padding-bottom: 48px;
 		}
 
-		.location-hero__title {
-			font-size: clamp(2.125rem, 8.5vw, 2.25rem); /* 34–36px */
-			line-height: 1.15;
-		}
-
-		.location-hero__text {
-			font-size: 16px;
-		}
 	}
 </style>

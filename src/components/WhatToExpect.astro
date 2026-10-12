@@ -19,11 +19,11 @@ const items = [
 
 <Section aria-labelledby="expect-heading">
 	<div class="expect">
-		<div class="expect__left">
+		<div class="expect__left" data-reveal="up">
 			<p class="pill-light m-0">What you can expect</p>
 			<h2
 				id="expect-heading"
-				class="expect__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="expect__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				A digital partner. Not just a delivery team.
 			</h2>
@@ -33,10 +33,10 @@ const items = [
 			</p>
 		</div>
 
-		<ul class="expect__list m-0 list-none p-0" role="list">
+		<ul class="expect__list m-0 list-none p-0" role="list" data-reveal-group>
 			{
 				items.map((item) => (
-					<li class="expect__item">
+					<li class="expect__item" data-reveal="up">
 						<span class="expect__check" aria-hidden="true">
 							<svg
 								width="20"
@@ -130,7 +130,7 @@ const items = [
 
 	.expect__item-title {
 		font-family: var(--font-inter);
-		font-size: 24px;
+		font-size: var(--text-h3);
 		font-weight: 700;
 		line-height: 1.25;
 		color: var(--color-primary-black);
@@ -140,7 +140,7 @@ const items = [
 		margin-top: 8px;
 		max-width: 380px;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 140%;
 		color: #555555;

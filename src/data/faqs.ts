@@ -153,6 +153,44 @@ export const faqs: Record<string, FaqSet> = {
 	'child-service': {
 		items: cloneFaqItems(generalFaqItems),
 	},
+	// PLACEHOLDER: replace with real pricing FAQs
+	pricing: {
+		pill: 'FAQ',
+		heading: 'Pricing questions, answered',
+		text: "Clear answers about how our packages and ad hoc pricing work. Can't find what you need? Get in touch and we'll help.",
+		items: [
+			{
+				question: 'What is the difference between Packages and Ad Hoc?',
+				answer:
+					'Packages are ongoing monthly services built around a single discipline, such as SEO or social media. Ad hoc options are tiered one-off or project-based plans, such as website design and development. We can help you choose the right route.',
+			},
+			{
+				question: 'Are your prices fixed?',
+				answer:
+					'The prices shown are starting points. The final cost depends on your goals, the scope of work and the level of support you need. We confirm everything in a clear proposal before work begins.',
+			},
+			{
+				question: 'Is there a minimum contract length?',
+				answer:
+					'We will agree contract terms with you before you commit. Monthly services are scoped around your goals, and we are happy to talk through what suits your business.',
+			},
+			{
+				question: 'What is included in each package?',
+				answer:
+					'Each package lists its main capabilities. If you need something that is not listed, or want a mix of services, we can build a tailored recommendation.',
+			},
+			{
+				question: 'Can I combine different services?',
+				answer:
+					'Yes. Many businesses combine services such as SEO, social media and web design. We bring them into one plan so the work stays connected.',
+			},
+			{
+				question: 'How do I get a custom quote?',
+				answer:
+					'Send us a few details using the form on this page, or get in touch directly. We will review your needs and come back with a tailored recommendation.',
+			},
+		],
+	},
 };
 
 export function getFaqSet(page: string): FaqSet | undefined {

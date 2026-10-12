@@ -15,7 +15,7 @@ import CTASection from '@/components/CTASection.astro';
 	title="Industries | Xoomplus"
 	description="See how Xoomplus supports businesses across different industries with web design, SEO, social media and paid search. A joined-up digital partner based in Blackburn."
 >
-	<main id="main-content" class="flex-1">
+	<main id="main-content" class="page-industries flex-1">
 		<PageHero title="Industries" />
 		<Industries />
 		<IndustryIntent />
@@ -29,3 +29,40 @@ import CTASection from '@/components/CTASection.astro';
 		<CTASection />
 	</main>
 </Layout>
+
+<style is:global>
+	/* Industries-only wrapping / heading size — scoped under .page-industries */
+
+	@media (min-width: 1024px) {
+		/* Industries grid intro — 2 lines */
+		.page-industries #industries .text-on-light {
+			max-width: min(100%, 820px);
+		}
+
+		.page-industries #industries .container > [data-reveal='up'] {
+			max-width: min(100%, 900px);
+		}
+
+		/* Industry intent intro — 3 lines */
+		.page-industries .industry-intent__intro {
+			max-width: 400px;
+		}
+
+		/* Industry clarity intro — 2 lines */
+		.page-industries .industry-clarity__intro {
+			max-width: 530px;
+		}
+
+		/* Services behind intro — 3 lines */
+		.page-industries .services-behind__intro {
+			max-width: 450px;
+		}
+	}
+
+	/* Feature section headings — fixed 40px on these two only */
+	.page-industries #retail-ecommerce .industry-feature__heading,
+	.page-industries #hospitality-leisure .industry-feature__heading {
+		font-size: 40px;
+		line-height: 1.15;
+	}
+</style>

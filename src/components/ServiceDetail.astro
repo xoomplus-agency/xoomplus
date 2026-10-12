@@ -31,12 +31,12 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 	aria-labelledby={headingId}
 	class="service-detail"
 >
-	<div class="sd-header">
+	<div class="sd-header" data-reveal="up">
 		<div class="sd-header__intro">
 			<p class="pill-light m-0">{service.pill}</p>
 			<h2
 				id={headingId}
-				class="sd-header__heading m-0 text-h1 font-medium tracking-[-0.03em] text-primary-black"
+				class="sd-header__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				{titleLine1}<br />
 				{titleLine2}
@@ -149,7 +149,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		border-top: 1px solid #e9e9e7;
 		border-bottom: 1px solid #e9e9e7;
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 600;
 		line-height: 1.3;
 		letter-spacing: 0.02em;
@@ -170,7 +170,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 	.sd-table tbody th {
 		font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter',
 			sans-serif;
-		font-size: 24px;
+		font-size: var(--text-h3);
 		font-weight: 500;
 		line-height: 1.25;
 		color: var(--color-primary-black);
@@ -193,7 +193,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 
 	.sd-table tbody td {
 		font-family: var(--font-inter);
-		font-size: 16px;
+		font-size: var(--text-body);
 		font-weight: 500;
 		line-height: 1.5;
 		color: var(--color-text-on-light);
@@ -236,7 +236,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 
 	.sd-note__text {
 		font-family: var(--font-inter);
-		font-size: 18px;
+		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.5;
 		color: var(--color-text-on-light);
@@ -254,12 +254,12 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		}
 
 		.sd-table thead th {
-			font-size: 15px;
+			font-size: var(--text-small);
 			padding: 16px 0;
 		}
 
 		.sd-table tbody th {
-			font-size: 20px;
+			font-size: var(--text-h3-sm);
 		}
 	}
 
@@ -310,7 +310,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 
 		.sd-table tbody th {
 			margin-bottom: 12px;
-			font-size: 20px;
+			font-size: var(--text-h3-sm);
 		}
 
 		.sd-table tbody td {
