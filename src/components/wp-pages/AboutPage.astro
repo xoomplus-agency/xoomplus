@@ -1,0 +1,59 @@
+---
+import PageHero from '../PageHero.astro';
+import OurStory from '../OurStory.astro';
+import ExpertiseImpact from '../ExpertiseImpact.astro';
+import OurPurpose from '../OurPurpose.astro';
+import WhatGuidesUs from '../WhatGuidesUs.astro';
+import OurExpertise from '../OurExpertise.astro';
+import HowWeWork from '../HowWeWork.astro';
+import WhatToExpect from '../WhatToExpect.astro';
+import OurProcess from '../OurProcess.astro';
+import FAQ from '../FAQ.astro';
+import ContactSection from '@/components/ContactSection.astro';
+import CTASection from '@/components/CTASection.astro';
+---
+
+<main id="main-content" class="page-about flex-1">
+	<PageHero title="About us" />
+	<OurStory />
+	<ExpertiseImpact />
+	<OurPurpose />
+	<WhatGuidesUs />
+	<OurExpertise />
+	<OurProcess />
+	<HowWeWork />
+	<WhatToExpect />
+	<FAQ page="about" id="about-faq" />
+	<ContactSection />
+	<CTASection />
+</main>
+
+<style is:global>
+	.page-about .purpose-header {
+		max-width: min(100%, 760px);
+	}
+
+	.page-about .purpose-intro {
+		max-width: min(100%, 760px);
+	}
+
+	.page-about .our-expertise .expertise-intro {
+		max-width: min(100%, 820px);
+	}
+
+	.page-about #process .process-intro {
+		max-width: min(100%, 820px);
+	}
+
+	@media (min-width: 1024px) {
+		.page-about .hww-intro {
+			flex: 0 0 660px;
+			width: 660px;
+			max-width: 660px;
+		}
+	}
+
+	.page-about #contact .contact-intro {
+		max-width: none;
+	}
+</style>

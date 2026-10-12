@@ -1,14 +1,18 @@
 ---
+/**
+ * On-demand /blogs listing — fetches publish-only posts from WordPress on each
+ * request so draft/unpublish is reflected after a normal refresh (no rebuild).
+ * Takes priority over CMS [slug].astro for `/blogs`.
+ */
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
-import PageHero from '../../components/PageHero.astro';
 import BlogListing from '../../components/BlogListing.astro';
 import CTASection from '../../components/CTASection.astro';
+import PageHero from '../../components/PageHero.astro';
 ---
 
-<Layout
-	title="Blogs | Xoomplus"
-	description="Insights on web design, SEO, social media and paid search from the Xoomplus team in Blackburn. Practical ideas to help you navigate digital growth."
->
+<Layout theme="light" seoPath="/blogs">
 	<main id="main-content" class="flex-1">
 		<PageHero title="Blogs" />
 		<BlogListing />

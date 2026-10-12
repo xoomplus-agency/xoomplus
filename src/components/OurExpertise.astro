@@ -3,6 +3,9 @@ import Section from './Section.astro';
 import ServiceCard from './ServiceCard.astro';
 import Button from './Button.astro';
 import { expertiseServices } from '../data/services';
+import { getWpPagePath } from '../lib/wp-seo';
+
+const servicesHref = await getWpPagePath('services');
 ---
 
 <Section
@@ -42,7 +45,7 @@ import { expertiseServices } from '../data/services';
 	</p>
 
 	<div class="expertise-cta">
-		<Button href="/our-services" class="!w-[220px] max-sm:!w-full">View all Services</Button>
+		<Button href={servicesHref} class="!w-[220px] max-sm:!w-full">View all Services</Button>
 	</div>
 </Section>
 

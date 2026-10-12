@@ -97,7 +97,7 @@ export const expertiseServices: ServiceItem[] = [
 			'SEO Audit',
 			'SEO Content Marketing',
 		],
-		cta: { label: 'Explore service', href: '/our-services' },
+		cta: { label: 'Explore service', href: '/services' },
 	},
 	{
 		title: 'Web Design & Development',
@@ -113,7 +113,7 @@ export const expertiseServices: ServiceItem[] = [
 			'Website content',
 			'Ongoing website care',
 		],
-		cta: { label: 'Explore service', href: '/our-services' },
+		cta: { label: 'Explore service', href: '/services' },
 	},
 	{
 		title: 'Social Media & Paid Ads',
@@ -129,6 +129,6 @@ export const expertiseServices: ServiceItem[] = [
 			'Landing page alignment',
 			'Reporting & refinement',
 		],
-		cta: { label: 'Explore service', href: '/our-services' },
+		cta: { label: 'Explore service', href: '/services' },
 	},
 ];

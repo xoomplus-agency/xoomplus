@@ -1,52 +1,130 @@
 ---
 import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
+import type { PageSEO } from '../lib/wp-seo';
 
 interface Props {
-	title: string;
+	/** Fallback title when pageSeo is absent or seoTitle is null (non-WP routes). */
+	title?: string;
+	/** Fallback description for non-WP routes only — never invent when pageSeo is set. */
 	description?: string;
 	image?: string;
 	type?: string;
 	/** Override canonical path; defaults to current pathname. Only emitted when SITE_URL is set. */
 	canonicalPath?: string;
+	/**
+	 * Normalized Yoast page SEO from getPageSEO.
+	 * When provided, head tags come from WP only — missing fields are omitted, not invented.
+	 */
+	pageSeo?: PageSEO | null;
+	/** When true: force noindex,nofollow and omit canonical + og:url. Default false. */
+	noindex?: boolean;
+	/**
+	 * Explicit robots meta (e.g. CMS post noindex → "noindex, follow").
+	 * Wins over pageSeo robots when set; ignored when `noindex` is true or staging.
+	 */
+	robots?: string;
 }
 
 const {
-	title,
+	title = '',
 	description = '',
 	image,
 	type = 'website',
 	canonicalPath = Astro.url.pathname,
+	pageSeo,
+	noindex = false,
+	robots: robotsProp,
 } = Astro.props;
 
-// Canonicals only when SITE_URL / astro `site` is configured — avoids accidental production URLs in staging.
 const site = Astro.site;
-const canonical = site != null ? new URL(canonicalPath, site).href : undefined;
+const fromWp = pageSeo != null;
 
-const ogImage = image
-	? image.startsWith('http')
-		? image
-		: site
-			? new URL(image, site).href
-			: undefined
-	: undefined;
+const seoTitle = fromWp ? (pageSeo.seoTitle ?? title) : title;
+const seoDescription = fromWp ? pageSeo.metaDescription : description || undefined;
+
+const canonical = noindex
+	? undefined
+	: fromWp
+		? (pageSeo.canonical ?? undefined)
+		: site != null
+			? new URL(canonicalPath, site).href
+			: undefined;
+
+const og = fromWp ? pageSeo.social.og : null;
+const x = fromWp ? pageSeo.social.x : null;
+
+const ogTitle = fromWp ? (og?.title ?? seoTitle) : seoTitle;
+const ogDescription = fromWp ? (og?.description ?? undefined) : seoDescription;
+const ogType = fromWp ? (og?.type ?? type) : type;
+const ogUrl = noindex ? undefined : fromWp ? (og?.url ?? canonical) : canonical;
+const ogSiteName = fromWp ? (og?.siteName ?? undefined) : undefined;
+const ogLocale = fromWp ? (og?.locale ?? undefined) : undefined;
+
+const ogImage = fromWp
+	? (og?.image ?? undefined)
+	: image
+		? image.startsWith('http')
+			? image
+			: site
+				? new URL(image, site).href
+				: undefined
+		: undefined;
+
+const ogImageWidth = fromWp ? (og?.imageWidth ?? undefined) : undefined;
+const ogImageHeight = fromWp ? (og?.imageHeight ?? undefined) : undefined;
+const ogImageType = fromWp ? (og?.imageType ?? undefined) : undefined;
+
+const twitterCard = fromWp
+	? (x?.card ?? (ogImage ? 'summary_large_image' : 'summary'))
+	: ogImage
+		? 'summary_large_image'
+		: 'summary';
+const twitterTitle = fromWp ? (x?.title ?? seoTitle) : seoTitle;
+const twitterDescription = fromWp ? (x?.description ?? undefined) : seoDescription;
+const twitterImage = fromWp ? (x?.image ?? ogImage) : ogImage;
+
+function robotsContent(seo: PageSEO): string | undefined {
+	const parts: string[] = [];
+	if (seo.robots.index) parts.push(seo.robots.index);
+	if (seo.robots.follow) parts.push(seo.robots.follow);
+	for (const value of Object.values(seo.robots.advanced)) {
+		if (value) parts.push(value);
+	}
+	return parts.length > 0 ? parts.join(', ') : undefined;
+}
+
+const yoastRobots = fromWp ? robotsContent(pageSeo) : undefined;
+const schemaJson = fromWp && pageSeo.schema ? JSON.stringify(pageSeo.schema) : undefined;
 ---
 
-<title>{title}</title>
-{description && <meta name="description" content={description} />}
+{seoTitle && <title>{seoTitle}</title>}
+{seoDescription && <meta name="description" content={seoDescription} />}
 
 {isStaging() && <meta name="robots" content={STAGING_ROBOTS} />}
+{!isStaging() && noindex && <meta name="robots" content="noindex, nofollow" />}
+{!isStaging() && !noindex && robotsProp && <meta name="robots" content={robotsProp} />}
+{!isStaging() && !noindex && !robotsProp && yoastRobots && (
+	<meta name="robots" content={yoastRobots} />
+)}
 
 {canonical && <link rel="canonical" href={canonical} />}
 
-<meta property="og:title" content={title} />
-{description && <meta property="og:description" content={description} />}
-<meta property="og:type" content={type} />
-{canonical && <meta property="og:url" content={canonical} />}
+{ogTitle && <meta property="og:title" content={ogTitle} />}
+{ogDescription && <meta property="og:description" content={ogDescription} />}
+{ogType && <meta property="og:type" content={ogType} />}
+{ogUrl && <meta property="og:url" content={ogUrl} />}
+{ogSiteName && <meta property="og:site_name" content={ogSiteName} />}
+{ogLocale && <meta property="og:locale" content={ogLocale} />}
 {ogImage && <meta property="og:image" content={ogImage} />}
+{ogImageWidth != null && <meta property="og:image:width" content={String(ogImageWidth)} />}
+{ogImageHeight != null && <meta property="og:image:height" content={String(ogImageHeight)} />}
+{ogImageType && <meta property="og:image:type" content={ogImageType} />}
 
-<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
-<meta name="twitter:title" content={title} />
-{description && <meta name="twitter:description" content={description} />}
-{ogImage && <meta name="twitter:image" content={ogImage} />}
+<meta name="twitter:card" content={twitterCard} />
+{twitterTitle && <meta name="twitter:title" content={twitterTitle} />}
+{twitterDescription && <meta name="twitter:description" content={twitterDescription} />}
+{twitterImage && <meta name="twitter:image" content={twitterImage} />}
+
+{schemaJson && <script type="application/ld+json" set:html={schemaJson} />}
 
 <slot name="json-ld" />

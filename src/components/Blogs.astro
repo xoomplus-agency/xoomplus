@@ -1,7 +1,9 @@
 ---
 import Button from './Button.astro';
 import BlogCard from './BlogCard.astro';
-import { homeBlogs } from '../data/blogs';
+import { BLOG_IMAGE_PLACEHOLDER, getPosts } from '../lib/wp';
+
+const posts = await getPosts({ perPage: 3 });
 ---
 
 <section
@@ -13,6 +15,7 @@ import { homeBlogs } from '../data/blogs';
 	<div class="container">
 		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14" data-reveal="up">
 			<p class="pill-light mb-5">Blogs</p>
+			{/* Section heading + card titles are both h2 — outline: h2 (section) then h2 (cards). */}
 			<h2
 				id="blogs-heading"
 				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
@@ -26,15 +29,19 @@ import { homeBlogs } from '../data/blogs';
 
 		<ul class="blogs-grid m-0 list-none p-0" role="list" data-reveal-group>
 			{
-				homeBlogs.map((post) => (
+				posts.map((post) => (
 					<li class="blogs-grid__item" data-reveal="up">
 						<BlogCard
-							image={post.image}
-							alt={post.alt}
+							headingLevel="h2"
+							post={post}
+							image={post.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
+							alt={post.image?.alt ?? post.title}
+							srcset={post.image?.srcset}
+							width={post.image?.width ?? 400}
+							height={post.image?.height ?? 240}
 							category={post.category}
 							title={post.title}
 							excerpt={post.excerpt}
-							href={post.href}
 						/>
 					</li>
 				))

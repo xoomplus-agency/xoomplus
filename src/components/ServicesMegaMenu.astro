@@ -1,8 +1,10 @@
 ---
 import Button from './Button.astro';
 import { servicesMenu } from '../data/services-menu';
+import { getWpPagePath } from '../lib/wp-seo';
 
 const { columns, footer } = servicesMenu;
+const allServicesHref = await getWpPagePath('services');
 const panelId = 'services-mega-menu';
 ---
 
@@ -164,7 +166,7 @@ const panelId = 'services-mega-menu';
 	</div>
 
 	<div class="services-mega__footer">
-		<a class="services-mega__all" href={footer.allServicesHref} data-mega-link>
+		<a class="services-mega__all" href={allServicesHref} data-mega-link>
 			<span>All Services</span>
 			<svg
 				class="services-mega__all-arrow"

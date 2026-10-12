@@ -1,7 +1,7 @@
 ---
 import Button from './Button.astro';
 import ServicesMegaMenu from './ServicesMegaMenu.astro';
-import { isNavActive, navItems } from '../data/nav';
+import { getNavItemsResolved, isNavActive } from '../data/nav';
 import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
 
 interface Props {
@@ -9,18 +9,23 @@ interface Props {
 	variant?: 'default' | 'solid';
 	/** `light` = menu pill over white/#F7F7F5 from first paint (e.g. blog detail) */
 	theme?: 'dark' | 'light';
+	/** When true, no nav item is marked active (404 and similar). */
+	suppressActive?: boolean;
 }
 
-const { variant = 'default', theme = 'dark' } = Astro.props;
+const { variant = 'default', theme = 'dark', suppressActive = false } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const nav = navItems;
+const nav = await getNavItemsResolved();
+const allServicesHref =
+	nav.find((item) => item.label === 'Services')?.href ?? '/services';
 const megaPanelId = 'services-mega-menu';
 const mobileDrawerId = 'mobile-nav-drawer';
 const mobileServicesId = 'mobile-services-sheet';
 const servicesSections = getServicesMenuSections();
 
 function isActive(href: string, matchPrefixes?: string[]) {
+	if (suppressActive) return false;
 	if (href.startsWith('#')) return false;
 	return isNavActive(pathname, href, matchPrefixes);
 }
@@ -319,7 +324,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 			<div class="mobile-services-sheet__body">
 				<a
 					class="mobile-services-sheet__all"
-					href={servicesMenu.footer.allServicesHref}
+					href={allServicesHref}
 					data-mobile-services-link
 				>
 					All Services

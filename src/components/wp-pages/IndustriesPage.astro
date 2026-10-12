@@ -1,6 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import PageHero from '../../components/PageHero.astro';
+import PageHero from '../PageHero.astro';
 import Industries from '@/components/Industries.astro';
 import IndustryIntent from '@/components/IndustryIntent.astro';
 import IndustryFeature from '@/components/IndustryFeature.astro';
@@ -11,30 +10,22 @@ import FAQ from '@/components/FAQ.astro';
 import CTASection from '@/components/CTASection.astro';
 ---
 
-<Layout
-	title="Industries | Xoomplus"
-	description="See how Xoomplus supports businesses across different industries with web design, SEO, social media and paid search. A joined-up digital partner based in Blackburn."
->
-	<main id="main-content" class="page-industries flex-1">
-		<PageHero title="Industries" />
-		<Industries />
-		<IndustryIntent />
-		<IndustryFeature id="retail-ecommerce" />
-		<IndustryClarity />
-		<IndustryFeature id="hospitality-leisure" />
-		<ServicesBehind />
-		<IndustryFeature id="industry-rows" />
-		<IndustryFundamentals />
-		<FAQ page="industries" id="industries-faq" />
-		<CTASection />
-	</main>
-</Layout>
+<main id="main-content" class="page-industries flex-1">
+	<PageHero title="Industries" />
+	<Industries />
+	<IndustryIntent />
+	<IndustryFeature id="retail-ecommerce" />
+	<IndustryClarity />
+	<IndustryFeature id="hospitality-leisure" />
+	<ServicesBehind />
+	<IndustryFeature id="industry-rows" />
+	<IndustryFundamentals />
+	<FAQ page="industries" id="industries-faq" />
+	<CTASection />
+</main>
 
 <style is:global>
-	/* Industries-only wrapping / heading size — scoped under .page-industries */
-
 	@media (min-width: 1024px) {
-		/* Industries grid intro — 2 lines */
 		.page-industries #industries .text-on-light {
 			max-width: min(100%, 820px);
 		}
@@ -43,23 +34,19 @@ import CTASection from '@/components/CTASection.astro';
 			max-width: min(100%, 900px);
 		}
 
-		/* Industry intent intro — 3 lines */
 		.page-industries .industry-intent__intro {
 			max-width: 400px;
 		}
 
-		/* Industry clarity intro — 2 lines */
 		.page-industries .industry-clarity__intro {
 			max-width: 530px;
 		}
 
-		/* Services behind intro — 3 lines */
 		.page-industries .services-behind__intro {
 			max-width: 450px;
 		}
 	}
 
-	/* Feature section headings — fixed 40px on these two only */
 	.page-industries #retail-ecommerce .industry-feature__heading,
 	.page-industries #hospitality-leisure .industry-feature__heading {
 		font-size: 40px;

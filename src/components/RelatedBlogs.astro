@@ -1,10 +1,10 @@
 ---
 import Section from './Section.astro';
 import BlogCard from './BlogCard.astro';
-import type { BlogPost } from '../data/blogs';
+import { BLOG_IMAGE_PLACEHOLDER, type WpPost } from '../lib/wp';
 
 interface Props {
-	posts: BlogPost[];
+	posts: WpPost[];
 }
 
 const { posts } = Astro.props;
@@ -26,12 +26,15 @@ const { posts } = Astro.props;
 				{posts.map((post) => (
 					<li class="related-blogs__item" data-reveal="up">
 						<BlogCard
-							image={post.image}
-							alt={post.alt}
+							post={post}
+							image={post.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
+							alt={post.image?.alt ?? post.title}
+							srcset={post.image?.srcset}
+							width={post.image?.width ?? 400}
+							height={post.image?.height ?? 240}
 							category={post.category}
 							title={post.title}
 							excerpt={post.excerpt}
-							href={post.href}
 						/>
 					</li>
 				))}

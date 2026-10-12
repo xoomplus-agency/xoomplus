@@ -1,15 +1,26 @@
 ---
+import { postUrl, type WpPost } from '../lib/wp';
+
 interface Props {
 	image: string;
 	alt: string;
 	category: string;
 	title: string;
 	excerpt: string;
-	href: string;
+	/**
+	 * Prefer passing `post` so the href always comes from CMS `path` via postUrl().
+	 * If only `href` is passed, it must already be the WordPress path (not /blogs/<slug>).
+	 */
+	post?: Pick<WpPost, 'path' | 'slug' | 'id' | 'title'>;
+	href?: string;
 	/** Smaller title/excerpt for narrow sidebar cards only */
 	size?: 'default' | 'compact';
-	/** When true, meta label shows "EDITORIAL DRAFT" */
-	draft?: boolean;
+	/** Title heading level — default h3 keeps existing outlines */
+	headingLevel?: 'h2' | 'h3';
+	srcset?: string;
+	sizes?: string;
+	width?: number;
+	height?: number;
 }
 
 const {
@@ -18,12 +29,28 @@ const {
 	category,
 	title,
 	excerpt,
-	href,
+	post,
+	href: hrefProp,
 	size = 'default',
-	draft = false,
+	headingLevel = 'h3',
+	srcset,
+	sizes = '(min-width:1024px) 33vw, 100vw',
+	width = 400,
+	height = 240,
 } = Astro.props;
 
-const metaLabel = draft ? 'Editorial draft' : 'From our blog';
+const href = post
+	? postUrl(post)
+	: hrefProp
+		? postUrl({ path: hrefProp, slug: title, id: 0, title })
+		: (() => {
+				throw new Error(
+					`[BlogCard] "${title}" needs a post (or href from postUrl) — no /blogs/<slug> fallback`,
+				);
+			})();
+
+const TitleTag = headingLevel;
+const showCategory = Boolean(category?.trim());
 ---
 
 <article class:list={['blog-card-wrap', size === 'compact' && 'blog-card-wrap--compact']}>
@@ -32,23 +59,31 @@ const metaLabel = draft ? 'Editorial draft' : 'From our blog';
 			<img
 				class="blog-card__img"
 				src={image}
+				srcset={srcset || undefined}
+				sizes={srcset ? sizes : undefined}
 				alt={alt}
-				width="400"
-				height="240"
+				width={width}
+				height={height}
 				loading="lazy"
 				decoding="async"
 			/>
 		</div>
 
 		<div class="blog-card__meta">
-			<span class="blog-card__category">
-				<span class="blog-card__dot" aria-hidden="true"></span>
-				{category}
-			</span>
-			<span class="blog-card__label">{metaLabel}</span>
+			{
+				showCategory ? (
+					<span class="blog-card__category">
+						<span class="blog-card__dot" aria-hidden="true"></span>
+						{category}
+					</span>
+				) : (
+					<span class="blog-card__category" aria-hidden="true"></span>
+				)
+			}
+			<span class="blog-card__label">From our blog</span>
 		</div>
 
-		<h3 class="blog-card__title">{title}</h3>
+		<TitleTag class="blog-card__title">{title}</TitleTag>
 		<p class="blog-card__excerpt">{excerpt}</p>
 
 		<div class="blog-card__footer">
@@ -133,6 +168,7 @@ const metaLabel = draft ? 'Editorial draft' : 'From our blog';
 		font-weight: 500;
 		line-height: 1.3;
 		color: #555555;
+		min-height: 1.3em;
 	}
 
 	.blog-card__dot {

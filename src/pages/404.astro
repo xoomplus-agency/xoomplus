@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+Astro.response.status = 404;
+Astro.response.statusText = 'Not Found';
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+---
+
+<Layout
+	title="Page not found | Xoomplus"
+	description="The page you are looking for could not be found."
+	noindex={true}
+	theme="light"
+	suppressNavActive={true}
+>
+	<main id="main-content" class="page-404-main flex-1">
+		<!-- 404 content will be added here -->
+	</main>
+</Layout>
+
+<style>
+	/* Matches blog detail header clear (fixed navbar) + shared section padding */
+	.page-404-main {
+		--page-404-nav-offset: 100px;
+		padding-top: calc(var(--page-404-nav-offset) + var(--section-padding-y));
+		/* remove min-height when content is added */
+		min-height: 70vh;
+	}
+
+	@media (max-width: 639px) {
+		.page-404-main {
+			--page-404-nav-offset: 88px;
+		}
+	}
+
+	/* Mobile dock / safe-area clearance (same spirit as other mobile chrome) */
+	@media (max-width: 1023px) {
+		.page-404-main {
+			padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+		}
+	}
+</style>

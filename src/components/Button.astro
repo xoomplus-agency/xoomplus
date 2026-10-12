@@ -13,6 +13,8 @@ interface Props {
 	class?: string;
 	id?: string;
 	'aria-label'?: string;
+	'aria-controls'?: string;
+	hidden?: boolean;
 }
 
 const {
@@ -25,6 +27,8 @@ const {
 	class: className = '',
 	id,
 	'aria-label': ariaLabel,
+	'aria-controls': ariaControls,
+	hidden = false,
 } = Astro.props;
 
 const isDisabled = disabled || loading;
@@ -60,6 +64,8 @@ const Tag = href && !isDisabled ? 'a' : 'button';
 	disabled={Tag === 'button' ? isDisabled : undefined}
 	aria-busy={loading || undefined}
 	aria-label={loading ? ariaLabel || 'Loading' : ariaLabel}
+	aria-controls={ariaControls}
+	hidden={hidden || undefined}
 >
 	<span class="btn__label inline-flex items-center justify-center gap-2">
 		{

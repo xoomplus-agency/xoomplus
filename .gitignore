@@ -2,6 +2,9 @@
 dist/
 dist.zip
 
+# Dev-only WordPress posts disk cache (also under node_modules/.cache/)
+.cache/
+
 # generated types
 .astro/
 

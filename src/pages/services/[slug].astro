@@ -39,7 +39,7 @@ const service =
 	serviceFromProps ?? (slug ? getMainServiceBySlug(slug) : undefined);
 
 if (!service) {
-	return Astro.redirect('/our-services');
+	return Astro.rewrite('/404');
 }
 
 const canonicalPath = `/services/${service.slug}`;

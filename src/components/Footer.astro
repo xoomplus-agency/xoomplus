@@ -1,18 +1,32 @@
 ---
+import { getAllWpPageRoutes } from '../lib/wp-seo';
+
 const year = new Date().getFullYear();
+
+const routes = await getAllWpPageRoutes();
+const byKey = new Map(routes.map((r) => [r.key, r.route]));
+const aboutHref = byKey.get('about');
+const servicesHref = byKey.get('services');
+const industriesHref = byKey.get('industries');
+const caseStudiesHref = byKey.get('caseStudies');
+const contactHref = byKey.get('contact');
+const blogsHref = byKey.get('blogs');
+if (!aboutHref || !servicesHref || !industriesHref || !caseStudiesHref || !contactHref || !blogsHref) {
+	throw new Error('[footer] live CMS paths incomplete — check WP_BASE_URL / page publish status');
+}
 
 const linkColumns = [
 	{
 		title: 'Company',
 		ariaLabel: 'Company',
 		links: [
-			{ label: 'About', href: '/about' },
-			{ label: 'Services', href: '/our-services' },
-			{ label: 'Industries', href: '/industries' },
-			{ label: 'Case Studies', href: '/case-studies' },
+			{ label: 'About', href: aboutHref },
+			{ label: 'Services', href: servicesHref },
+			{ label: 'Industries', href: industriesHref },
+			{ label: 'Case Studies', href: caseStudiesHref },
 			{ label: 'Pricing', href: '/pricing' },
-			{ label: 'Contact', href: '/contact' },
-			{ label: 'Blog', href: '/blogs' },
+			{ label: 'Contact', href: contactHref },
+			{ label: 'Blog', href: blogsHref },
 		],
 	},
 	{

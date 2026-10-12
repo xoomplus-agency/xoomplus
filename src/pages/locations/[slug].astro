@@ -28,7 +28,7 @@ const location =
 	locationFromProps ?? (slug ? getLocationBySlug(slug) : undefined);
 
 if (!location) {
-	return new Response(null, { status: 404, statusText: 'Not Found' });
+	return Astro.rewrite('/404');
 }
 
 const canonicalPath = `/locations/${location.slug}`;

@@ -1,0 +1,42 @@
+---
+/**
+ * CMS-driven WP pages (except home) — resolved by page ID → live CMS slug at request time.
+ * prerender=false so a slug change does not require regenerating static paths to avoid 404s.
+ * Nested static trees (e.g. /services/seo) stay under pages/services/[slug].astro.
+ */
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import AboutPage from '../components/wp-pages/AboutPage.astro';
+import ContactPage from '../components/wp-pages/ContactPage.astro';
+import IndustriesPage from '../components/wp-pages/IndustriesPage.astro';
+import BlogsPage from '../components/wp-pages/BlogsPage.astro';
+import ServicesPage from '../components/wp-pages/ServicesPage.astro';
+import CaseStudiesListingPage from '../components/CaseStudiesListingPage.astro';
+import {
+	getAllWpPageRoutes,
+	normalizeSeoPath,
+} from '../lib/wp-seo';
+
+const param = Astro.params.slug;
+const routes = await getAllWpPageRoutes();
+const hit = routes.find(
+	(r) => r.key !== 'home' && param != null && normalizeSeoPath(`/${param}`) === r.route,
+);
+
+if (!hit) {
+	return Astro.rewrite('/404');
+}
+
+const pageKey = hit.key;
+const seoPath = hit.route;
+---
+
+<Layout seoPath={seoPath}>
+	{pageKey === 'about' && <AboutPage />}
+	{pageKey === 'contact' && <ContactPage />}
+	{pageKey === 'industries' && <IndustriesPage />}
+	{pageKey === 'blogs' && <BlogsPage />}
+	{pageKey === 'services' && <ServicesPage />}
+	{pageKey === 'caseStudies' && <CaseStudiesListingPage />}
+</Layout>

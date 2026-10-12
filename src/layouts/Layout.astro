@@ -4,20 +4,42 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ScrollToTop from '../components/ScrollToTop.astro';
 import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
+import { getPageSEO, isMappedSeoPath, type PageSEO } from '../lib/wp-seo';
 import '../styles/global.css';
 import '../styles/motion.css';
 import sfProDisplayBold from '../assets/fonts/SFPRODISPLAYBOLD.OTF';
 
 interface Props {
+	/** Fallback title for non-WP-mapped routes (blogs, services, etc.). */
 	title?: string;
+	/** Fallback description for non-WP-mapped routes only. */
 	description?: string;
 	image?: string;
 	type?: string;
 	canonicalPath?: string;
+	/**
+	 * Override pathname for WP SEO lookup when the request path differs from the CMS route.
+	 * Canonicals / og:url use the resolved CMS path.
+	 */
+	seoPath?: string;
 	/** Pass-through to Header — `solid` for white pages without a dark hero */
 	headerVariant?: 'default' | 'solid';
-	/** Pass-through to Header — `light` for pages that start on white (no dark hero) */
+	/**
+	 * Nav chrome theme from first paint. Prefer this over `headerTheme`.
+	 * `light` also sets `data-theme="light"` on `<html>` (white pages, no dark hero).
+	 */
+	theme?: 'dark' | 'light';
+	/** @deprecated Prefer `theme`. Pass-through to Header when `theme` is omitted. */
 	headerTheme?: 'dark' | 'light';
+	/** When true: noindex/nofollow, no canonical, no og:url. Default false. */
+	noindex?: boolean;
+	/**
+	 * Explicit robots meta (e.g. "noindex, follow" for CMS posts).
+	 * Does not strip canonical/og — use `noindex` for full suppression.
+	 */
+	robots?: string;
+	/** When true, no nav item is marked active (e.g. 404 under /blogs/…). */
+	suppressNavActive?: boolean;
 }
 
 const {
@@ -26,17 +48,34 @@ const {
 	image,
 	type = 'website',
 	canonicalPath,
+	seoPath,
 	headerVariant = 'default',
+	theme: themeProp,
 	headerTheme = 'dark',
+	noindex = false,
+	robots: robotsProp,
+	suppressNavActive = false,
 } = Astro.props;
+
+const theme = themeProp ?? headerTheme;
+
+const path = seoPath ?? Astro.url.pathname;
+const mapped = !noindex && (await isMappedSeoPath(path));
+
+/** Yoast SEO for mapped routes — fetched once in the shared layout. */
+const pageSeo: PageSEO | null = mapped ? await getPageSEO(path) : null;
 
 if (isStaging()) {
 	Astro.response.headers.set('X-Robots-Tag', STAGING_ROBOTS);
+} else if (noindex) {
+	Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+} else if (robotsProp) {
+	Astro.response.headers.set('X-Robots-Tag', robotsProp);
 }
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme={theme === 'light' ? 'light' : undefined}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -54,17 +93,24 @@ if (isStaging()) {
 			document.documentElement.classList.add('js');
 		</script>
 		<Seo
-			title={title}
-			description={description}
+			title={mapped ? undefined : title}
+			description={mapped ? undefined : description}
 			image={image}
 			type={type}
 			canonicalPath={canonicalPath}
+			pageSeo={pageSeo}
+			noindex={noindex}
+			robots={robotsProp}
 		>
 			<slot name="json-ld" slot="json-ld" />
 		</Seo>
 	</head>
 	<body class="m-0 flex min-h-screen w-full flex-col">
-		<Header variant={headerVariant} theme={headerTheme} />
+		<Header
+			variant={headerVariant}
+			theme={theme}
+			suppressActive={suppressNavActive}
+		/>
 		<slot />
 		<Footer />
 		<ScrollToTop />

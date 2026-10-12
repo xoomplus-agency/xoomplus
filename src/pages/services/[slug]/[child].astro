@@ -59,7 +59,7 @@ const resolved =
 			: undefined;
 
 if (!resolved) {
-	return new Response(null, { status: 404, statusText: 'Not Found' });
+	return Astro.rewrite('/404');
 }
 
 const { service, child } = resolved;
@@ -127,7 +127,7 @@ const breadcrumbJsonLd = {
 			'@type': 'ListItem',
 			position: 2,
 			name: 'Services',
-			item: origin ? `${origin}/our-services/` : '/our-services/',
+			item: origin ? `${origin}/services/` : '/services/',
 		},
 		{
 			'@type': 'ListItem',

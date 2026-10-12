@@ -2,20 +2,49 @@
 import Section from './Section.astro';
 import BlogCard from './BlogCard.astro';
 import Button from './Button.astro';
-import { blogs } from '../data/blogs';
+import {
+	BLOG_IMAGE_PLACEHOLDER,
+	categoryKey,
+	getPosts,
+	postUrl,
+} from '../lib/wp';
 
-const filters = [
-	'All articles',
-	'Digital marketing',
-	'SEO',
-	'Web design',
-	'Development',
-	'Brand strategy',
-] as const;
+const PAGE_SIZE = 9;
+
+const blogs = await getPosts({ all: true });
+
+/** Unique categories: filter value = categoryKey(name), label = display name. */
+const categoryByKey = new Map<string, string>();
+for (const post of blogs) {
+	const key = categoryKey(post.category || post.categorySlug);
+	if (!key || key === 'all') continue;
+	if (!categoryByKey.has(key)) {
+		categoryByKey.set(key, post.category || post.categorySlug);
+	}
+}
+const categoryFilters = [...categoryByKey.entries()].sort((a, b) =>
+	a[1].localeCompare(b[1]),
+);
+
+const initialVisible = Math.min(PAGE_SIZE, blogs.length);
+
+/** Compact search index for the dropdown only (not the grid). */
+const searchIndex = blogs.map((post) => ({
+	t: post.title,
+	e: post.excerpt,
+	c: post.category || '',
+	p: postUrl(post),
+	i: post.image?.src ?? BLOG_IMAGE_PLACEHOLDER,
+}));
 ---
 
 <Section aria-labelledby="blogs-heading">
 	<div data-blog-listing>
+	<script
+		type="application/json"
+		id="blog-search-index"
+		set:html={JSON.stringify(searchIndex)}
+	/>
 	<div class="blog-listing__header">
 		<div class="blog-listing__intro" data-reveal="up">
 			<p class="pill-light">Explore the blog</p>
@@ -57,9 +86,11 @@ const filters = [
 				name="q"
 				placeholder="Search articles"
 				autocomplete="off"
+				role="combobox"
 				aria-autocomplete="list"
 				aria-controls="blog-search-results"
 				aria-expanded="false"
+				aria-haspopup="listbox"
 				data-blog-search
 			/>
 			<div
@@ -70,6 +101,7 @@ const filters = [
 				hidden
 				data-blog-search-results
 			></div>
+			<p class="sr-only" role="status" aria-live="polite" data-blog-search-live></p>
 		</div>
 	</div>
 
@@ -79,14 +111,23 @@ const filters = [
 		aria-label="Filter articles by category"
 		data-blog-filters
 	>
+		<button
+			type="button"
+			class="blog-listing__chip is-active"
+			aria-pressed="true"
+			data-filter-chip
+			data-filter="all"
+		>
+			All articles
+		</button>
 		{
-			filters.map((label, index) => (
+			categoryFilters.map(([key, label]) => (
 				<button
 					type="button"
-					class:list={['blog-listing__chip', index === 0 && 'is-active']}
-					aria-pressed={index === 0 ? 'true' : 'false'}
+					class="blog-listing__chip"
+					aria-pressed="false"
 					data-filter-chip
-					data-filter={label}
+					data-filter={key}
 				>
 					{label}
 				</button>
@@ -97,54 +138,73 @@ const filters = [
 	<hr class="blog-listing__divider" />
 
 	<div class="blog-listing__meta">
-		<p class="blog-listing__meta-left" aria-live="polite">
+		<p class="blog-listing__meta-left">
 			<span data-blog-perspective>All perspectives</span>
-			{' '}· <span data-blog-count>{blogs.length}</span> articles shown
-		</p>
-		<p class="blog-listing__meta-right">
-			New article concepts are marked editorial draft.
+			{' '}· <span data-blog-count>{initialVisible}</span> of{' '}
+			<span data-blog-matching>{blogs.length}</span> articles shown
 		</p>
 	</div>
 
 	<p class="blog-listing__empty" role="status" aria-live="polite" hidden data-blog-empty>
-		No articles match your search.
+		No articles in this category.
 	</p>
 
-	<!-- data-page-size reserved for future Load more pagination -->
-	<ul class="blog-listing__grid m-0 list-none p-0" role="list" data-page-size="9" data-blog-grid data-reveal-group>
+	<noscript>
+		<style>
+			[data-post-card][hidden] {
+				display: block !important;
+			}
+			[data-blog-load-more],
+			[data-blog-search-wrap] {
+				display: none !important;
+			}
+		</style>
+	</noscript>
+
+	<ul
+		id="blog-listing-grid"
+		class="blog-listing__grid m-0 list-none p-0"
+		role="list"
+		data-page-size={String(PAGE_SIZE)}
+		data-total={String(blogs.length)}
+		data-blog-grid
+		data-reveal-group
+	>
 		{
-			blogs.map((post) => (
+			blogs.map((post, index) => (
 				<li
 					class="blog-listing__item"
 					data-reveal="up"
-					data-blog-card
-					data-category={post.category}
-					data-title={post.title}
-					data-excerpt={post.excerpt}
-					data-href={post.href}
-					data-image={post.image}
-					data-alt={post.alt}
-					data-author-name={post.author.name}
-					data-author-role={post.author.role}
-					data-date={post.date}
-					data-read-time={String(post.readTime)}
+					data-post-card
+					data-category={categoryKey(post.category || post.categorySlug)}
+					hidden={index >= PAGE_SIZE ? true : undefined}
 				>
 					<BlogCard
-						image={post.image}
-						alt={post.alt}
+						headingLevel="h3"
+						post={post}
+						image={post.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
+						alt={post.image?.alt ?? post.title}
+						srcset={post.image?.srcset}
+						width={post.image?.width ?? 400}
+						height={post.image?.height ?? 240}
 						category={post.category}
 						title={post.title}
 						excerpt={post.excerpt}
-						href={post.href}
 					/>
 				</li>
 			))
 		}
 	</ul>
 
-	{/* Placeholder — no pagination behavior yet */}
-	<div class="blog-listing__load-more">
-		<Button type="button" id="load-more" class="!w-[220px]">
+	<div class="blog-listing__load-more" data-blog-load-more hidden={blogs.length <= PAGE_SIZE ? true : undefined}>
+		<Button
+			type="button"
+			id="load-more"
+			class="!w-[220px]"
+			aria-controls="blog-listing-grid"
+			aria-label="Load more articles"
+			hidden={blogs.length <= PAGE_SIZE ? true : undefined}
+		>
 			Load more
 			<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
 				<path
@@ -156,9 +216,28 @@ const filters = [
 					stroke-linejoin="round"></path>
 			</svg>
 		</Button>
+		<p
+			class="blog-listing__load-status"
+			role="status"
+			aria-live="polite"
+			data-blog-load-status
+		>
+			Showing {initialVisible} of {blogs.length} articles
+		</p>
 	</div>
 	</div>
 </Section>
+
+<script>
+	import '../scripts/blog-list.ts';
+</script>
+
+<style is:global>
+	/* Ensure [hidden] always wins over grid/flex display utilities */
+	[data-blog-listing] [hidden] {
+		display: none !important;
+	}
+</style>
 
 <style>
 	.blog-listing__header {
@@ -241,15 +320,13 @@ const filters = [
 	}
 
 	.blog-listing__search-results {
-		/* ~4 result rows (media 66px + gap/padding) before scrolling */
-		--blog-search-row: 86px;
 		position: absolute;
 		top: 100%;
 		left: 0;
 		right: 0;
-		z-index: 30;
+		z-index: 40;
 		box-sizing: border-box;
-		max-height: calc(12px + (var(--blog-search-row) * 4));
+		max-height: min(320px, 70vh);
 		padding: 12px;
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -277,7 +354,7 @@ const filters = [
 	}
 
 	/*
-	 * Result rows are injected via innerHTML — they lack Astro scoped attrs.
+	 * Result rows are injected via innerHTML â€” they lack Astro scoped attrs.
 	 * Scope under the static .blog-listing__search-results parent with :global().
 	 */
 	.blog-listing__search-results :global(.blog-listing__search-option) {
@@ -321,11 +398,11 @@ const filters = [
 	}
 
 	.blog-listing__search-results :global(.blog-listing__search-media) {
-		flex: 0 0 88px;
-		width: 88px;
-		height: 66px;
+		flex: 0 0 64px;
+		width: 64px;
+		height: 48px;
 		overflow: hidden;
-		border-radius: 10px;
+		border-radius: 8px;
 		background: #f3f3f1;
 	}
 
@@ -334,7 +411,7 @@ const filters = [
 		width: 100%;
 		height: 100%;
 		max-width: none;
-		border-radius: 10px;
+		border-radius: 8px;
 		object-fit: cover;
 	}
 
@@ -343,14 +420,14 @@ const filters = [
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 2px;
 	}
 
 	.blog-listing__search-results :global(.blog-listing__search-title) {
 		margin: 0;
 		font-family: var(--font-inter);
 		font-size: 14px;
-		font-weight: 600;
+		font-weight: 500;
 		line-height: 1.3;
 		color: var(--color-primary-black);
 		display: -webkit-box;
@@ -359,25 +436,12 @@ const filters = [
 		overflow: hidden;
 	}
 
-	.blog-listing__search-results :global(.blog-listing__search-excerpt) {
+	.blog-listing__search-results :global(.blog-listing__search-cat) {
 		margin: 0;
-		font-family: var(--font-inter);
-		font-size: 13px;
-		font-weight: 400;
-		line-height: 1.4;
-		color: #555555;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-meta) {
-		margin: 2px 0 0;
 		font-family: var(--font-inter);
 		font-size: 12px;
 		font-weight: 400;
-		line-height: 1.4;
+		line-height: 1.3;
 		color: #888888;
 	}
 
@@ -393,35 +457,22 @@ const filters = [
 
 	@media (max-width: 639px) {
 		.blog-listing__search-results {
-			--blog-search-row: 74px;
-			max-height: calc(10px + (var(--blog-search-row) * 4));
+			max-height: min(280px, 60vh);
 			padding: 10px;
 		}
 
 		.blog-listing__search-results :global(.blog-listing__search-option) {
-			display: flex;
-			flex-direction: row;
 			gap: 10px;
 		}
 
 		.blog-listing__search-results :global(.blog-listing__search-media) {
-			flex: 0 0 72px;
-			width: 72px;
-			height: 54px;
-			border-radius: 8px;
-		}
-
-		.blog-listing__search-results :global(.blog-listing__search-thumb) {
-			border-radius: 8px;
+			flex: 0 0 56px;
+			width: 56px;
+			height: 42px;
 		}
 
 		.blog-listing__search-results :global(.blog-listing__search-title) {
 			font-size: 13px;
-		}
-
-		.blog-listing__search-results :global(.blog-listing__search-excerpt) {
-			font-size: 12px;
-			-webkit-line-clamp: 2;
 		}
 	}
 
@@ -507,21 +558,40 @@ const filters = [
 		grid-template-columns: 1fr;
 		gap: 24px;
 		margin-top: 40px;
+		content-visibility: visible;
 	}
 
 	.blog-listing__item {
 		min-width: 0;
 		height: 100%;
-	}
-
-	.blog-listing__item[hidden] {
-		display: none;
+		content-visibility: visible;
 	}
 
 	.blog-listing__load-more {
 		display: flex;
-		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
 		margin-top: 40px;
+	}
+
+	.blog-listing__load-more[hidden],
+	.blog-listing__load-more :global(#load-more[hidden]) {
+		display: none !important;
+	}
+
+	.blog-listing__load-status {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #888888;
+		text-align: center;
+	}
+
+	.blog-listing__item[hidden] {
+		display: none !important;
 	}
 
 	@media (min-width: 640px) {
@@ -576,246 +646,3 @@ const filters = [
 		}
 	}
 </style>
-
-<script>
-	const root = document.querySelector('[data-blog-listing]');
-	if (root instanceof HTMLElement) {
-		const chips = root.querySelectorAll('[data-filter-chip]');
-		const search = root.querySelector('[data-blog-search]');
-		const searchWrap = root.querySelector('[data-blog-search-wrap]');
-		const resultsEl = root.querySelector('[data-blog-search-results]');
-		const cards = root.querySelectorAll('[data-blog-card]');
-		const perspectiveEl = root.querySelector('[data-blog-perspective]');
-		const countEl = root.querySelector('[data-blog-count]');
-		const emptyEl = root.querySelector('[data-blog-empty]');
-
-		let activeCategory = 'All articles';
-		let query = '';
-		let debounceId = 0;
-		let activeIndex = -1;
-
-		function escapeHtml(value) {
-			return String(value)
-				.replace(/&/g, '&amp;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;')
-				.replace(/"/g, '&quot;');
-		}
-
-		function matchesQuery(card, q) {
-			const title = card.getAttribute('data-title') || '';
-			const excerpt = card.getAttribute('data-excerpt') || '';
-			return title.toLowerCase().includes(q) || excerpt.toLowerCase().includes(q);
-		}
-
-		function formatDate(iso) {
-			if (!iso) return '';
-			const date = new Date(iso);
-			if (Number.isNaN(date.getTime())) return '';
-			return new Intl.DateTimeFormat('en-US', {
-				month: 'long',
-				day: '2-digit',
-				year: 'numeric',
-			}).format(date);
-		}
-
-		function getMatches(q) {
-			const matches = [];
-			cards.forEach((card) => {
-				if (!(card instanceof HTMLElement)) return;
-				if (!q || !matchesQuery(card, q)) return;
-				matches.push({
-					title: card.getAttribute('data-title') || '',
-					excerpt: card.getAttribute('data-excerpt') || '',
-					href: card.getAttribute('data-href') || '#',
-					image: card.getAttribute('data-image') || '',
-					alt: card.getAttribute('data-alt') || '',
-					authorName: card.getAttribute('data-author-name') || '',
-					authorRole: card.getAttribute('data-author-role') || '',
-					date: card.getAttribute('data-date') || '',
-					readTime: card.getAttribute('data-read-time') || '',
-				});
-			});
-			return matches;
-		}
-
-		function buildResultMeta(item) {
-			const parts = [];
-			const authorBits = [item.authorName, item.authorRole].filter(Boolean);
-			if (authorBits.length) parts.push(authorBits.join(' · '));
-			const dateLabel = formatDate(item.date);
-			const readLabel = item.readTime ? `${item.readTime} min read` : '';
-			const dateRead = [dateLabel, readLabel].filter(Boolean).join(' · ');
-			if (dateRead) parts.push(dateRead);
-			return parts;
-		}
-
-		function renderResultItem(item, i) {
-			const metaLines = buildResultMeta(item)
-				.map((line) => `<p class="blog-listing__search-meta">${escapeHtml(line)}</p>`)
-				.join('');
-			const excerpt = item.excerpt
-				? `<p class="blog-listing__search-excerpt">${escapeHtml(item.excerpt)}</p>`
-				: '';
-			const image = item.image
-				? `<span class="blog-listing__search-media"><img class="blog-listing__search-thumb" src="${escapeHtml(item.image)}" alt="" width="88" height="66" loading="lazy" decoding="async" /></span>`
-				: `<span class="blog-listing__search-media" aria-hidden="true"></span>`;
-
-			return `<a id="blog-search-option-${i}" class="blog-listing__search-option" role="option" aria-selected="false" href="${escapeHtml(item.href)}" data-search-option>${image}<span class="blog-listing__search-body"><span class="blog-listing__search-title">${escapeHtml(item.title)}</span>${excerpt}${metaLines}</span></a>`;
-		}
-
-		function closeResults() {
-			if (!(searchWrap instanceof HTMLElement) || !(resultsEl instanceof HTMLElement)) return;
-			if (!(search instanceof HTMLInputElement)) return;
-			searchWrap.classList.remove('is-open');
-			resultsEl.hidden = true;
-			resultsEl.innerHTML = '';
-			search.setAttribute('aria-expanded', 'false');
-			activeIndex = -1;
-		}
-
-		function setActiveOption(index) {
-			if (!(resultsEl instanceof HTMLElement)) return;
-			const options = resultsEl.querySelectorAll('[data-search-option]');
-			if (!options.length) {
-				activeIndex = -1;
-				return;
-			}
-			activeIndex = ((index % options.length) + options.length) % options.length;
-			options.forEach((option, i) => {
-				const isActive = i === activeIndex;
-				option.classList.toggle('is-active', isActive);
-				option.setAttribute('aria-selected', isActive ? 'true' : 'false');
-				if (isActive && option instanceof HTMLElement) {
-					option.scrollIntoView({ block: 'nearest' });
-					const id = option.id;
-					if (search instanceof HTMLInputElement && id) {
-						search.setAttribute('aria-activedescendant', id);
-					}
-				}
-			});
-		}
-
-		function openSelected() {
-			if (!(resultsEl instanceof HTMLElement)) return;
-			const options = resultsEl.querySelectorAll('[data-search-option]');
-			const target =
-				activeIndex >= 0 ? options[activeIndex] : options[0];
-			if (target instanceof HTMLAnchorElement && target.href) {
-				window.location.assign(target.href);
-			}
-		}
-
-		function renderResults() {
-			if (!(searchWrap instanceof HTMLElement) || !(resultsEl instanceof HTMLElement)) return;
-			if (!(search instanceof HTMLInputElement)) return;
-
-			const q = query.trim().toLowerCase();
-			if (!q) {
-				closeResults();
-				return;
-			}
-
-			const matches = getMatches(q);
-			searchWrap.classList.add('is-open');
-			resultsEl.hidden = false;
-			search.setAttribute('aria-expanded', 'true');
-			activeIndex = -1;
-			search.removeAttribute('aria-activedescendant');
-
-			if (matches.length === 0) {
-				resultsEl.innerHTML =
-					'<p class="blog-listing__search-empty" role="status">No articles match your search.</p>';
-				return;
-			}
-
-			resultsEl.innerHTML = matches.map(renderResultItem).join('');
-		}
-
-		function applyCategoryFilters() {
-			let visible = 0;
-
-			cards.forEach((card) => {
-				if (!(card instanceof HTMLElement)) return;
-				const category = card.getAttribute('data-category') || '';
-				const show =
-					activeCategory === 'All articles' || category === activeCategory;
-				card.toggleAttribute('hidden', !show);
-				if (show) visible += 1;
-			});
-
-			if (perspectiveEl) {
-				perspectiveEl.textContent =
-					activeCategory === 'All articles' ? 'All perspectives' : activeCategory;
-			}
-			if (countEl) countEl.textContent = String(visible);
-			if (emptyEl instanceof HTMLElement) emptyEl.hidden = visible !== 0;
-		}
-
-		function clearSearch() {
-			if (search instanceof HTMLInputElement) search.value = '';
-			query = '';
-			closeResults();
-		}
-
-		chips.forEach((chip) => {
-			chip.addEventListener('click', () => {
-				if (!(chip instanceof HTMLElement)) return;
-				chips.forEach((other) => {
-					if (!(other instanceof HTMLElement)) return;
-					other.classList.toggle('is-active', other === chip);
-					other.setAttribute('aria-pressed', other === chip ? 'true' : 'false');
-				});
-				activeCategory = chip.getAttribute('data-filter') || 'All articles';
-				applyCategoryFilters();
-			});
-		});
-
-		if (search instanceof HTMLInputElement) {
-			search.addEventListener('input', () => {
-				window.clearTimeout(debounceId);
-				debounceId = window.setTimeout(() => {
-					query = search.value;
-					renderResults();
-				}, 150);
-			});
-
-			search.addEventListener('focus', () => {
-				if (query.trim()) renderResults();
-			});
-
-			search.addEventListener('keydown', (event) => {
-				if (!(resultsEl instanceof HTMLElement) || resultsEl.hidden) {
-					if (event.key === 'Escape') clearSearch();
-					return;
-				}
-
-				if (event.key === 'ArrowDown') {
-					event.preventDefault();
-					setActiveOption(activeIndex + 1);
-				} else if (event.key === 'ArrowUp') {
-					event.preventDefault();
-					setActiveOption(activeIndex <= 0 ? 0 : activeIndex - 1);
-				} else if (event.key === 'Enter') {
-					const options = resultsEl.querySelectorAll('[data-search-option]');
-					if (options.length) {
-						event.preventDefault();
-						openSelected();
-					}
-				} else if (event.key === 'Escape') {
-					event.preventDefault();
-					clearSearch();
-					search.blur();
-				}
-			});
-		}
-
-		document.addEventListener('pointerdown', (event) => {
-			if (!(searchWrap instanceof HTMLElement)) return;
-			const target = event.target;
-			if (target instanceof Node && !searchWrap.contains(target)) {
-				closeResults();
-			}
-		});
-	}
-</script>

@@ -150,7 +150,7 @@ export const servicesMenu: ServicesMenu = {
 		},
 	],
 	footer: {
-		allServicesHref: '/our-services',
+		allServicesHref: '/services',
 		heading: 'Not sure where to start?',
 		text: "Tell us what you're working towards.",
 		buttonLabel: 'Discuss your project',

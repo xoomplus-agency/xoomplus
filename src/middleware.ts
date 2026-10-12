@@ -1,22 +1,49 @@
 import { defineMiddleware } from 'astro:middleware';
-import { isStaging, STAGING_ROBOTS } from './lib/site-env';
+import { clearWpPostsCache } from './lib/wp';
+import {
+	isMappedSeoPath,
+	resolveAliasRedirect,
+	WP_SEO_REVALIDATE,
+} from './lib/wp-seo';
+
+function isBlogsListingPath(pathname: string): boolean {
+	const p = pathname.replace(/\/+$/, '') || '/';
+	return p === '/blogs';
+}
 
 /**
- * Adds X-Robots-Tag on HTML responses in staging.
- * Note: with default static output, this runs for SSR/on-demand routes and
- * adapters that support middleware — not for plain static file hosts.
+ * SEO pages advertise CDN/edge revalidation.
+ * Former CMS paths in WP_SEO_PATH_ALIASES 301 to the live slug route.
+ * `/blogs` is SSR + live WP status — never edge-cache that HTML.
+ * `?refresh=1` busts the WordPress posts disk/memory cache in dev.
  */
-export const onRequest = defineMiddleware(async (_context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
+	if (context.url.searchParams.get('refresh') === '1') {
+		clearWpPostsCache();
+	}
+
+	const aliasTarget = await resolveAliasRedirect(context.url.pathname);
+	if (aliasTarget) {
+		return context.redirect(aliasTarget, 301);
+	}
+
 	const response = await next();
 
-	if (!isStaging()) {
+	if (isBlogsListingPath(context.url.pathname)) {
+		response.headers.set(
+			'Cache-Control',
+			'private, no-store, no-cache, must-revalidate, max-age=0',
+		);
+		response.headers.set('CDN-Cache-Control', 'no-store');
+		response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
 		return response;
 	}
 
-	const contentType = response.headers.get('content-type') ?? '';
-	if (contentType.includes('text/html')) {
-		response.headers.set('X-Robots-Tag', STAGING_ROBOTS);
+	if (await isMappedSeoPath(context.url.pathname)) {
+		response.headers.set(
+			'Cache-Control',
+			`public, s-maxage=${WP_SEO_REVALIDATE}, stale-while-revalidate`,
+		);
 	}
-
 	return response;
 });
