@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "check:wp-routes": "npx --yes tsx --env-file=.env scripts/check-wp-routes.ts",
+    "check:wp-routes": "npx --yes tsx scripts/check-wp-routes.ts",
     "prebuild": "npm run check:wp-routes",
     "build": "astro build",
     "preview": "astro preview",

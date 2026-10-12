@@ -815,14 +815,24 @@ export async function fetchWpJson(
 	url: string,
 	id: number,
 ): Promise<{ ok: boolean; status: number; data: unknown }> {
-	const response = await fetch(url, {
-		...({
-			next: {
-				revalidate: WP_SEO_REVALIDATE,
-				tags: ['wp-seo', `wp-seo:id:${id}`],
-			},
-		} as RequestInit),
-	});
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			signal: AbortSignal.timeout(30_000),
+			...({
+				next: {
+					revalidate: WP_SEO_REVALIDATE,
+					tags: ['wp-seo', `wp-seo:id:${id}`],
+				},
+			} as RequestInit),
+		});
+	} catch (err) {
+		const reason = err instanceof Error ? err.name : 'Error';
+		console.error(
+			`WordPress SEO: fetch failed for id ${id} (${reason}). Check WP_BASE_URL and CMS reachability.`,
+		);
+		return { ok: false, status: 0, data: null };
+	}
 	if (!response.ok) {
 		return { ok: false, status: response.status, data: null };
 	}

@@ -3,8 +3,11 @@
  * Reports: page key, WP id, CMS slug, generated Astro route, HTTP status, SEO title.
  * Exit 1 on mismatch or fetch failure.
  *
- * Usage: npx --yes tsx --env-file=.env scripts/check-wp-routes.ts
+ * Usage: npm run check:wp-routes
+ * Loads `.env` only when the file exists (local). On Vercel, use project env vars.
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import {
 	WP_SEO_PAGES,
 	fetchWpPageById,
@@ -17,10 +20,49 @@ import {
 	type WpPageKey,
 } from '../src/lib/wp-seo';
 
+/** Load local `.env` into process.env when present; never override existing vars (Vercel). */
+function loadDotEnvIfPresent(): void {
+	const envPath = path.resolve(process.cwd(), '.env');
+	if (!fs.existsSync(envPath)) return;
+
+	const text = fs.readFileSync(envPath, 'utf8');
+	for (const line of text.split(/\r?\n/)) {
+		const trimmed = line.trim();
+		if (!trimmed || trimmed.startsWith('#')) continue;
+		const eq = trimmed.indexOf('=');
+		if (eq <= 0) continue;
+		const key = trimmed.slice(0, eq).trim();
+		if (!key || process.env[key] !== undefined) continue;
+		let val = trimmed.slice(eq + 1).trim();
+		if (
+			(val.startsWith('"') && val.endsWith('"')) ||
+			(val.startsWith("'") && val.endsWith("'"))
+		) {
+			val = val.slice(1, -1);
+		}
+		process.env[key] = val;
+	}
+}
+
+loadDotEnvIfPresent();
+
 const wpBase = getWpBaseUrl();
-const siteUrl = getSiteUrl() ?? wpBase;
-if (!wpBase) {
-	console.error('Missing WP_BASE_URL');
+const siteUrl = getSiteUrl();
+
+if (!wpBase || !siteUrl) {
+	const missing = [
+		!wpBase ? 'WP_BASE_URL' : null,
+		!siteUrl ? 'SITE_URL' : null,
+	].filter(Boolean);
+	console.error(
+		`[check:wp-routes] Missing required environment variable(s): ${missing.join(', ')}.`,
+	);
+	console.error(
+		'Set them in the Vercel project Environment Variables (Production/Preview), or in a local .env file.',
+	);
+	console.error(
+		`WP_BASE_URL=${wpBase ? '(set)' : '(missing)'}  SITE_URL=${siteUrl ? '(set)' : '(missing)'}`,
+	);
 	process.exit(1);
 }
 
@@ -62,7 +104,7 @@ for (const [key, { id }] of Object.entries(WP_SEO_PAGES) as [WpPageKey, { id: nu
 
 	if (!match) failed = true;
 
-	const seo = normalizePage(raw, wpBase, siteUrl!, expectedRoute);
+	const seo = normalizePage(raw, wpBase, siteUrl, expectedRoute);
 	const titlePreview = (seo.seoTitle ?? '—').slice(0, 48);
 
 	console.log(
