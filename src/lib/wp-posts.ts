@@ -145,7 +145,8 @@ export async function getPosts(params: GetPostsParams = {}): Promise<PostsResult
 		per_page: String(perPage),
 		page: String(page),
 		status: 'publish',
-		orderby: 'date',
+		// WP ranks search hits by relevance; date order buries matching titles.
+		orderby: search ? 'relevance' : 'date',
 		order: 'desc',
 		_embed: 'wp:featuredmedia,wp:term',
 		_fields: includeContent ? POST_FIELDS : LISTING_FIELDS,
@@ -261,6 +262,32 @@ export async function getPostsPages(
 		...new Set(pages.map((p) => Math.floor(p)).filter((p) => p >= 1)),
 	];
 	return Promise.all(unique.map((page) => getPosts({ ...query, page })));
+}
+
+/** All published posts (paginated) — for static `getStaticPaths`. */
+export async function getAllPublishedPosts(
+	opts: { includeContent?: boolean; maxPages?: number } = {},
+): Promise<WpPost[]> {
+	const perPage = 100;
+	const maxPages = opts.maxPages ?? 50;
+	const first = await getPosts({
+		page: 1,
+		perPage,
+		includeContent: opts.includeContent,
+	});
+	const pages = Math.min(maxPages, Math.max(1, first.totalPages));
+	if (pages === 1) return first.posts;
+
+	const rest = await Promise.all(
+		Array.from({ length: pages - 1 }, (_, i) =>
+			getPosts({
+				page: i + 2,
+				perPage,
+				includeContent: opts.includeContent,
+			}),
+		),
+	);
+	return [first, ...rest].flatMap((r) => r.posts);
 }
 
 /**

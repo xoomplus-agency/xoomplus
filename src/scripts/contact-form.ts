@@ -1,4 +1,11 @@
-const DEFAULT_ENDPOINT = '/api/contact';
+import {
+	buildCf7FormData,
+	getCf7FeedbackUrl,
+	getCf7FormId,
+	isCf7Success,
+	type Cf7Feedback,
+} from '../lib/cf7';
+
 const HONEYPOT_NAME = 'hp_website';
 
 function setStatus(
@@ -21,10 +28,11 @@ function clearStatus(statusEl: HTMLElement) {
 }
 
 /**
- * Shared contact-form submit handler.
- * Forms opt in with `data-contact-form`. Honeypot field name: `hp_website`.
+ * Submit Astro contact forms to WordPress Contact Form 7 via REST.
+ * Requires PUBLIC_CF7_FORM_ID (+ PUBLIC_WP_API). Enquiry forms use
+ * PUBLIC_CF7_FORM_ID_ENQUIRY when set.
  */
-export function initContactForms(endpoint = DEFAULT_ENDPOINT) {
+export function initContactForms(_endpointIgnored?: string) {
 	document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
 		if (form.dataset.contactFormBound) return;
 		form.dataset.contactFormBound = 'true';
@@ -51,31 +59,57 @@ export function initContactForms(endpoint = DEFAULT_ENDPOINT) {
 				return;
 			}
 
+			const kind = form.hasAttribute('data-enquiry-form') ? 'enquiry' : 'default';
+			const formId = getCf7FormId(kind);
+			const endpoint = formId ? getCf7FeedbackUrl(formId) : undefined;
+
+			if (!formId || !endpoint) {
+				setStatus(
+					statusEl,
+					'Form is not configured (missing PUBLIC_CF7_FORM_ID / PUBLIC_WP_API).',
+					'error',
+				);
+				return;
+			}
+
 			submitBtn.disabled = true;
 
 			try {
+				const body = buildCf7FormData(form, formId);
 				const response = await fetch(endpoint, {
 					method: 'POST',
-					body: new FormData(form),
+					body,
 					headers: { Accept: 'application/json' },
 				});
 
-				if (!response.ok) {
-					throw new Error(`Request failed (${response.status})`);
+				let data: Cf7Feedback = {};
+				try {
+					data = (await response.json()) as Cf7Feedback;
+				} catch {
+					/* non-JSON */
+				}
+
+				if (!response.ok || !isCf7Success(data)) {
+					const detail =
+						data.message ||
+						data.invalid_fields?.map((f) => f.message).join(' ') ||
+						`Request failed (${response.status})`;
+					throw new Error(detail);
 				}
 
 				setStatus(
 					statusEl,
-					'Thanks — your message has been sent. We will be in touch shortly.',
+					data.message ||
+						'Thanks — your message has been sent. We will be in touch shortly.',
 					'success',
 				);
 				form.reset();
-			} catch {
-				setStatus(
-					statusEl,
-					'Something went wrong. Please try again or email info@xoomplus.co.uk.',
-					'error',
-				);
+			} catch (err) {
+				const msg =
+					err instanceof Error && err.message
+						? err.message
+						: 'Something went wrong. Please try again or email info@xoomplus.co.uk.';
+				setStatus(statusEl, msg, 'error');
 			} finally {
 				submitBtn.disabled = false;
 			}

@@ -8,9 +8,10 @@
   "scripts": {
     "dev": "astro dev",
     "check:wp-routes": "npx --yes tsx scripts/check-wp-routes.ts",
-    "prebuild": "npm run check:wp-routes",
+    "prebuild": "node scripts/prebuild.mjs",
     "build": "astro build",
     "preview": "astro preview",
+    "start": "node ./dist/server/entry.mjs",
     "astro": "astro",
     "warm:cache": "node scripts/warm-cache.mjs"
   },

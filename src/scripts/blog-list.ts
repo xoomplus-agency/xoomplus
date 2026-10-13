@@ -379,10 +379,30 @@ function initBlogList(root: HTMLElement): void {
 	}
 }
 
+let gridObserver: MutationObserver | null = null;
+
 function boot(): void {
 	const root = document.querySelector('[data-blog-listing]');
 	if (!(root instanceof HTMLElement)) return;
+
 	initBlogList(root);
+	if (root.getAttribute(INIT_ATTR) === '1') {
+		gridObserver?.disconnect();
+		gridObserver = null;
+		return;
+	}
+
+	// Grid arrives via server:defer after the shell — retry when it appears.
+	// Without this, boot can run once against the skeleton and never attach search.
+	gridObserver?.disconnect();
+	gridObserver = new MutationObserver(() => {
+		initBlogList(root);
+		if (root.getAttribute(INIT_ATTR) === '1') {
+			gridObserver?.disconnect();
+			gridObserver = null;
+		}
+	});
+	gridObserver.observe(root, { childList: true, subtree: true });
 }
 
 boot();

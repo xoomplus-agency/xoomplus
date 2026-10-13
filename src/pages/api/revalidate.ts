@@ -9,7 +9,7 @@
  *   { "type": "post", "id": 123, "slug": "my-post", "status": "publish", "oldStatus": "draft",
  *     "category": "seo", "path": "/seo/my-post" }
  *
- * Clears in-memory WP memos and purges Vercel ISR HTML via x-prerender-revalidate.
+ * Clears in-memory WP memos, Node HTML cache, and Vercel ISR when applicable.
  */
 import type { APIRoute } from 'astro';
 import { timingSafeEqual } from 'node:crypto';
@@ -26,7 +26,11 @@ import {
 	type WpPageKey,
 } from '../../lib/wp-seo';
 import { clearWpPostsCache } from '../../lib/wp-posts';
-import { purgeIsrPaths, normalizePurgePath } from '../../lib/isr-purge';
+import {
+	normalizePurgePath,
+	purgeAllHtmlCache,
+	purgeCachedPaths,
+} from '../../lib/purge-paths';
 
 export const prerender = false;
 
@@ -111,7 +115,7 @@ export const POST: APIRoute = async ({ request }) => {
 			paths.add(normalizePurgePath(`/blogs/${body.slug}`));
 		}
 
-		const purged = await purgeIsrPaths([...paths]);
+		const purged = await purgeCachedPaths([...paths]);
 		const revalidated = {
 			tag: 'wp-posts',
 			paths: [...paths],
@@ -122,7 +126,7 @@ export const POST: APIRoute = async ({ request }) => {
 			oldStatus: body.oldStatus ?? null,
 		};
 		console.log(
-			`[revalidate] post id=${revalidated.id} slug=${revalidated.slug} status=${revalidated.status} → purged ${paths.size} ISR path(s)`,
+			`[revalidate] post id=${revalidated.id} slug=${revalidated.slug} status=${revalidated.status} → purged ${paths.size} path(s)`,
 		);
 		return new Response(JSON.stringify({ revalidated: true, ...revalidated }), {
 			status: 200,
@@ -134,7 +138,8 @@ export const POST: APIRoute = async ({ request }) => {
 		invalidateWpSeoCache();
 		clearWpPostsCache();
 		const paths = coreNavPaths();
-		const purged = await purgeIsrPaths(paths);
+		const cleared = await purgeAllHtmlCache();
+		const purged = await purgeCachedPaths(paths);
 		const deploy = forceRebuild
 			? await triggerDeployHook('revalidate all + rebuild')
 			: { triggered: false, ok: false };
@@ -146,6 +151,7 @@ export const POST: APIRoute = async ({ request }) => {
 				id: null,
 				rebuild: forceRebuild,
 				paths,
+				cleared,
 				purged,
 				deploy,
 			}),
@@ -175,7 +181,7 @@ export const POST: APIRoute = async ({ request }) => {
 					: `/${previousSlug.replace(/^\/+|\/+$/g, '')}`;
 			paths.push(normalizePurgePath(prevPath));
 		}
-		const purged = await purgeIsrPaths(paths);
+		const purged = await purgeCachedPaths(paths);
 
 		let deploy: Awaited<ReturnType<typeof triggerDeployHook>> | {
 			triggered: boolean;
@@ -189,7 +195,7 @@ export const POST: APIRoute = async ({ request }) => {
 			deploy = await triggerDeployHook(reason);
 		} else if (mapped) {
 			console.log(
-				`[revalidate] id ${id} — ISR purge + SEO memo clear (no rebuild)`,
+				`[revalidate] id ${id} — HTML/ISR purge + SEO memo clear (no rebuild)`,
 			);
 		}
 
