@@ -1,6 +1,5 @@
-import { d as isMappedSeoPath, m as resolveAliasRedirect, n as WP_SEO_REVALIDATE } from "./chunks/wp-seo_BlJOjkiY.mjs";
 import { ct as defineMiddleware, t as sequence } from "./chunks/sequence_D_4a4hvD.mjs";
-import { r as clearWpPostsCache } from "./chunks/wp_B1K4Gk81.mjs";
+import { f as isMappedSeoPath, h as resolveAliasRedirect, r as WP_SEO_REVALIDATE } from "./chunks/wp-seo_tkf0J7_Y.mjs";
 //#region src/middleware.ts
 function isBlogsListingPath(pathname) {
 	return (pathname.replace(/\/+$/, "") || "/") === "/blogs";
@@ -12,7 +11,10 @@ function isBlogsListingPath(pathname) {
 * `?refresh=1` busts the WordPress posts disk/memory cache in dev.
 */
 var onRequest$1 = defineMiddleware(async (context, next) => {
-	if (context.url.searchParams.get("refresh") === "1") clearWpPostsCache();
+	if (context.url.searchParams.get("refresh") === "1") {
+		const { clearWpPostsCache } = await import("./chunks/wp_3Jg0x5Z_.mjs").then((n) => n.o);
+		clearWpPostsCache();
+	}
 	const aliasTarget = await resolveAliasRedirect(context.url.pathname);
 	if (aliasTarget) return context.redirect(aliasTarget, 301);
 	const response = await next();

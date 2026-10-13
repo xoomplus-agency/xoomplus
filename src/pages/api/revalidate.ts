@@ -1,19 +1,19 @@
 /**
- * On-demand SEO cache bust (+ optional Vercel rebuild for slug/route changes).
+ * On-demand cache bust for SEO pages + blog posts webhook.
  *
  * POST /api/revalidate
  * Header: x-revalidate-secret: <REVALIDATE_SECRET>
- * Body:
- *   { "id": 215 }
- *   { "slug": "about" }
- *   { "all": true }
- *   { "id": 1037, "rebuild": true }  // force deploy hook
+ * Body (pages):
+ *   { "id": 215 } | { "slug": "about" } | { "all": true } | { "rebuild": true }
+ * Body (posts — WordPress webhook):
+ *   { "type": "post", "id": 123, "slug": "my-post", "status": "publish", "oldStatus": "draft" }
  *
- * Cache invalidation alone cannot create a new prerendered Astro route after a
- * WordPress slug change — set VERCEL_DEPLOY_HOOK_URL and pass rebuild:true (or
- * let the handler auto-rebuild when it detects a slug change).
+ * Astro SSR blog routes use `cache: "no-store"` and do not need Next.js
+ * `revalidateTag`. This endpoint still accepts post webhooks, logs them, and
+ * clears any residual SEO/post helpers so publish/draft sync is one refresh.
  */
 import type { APIRoute } from 'astro';
+import { timingSafeEqual } from 'node:crypto';
 import {
 	getLiveWpSlugForId,
 	getRevalidateSecret,
@@ -23,14 +23,23 @@ import {
 	triggerDeployHook,
 	WP_SEO_PAGES,
 } from '../../lib/wp-seo';
+import { clearWpPostsCache } from '../../lib/wp-posts';
 
 export const prerender = false;
+
+function secretsEqual(provided: string | null, expected: string): boolean {
+	if (!provided) return false;
+	const a = Buffer.from(provided);
+	const b = Buffer.from(expected);
+	if (a.length !== b.length) return false;
+	return timingSafeEqual(a, b);
+}
 
 export const POST: APIRoute = async ({ request }) => {
 	const expected = getRevalidateSecret();
 	const provided = request.headers.get('x-revalidate-secret');
 
-	if (!expected || provided !== expected) {
+	if (!expected || !secretsEqual(provided, expected)) {
 		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
 			status: 401,
 			headers: { 'Content-Type': 'application/json' },
@@ -38,8 +47,11 @@ export const POST: APIRoute = async ({ request }) => {
 	}
 
 	let body: {
+		type?: string;
 		id?: number;
 		slug?: string;
+		status?: string;
+		oldStatus?: string;
 		all?: boolean;
 		rebuild?: boolean;
 	} = {};
@@ -54,11 +66,38 @@ export const POST: APIRoute = async ({ request }) => {
 
 	const forceRebuild = body.rebuild === true;
 
+	// WordPress post publish/draft/trash/delete webhook
+	if (body.type === 'post') {
+		clearWpPostsCache();
+		invalidateWpSeoCache(typeof body.id === 'number' ? body.id : undefined);
+		const revalidated = {
+			tag: 'wp-posts',
+			paths: ['/blogs', '/'],
+			id: body.id ?? null,
+			slug: body.slug ?? null,
+			status: body.status ?? null,
+			oldStatus: body.oldStatus ?? null,
+			note: 'Astro SSR: posts are fetched with cache:no-store; nothing to purge beyond SEO memo',
+		};
+		console.log(
+			`[revalidate] post id=${revalidated.id} slug=${revalidated.slug} status=${revalidated.status} oldStatus=${revalidated.oldStatus} → cleared wp-posts + SEO`,
+		);
+		return new Response(
+			JSON.stringify({ revalidated: true, ...revalidated }),
+			{
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			},
+		);
+	}
+
 	if (body.all === true) {
 		invalidateWpSeoCache();
+		clearWpPostsCache();
 		const deploy = forceRebuild
 			? await triggerDeployHook('revalidate all + rebuild')
 			: { triggered: false, ok: false };
+		console.log(`[revalidate] all rebuild=${forceRebuild}`);
 		return new Response(
 			JSON.stringify({
 				revalidated: true,
@@ -75,9 +114,9 @@ export const POST: APIRoute = async ({ request }) => {
 	}
 
 	async function revalidateById(id: number, label?: string) {
-		// Cached slug only (no WP fetch) so a cold cache cannot mask a real change.
 		const previousSlug = peekCachedWpSlug(id);
 		invalidateWpSeoCache(id);
+		clearWpPostsCache();
 		const nextSlug = await getLiveWpSlugForId(id);
 		const slugChanged =
 			previousSlug != null && nextSlug != null && previousSlug !== nextSlug;
@@ -99,6 +138,10 @@ export const POST: APIRoute = async ({ request }) => {
 				`[wp-seo] revalidated id ${id} (SEO cache only). Slug unchanged — no rebuild.`,
 			);
 		}
+
+		console.log(
+			`[revalidate] page id=${id} slug=${label ?? nextSlug} slugChanged=${slugChanged} rebuild=${shouldRebuild}`,
+		);
 
 		return {
 			revalidated: true,
@@ -143,7 +186,7 @@ export const POST: APIRoute = async ({ request }) => {
 	return new Response(
 		JSON.stringify({
 			error:
-				'Provide { "id": number }, { "slug": "..." }, or { "all": true }. Optional: "rebuild": true',
+				'Provide { "type": "post", ... }, { "id": number }, { "slug": "..." }, or { "all": true }. Optional: "rebuild": true',
 		}),
 		{
 			status: 400,

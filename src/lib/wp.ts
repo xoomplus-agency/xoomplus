@@ -1,13 +1,8 @@
 /**
- * WordPress posts (blog) — build-time fetch only.
+ * WordPress posts (blog) — mapping helpers, categories, and compatibility wrappers.
+ * All `/posts` HTTP goes through `./wp-posts` (unauthenticated, cache: no-store).
  * Base: PUBLIC_WP_API (default https://xoomplus.co.uk/wp-json/wp/v2)
- *
- * Returns every published post (WP REST default status=publish). Never filters
- * by Yoast robots/noindex or category — noindex posts still render and link.
  */
-
-import fs from 'node:fs';
-import path from 'node:path';
 
 export type WpPostImage = {
 	src: string;
@@ -40,33 +35,37 @@ export type WpPost = {
 
 const DEFAULT_API = 'https://xoomplus.co.uk/wp-json/wp/v2';
 
-const POST_FIELDS =
-	'id,slug,link,date,status,title,excerpt,content,featured_media,categories,yoast_head_json,_links,_embedded';
+/** @deprecated Use BLOG_NO_STORE from `./wp-posts` — blog routes must not be edge-cached. */
+export { BLOG_NO_STORE as BLOG_LIST_CACHE_CONTROL, BLOG_NO_STORE as BLOG_POST_CACHE_CONTROL, BLOG_LIST_PAGE_SIZE, BLOG_NO_STORE } from './wp-posts';
 
-/** Bump when the on-disk post shape changes so stale caches are discarded. */
-const WP_POSTS_CACHE_VERSION = 3;
+/** Path prefixes owned by the Astro app — not WordPress blog categories. */
+export const RESERVED_BLOG_CATEGORY_SLUGS = new Set([
+	'api',
+	'blogs',
+	'locations',
+	'pricing',
+	'services',
+	'about',
+	'contact',
+	'industries',
+	'case-studies',
+	'our-services',
+	'projects',
+]);
 
-/** Dev disk-cache TTL (seconds). */
-const DISK_CACHE_TTL_SEC = 60;
+/** Prefer these size keys (in order) for the primary `src` (LCP-friendly ≤1536). */
+const PREFERRED_SIZES = ['medium_large', 'large', '1536x1536'] as const;
 
-const DISK_CACHE_FILE = path.join(
-	process.cwd(),
-	'node_modules',
-	'.cache',
-	'wp-cache.json',
-);
-
-type DiskCachePayload = {
-	version: number;
-	fetchedAt: number;
-	posts: WpPost[];
-};
-
-/** Set by middleware when `?refresh=1` — forces a live refetch in dev. */
-let forceRefresh = false;
-
-/** Prefer these size keys (in order) for the primary `src`. */
-const PREFERRED_SIZES = ['medium_large', 'large', 'full'] as const;
+/**
+ * Featured-image srcset: real WP variants only (300 / 768 / 1024 / 1536).
+ * Excludes the 2000px `full` original and theme crop sizes (digtek_*).
+ */
+const FEATURE_SRCSET_KEYS = new Set([
+	'medium',
+	'medium_large',
+	'large',
+	'1536x1536',
+]);
 
 type WpMediaSize = {
 	file?: string;
@@ -108,6 +107,7 @@ type WpRawPost = {
 	excerpt?: { rendered?: string };
 	content?: { rendered?: string };
 	featured_media?: number;
+	categories?: number[];
 	yoast_head_json?: {
 		robots?: WpYoastRobots;
 	};
@@ -130,111 +130,12 @@ function getApiBase(): string {
 	return raw.replace(/\/+$/, '');
 }
 
-function isDev(): boolean {
-	try {
-		return Boolean(import.meta.env.DEV);
-	} catch {
-		return process.env.NODE_ENV !== 'production';
-	}
-}
-
-/**
- * Disk cache is development-only so production/CI builds always hit the CMS.
- * Opt out in dev with WP_CACHE=off, or force refresh via ?refresh=1.
- */
-function shouldUseDiskCache(): boolean {
-	if (!isDev()) return false;
-	if (forceRefresh) return false;
-	const flag =
-		typeof process !== 'undefined' ? process.env?.WP_CACHE : undefined;
-	try {
-		const fromAstro = import.meta.env.WP_CACHE as string | undefined;
-		const resolved = flag ?? fromAstro;
-		return resolved !== 'off';
-	} catch {
-		return flag !== 'off';
-	}
-}
-
-function isValidCachedPost(post: unknown): post is WpPost {
-	if (!post || typeof post !== 'object') return false;
-	const p = post as Partial<WpPost>;
-	return (
-		typeof p.path === 'string' &&
-		p.path.length > 1 &&
-		!isLegacyBlogsPostPath(p.path) &&
-		typeof p.date === 'string' &&
-		p.date.length > 0 &&
-		typeof p.status === 'string' &&
-		p.status.length > 0
-	);
-}
-
 /** True for legacy `/blogs/<slug>/` post URLs (listing `/blogs` is fine elsewhere). */
 function isLegacyBlogsPostPath(pathname: string): boolean {
 	const cleaned = pathname.replace(/\/+$/, '') || '/';
 	return /^\/blogs\/[^/]+$/.test(cleaned);
 }
 
-function readDiskCache(): WpPost[] | null {
-	try {
-		if (!fs.existsSync(DISK_CACHE_FILE)) return null;
-		const raw = fs.readFileSync(DISK_CACHE_FILE, 'utf8');
-		const data = JSON.parse(raw) as unknown;
-
-		// Legacy: bare array (pre-versioned) — always discard.
-		if (Array.isArray(data)) {
-			console.warn('[wp] disk cache discarded (pre-versioned / missing path schema)');
-			return null;
-		}
-
-		const payload = data as Partial<DiskCachePayload>;
-		if (payload.version !== WP_POSTS_CACHE_VERSION) {
-			console.warn(
-				`[wp] disk cache discarded (version ${String(payload.version)} ≠ ${WP_POSTS_CACHE_VERSION})`,
-			);
-			return null;
-		}
-		const fetchedAt = typeof payload.fetchedAt === 'number' ? payload.fetchedAt : 0;
-		const ageSec = (Date.now() - fetchedAt) / 1000;
-		if (!fetchedAt || ageSec > DISK_CACHE_TTL_SEC) {
-			console.warn(
-				`[wp] disk cache expired (age ${Math.round(ageSec)}s > ${DISK_CACHE_TTL_SEC}s) — refetching`,
-			);
-			return null;
-		}
-		if (!Array.isArray(payload.posts) || payload.posts.length === 0) return null;
-		if (!payload.posts.every(isValidCachedPost)) {
-			console.warn(
-				'[wp] disk cache discarded (one or more posts missing path/date/status)',
-			);
-			return null;
-		}
-
-		console.warn(
-			`[wp] disk cache hit (${payload.posts.length} posts, age ${Math.round(ageSec)}s) — DEV only`,
-		);
-		return payload.posts;
-	} catch (err) {
-		console.warn('[wp] disk cache read failed — fetching live:', err);
-		return null;
-	}
-}
-
-function writeDiskCache(posts: WpPost[]): void {
-	try {
-		fs.mkdirSync(path.dirname(DISK_CACHE_FILE), { recursive: true });
-		const payload: DiskCachePayload = {
-			version: WP_POSTS_CACHE_VERSION,
-			fetchedAt: Date.now(),
-			posts,
-		};
-		fs.writeFileSync(DISK_CACHE_FILE, JSON.stringify(payload), 'utf8');
-		console.warn(`[wp] disk cache wrote ${posts.length} posts → ${DISK_CACHE_FILE}`);
-	} catch (err) {
-		console.warn('[wp] disk cache write failed:', err);
-	}
-}
 /** Strip Elementor (and similar) leading <style> blocks before JSON.parse. */
 function stripLeadingStyles(text: string): string {
 	let out = text;
@@ -414,18 +315,18 @@ function mapImage(media: WpFeaturedMedia | undefined, title: string): WpPostImag
 	const height = chosen?.height ?? media.media_details?.height ?? 720;
 
 	const srcsetParts: string[] = [];
-	const seen = new Set<string>();
-	for (const size of Object.values(sizes)) {
+	const seenWidths = new Set<number>();
+	for (const key of FEATURE_SRCSET_KEYS) {
+		const size = sizes[key];
 		if (!size?.source_url || !size.width) continue;
-		const entry = `${size.source_url} ${size.width}w`;
-		if (seen.has(entry)) continue;
-		seen.add(entry);
-		srcsetParts.push(entry);
+		if (seenWidths.has(size.width)) continue;
+		seenWidths.add(size.width);
+		srcsetParts.push(`${size.source_url} ${size.width}w`);
 	}
-	if (media.source_url && media.media_details?.width) {
-		const full = `${media.source_url} ${media.media_details.width}w`;
-		if (!seen.has(full)) srcsetParts.push(full);
-	}
+	// Sort ascending so browsers pick cleanly
+	srcsetParts.sort(
+		(a, b) => parseInt(a.split(' ').pop() || '0', 10) - parseInt(b.split(' ').pop() || '0', 10),
+	);
 
 	const alt = plainFromHtml(media.alt_text || '') || title;
 
@@ -438,7 +339,10 @@ function mapImage(media: WpFeaturedMedia | undefined, title: string): WpPostImag
 	};
 }
 
-export function mapWpPost(raw: WpRawPost): WpPost | null {
+export function mapWpPost(
+	raw: WpRawPost,
+	extras?: { media?: WpFeaturedMedia; category?: { name: string; slug: string } },
+): WpPost | null {
 	const id = typeof raw.id === 'number' ? raw.id : null;
 	const slug = typeof raw.slug === 'string' ? raw.slug : '';
 	if (id == null || !slug) return null;
@@ -450,9 +354,9 @@ export function mapWpPost(raw: WpRawPost): WpPost | null {
 	const title = plainFromHtml(raw.title?.rendered || '');
 	const content = raw.content?.rendered || '';
 	const excerpt = buildExcerpt(raw.excerpt?.rendered || '', content);
-	const term = firstCategoryTerm(raw._embedded?.['wp:term']);
+	const term = extras?.category ?? firstCategoryTerm(raw._embedded?.['wp:term']);
 	const category = term?.name || '';
-	const media = raw._embedded?.['wp:featuredmedia']?.[0];
+	const media = extras?.media ?? raw._embedded?.['wp:featuredmedia']?.[0];
 	const resolved = resolvePostPath(raw.link, slug, term?.slug || '');
 	const noindex = raw.yoast_head_json?.robots?.index === 'noindex';
 
@@ -473,204 +377,88 @@ export function mapWpPost(raw: WpRawPost): WpPost | null {
 	};
 }
 
-async function fetchPostsPage(
-	page: number,
-	perPage: number,
-): Promise<{ posts: WpRawPost[]; total: number; totalPages: number; url: string }> {
-	const base = getApiBase();
-	const params = new URLSearchParams({
-		_embed: '1',
-		per_page: String(perPage),
-		page: String(page),
-		status: 'publish',
-		orderby: 'date',
-		order: 'desc',
-		_fields: POST_FIELDS,
-	});
-	// Production/CI only: bust CDN / CMS REST caches so a new publish is never missed.
-	if (!isDev()) {
-		params.set('_', String(Date.now()));
-	}
-	const url = `${base}/posts?${params}`;
-	let res: Response;
-	try {
-		res = await fetch(url, {
-			headers: { 'Cache-Control': 'no-cache' },
-			signal: AbortSignal.timeout(25_000),
-		});
-	} catch (err) {
-		const reason = err instanceof Error ? err.name : 'Error';
-		throw new Error(`WordPress posts fetch failed (${reason}) ${url}`);
-	}
-	const text = await res.text();
-	const clean = stripLeadingStyles(text);
+export type PostListPage = {
+	posts: WpPost[];
+	total: number;
+	totalPages: number;
+	page: number;
+};
 
-	if (!res.ok) {
-		throw new Error(
-			`WordPress posts fetch failed (${res.status}) ${url} — ${clean.slice(0, 160)}`,
-		);
-	}
+type WpCategoryRecord = { id: number; name: string; slug: string };
 
-	let data: unknown;
-	try {
-		data = JSON.parse(clean);
-	} catch (err) {
-		throw new Error(
-			`WordPress posts JSON parse failed for ${url}: ${String(err)} (body starts: ${clean.slice(0, 120)})`,
-		);
-	}
+let categoriesMemo: { promise: Promise<WpCategoryRecord[]> | null; expires: number } = {
+	promise: null,
+	expires: 0,
+};
+let categoriesInflight: Promise<WpCategoryRecord[]> | null = null;
 
-	if (!Array.isArray(data)) {
-		throw new Error(`WordPress posts: expected an array from ${url}`);
-	}
+/** @deprecated Prefer `getPosts` / `getPostBySlug` from `./wp-posts`. */
+export { clearWpPostsCache, getPosts, getPostBySlug } from './wp-posts';
 
-	const total = Number(res.headers.get('X-WP-Total') || '0') || 0;
-	const totalPages = Number(res.headers.get('X-WP-TotalPages') || '1') || 1;
-	return { posts: data as WpRawPost[], total, totalPages, url };
-}
-
-/**
- * In-flight / short-lived memo.
- * - Dev: 60s (aligned with disk TTL)
- * - `astro build`: long TTL so getStaticPaths does not refetch 100+ times
- * - Production SSR: TTL 0 — only coalesces concurrent callers in one request
- */
-let allPostsPromise: Promise<WpPost[]> | null = null;
-let allPostsExpiresAt = 0;
-
-function memoryTtlMs(): number {
-	if (isDev()) return DISK_CACHE_TTL_SEC * 1000;
-	const life = typeof process !== 'undefined' ? process.env?.npm_lifecycle_event : '';
-	const argv = typeof process !== 'undefined' ? process.argv.join(' ') : '';
-	if (life === 'build' || life === 'prebuild' || /\bastro\s+build\b/.test(argv)) {
-		return 30 * 60 * 1000;
-	}
-	return 0;
-}
-
-/** Drop in-memory + disk memo so the next getPosts() hits the CMS. */
-export function clearWpPostsCache(opts?: { disk?: boolean }): void {
-	allPostsPromise = null;
-	allPostsExpiresAt = 0;
-	forceRefresh = true;
-	if (opts?.disk !== false) {
-		try {
-			if (fs.existsSync(DISK_CACHE_FILE)) fs.unlinkSync(DISK_CACHE_FILE);
-		} catch {
-			/* ignore */
-		}
-	}
-}
-
-async function fetchAllPosts(): Promise<WpPost[]> {
-	if (shouldUseDiskCache()) {
-		const cached = readDiskCache();
-		if (cached) return cached;
-	} else if (!isDev()) {
-		console.warn('[wp] production/CI build — skipping disk cache, fetching live posts');
-	}
-
-	const first = await fetchPostsPage(1, 100);
-	const pages = [first.posts];
-	const expectedTotal = first.total;
-	console.warn(
-		`[wp] fetching posts: page 1/${first.totalPages} (X-WP-Total=${expectedTotal}) ${first.url}`,
-	);
-
-	for (let page = 2; page <= first.totalPages; page++) {
-		const next = await fetchPostsPage(page, 100);
-		console.warn(`[wp] fetching posts: page ${page}/${first.totalPages}`);
-		pages.push(next.posts);
-	}
-
-	const rawAll = pages.flat();
-	if (expectedTotal > 0 && rawAll.length < expectedTotal) {
-		throw new Error(
-			`[wp] incomplete posts fetch: got ${rawAll.length} raw items but X-WP-Total=${expectedTotal} — refusing to build a partial list`,
-		);
-	}
-
-	const mapped: WpPost[] = [];
-	for (const raw of rawAll) {
-		const post = mapWpPost(raw);
-		if (post) mapped.push(post);
-	}
-
-	// Stable: CMS `date` desc (publish date), then id.
-	mapped.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
-
-	console.warn(`[wp] published posts ready: ${mapped.length} (X-WP-Total=${expectedTotal})`);
-
-	forceRefresh = false;
-	if (shouldUseDiskCache()) {
-		writeDiskCache(mapped);
-	}
-
-	return mapped;
-}
-export type GetPostsOptions = {
+export type PostListQuery = {
+	page?: number;
 	perPage?: number;
-	all?: boolean;
+	categoryId?: number;
+	search?: string;
+};
+
+export type PostListCard = {
+	title: string;
+	excerpt: string;
+	category: string;
+	categoryKey: string;
+	href: string;
+	image: string;
+	alt: string;
+	srcset: string;
+	width: number;
+	height: number;
 };
 
 /**
- * Fetch published blog posts from WordPress (`/posts`).
- * Always `status=publish` only.
- * - `perPage` (without `all`): single lightweight page request — safe for homepage SSR.
- * - `all` / no perPage: full catalog (listing, static paths). Prod SSR memo TTL is 0.
+ * One page of listing cards — delegates to `wp-posts.getPosts`.
+ * `total` is always `X-WP-Total` from that response.
  */
-export async function getPosts(options: GetPostsOptions = {}): Promise<WpPost[]> {
-	const { perPage, all = false } = options;
+export async function getPostList(query: PostListQuery = {}): Promise<PostListPage> {
+	const { getPosts, BLOG_LIST_PAGE_SIZE } = await import('./wp-posts');
+	const page = Math.max(1, Math.floor(query.page ?? 1));
+	const perPage = Math.min(20, Math.max(1, Math.floor(query.perPage ?? BLOG_LIST_PAGE_SIZE)));
+	const categoryId =
+		query.categoryId && query.categoryId > 0 ? Math.floor(query.categoryId) : undefined;
+	const search = query.search?.trim() || undefined;
+	const result = await getPosts({
+		page,
+		perPage,
+		category: categoryId,
+		search,
+	});
+	return { ...result, page };
+}
 
-	// Homepage and similar: never download the full 5MB+ catalog for a teaser strip.
-	if (!all && perPage != null) {
-		try {
-			const page = await fetchPostsPage(1, perPage);
-			const mapped: WpPost[] = [];
-			for (const raw of page.posts) {
-				const post = mapWpPost(raw);
-				if (post) mapped.push(post);
-			}
-			mapped.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
-			return mapped.slice(0, perPage);
-		} catch (err) {
-			if (isDev()) {
-				console.error('[wp] getPosts(perPage) failed (dev — returning []):', err);
-				return [];
-			}
-			throw new Error(
-				`[wp] getPosts failed — cannot serve blog teaser without live CMS data: ${String(err)}`,
-			);
-		}
-	}
+/** Several listing pages at once (load-more restore). */
+export async function getPostListPages(
+	pages: number[],
+	query: Omit<PostListQuery, 'page'> = {},
+): Promise<PostListPage[]> {
+	const unique = [
+		...new Set(pages.map((page) => Math.floor(page)).filter((page) => page >= 1)),
+	];
+	return Promise.all(unique.map((page) => getPostList({ ...query, page })));
+}
 
-	const now = Date.now();
-
-	if (forceRefresh || !allPostsPromise || now >= allPostsExpiresAt) {
-		const ttl = memoryTtlMs();
-		allPostsPromise = fetchAllPosts()
-			.then((posts) => {
-				allPostsExpiresAt = Date.now() + ttl;
-				return posts;
-			})
-			.catch((err) => {
-				allPostsPromise = null;
-				allPostsExpiresAt = 0;
-				throw err;
-			});
-	}
-
-	try {
-		return await allPostsPromise;
-	} catch (err) {
-		if (isDev()) {
-			console.error('[wp] getPosts failed (dev — returning []):', err);
-			return [];
-		}
-		throw new Error(
-			`[wp] getPosts failed — cannot serve /blogs without live CMS data: ${String(err)}`,
-		);
-	}
+export function toPostListCard(post: WpPost): PostListCard {
+	return {
+		title: post.title,
+		excerpt: post.excerpt,
+		category: post.category,
+		categoryKey: categoryKey(post.category || post.categorySlug),
+		href: postUrl(post),
+		image: post.image?.src ?? '',
+		alt: post.image?.alt || post.title,
+		srcset: post.image?.srcset ?? '',
+		width: post.image?.width ?? 400,
+		height: post.image?.height ?? 240,
+	};
 }
 
 /** Related posts: same category first, then newest, excluding current. */
@@ -701,50 +489,91 @@ export function readTimeMinutes(html: string): number {
 
 export const BLOG_IMAGE_PLACEHOLDER = '/images/1st.webp';
 
-/** Look up a post by URL segments (category + slug, or full path segments). */
+/**
+ * One published post by WordPress slug. Draft / private / missing → `null`.
+ * @deprecated Prefer `getPostBySlug` from `./wp-posts`.
+ */
+export async function getPublishedPostBySlug(slug: string): Promise<WpPost | null> {
+	const { getPostBySlug } = await import('./wp-posts');
+	return getPostBySlug(slug);
+}
+
+/** Look up a published post by URL segments (category + slug). */
 export async function getPostByPath(segments: string[]): Promise<WpPost | undefined> {
 	const parts = segments.map((s) => s.replace(/^\/+|\/+$/g, '')).filter(Boolean);
 	if (parts.length < 2) return undefined;
-	const needle = withTrailingSlash(`/${parts.join('/')}`);
-	const posts = await getPosts({ all: true });
-	return posts.find((p) => p.path === needle);
+	const postSlug = parts[parts.length - 1];
+	const categorySlug = parts[parts.length - 2];
+	const post = await getPublishedPostBySlug(postSlug);
+	if (!post) return undefined;
+	if (post.categorySlug !== categorySlug) return undefined;
+	return post;
 }
 
-/** Unique category path prefixes for nav active-state (e.g. `/web-solutions`). */
-export async function getBlogCategoryPrefixes(): Promise<string[]> {
-	// Use the categories collection — do NOT fetch every post (that times out on Vercel).
+/** Published categories (id, name, slug). Shared by nav prefixes and the blog listing. */
+export async function getPublishedCategories(): Promise<WpCategoryRecord[]> {
+	if (categoriesMemo.promise && Date.now() < categoriesMemo.expires) {
+		return categoriesMemo.promise;
+	}
+	if (categoriesInflight) return categoriesInflight;
+
+	categoriesInflight = (async () => {
+		try {
+			const categories = await fetchPublishedCategories();
+			categoriesMemo.promise = Promise.resolve(categories);
+			categoriesMemo.expires = Date.now() + 60_000;
+			return categories;
+		} catch (err) {
+			categoriesMemo.promise = null;
+			categoriesMemo.expires = 0;
+			console.error('[wp] getPublishedCategories failed:', err);
+			return [];
+		} finally {
+			categoriesInflight = null;
+		}
+	})();
+	return categoriesInflight;
+}
+
+async function fetchPublishedCategories(): Promise<WpCategoryRecord[]> {
 	const base = getApiBase();
 	const params = new URLSearchParams({
 		per_page: '100',
 		hide_empty: 'true',
-		_fields: 'slug',
+		_fields: 'id,name,slug',
 	});
-	if (!isDev()) {
-		params.set('_', String(Date.now()));
-	}
 	const url = `${base}/categories?${params}`;
+	const res = await fetch(url, {
+		cache: 'no-store',
+		signal: AbortSignal.timeout(8_000),
+	});
+	const text = await res.text();
+	const clean = stripLeadingStyles(text);
+	if (!res.ok) {
+		throw new Error(`WordPress categories fetch failed (${res.status}) ${url}`);
+	}
+	const data = JSON.parse(clean) as unknown;
+	if (!Array.isArray(data)) return [];
+	const categories: WpCategoryRecord[] = [];
+	for (const row of data) {
+		if (!row || typeof row !== 'object') continue;
+		const id = Number((row as { id?: number }).id);
+		const slug = String((row as { slug?: string }).slug || '').trim();
+		const name = plainFromHtml(String((row as { name?: string }).name || ''));
+		if (!id || !slug) continue;
+		categories.push({ id, name: name || slug, slug });
+	}
+	return categories;
+}
+
+/** Unique category path prefixes for nav active-state (e.g. `/web-solutions`). */
+export async function getBlogCategoryPrefixes(): Promise<string[]> {
 	try {
-		const res = await fetch(url, {
-			headers: { 'Cache-Control': 'no-cache' },
-			signal: AbortSignal.timeout(15_000),
-		});
-		const text = await res.text();
-		const clean = stripLeadingStyles(text);
-		if (!res.ok) {
-			console.error(`[wp] categories fetch failed (${res.status}) ${url}`);
-			return [];
-		}
-		const data = JSON.parse(clean) as unknown;
-		if (!Array.isArray(data)) return [];
+		const categories = await getPublishedCategories();
 		const set = new Set<string>();
-		for (const row of data) {
-			const slug =
-				row && typeof row === 'object' && 'slug' in row
-					? String((row as { slug?: string }).slug || '').trim()
-					: '';
-			if (!slug) continue;
-			if (/^uncategorized$/i.test(slug) || /^uncategorised$/i.test(slug)) continue;
-			set.add(`/${slug}`);
+		for (const cat of categories) {
+			if (/^uncategorized$/i.test(cat.slug) || /^uncategorised$/i.test(cat.slug)) continue;
+			set.add(`/${cat.slug}`);
 		}
 		return [...set];
 	} catch (err) {

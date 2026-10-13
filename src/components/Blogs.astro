@@ -1,9 +1,20 @@
 ---
 import Button from './Button.astro';
 import BlogCard from './BlogCard.astro';
-import { BLOG_IMAGE_PLACEHOLDER, getPosts } from '../lib/wp';
+import { BLOG_IMAGE_PLACEHOLDER, type WpPost } from '../lib/wp';
+import { getPosts } from '../lib/wp-posts';
 
-const posts = await getPosts({ perPage: 3 });
+interface Props {
+	/** Homepage starts this before the layout so it overlaps SEO and nav. */
+	posts?: Promise<WpPost[]>;
+}
+
+let posts: WpPost[] = [];
+try {
+	posts = await (Astro.props.posts ?? getPosts({ perPage: 3 }).then((r) => r.posts));
+} catch (err) {
+	console.error('[Blogs] getPosts failed — rendering empty teaser:', err);
+}
 ---
 
 <section

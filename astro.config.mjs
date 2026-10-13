@@ -20,9 +20,12 @@ export default defineConfig({
   site: env.SITE_URL || undefined,
 
   // Static by default; SEO pages + revalidate API opt into on-demand via `prerender = false`.
-  // Vercel Hobby defaults to a short function limit; homepage hits WP several times.
+  // Homepage SSR calls WordPress several times — give the serverless function enough time.
   adapter: useVercel
-    ? vercel({ maxDuration: 60 })
+    ? vercel({
+        maxDuration: 60,
+        // Match package.json engines (22.x). Avoid auto-picking unsupported local Node majors.
+      })
     : node({ mode: 'standalone' }),
 
   integrations: [react()],

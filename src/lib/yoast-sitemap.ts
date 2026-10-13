@@ -2,8 +2,13 @@
  * Proxy Yoast XML sitemaps from WordPress (WP_BASE_URL) and rewrite public
  * `<loc>` URLs to SITE_URL so cms.* never appears as a crawlable sitemap location.
  *
- * Media (`/wp-content/`, `/wp-includes/`) and xml-stylesheet hrefs keep the CMS
+ * Media (`/wp-content/`, `/wp-includes/`) in `<loc>` / `<image:loc>` keep the CMS
  * origin when hosts differ — they are not page canonicals.
+ *
+ * xml-stylesheet hrefs are rewritten to a same-origin Astro path (`/main-sitemap.xsl`)
+ * so browsers can apply Yoast’s XSL when the sitemap is served from localhost or
+ * the public host (protocol-relative `//site/...` would otherwise become a
+ * cross-origin http:// load on http://localhost).
  */
 
 import { getSiteUrl, getWpBaseUrl } from './wp-seo';
@@ -23,16 +28,19 @@ const EMPTY_URLSET = `<?xml version="1.0" encoding="UTF-8"?>
 const YOAST_SITEMAP_RE =
 	/^(?:sitemap_index|[a-z][a-z0-9_-]*-sitemap[0-9]*)\.xml$/i;
 
+/** Same-origin path served by Astro; proxies Yoast’s main-sitemap.xsl. */
+export const YOAST_SITEMAP_XSL_PATH = '/main-sitemap.xsl';
+
+/** Upstream path on the WordPress host. */
+export const YOAST_SITEMAP_XSL_UPSTREAM =
+	'/wp-content/plugins/wordpress-seo/css/main-sitemap.xsl';
+
 export function isYoastSitemapFile(name: string): boolean {
 	return YOAST_SITEMAP_RE.test(name.trim());
 }
 
 function stripTrailingSlash(url: string): string {
 	return url.replace(/\/+$/, '');
-}
-
-function escapeRegExp(s: string): string {
-	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -53,17 +61,33 @@ export function getWpSitemapOrigin(): string | undefined {
 }
 
 /**
+ * Point Yoast’s xml-stylesheet at a same-origin path.
+ * Yoast emits protocol-relative `//host/wp-content/.../main-sitemap.xsl`; that
+ * inherits the document protocol and fails cross-origin on localhost.
+ * Does not touch `<loc>` entries.
+ */
+export function rewriteYoastSitemapStylesheetHref(xml: string): string {
+	return xml.replace(
+		/(<\?xml-stylesheet\b[^?]*?\bhref=(["']))([^"']*)(\2[^?]*?\?>)/i,
+		`$1${YOAST_SITEMAP_XSL_PATH}$4`,
+	);
+}
+
+/**
  * Rewrite CMS-host page/sitemap `<loc>` values to SITE_URL.
  * Leaves image locs and other /wp-content/ URLs on the CMS host unchanged.
+ * Always rewrites the xml-stylesheet href to the same-origin XSL proxy.
  */
 export function rewriteYoastSitemapXml(
 	xml: string,
 	wpBase: string,
 	siteUrl: string,
 ): string {
+	const withStylesheet = rewriteYoastSitemapStylesheetHref(xml);
+
 	const from = stripTrailingSlash(wpBase);
 	const to = stripTrailingSlash(siteUrl);
-	if (!from || !to || from === to) return xml;
+	if (!from || !to || from === to) return withStylesheet;
 
 	let fromOrigin: string;
 	let fromHost: string;
@@ -75,12 +99,12 @@ export function rewriteYoastSitemapXml(
 		fromHost = f.host;
 		toOrigin = t.origin;
 	} catch {
-		return xml;
+		return withStylesheet;
 	}
 
 	const mediaPath = /^(?:\/wp-content\/|\/wp-includes\/)/i;
 
-	return xml.replace(/<loc>([\s\S]*?)<\/loc>/gi, (full, inner: string) => {
+	return withStylesheet.replace(/<loc>([\s\S]*?)<\/loc>/gi, (full, inner: string) => {
 		const loc = inner.trim();
 		if (!loc) return full;
 
@@ -192,6 +216,58 @@ export async function fetchYoastSitemap(fileName: string): Promise<YoastSitemapR
 		body,
 		contentType:
 			upstreamType && /xml/i.test(upstreamType)
+				? upstreamType
+				: contentType,
+	};
+}
+
+/**
+ * Fetch Yoast’s sitemap XSL from WordPress for same-origin browser styling.
+ */
+export async function fetchYoastSitemapStylesheet(): Promise<YoastSitemapResult> {
+	const contentType = 'text/xsl; charset=UTF-8';
+	const origin = getWpSitemapOrigin();
+	if (!origin) {
+		console.error(
+			'[yoast-sitemap] missing WP_BASE_URL/WP_SITEMAP_ORIGIN — cannot proxy Yoast XSL',
+		);
+		return { ok: false, status: 503, body: '', contentType };
+	}
+
+	const upstream = `${origin}${YOAST_SITEMAP_XSL_UPSTREAM}`;
+	let res: Response;
+	try {
+		res = await fetch(upstream, {
+			headers: {
+				Accept: 'application/xml,text/xml,text/xsl,*/*',
+				'Cache-Control': 'no-cache',
+				'User-Agent': 'Xoomplus-Astro-Yoast-Sitemap-Proxy/1.0',
+			},
+			redirect: 'follow',
+		});
+	} catch (err) {
+		console.error(`[yoast-sitemap] XSL fetch failed for ${upstream}:`, err);
+		return { ok: false, status: 502, body: '', contentType };
+	}
+
+	if (!res.ok) {
+		console.error(`[yoast-sitemap] XSL upstream ${res.status} for ${upstream}`);
+		return {
+			ok: false,
+			status: res.status === 404 ? 404 : 502,
+			body: '',
+			contentType,
+		};
+	}
+
+	const body = await res.text();
+	const upstreamType = res.headers.get('content-type');
+	return {
+		ok: true,
+		status: 200,
+		body,
+		contentType:
+			upstreamType && /(xml|xsl)/i.test(upstreamType)
 				? upstreamType
 				: contentType,
 	};

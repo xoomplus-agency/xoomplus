@@ -19,30 +19,38 @@
 	scroll-margin-top: 96px;
 }
 
-/* ── Scroll reveals (hidden only after html.js) ── */
+/* ── Scroll reveals ──
+ * Default: VISIBLE. JS sets data-reveal-armed only when an observer is ready,
+ * so late-mounted nodes (server islands) never stay stuck at opacity 0.
+ */
 
 .js [data-reveal] {
-	opacity: 0;
-	transform: translate3d(0, var(--reveal-distance), 0);
+	opacity: 1;
+	transform: none;
 	transition:
 		opacity var(--dur-reveal) var(--ease-out),
 		transform var(--dur-reveal) var(--ease-out);
 	transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
 }
 
-.js [data-reveal='fade'] {
+.js [data-reveal][data-reveal-armed]:not(.is-visible) {
+	opacity: 0;
+	transform: translate3d(0, var(--reveal-distance), 0);
+}
+
+.js [data-reveal='fade'][data-reveal-armed]:not(.is-visible) {
 	transform: none;
 }
 
-.js [data-reveal='left'] {
+.js [data-reveal='left'][data-reveal-armed]:not(.is-visible) {
 	transform: translate3d(calc(var(--reveal-distance) * -1), 0, 0);
 }
 
-.js [data-reveal='right'] {
+.js [data-reveal='right'][data-reveal-armed]:not(.is-visible) {
 	transform: translate3d(var(--reveal-distance), 0, 0);
 }
 
-.js [data-reveal='scale'] {
+.js [data-reveal='scale'][data-reveal-armed]:not(.is-visible) {
 	transform: scale(0.97);
 }
 
@@ -151,9 +159,11 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.js [data-reveal],
+	.js [data-reveal][data-reveal-armed],
 	.js [data-reveal].is-visible {
-		opacity: 1;
-		transform: none;
+		opacity: 1 !important;
+		visibility: visible !important;
+		transform: none !important;
 		transition: none;
 		transition-delay: 0s;
 	}

@@ -9,3 +9,9 @@
  * In both cases the post is still fetched, rendered, and linked normally.
  */
 export const RESPECT_CMS_NOINDEX = true;
+
+/** Byline on single blog posts (display + Article JSON-LD author). */
+export const BLOG_AUTHOR = {
+	name: 'Xoomplus',
+	role: 'Digital Agency',
+} as const;

@@ -1,50 +1,57 @@
 ---
 import Section from './Section.astro';
 import BlogCard from './BlogCard.astro';
-import Button from './Button.astro';
+import BlogPostsGrid from './BlogPostsGrid.astro';
+import BlogGridSkeleton from './BlogGridSkeleton.astro';
 import {
 	BLOG_IMAGE_PLACEHOLDER,
 	categoryKey,
-	getPosts,
-	postUrl,
+	getPublishedCategories,
 } from '../lib/wp';
+import { BLOG_LIST_PAGE_SIZE } from '../lib/wp-posts';
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = BLOG_LIST_PAGE_SIZE;
 
-const blogs = await getPosts({ all: true });
-
-/** Unique categories: filter value = categoryKey(name), label = display name. */
-const categoryByKey = new Map<string, string>();
-for (const post of blogs) {
-	const key = categoryKey(post.category || post.categorySlug);
-	if (!key || key === 'all') continue;
-	if (!categoryByKey.has(key)) {
-		categoryByKey.set(key, post.category || post.categorySlug);
-	}
+/** Categories only — posts load in BlogPostsGrid (server:defer). */
+let categoryFilters: { id: number; key: string; label: string }[] = [];
+try {
+	const categories = await getPublishedCategories();
+	categoryFilters = categories
+		.filter(
+			(cat) =>
+				!/^uncategorized$/i.test(cat.slug) && !/^uncategorised$/i.test(cat.slug),
+		)
+		.map((cat) => ({
+			id: cat.id,
+			key: categoryKey(cat.name || cat.slug),
+			label: cat.name || cat.slug,
+		}))
+		.sort((a, b) => a.label.localeCompare(b.label));
+} catch (err) {
+	console.error('[BlogListing] getPublishedCategories failed:', err);
 }
-const categoryFilters = [...categoryByKey.entries()].sort((a, b) =>
-	a[1].localeCompare(b[1]),
-);
-
-const initialVisible = Math.min(PAGE_SIZE, blogs.length);
-
-/** Compact search index for the dropdown only (not the grid). */
-const searchIndex = blogs.map((post) => ({
-	t: post.title,
-	e: post.excerpt,
-	c: post.category || '',
-	p: postUrl(post),
-	i: post.image?.src ?? BLOG_IMAGE_PLACEHOLDER,
-}));
 ---
 
 <Section aria-labelledby="blogs-heading">
-	<div data-blog-listing>
-	<script
-		type="application/json"
-		id="blog-search-index"
-		set:html={JSON.stringify(searchIndex)}
-	/>
+	<div
+		data-blog-listing
+		data-api="/api/blog-posts"
+		data-per-page={String(PAGE_SIZE)}
+	>
+	<template id="blog-card-template">
+		<!-- No data-reveal: cloned Load More cards are never observed by reveal.ts -->
+		<li class="blog-listing__item" data-post-card data-category="template">
+			<BlogCard
+				headingLevel="h3"
+				post={{ id: 0, slug: 'template', path: '/template/post/', title: 'Template' }}
+				image={BLOG_IMAGE_PLACEHOLDER}
+				alt=""
+				category="Category"
+				title="Template"
+				excerpt="Excerpt"
+			/>
+		</li>
+	</template>
 	<div class="blog-listing__header">
 		<div class="blog-listing__intro" data-reveal="up">
 			<p class="pill-light">Explore the blog</p>
@@ -121,33 +128,22 @@ const searchIndex = blogs.map((post) => ({
 			All articles
 		</button>
 		{
-			categoryFilters.map(([key, label]) => (
+			categoryFilters.map((cat) => (
 				<button
 					type="button"
 					class="blog-listing__chip"
 					aria-pressed="false"
 					data-filter-chip
-					data-filter={key}
+					data-filter={cat.key}
+					data-category-id={String(cat.id)}
 				>
-					{label}
+					{cat.label}
 				</button>
 			))
 		}
 	</div>
 
 	<hr class="blog-listing__divider" />
-
-	<div class="blog-listing__meta">
-		<p class="blog-listing__meta-left">
-			<span data-blog-perspective>All perspectives</span>
-			{' '}· <span data-blog-count>{initialVisible}</span> of{' '}
-			<span data-blog-matching>{blogs.length}</span> articles shown
-		</p>
-	</div>
-
-	<p class="blog-listing__empty" role="status" aria-live="polite" hidden data-blog-empty>
-		No articles in this category.
-	</p>
 
 	<noscript>
 		<style>
@@ -161,81 +157,119 @@ const searchIndex = blogs.map((post) => ({
 		</style>
 	</noscript>
 
-	<ul
-		id="blog-listing-grid"
-		class="blog-listing__grid m-0 list-none p-0"
-		role="list"
-		data-page-size={String(PAGE_SIZE)}
-		data-total={String(blogs.length)}
-		data-blog-grid
-		data-reveal-group
-	>
-		{
-			blogs.map((post, index) => (
-				<li
-					class="blog-listing__item"
-					data-reveal="up"
-					data-post-card
-					data-category={categoryKey(post.category || post.categorySlug)}
-					hidden={index >= PAGE_SIZE ? true : undefined}
-				>
-					<BlogCard
-						headingLevel="h3"
-						post={post}
-						image={post.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
-						alt={post.image?.alt ?? post.title}
-						srcset={post.image?.srcset}
-						width={post.image?.width ?? 400}
-						height={post.image?.height ?? 240}
-						category={post.category}
-						title={post.title}
-						excerpt={post.excerpt}
-					/>
-				</li>
-			))
-		}
-	</ul>
-
-	<div class="blog-listing__load-more" data-blog-load-more hidden={blogs.length <= PAGE_SIZE ? true : undefined}>
-		<Button
-			type="button"
-			id="load-more"
-			class="!w-[220px]"
-			aria-controls="blog-listing-grid"
-			aria-label="Load more articles"
-			hidden={blogs.length <= PAGE_SIZE ? true : undefined}
-		>
-			Load more
-			<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-				<path
-					d="M8 3v10M4 9l4 4 4-4"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.75"
-					stroke-linecap="round"
-					stroke-linejoin="round"></path>
-			</svg>
-		</Button>
-		<p
-			class="blog-listing__load-status"
-			role="status"
-			aria-live="polite"
-			data-blog-load-status
-		>
-			Showing {initialVisible} of {blogs.length} articles
-		</p>
-	</div>
+	{/*
+	  Posts are a server island: shell (title, filters, search) streams first;
+	  BlogGridSkeleton shows until getPosts resolves. Freshness unchanged
+	  (getPosts still uses cache: no-store).
+	*/}
+	<BlogPostsGrid server:defer>
+		<BlogGridSkeleton slot="fallback" />
+	</BlogPostsGrid>
 	</div>
 </Section>
-
-<script>
-	import '../scripts/blog-list.ts';
-</script>
 
 <style is:global>
 	/* Ensure [hidden] always wins over grid/flex display utilities */
 	[data-blog-listing] [hidden] {
 		display: none !important;
+	}
+
+	/*
+	  Grid/meta/load-more render inside BlogPostsGrid / BlogGridSkeleton
+	  (server:defer). Keep rules global so deferred HTML inherits layout.
+	*/
+	[data-blog-listing] .blog-listing__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		margin-top: 0;
+	}
+
+	[data-blog-listing] .blog-listing__meta-left,
+	[data-blog-listing] .blog-listing__meta-right {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+	}
+
+	[data-blog-listing] .blog-listing__empty {
+		margin: 20px 0 0;
+		font-family: var(--font-inter);
+		font-size: var(--text-small);
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+	}
+
+	[data-blog-listing] .blog-listing__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+		margin-top: 40px;
+		content-visibility: visible;
+	}
+
+	[data-blog-listing] .blog-listing__item {
+		min-width: 0;
+		height: 100%;
+		content-visibility: visible;
+	}
+
+	/* Below-fold only (first row has no --cv). Fixed intrinsic size avoids zero-height. */
+	[data-blog-listing] .blog-listing__item--cv {
+		content-visibility: auto;
+		contain-intrinsic-size: 400px 420px;
+	}
+
+	[data-blog-listing] .blog-listing__load-more {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		margin-top: 40px;
+	}
+
+	[data-blog-listing] .blog-listing__load-more[hidden],
+	[data-blog-listing] .blog-listing__load-more #load-more[hidden] {
+		display: none !important;
+	}
+
+	[data-blog-listing] .blog-listing__load-status {
+		margin: 0;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #888888;
+		text-align: center;
+	}
+
+	[data-blog-listing] .blog-listing__item[hidden] {
+		display: none !important;
+	}
+
+	@media (min-width: 640px) {
+		[data-blog-listing] .blog-listing__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1024px) {
+		[data-blog-listing] .blog-listing__grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 639px) {
+		[data-blog-listing] .blog-listing__meta {
+			flex-direction: column;
+			align-items: flex-start;
+		}
 	}
 </style>
 
@@ -303,60 +337,26 @@ const searchIndex = blogs.map((post) => ({
 
 	.blog-listing__search-input:focus {
 		border-color: #ffa800;
-		box-shadow: 0 0 0 3px rgba(255, 168, 0, 0.18);
-	}
-
-	.blog-listing__search.is-open .blog-listing__search-input {
-		border-color: #e9e9e7;
-		border-bottom-color: transparent;
-		border-radius: 8px 8px 0 0;
-		box-shadow: none;
-	}
-
-	.blog-listing__search.is-open .blog-listing__search-input:focus {
-		border-color: #e9e9e7;
-		border-bottom-color: transparent;
-		box-shadow: none;
+		box-shadow: 0 0 0 3px rgba(255, 168, 0, 0.15);
 	}
 
 	.blog-listing__search-results {
 		position: absolute;
-		top: 100%;
+		top: calc(100% + 6px);
 		left: 0;
 		right: 0;
-		z-index: 40;
+		z-index: 30;
 		box-sizing: border-box;
-		max-height: min(320px, 70vh);
-		padding: 12px;
+		max-height: min(360px, 70vh);
 		overflow-x: hidden;
 		overflow-y: auto;
-		overscroll-behavior: contain;
+		padding: 12px;
 		border: 1px solid #e9e9e7;
-		border-top: 1px solid #eeeeee;
-		border-radius: 0 0 8px 8px;
+		border-radius: 12px;
 		background: #ffffff;
-		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-		scrollbar-width: thin;
-		scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+		box-shadow: 0 12px 32px rgba(11, 10, 11, 0.12);
 	}
 
-	.blog-listing__search-results::-webkit-scrollbar {
-		width: 6px;
-	}
-
-	.blog-listing__search-results::-webkit-scrollbar-thumb {
-		border-radius: 9999px;
-		background: rgba(0, 0, 0, 0.25);
-	}
-
-	.blog-listing__search-results[hidden] {
-		display: none;
-	}
-
-	/*
-	 * Result rows are injected via innerHTML â€” they lack Astro scoped attrs.
-	 * Scope under the static .blog-listing__search-results parent with :global().
-	 */
 	.blog-listing__search-results :global(.blog-listing__search-option) {
 		display: flex;
 		flex-direction: row;
@@ -525,87 +525,6 @@ const searchIndex = blogs.map((post) => ({
 		border-top: 1px solid #e9e9e7;
 	}
 
-	.blog-listing__meta {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		margin-top: 0;
-	}
-
-	.blog-listing__meta-left,
-	.blog-listing__meta-right {
-		margin: 0;
-		font-family: var(--font-inter);
-		font-size: 12px;
-		font-weight: 400;
-		line-height: 1.5;
-		color: #888888;
-	}
-
-	.blog-listing__empty {
-		margin: 20px 0 0;
-		font-family: var(--font-inter);
-		font-size: var(--text-small);
-		font-weight: 400;
-		line-height: 1.5;
-		color: #888888;
-	}
-
-	.blog-listing__grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 24px;
-		margin-top: 40px;
-		content-visibility: visible;
-	}
-
-	.blog-listing__item {
-		min-width: 0;
-		height: 100%;
-		content-visibility: visible;
-	}
-
-	.blog-listing__load-more {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 12px;
-		margin-top: 40px;
-	}
-
-	.blog-listing__load-more[hidden],
-	.blog-listing__load-more :global(#load-more[hidden]) {
-		display: none !important;
-	}
-
-	.blog-listing__load-status {
-		margin: 0;
-		font-family: var(--font-inter);
-		font-size: 13px;
-		font-weight: 400;
-		line-height: 1.4;
-		color: #888888;
-		text-align: center;
-	}
-
-	.blog-listing__item[hidden] {
-		display: none !important;
-	}
-
-	@media (min-width: 640px) {
-		.blog-listing__grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.blog-listing__grid {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-		}
-	}
-
 	@media (max-width: 1023px) {
 		.blog-listing__header {
 			flex-wrap: wrap;
@@ -638,11 +557,6 @@ const searchIndex = blogs.map((post) => ({
 
 		.blog-listing__chip {
 			flex-shrink: 0;
-		}
-
-		.blog-listing__meta {
-			flex-direction: column;
-			align-items: flex-start;
 		}
 	}
 </style>

@@ -1,6 +1,6 @@
 /**
- * /blogs — category chips + Load more (grid) and search dropdown (index only).
- * Search never filters the grid. Static, no fetches.
+ * /blogs — one page of cards in the HTML. Load more, category chips, and
+ * search each request the next slim page. Search never filters the grid.
  */
 const PAGE_SIZE = 9;
 const KEY = 'xoomplus-blog-list-visible';
@@ -8,13 +8,27 @@ const INIT_ATTR = 'data-blog-list-ready';
 const MIN_Q = 2;
 const MAX_HITS = 6;
 
-type SearchHit = {
-	t: string;
-	e: string;
-	c: string;
-	p: string;
-	i: string;
+type Card = {
+	title: string;
+	excerpt: string;
+	category: string;
+	categoryKey: string;
+	href: string;
+	image: string;
+	alt: string;
+	srcset: string;
+	width: number;
+	height: number;
 };
+
+type ListPage = {
+	page: number;
+	total: number;
+	totalPages: number;
+	posts: Card[];
+};
+
+type ListResponse = { pages: ListPage[] };
 
 function restore(): number {
 	try {
@@ -38,21 +52,41 @@ function esc(s: string): string {
 	return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
-function loadIndex(): SearchHit[] {
-	const el = document.getElementById('blog-search-index');
-	if (!(el instanceof HTMLScriptElement)) return [];
-	try {
-		const data = JSON.parse(el.textContent || '[]') as unknown;
-		return Array.isArray(data) ? (data as SearchHit[]) : [];
-	} catch {
-		console.warn('[blog-list] invalid #blog-search-index');
-		return [];
+function fillCard(li: HTMLElement, post: Card): void {
+	li.hidden = false;
+	li.setAttribute('data-category', post.categoryKey);
+	const link = li.querySelector('a.blog-card');
+	if (link instanceof HTMLAnchorElement) link.href = post.href;
+	const img = li.querySelector('img');
+	if (img instanceof HTMLImageElement) {
+		if (post.image) img.src = post.image;
+		if (post.srcset) img.setAttribute('srcset', post.srcset);
+		else img.removeAttribute('srcset');
+		img.alt = post.alt || '';
+		img.width = post.width || 400;
+		img.height = post.height || 240;
+	}
+	const title = li.querySelector('.blog-card__title');
+	if (title) title.textContent = post.title;
+	const excerpt = li.querySelector('.blog-card__excerpt');
+	if (excerpt) excerpt.textContent = post.excerpt;
+	const cat = li.querySelector('.blog-card__category');
+	if (cat) {
+		const dot = cat.querySelector('.blog-card__dot');
+		[...cat.childNodes].forEach((node) => {
+			if (node !== dot) node.remove();
+		});
+		if (post.category) {
+			cat.append(document.createTextNode(post.category));
+			cat.removeAttribute('aria-hidden');
+		} else {
+			cat.setAttribute('aria-hidden', 'true');
+		}
 	}
 }
 
 function initBlogList(root: HTMLElement): void {
 	if (root.getAttribute(INIT_ATTR) === '1') return;
-	root.setAttribute(INIT_ATTR, '1');
 
 	const grid = root.querySelector('[data-blog-grid]');
 	const filtersEl = root.querySelector('[data-blog-filters]');
@@ -60,7 +94,6 @@ function initBlogList(root: HTMLElement): void {
 	const searchWrap = root.querySelector('[data-blog-search-wrap]');
 	const resultsEl = root.querySelector('[data-blog-search-results]');
 	const liveEl = root.querySelector('[data-blog-search-live]');
-	const cards = [...root.querySelectorAll<HTMLElement>('[data-post-card]')];
 	const perspectiveEl = root.querySelector('[data-blog-perspective]');
 	const countEl = root.querySelector('[data-blog-count]');
 	const matchEl = root.querySelector('[data-blog-matching]');
@@ -68,79 +101,106 @@ function initBlogList(root: HTMLElement): void {
 	const loadMore = root.querySelector<HTMLButtonElement>('#load-more');
 	const statusEl = root.querySelector('[data-blog-load-status]');
 	const loadMoreWrap = root.querySelector('[data-blog-load-more]');
-	const index = loadIndex();
+	const template = root.querySelector('#blog-card-template');
+	const api = root.getAttribute('data-api') || '/api/blog-posts';
 
-	if (!(grid instanceof HTMLElement)) {
-		console.warn('[blog-list] missing [data-blog-grid]');
-		return;
-	}
-	if (!cards.length) {
-		console.warn('[blog-list] missing [data-post-card] items');
+	// Grid arrives via server:defer — do not mark ready until it exists.
+	if (!(grid instanceof HTMLElement) || !(template instanceof HTMLTemplateElement)) {
 		return;
 	}
 
-	let activeCategory = 'all';
-	let visibleCount = restore();
+	root.setAttribute(INIT_ATTR, '1');
+
+	let categoryId = '';
+	let nextPage = Number(grid.getAttribute('data-page') || '1') + 1;
+	let total = Number(grid.getAttribute('data-total') || '0') || 0;
+	let loading = false;
 	let debounceId = 0;
 	let activeIndex = -1;
+	let searchSeq = 0;
 
-	function matchCat(card: HTMLElement, cat: string): boolean {
-		return cat === 'all' || (card.getAttribute('data-category') || '') === cat;
+	function shownCount(): number {
+		return grid.querySelectorAll('[data-post-card]').length;
 	}
 
-	function revealCard(card: HTMLElement, staggerIndex: number): void {
-		card.style.setProperty('--i', String(Math.min(Math.max(staggerIndex, 0), 8)));
-		card.classList.add('is-visible');
+	function paintCounts(opts?: { keepStatus?: boolean }): void {
+		const shown = shownCount();
+		const label = `Showing ${shown} of ${total} articles`;
+		if (countEl) countEl.textContent = String(shown);
+		if (matchEl) matchEl.textContent = String(total);
+		if (statusEl && !loading && !opts?.keepStatus) statusEl.textContent = label;
+		const done = shown >= total || total === 0;
+		if (loadMore) loadMore.hidden = done;
+		if (loadMoreWrap instanceof HTMLElement) loadMoreWrap.hidden = total === 0;
+		if (emptyEl instanceof HTMLElement) {
+			emptyEl.hidden = shown !== 0;
+		}
+		persist(Math.max(shown, PAGE_SIZE));
 	}
 
-	function applyFilters(opts?: { focusNew?: boolean; prev?: number }): void {
-		const matched = cards.filter((c) => matchCat(c, activeCategory));
-		const matching = matched.length;
-		const show = Math.min(visibleCount, matching);
-		const prev = opts?.prev ?? 0;
+	function makeCard(post: Card): HTMLElement | null {
+		const fragment = template.content.cloneNode(true);
+		if (!(fragment instanceof DocumentFragment)) return null;
+		const li = fragment.querySelector('[data-post-card]');
+		if (!(li instanceof HTMLElement)) return null;
+		fillCard(li, post);
+		// reveal.ts only observes the first paint — do not leave Load More cards at opacity 0
+		li.removeAttribute('data-reveal');
+		li.classList.add('is-visible');
+		return li;
+	}
 
-		requestAnimationFrame(() => {
-			let i = 0;
-			let firstNew: HTMLElement | null = null;
-			for (const card of cards) {
-				if (!matchCat(card, activeCategory)) {
-					card.hidden = true;
-					continue;
-				}
-				const idx = i++;
-				const on = idx < show;
-				card.hidden = !on;
-				if (!on) continue;
-				if (opts?.focusNew && idx >= prev && !firstNew) firstNew = card;
-				revealCard(card, opts?.focusNew ? idx - prev : idx);
-			}
+	function appendPosts(posts: Card[], focusFirst: boolean): void {
+		let first: HTMLElement | null = null;
+		for (const post of posts) {
+			const li = makeCard(post);
+			if (!li) continue;
+			grid.append(li);
+			if (!first) first = li;
+		}
+		paintCounts();
+		if (focusFirst) first?.querySelector('a')?.focus({ preventScroll: true });
+	}
 
-			const label = `Showing ${show} of ${matching} articles`;
-			if (countEl) countEl.textContent = String(show);
-			if (matchEl) matchEl.textContent = String(matching);
-			if (statusEl) statusEl.textContent = label;
-			if (perspectiveEl) {
-				const chip =
-					filtersEl instanceof HTMLElement
-						? filtersEl.querySelector<HTMLElement>(
-								`[data-filter-chip][data-filter="${CSS.escape(activeCategory)}"]`,
-							)
-						: null;
-				perspectiveEl.textContent =
-					activeCategory === 'all'
-						? 'All perspectives'
-						: chip?.textContent?.trim() || activeCategory;
+	async function loadPages(
+		pages: number[],
+		opts: { replace?: boolean; focusFirst?: boolean } = {},
+	): Promise<void> {
+		if (!pages.length || loading) return;
+		loading = true;
+		if (loadMore) loadMore.disabled = true;
+		if (statusEl) statusEl.textContent = 'Loading articles…';
+		try {
+			const params = new URLSearchParams();
+			if (pages.length === 1) params.set('page', String(pages[0]));
+			else params.set('pages', pages.join(','));
+			if (categoryId) params.set('category', categoryId);
+			const res = await fetch(`${api}?${params}`);
+			if (!res.ok) throw new Error(`blog list ${res.status}`);
+			const body = (await res.json()) as ListResponse;
+			const ordered = [...(body.pages || [])].sort((a, b) => a.page - b.page);
+			if (ordered[0]) {
+				total = ordered[0].total;
+				grid.setAttribute('data-total', String(total));
 			}
-			if (emptyEl instanceof HTMLElement) emptyEl.hidden = matching !== 0;
-			const done = show >= matching;
-			if (loadMore) loadMore.hidden = done || matching === 0;
-			if (loadMoreWrap instanceof HTMLElement) loadMoreWrap.hidden = matching === 0;
-			persist(visibleCount);
-
-			if (opts?.focusNew && firstNew) {
-				firstNew.querySelector('a')?.focus({ preventScroll: true });
+			const posts = ordered.flatMap((page) => page.posts);
+			if (opts.replace) grid.replaceChildren();
+			if (posts.length === 0 && emptyEl instanceof HTMLElement) {
+				emptyEl.textContent = 'No articles in this category.';
 			}
-		});
+			loading = false;
+			appendPosts(posts, Boolean(opts.focusFirst));
+			const last = ordered[ordered.length - 1];
+			if (last) nextPage = last.page + 1;
+		} catch (err) {
+			console.error('[blog-list] load failed:', err);
+			if (statusEl) statusEl.textContent = "Couldn't load more articles.";
+			loading = false;
+			paintCounts({ keepStatus: true });
+		} finally {
+			loading = false;
+			if (loadMore) loadMore.disabled = false;
+		}
 	}
 
 	function closeResults(): void {
@@ -158,37 +218,17 @@ function initBlogList(root: HTMLElement): void {
 		if (liveEl instanceof HTMLElement) liveEl.textContent = msg;
 	}
 
-	function searchHits(q: string): SearchHit[] {
-		const titleHits: SearchHit[] = [];
-		const excerptHits: SearchHit[] = [];
-		for (const item of index) {
-			const tl = item.t.toLowerCase();
-			const el = item.e.toLowerCase();
-			if (tl.includes(q)) titleHits.push(item);
-			else if (el.includes(q)) excerptHits.push(item);
-			if (titleHits.length + excerptHits.length >= MAX_HITS * 2) break;
-		}
-		return [...titleHits, ...excerptHits].slice(0, MAX_HITS);
-	}
-
-	function renderResults(): void {
+	function renderHits(hits: Card[]): void {
 		if (!(searchWrap instanceof HTMLElement) || !(resultsEl instanceof HTMLElement)) return;
 		if (!(search instanceof HTMLInputElement)) return;
-		const q = search.value.trim().toLowerCase();
-		if (q.length < MIN_Q) {
-			closeResults();
-			announce('');
-			return;
-		}
-		const hits = searchHits(q);
-		const rows = hits.map((h, i) => {
-			const cat = h.c
-				? `<span class="blog-listing__search-cat">${esc(h.c)}</span>`
+		const rows = hits.slice(0, MAX_HITS).map((h, i) => {
+			const cat = h.category
+				? `<span class="blog-listing__search-cat">${esc(h.category)}</span>`
 				: '';
-			const img = h.i
-				? `<img class="blog-listing__search-thumb" src="${esc(h.i)}" alt="" width="64" height="48" loading="lazy" decoding="async">`
+			const img = h.image
+				? `<img class="blog-listing__search-thumb" src="${esc(h.image)}" alt="" width="64" height="48" loading="lazy" decoding="async">`
 				: '';
-			return `<a id="blog-search-option-${i}" class="blog-listing__search-option" role="option" aria-selected="false" href="${esc(h.p)}" data-search-option><span class="blog-listing__search-media">${img}</span><span class="blog-listing__search-body"><span class="blog-listing__search-title">${esc(h.t)}</span>${cat}</span></a>`;
+			return `<a id="blog-search-option-${i}" class="blog-listing__search-option" role="option" aria-selected="false" href="${esc(h.href)}" data-search-option><span class="blog-listing__search-media">${img}</span><span class="blog-listing__search-body"><span class="blog-listing__search-title">${esc(h.title)}</span>${cat}</span></a>`;
 		});
 		searchWrap.classList.add('is-open');
 		resultsEl.hidden = false;
@@ -199,6 +239,39 @@ function initBlogList(root: HTMLElement): void {
 			? rows.join('')
 			: '<p class="blog-listing__search-empty" role="status">No articles found</p>';
 		announce(rows.length ? `${rows.length} results` : 'No results');
+	}
+
+	async function runSearch(): Promise<void> {
+		if (!(search instanceof HTMLInputElement)) return;
+		const q = search.value.trim();
+		if (q.length < MIN_Q) {
+			closeResults();
+			announce('');
+			return;
+		}
+		const seq = ++searchSeq;
+		if (searchWrap instanceof HTMLElement && resultsEl instanceof HTMLElement) {
+			searchWrap.classList.add('is-open');
+			resultsEl.hidden = false;
+			search.setAttribute('aria-expanded', 'true');
+			activeIndex = -1;
+			search.removeAttribute('aria-activedescendant');
+			resultsEl.innerHTML =
+				'<p class="blog-listing__search-empty" role="status">Loading…</p>';
+			announce('Loading results');
+		}
+		try {
+			const params = new URLSearchParams({ search: q, per_page: String(MAX_HITS) });
+			const res = await fetch(`${api}?${params}`);
+			if (!res.ok) throw new Error(`blog search ${res.status}`);
+			const body = (await res.json()) as ListResponse;
+			if (seq !== searchSeq) return;
+			renderHits(body.pages?.[0]?.posts ?? []);
+		} catch (err) {
+			if (seq !== searchSeq) return;
+			console.error('[blog-list] search failed:', err);
+			renderHits([]);
+		}
 	}
 
 	function setActive(i: number): void {
@@ -229,19 +302,24 @@ function initBlogList(root: HTMLElement): void {
 				o.classList.toggle('is-active', on);
 				o.setAttribute('aria-pressed', on ? 'true' : 'false');
 			});
-			activeCategory = chip.getAttribute('data-filter') || 'all';
-			visibleCount = PAGE_SIZE;
-			applyFilters();
+			const filter = chip.getAttribute('data-filter') || 'all';
+			categoryId = filter === 'all' ? '' : chip.getAttribute('data-category-id') || '';
+			if (perspectiveEl) {
+				perspectiveEl.textContent =
+					filter === 'all' ? 'All perspectives' : chip.textContent?.trim() || filter;
+			}
+			nextPage = 1;
+			void loadPages([1], { replace: true });
 		});
 	}
 
 	if (search instanceof HTMLInputElement) {
 		search.addEventListener('input', () => {
 			clearTimeout(debounceId);
-			debounceId = window.setTimeout(renderResults, 120);
+			debounceId = window.setTimeout(() => void runSearch(), 180);
 		});
 		search.addEventListener('focus', () => {
-			if (search.value.trim().length >= MIN_Q) renderResults();
+			if (search.value.trim().length >= MIN_Q) void runSearch();
 		});
 		search.addEventListener('keydown', (e) => {
 			const open =
@@ -285,17 +363,20 @@ function initBlogList(root: HTMLElement): void {
 
 	if (loadMore instanceof HTMLButtonElement) {
 		loadMore.addEventListener('click', () => {
-			const matching = cards.filter((c) => matchCat(c, activeCategory)).length;
-			const prev = Math.min(visibleCount, matching);
-			visibleCount += PAGE_SIZE;
-			applyFilters({ focusNew: true, prev });
+			void loadPages([nextPage], { focusFirst: true });
 		});
 	}
 
-	const total = Number(grid.getAttribute('data-total') || cards.length) || cards.length;
-	if (visibleCount > total) visibleCount = Math.max(PAGE_SIZE, total);
-
-	applyFilters();
+	const wanted = restore();
+	const already = shownCount();
+	const pagesNeeded = Math.ceil(wanted / PAGE_SIZE);
+	if (!categoryId && pagesNeeded > 1 && already < wanted && total > already) {
+		const pages: number[] = [];
+		for (let page = 2; page <= pagesNeeded; page++) pages.push(page);
+		void loadPages(pages);
+	} else {
+		paintCounts();
+	}
 }
 
 function boot(): void {

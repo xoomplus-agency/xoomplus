@@ -17,6 +17,11 @@ import OurLocations from '../components/OurLocations.astro';
 import ContactSection from '../components/ContactSection.astro';
 import FAQ from '../components/FAQ.astro';
 import CTASection from '../components/CTASection.astro';
+import { getPosts } from '../lib/wp-posts';
+import type { WpPost } from '../lib/wp';
+
+// Start the 3-card fetch before layout SEO/nav work so it does not run after them.
+const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 }).then((r) => r.posts);
 ---
 
 <Layout>
@@ -31,7 +36,7 @@ import CTASection from '../components/CTASection.astro';
 		<Industries />
 		<OurLocations />
 		<Testimonials />
-		<Blogs />
+		<Blogs posts={blogPosts} />
 		<!-- <FAQ page="home" /> -->
 		<ContactSection />
 		<CTASection />

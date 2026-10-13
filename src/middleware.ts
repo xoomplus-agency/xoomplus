@@ -4,22 +4,32 @@ import {
 	resolveAliasRedirect,
 	WP_SEO_REVALIDATE,
 } from './lib/wp-seo';
+import { BLOG_NO_STORE, BLOG_POST_CACHE_CONTROL } from './lib/wp-posts';
 
 function isBlogsListingPath(pathname: string): boolean {
 	const p = pathname.replace(/\/+$/, '') || '/';
 	return p === '/blogs';
 }
 
+function isLegacyBlogSlugPath(pathname: string): boolean {
+	const p = pathname.replace(/\/+$/, '') || '/';
+	return /^\/blogs\/[^/]+$/.test(p);
+}
+
+function isBlogPostPath(pathname: string): boolean {
+	const p = pathname.replace(/\/+$/, '') || '/';
+	// /{category}/{slug}/ — two segments, not reserved app routes
+	return /^\/[^/]+\/[^/]+$/.test(p) && !p.startsWith('/services/') && !p.startsWith('/api/');
+}
+
 /**
  * SEO pages advertise CDN/edge revalidation.
  * Former CMS paths in WP_SEO_PATH_ALIASES 301 to the live slug route.
- * `/blogs` is SSR + live WP status — never edge-cache that HTML.
- * `?refresh=1` busts the WordPress posts disk/memory cache in dev.
+ * Blog listing stays no-store. Single posts use short CDN s-maxage (see page).
  */
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.url.searchParams.get('refresh') === '1') {
-		// Dynamic import keeps node:fs out of the middleware module graph unless needed.
-		const { clearWpPostsCache } = await import('./lib/wp');
+		const { clearWpPostsCache } = await import('./lib/wp-posts');
 		clearWpPostsCache();
 	}
 
@@ -30,14 +40,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const response = await next();
 
-	if (isBlogsListingPath(context.url.pathname)) {
-		response.headers.set(
-			'Cache-Control',
-			'private, no-store, no-cache, must-revalidate, max-age=0',
-		);
-		response.headers.set('CDN-Cache-Control', 'no-store');
-		response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+	if (isBlogsListingPath(context.url.pathname) || isLegacyBlogSlugPath(context.url.pathname)) {
+		response.headers.set('Cache-Control', BLOG_NO_STORE);
+		response.headers.set('CDN-Cache-Control', BLOG_NO_STORE);
+		response.headers.set('Vercel-CDN-Cache-Control', BLOG_NO_STORE);
 		return response;
+	}
+
+	// Single posts: keep page-set CDN cache (or default short TTL). ?refresh=1 → no-store.
+	if (isBlogPostPath(context.url.pathname) && response.status === 200) {
+		if (context.url.searchParams.get('refresh') === '1') {
+			response.headers.set('Cache-Control', BLOG_NO_STORE);
+			response.headers.set('CDN-Cache-Control', BLOG_NO_STORE);
+			response.headers.set('Vercel-CDN-Cache-Control', BLOG_NO_STORE);
+		} else {
+			const existing = response.headers.get('Cache-Control') || '';
+			if (!existing.includes('s-maxage') && !existing.includes('no-store')) {
+				response.headers.set('Cache-Control', BLOG_POST_CACHE_CONTROL);
+				response.headers.set('CDN-Cache-Control', BLOG_POST_CACHE_CONTROL);
+				response.headers.set('Vercel-CDN-Cache-Control', BLOG_POST_CACHE_CONTROL);
+			}
+		}
 	}
 
 	if (await isMappedSeoPath(context.url.pathname)) {

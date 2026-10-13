@@ -1,12 +1,73 @@
 /* Shared blog article prose — used by Markdown/MDX/CMS HTML later */
-.prose-blog h2,
-.prose-blog h3 {
-	margin: 28px 0 12px;
-	font-family: var(--font-inter);
-	font-size: var(--text-h3-sm);
-	font-weight: 700;
-	line-height: 1.3;
+.prose-blog {
+	--callout-accent: #ffa800;
+	--callout-bg: rgb(255 168 0 / 0.1);
+}
+
+/*
+ * Single-blog post headings — fixed scale, SF Pro Display.
+ * Includes headings inside .custom-callout / .key-takeaways.
+ * Excludes tables, blockquotes, and FAQ chrome.
+ */
+.prose-blog
+	:where(h1, h2, h3, h4, h5, h6, .post-h1):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	) {
+	font-family: var(--font-sans);
+	font-weight: 500;
+	letter-spacing: -0.02em;
 	color: var(--color-primary-black);
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+	margin: 28px 0 12px;
+}
+
+.prose-blog
+	:where(h1, .post-h1):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	) {
+	font-size: 40px;
+	line-height: 1.2;
+}
+
+.prose-blog
+	:where(h2):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	):not(.post-h1) {
+	font-size: 36px;
+	line-height: 1.25;
+}
+
+.prose-blog
+	:where(h3):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	) {
+	font-size: 30px;
+	line-height: 1.3;
+}
+
+.prose-blog
+	:where(h4):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	) {
+	font-size: 26px;
+	line-height: 1.35;
+}
+
+.prose-blog
+	:where(h5):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	) {
+	font-size: 22px;
+	line-height: 1.4;
+}
+
+.prose-blog
+	:where(h6):not(
+		:where(.blog-table-wrap *, table *, blockquote *, .blog-article__faqs *)
+	) {
+	font-size: 18px;
+	line-height: 1.45;
 }
 
 .prose-blog > :first-child {
@@ -82,11 +143,199 @@
 	font-weight: 600;
 }
 
+/* Blockquotes — post prose only; tinted amber card matching blog design */
 .prose-blog blockquote {
-	margin: 20px 0;
-	padding-left: 16px;
-	border-left: 3px solid #ffa800;
-	color: #555555;
+	position: relative;
+	margin: 2rem 0;
+	padding: 24px 28px 24px 28px;
+	border: none;
+	border-left: 4px solid var(--callout-accent);
+	border-radius: 0;
+	box-shadow: none;
+	background: var(--callout-bg);
+	background-image: none;
+	color: inherit;
+	font-family: var(--font-inter);
+	font-size: 18px;
+	font-weight: 400;
+	font-style: normal;
+	line-height: 1.6;
+	text-align: left;
+	quotes: none;
+}
+
+.prose-blog blockquote::before {
+	content: '';
+	display: block;
+	width: 34px;
+	height: 26px;
+	margin: 0 0 12px;
+	background: url('/icons/quotation.svg') no-repeat center / contain;
+}
+
+.prose-blog blockquote::after {
+	content: none;
+}
+
+.prose-blog blockquote em,
+.prose-blog blockquote i {
+	font-style: normal;
+}
+
+.prose-blog blockquote p {
+	margin: 0 0 0.75em;
+	font-size: inherit;
+	font-weight: inherit;
+	font-style: inherit;
+	line-height: inherit;
+	color: inherit;
+	text-align: inherit;
+}
+
+.prose-blog blockquote p:last-child {
+	margin-bottom: 0;
+}
+
+.prose-blog blockquote cite,
+.prose-blog blockquote footer {
+	display: block;
+	margin-top: 12px;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	opacity: 0.8;
+}
+
+.prose-blog blockquote blockquote {
+	background: transparent;
+	margin: 1rem 0 0 16px;
+	padding: 12px 16px;
+}
+
+@media (max-width: 640px) {
+	.prose-blog blockquote {
+		padding: 18px 18px;
+		font-size: 16px;
+	}
+}
+
+/* WP callout boxes — class-scoped under post prose only */
+.prose-blog .custom-callout,
+.prose-blog .key-takeaways {
+	margin: 2rem 0;
+	padding: 24px 28px;
+	border: none;
+	border-radius: 24px;
+	box-shadow: none;
+	background: var(--callout-bg);
+	color: inherit;
+	font-family: var(--font-inter);
+	font-size: inherit;
+	font-weight: 400;
+	line-height: 1.7;
+}
+
+/* Non-heading callout labels (e.g. bare <strong>) — headings use the H1–H6 scale above */
+.prose-blog .custom-callout > :is(strong, b):first-child,
+.prose-blog .key-takeaways > :is(strong, b):first-child,
+.prose-blog .custom-callout > p:first-child:has(> :is(strong, b):only-child),
+.prose-blog .key-takeaways > p:first-child:has(> :is(strong, b):only-child) {
+	display: block;
+	margin: 0 0 10px;
+	padding: 0;
+	font-family: var(--font-inter);
+	font-size: 18px;
+	font-weight: 700;
+	font-style: normal;
+	line-height: 1.3;
+	letter-spacing: normal;
+	text-decoration: none;
+	color: inherit;
+}
+
+.prose-blog .custom-callout > :where(h1, h2, h3, h4, h5, h6):first-child,
+.prose-blog .key-takeaways > :where(h1, h2, h3, h4, h5, h6):first-child {
+	margin-top: 0;
+}
+
+.prose-blog .custom-callout > p:first-child:has(> :is(strong, b):only-child) > :is(strong, b),
+.prose-blog .key-takeaways > p:first-child:has(> :is(strong, b):only-child) > :is(strong, b) {
+	font-size: inherit;
+	font-weight: inherit;
+	color: inherit;
+}
+
+.prose-blog .custom-callout p {
+	margin: 0 0 0.75em;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	color: inherit;
+}
+
+.prose-blog .custom-callout p:last-child {
+	margin-bottom: 0;
+}
+
+.prose-blog .key-takeaways ul,
+.prose-blog .key-takeaways ol {
+	margin: 0;
+	padding-left: 22px;
+	list-style-position: outside;
+}
+
+.prose-blog .key-takeaways ul {
+	list-style-type: disc;
+}
+
+.prose-blog .key-takeaways ol {
+	list-style-type: decimal;
+	counter-reset: none;
+}
+
+.prose-blog .key-takeaways li {
+	position: static;
+	margin-bottom: 8px;
+	padding-left: 0;
+	font-family: var(--font-inter);
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: 1.6;
+	color: inherit;
+}
+
+.prose-blog .key-takeaways li:last-child {
+	margin-bottom: 0;
+}
+
+.prose-blog .key-takeaways ul > li::before,
+.prose-blog .key-takeaways ol > li::before {
+	content: none;
+	display: none;
+}
+
+.prose-blog .key-takeaways ul > li::marker {
+	color: var(--callout-accent);
+}
+
+.prose-blog .key-takeaways ol > li::marker {
+	color: inherit;
+	font-weight: 700;
+}
+
+.prose-blog .key-takeaways ul ul,
+.prose-blog .key-takeaways ol ol,
+.prose-blog .key-takeaways ul ol,
+.prose-blog .key-takeaways ol ul {
+	margin-top: 8px;
+	padding-left: 20px;
+}
+
+@media (max-width: 640px) {
+	.prose-blog .custom-callout,
+	.prose-blog .key-takeaways {
+		padding: 18px;
+	}
 }
 
 .prose-blog img {
@@ -95,32 +344,152 @@
 	height: auto;
 	margin: 24px 0;
 	border-radius: 20px;
+	/* Body images are below the fold relative to the featured LCP image */
+	content-visibility: auto;
 }
 
-.prose-blog .table-wrap {
+/* Blog post tables — white card; scoped to post prose only */
+.prose-blog .blog-table-wrap {
 	width: 100%;
 	overflow-x: auto;
-	margin: 20px 0;
+	margin: 2rem 0;
+	border: 1px solid #dcdcdc;
+	border-radius: 4px;
+	background: #fff;
 }
 
-.prose-blog table {
+.prose-blog .blog-table-wrap table {
 	width: 100%;
+	min-width: 520px;
 	border-collapse: collapse;
-	border: 1px solid #e9e9e7;
+	table-layout: fixed;
+	background: #fff;
+	color: #222;
+	border: none;
 }
 
-.prose-blog th,
-.prose-blog td {
-	padding: 10px 12px;
-	border: 1px solid #e9e9e7;
+.prose-blog .blog-table-wrap th,
+.prose-blog .blog-table-wrap td {
+	padding: 18px 24px;
+	min-height: 56px;
 	text-align: left;
+	vertical-align: middle;
 	font-family: var(--font-inter);
-	font-size: var(--text-small);
-	color: #555555;
+	font-size: 15px;
+	line-height: 1.55;
+	font-weight: 400;
+	color: #222;
+	border: none;
+	border-bottom: 1px solid #e6e6e6;
+	border-right: 1px solid #e6e6e6;
+	background: #fff;
+}
+
+.prose-blog .blog-table-wrap th:last-child,
+.prose-blog .blog-table-wrap td:last-child {
+	border-right: none;
+}
+
+.prose-blog .blog-table-wrap th {
+	background: #f5f5f5;
+}
+
+.prose-blog .blog-table-wrap thead:last-child > tr:last-child > th,
+.prose-blog .blog-table-wrap thead:last-child > tr:last-child > td,
+.prose-blog .blog-table-wrap tbody:last-child > tr:last-child > th,
+.prose-blog .blog-table-wrap tbody:last-child > tr:last-child > td,
+.prose-blog .blog-table-wrap > table > tr:last-child > th,
+.prose-blog .blog-table-wrap > table > tr:last-child > td {
+	border-bottom: none;
+}
+
+.prose-blog .blog-table-wrap .bt-title > th,
+.prose-blog .blog-table-wrap .bt-title > td {
+	background: var(--color-primary, #fea106);
+	color: #111;
+	text-align: center;
+	padding: 16px 24px;
+	font-weight: 700;
+	border-bottom: 1px solid #e6e6e6;
+	border-right: none;
+}
+
+.prose-blog .blog-table-wrap .bt-title h2,
+.prose-blog .blog-table-wrap .bt-title h3,
+.prose-blog .blog-table-wrap .bt-title h4,
+.prose-blog .blog-table-wrap .bt-title h5,
+.prose-blog .blog-table-wrap .bt-title h6,
+.prose-blog .blog-table-wrap .bt-title b,
+.prose-blog .blog-table-wrap .bt-title strong {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.3;
+	color: #111;
+	letter-spacing: normal;
+	text-decoration: none;
+}
+
+.prose-blog .blog-table-wrap .bt-head > th,
+.prose-blog .blog-table-wrap .bt-head > td {
+	background: #f5f5f5;
+	font-weight: 700;
+	color: #111;
+}
+
+.prose-blog .blog-table-wrap .bt-cols-2 > thead > tr > *:first-child,
+.prose-blog .blog-table-wrap .bt-cols-2 > tbody > tr > *:first-child,
+.prose-blog .blog-table-wrap .bt-cols-2 > tr > *:first-child {
+	width: 35%;
+}
+
+.prose-blog .blog-table-wrap .bt-cols-2 > thead > tr > *:nth-child(2),
+.prose-blog .blog-table-wrap .bt-cols-2 > tbody > tr > *:nth-child(2),
+.prose-blog .blog-table-wrap .bt-cols-2 > tr > *:nth-child(2) {
+	width: 65%;
+}
+
+/* Non-2-column tables: equal column widths via table-layout: fixed */
+
+@media (max-width: 640px) {
+	.prose-blog .blog-table-wrap th,
+	.prose-blog .blog-table-wrap td {
+		padding: 12px 14px;
+		font-size: 13px;
+	}
+
+	.prose-blog .blog-table-wrap .bt-title h2,
+	.prose-blog .blog-table-wrap .bt-title h3,
+	.prose-blog .blog-table-wrap .bt-title h4,
+	.prose-blog .blog-table-wrap .bt-title h5,
+	.prose-blog .blog-table-wrap .bt-title h6,
+	.prose-blog .blog-table-wrap .bt-title b,
+	.prose-blog .blog-table-wrap .bt-title strong,
+	.prose-blog .blog-table-wrap .bt-title > th,
+	.prose-blog .blog-table-wrap .bt-title > td {
+		font-size: 17px;
+	}
 }
 
 @media (max-width: 639px) {
 	.prose-blog li {
 		font-size: var(--text-body);
 	}
+}
+
+/* Author byline mark (blog detail meta, not post body) */
+.blog-article__avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+	font-family: var(--font-inter);
+	font-size: 20px;
+	font-weight: 400;
+	line-height: 1;
+	color: #ffffff;
 }

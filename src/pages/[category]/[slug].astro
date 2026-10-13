@@ -1,79 +1,80 @@
 ---
 /**
- * Blog detail — WordPress permalink shape /%category%/%postname%/
- * (two path segments; nested categories not used by this CMS).
+ * Blog detail — WordPress permalink shape /%category%/%postname%/.
+ * On-demand (SSR): only `status=publish` posts render. Draft/delete → 404
+ * without a redeploy. CDN: short s-maxage + SWR; purge via revalidate / ?refresh=1.
  */
-export const prerender = true;
+export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Section from '../../components/Section.astro';
 import FAQAccordion from '../../components/FAQAccordion';
-import BlogCard from '../../components/BlogCard.astro';
+import BlogRelatedPosts from '../../components/BlogRelatedPosts.astro';
 import BlogSidebarCta from '../../components/BlogSidebarCta.astro';
 import CTASection from '../../components/CTASection.astro';
 import {
 	BLOG_IMAGE_PLACEHOLDER,
-	getPosts,
-	getRelatedPosts,
+	RESERVED_BLOG_CATEGORY_SLUGS,
 	postUrl,
 	readTimeMinutes,
-	type WpPost,
 } from '../../lib/wp';
-import { RESPECT_CMS_NOINDEX } from '../../config';
+import {
+	BLOG_NO_STORE,
+	BLOG_POST_CACHE_CONTROL,
+	getPostBySlug,
+} from '../../lib/wp-posts';
+import { getNavItemsResolved } from '../../data/nav';
+import { cleanWpPostHtml } from '../../lib/wp-content';
+import { enhanceTables } from '../../lib/enhance-post-html';
+import { extractFaqs } from '../../lib/extract-faqs';
+import { BLOG_AUTHOR, RESPECT_CMS_NOINDEX } from '../../config';
 import '../../styles/prose-blog.css';
 
-export async function getStaticPaths() {
-	/** Must not collide with static / CMS page prefixes under src/pages. */
-	const reserved = new Set([
-		'api',
-		'blogs',
-		'locations',
-		'pricing',
-		'services',
-		'about',
-		'contact',
-		'industries',
-		'case-studies',
-		'our-services',
-		'projects',
-	]);
-	const posts = await getPosts({ all: true });
-	const clashes = [
-		...new Set(
-			posts.map((p) => p.categorySlug).filter((slug) => reserved.has(slug)),
-		),
-	];
-	if (clashes.length > 0) {
-		throw new Error(
-			`[blog routes] category slug(s) clash with reserved site prefixes: ${clashes.join(', ')}`,
-		);
-	}
-
-	return posts.map((post) => ({
-		params: { category: post.categorySlug, slug: post.postSlug },
-		props: { post },
-	}));
-}
-
-interface Props {
-	post: WpPost;
-}
-
 const { category, slug } = Astro.params;
-const postFromProps = Astro.props.post as WpPost | undefined;
-const allPosts = await getPosts({ all: true });
-const post =
-	postFromProps ??
-	(category && slug
-		? allPosts.find((p) => p.categorySlug === category && p.postSlug === slug)
-		: undefined);
 
-if (!post) {
+if (
+	!category ||
+	!slug ||
+	RESERVED_BLOG_CATEGORY_SLUGS.has(category)
+) {
+	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
 	return Astro.rewrite('/404');
 }
 
-const related = getRelatedPosts(allPosts, post, 3);
-const readTime = readTimeMinutes(post.content);
+// Kick off nav in parallel with the post fetch so Header does not wait again.
+const navPromise = getNavItemsResolved();
+
+let post: Awaited<ReturnType<typeof getPostBySlug>> = null;
+try {
+	post = await getPostBySlug(slug);
+} catch (err) {
+	console.error('[blog detail] getPostBySlug failed:', err);
+	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
+	return Astro.rewrite('/404');
+}
+
+// Wrong category segment, or WP no longer returns this slug as publish.
+if (!post || post.categorySlug !== category) {
+	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
+	return Astro.rewrite('/404');
+}
+
+const forceRefresh = Astro.url.searchParams.get('refresh') === '1';
+const cacheControl = forceRefresh ? BLOG_NO_STORE : BLOG_POST_CACHE_CONTROL;
+Astro.response.headers.set('Cache-Control', cacheControl);
+Astro.response.headers.set('CDN-Cache-Control', cacheControl);
+Astro.response.headers.set('Vercel-CDN-Cache-Control', cacheControl);
+
+/** Strip Elementor chrome for Astro prose — not applied to the shared catalog. */
+const cleanedHtml = cleanWpPostHtml(post.content);
+const enhancedHtml = enhanceTables(cleanedHtml);
+const extracted = extractFaqs(enhancedHtml);
+const hasContentFaqs = extracted.faqs.length > 0;
+const articleHtml = hasContentFaqs
+	? extracted.before
+	: enhancedHtml;
+const articleAfterHtml = hasContentFaqs ? extracted.after : '';
+const readTime = readTimeMinutes(enhancedHtml);
 const canonicalPath = postUrl(post);
 const siteOrigin = Astro.site?.href.replace(/\/+$/, '') ?? '';
 const absolutePostUrl = siteOrigin ? `${siteOrigin}${canonicalPath}` : canonicalPath;
@@ -89,14 +90,36 @@ const featureImage = {
 	srcset: post.image?.srcset,
 };
 
-/** CMS does not provide author yet — keep existing placeholders. */
-const author = {
-	name: 'Elena Bostova, CPC',
-	role: 'AAPC Certified Professional Coder',
-	avatar: '/images/avatar.webp',
-};
+/**
+ * Content column ≈ container (1320) − gutters − sidebar (320) − gap (32) ≈ 900px
+ * on desktop; full container width on mobile. Matches rendered CSS.
+ */
+const featureSizes = '(max-width: 1023px) 100vw, 900px';
 
-/** CMS does not provide FAQs yet — keep existing placeholders. */
+let featureImageOrigin: string | undefined;
+try {
+	if (/^https?:\/\//i.test(featureImage.src)) {
+		featureImageOrigin = new URL(featureImage.src).origin;
+	}
+} catch {
+	featureImageOrigin = undefined;
+}
+// Compare to the request origin (not SITE_URL) so localhost → WP media gets preconnect.
+const pageOrigin = Astro.url.origin;
+const preconnectOrigins =
+	featureImageOrigin && featureImageOrigin !== pageOrigin
+		? [featureImageOrigin]
+		: [];
+const lcpImagePreload =
+	featureImage.src && featureImage.src !== BLOG_IMAGE_PLACEHOLDER
+		? {
+				href: featureImage.src,
+				imagesrcset: featureImage.srcset || undefined,
+				imagesizes: featureImage.srcset ? featureSizes : undefined,
+			}
+		: undefined;
+
+/** Fallback when the post body has no extractable FAQ section. */
 const placeholderFaqs = [
 	{
 		question: 'Are these examples of industries you have worked in?',
@@ -144,9 +167,9 @@ const articleJsonLd = {
 		'@id': absolutePostUrl,
 	},
 	author: {
-		'@type': 'Person',
-		name: author.name,
-		jobTitle: author.role,
+		'@type': 'Organization',
+		name: BLOG_AUTHOR.name,
+		description: BLOG_AUTHOR.role,
 	},
 };
 
@@ -180,7 +203,14 @@ const breadcrumbJsonLd = {
 	],
 };
 
-const faqItems = placeholderFaqs.map((item, index) => ({
+const faqSource = hasContentFaqs
+	? extracted.faqs.map((item) => ({
+			question: item.question,
+			answer: item.answerHtml,
+		}))
+	: placeholderFaqs;
+
+const faqItems = faqSource.map((item, index) => ({
 	id: `blog-faq-item-${index}`,
 	question: item.question,
 	answer: item.answer,
@@ -209,6 +239,8 @@ const faqJsonLd =
 				})),
 			}
 		: null;
+
+const navItems = await navPromise;
 ---
 
 <Layout
@@ -219,6 +251,10 @@ const faqJsonLd =
 	canonicalPath={canonicalPath}
 	theme="light"
 	robots={robotsMeta}
+	skipWpSeo
+	lcpImagePreload={lcpImagePreload}
+	preconnectOrigins={preconnectOrigins}
+	navItems={navItems}
 >
 	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
 	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
@@ -255,24 +291,17 @@ const faqJsonLd =
 
 				<h1
 					id="article-title"
-					class="blog-article__title text-h1 font-semibold tracking-[-0.02em] text-primary-black"
+					class="blog-article__title text-h1 tracking-[-0.02em] text-primary-black"
 				>
 					{post.title}
 				</h1>
 
 				<div class="blog-article__meta">
 					<div class="blog-article__author">
-						<img
-							class="blog-article__avatar"
-							src={author.avatar}
-							alt=""
-							width="40"
-							height="40"
-							decoding="async"
-						/>
+						<span class="blog-article__avatar" aria-hidden="true">X</span>
 						<div class="blog-article__author-text">
-							<span class="blog-article__author-name">{author.name}</span>
-							<span class="blog-article__author-role">{author.role}</span>
+							<span class="blog-article__author-name">{BLOG_AUTHOR.name}</span>
+							<span class="blog-article__author-role">{BLOG_AUTHOR.role}</span>
 						</div>
 					</div>
 
@@ -329,20 +358,20 @@ const faqJsonLd =
 
 				<div class="blog-article__layout">
 					<div class="blog-article__content">
+						{/* LCP: server HTML, never lazy, high priority, intrinsic size + srcset */}
 						<img
 							class="blog-article__feature"
 							src={featureImage.src}
 							srcset={featureImage.srcset || undefined}
-							sizes={featureImage.srcset ? '(min-width:1024px) 800px, 100vw' : undefined}
+							sizes={featureImage.srcset ? featureSizes : undefined}
 							alt={featureImage.alt}
 							width={featureImage.width}
 							height={featureImage.height}
-							loading="eager"
 							fetchpriority="high"
 							decoding="async"
 						/>
 
-						<div class="prose-blog blog-article__body" set:html={post.content} />
+						<div class="prose-blog blog-article__body" set:html={articleHtml} />
 
 						{
 							faqItems.length > 0 && (
@@ -357,9 +386,16 @@ const faqJsonLd =
 									>
 										FAQs
 									</h2>
-									<FAQAccordion client:load items={faqItems} defaultOpen={0} />
+									{/* Below-fold: hydrate when visible so it does not compete with LCP */}
+									<FAQAccordion client:visible items={faqItems} defaultOpen={0} />
 								</section>
 							)
+						}
+
+						{
+							articleAfterHtml ? (
+								<div class="prose-blog blog-article__body" set:html={articleAfterHtml} />
+							) : null
 						}
 					</div>
 
@@ -368,31 +404,15 @@ const faqJsonLd =
 							<BlogSidebarCta />
 						</div>
 
-						{
-							related.length > 0 && (
-								<div class="blog-sidebar__related">
-									<h2 class="blog-sidebar__related-heading" data-reveal="up">Related Blogs</h2>
-									<ul class="blog-sidebar__list m-0 list-none p-0" role="list" data-reveal-group>
-										{related.map((item) => (
-											<li class="blog-sidebar__item" data-reveal="up">
-												<BlogCard
-													post={item}
-													image={item.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
-													alt={item.image?.alt ?? item.title}
-													srcset={item.image?.srcset}
-													width={item.image?.width ?? 400}
-													height={item.image?.height ?? 240}
-													category={item.category}
-													title={item.title}
-													excerpt={item.excerpt}
-													size="compact"
-												/>
-											</li>
-										))}
-									</ul>
-								</div>
-							)
-						}
+						<BlogRelatedPosts
+							server:defer
+							postId={post.id}
+							categorySlug={post.categorySlug}
+							postSlug={post.postSlug || post.slug}
+							category={post.category}
+						>
+							<div slot="fallback" class="blog-sidebar__related" aria-hidden="true"></div>
+						</BlogRelatedPosts>
 					</aside>
 				</div>
 			</article>
@@ -411,7 +431,9 @@ const faqJsonLd =
 
 	.blog-article {
 		margin-inline: auto;
-		max-width: 1196px;
+		/* Fill the site container (1320px) — wider than the old 1196px shell */
+		max-width: var(--container-max);
+		width: 100%;
 	}
 
 	.blog-article__back {
@@ -452,6 +474,11 @@ const faqJsonLd =
 
 	.blog-article__title {
 		margin: 24px 0 0;
+		font-family: var(--font-sans);
+		font-size: 40px;
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
 		text-align: left;
 	}
 
@@ -466,40 +493,34 @@ const faqJsonLd =
 
 	.blog-article__author {
 		display: flex;
+		flex-direction: row;
 		align-items: center;
-		gap: 12px;
+		gap: 16px;
 		min-width: 0;
-	}
-
-	.blog-article__avatar {
-		flex-shrink: 0;
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		object-fit: cover;
 	}
 
 	.blog-article__author-text {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
 		min-width: 0;
 	}
 
 	.blog-article__author-name {
+		margin: 0;
 		font-family: var(--font-inter);
-		font-size: var(--text-small);
-		font-weight: 600;
+		font-size: 20px;
+		font-weight: 700;
 		line-height: 1.3;
-		color: #ffa800;
+		color: var(--color-primary, #ffa800);
 	}
 
 	.blog-article__author-role {
+		margin: 2px 0 0;
 		font-family: var(--font-inter);
-		font-size: 12px;
+		font-size: 16px;
 		font-weight: 400;
 		line-height: 1.3;
-		color: #555555;
+		color: var(--color-muted, #6b6b6b);
 	}
 
 	.blog-article__facts {
@@ -556,9 +577,9 @@ const faqJsonLd =
 
 	.blog-article__faqs-heading {
 		margin: 0 0 20px;
-		font-family: var(--font-inter);
-		font-size: var(--text-h2, 32px);
-		font-weight: 600;
+		font-family: var(--font-sans);
+		font-size: 36px;
+		font-weight: 500;
 		line-height: 1.25;
 		letter-spacing: -0.02em;
 		color: var(--color-primary-black);

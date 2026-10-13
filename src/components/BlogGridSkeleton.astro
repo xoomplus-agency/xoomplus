@@ -1,0 +1,148 @@
+---
+/**
+ * Placeholder grid that mirrors BlogCard + blog-listing__grid so the
+ * skeleton → posts swap does not shift layout.
+ */
+const COUNT = 9;
+---
+
+<div class="blog-listing__meta" aria-hidden="true">
+	<p class="blog-listing__meta-left">
+		<span class="blog-skel__line blog-skel__line--sm"></span>
+	</p>
+</div>
+
+<ul
+	class="blog-listing__grid m-0 list-none p-0"
+	role="list"
+	aria-busy="true"
+	aria-label="Loading articles"
+	data-blog-grid-skeleton
+>
+	{
+		Array.from({ length: COUNT }, (_, i) => (
+			<li class:list={['blog-listing__item', i >= 3 && 'blog-listing__item--cv']}>
+				<article class="blog-card-wrap blog-skel-card" aria-hidden="true">
+					<div class="blog-card blog-skel-card__inner">
+						<div class="blog-card__media blog-skel__media"></div>
+						<div class="blog-card__meta">
+							<span class="blog-skel__line blog-skel__line--cat"></span>
+							<span class="blog-skel__line blog-skel__line--label"></span>
+						</div>
+						<span class="blog-skel__line blog-skel__line--title"></span>
+						<span class="blog-skel__line blog-skel__line--excerpt"></span>
+						<span class="blog-skel__line blog-skel__line--excerpt blog-skel__line--short"></span>
+						<div class="blog-card__footer">
+							<span class="blog-skel__line blog-skel__line--read"></span>
+						</div>
+					</div>
+				</article>
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	/* Mirror BlogCard chrome so the swap does not jump */
+	.blog-skel-card {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		height: 100%;
+	}
+
+	.blog-skel-card__inner {
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		padding: 20px;
+		border: 1px solid #eeeeee;
+		border-radius: 24px;
+		background: #ffffff;
+		pointer-events: none;
+		cursor: default;
+	}
+
+	.blog-skel__media {
+		aspect-ratio: 5 / 3;
+		border-radius: 16px;
+		background: linear-gradient(90deg, #f3f3f1 0%, #e9e9e7 50%, #f3f3f1 100%);
+		background-size: 200% 100%;
+		animation: blog-skel-shimmer 1.2s ease-in-out infinite;
+	}
+
+	.blog-skel-card__inner :global(.blog-card__meta) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-top: 16px;
+	}
+
+	.blog-skel-card__inner :global(.blog-card__footer) {
+		margin-top: auto;
+		padding-top: 16px;
+	}
+
+	.blog-skel__line {
+		display: block;
+		border-radius: 6px;
+		background: linear-gradient(90deg, #f3f3f1 0%, #e9e9e7 50%, #f3f3f1 100%);
+		background-size: 200% 100%;
+		animation: blog-skel-shimmer 1.2s ease-in-out infinite;
+	}
+
+	.blog-skel__line--sm {
+		width: 180px;
+		height: 12px;
+		margin: 2px 0;
+	}
+
+	.blog-skel__line--cat {
+		width: 88px;
+		height: 14px;
+	}
+
+	.blog-skel__line--label {
+		width: 72px;
+		height: 12px;
+	}
+
+	.blog-skel__line--title {
+		width: 92%;
+		height: 22px;
+		margin-top: 12px;
+	}
+
+	.blog-skel__line--excerpt {
+		width: 100%;
+		height: 14px;
+		margin-top: 10px;
+	}
+
+	.blog-skel__line--short {
+		width: 68%;
+	}
+
+	.blog-skel__line--read {
+		width: 72px;
+		height: 14px;
+	}
+
+	@keyframes blog-skel-shimmer {
+		0% {
+			background-position: 100% 0;
+		}
+		100% {
+			background-position: -100% 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.blog-skel__media,
+		.blog-skel__line {
+			animation: none;
+		}
+	}
+</style>

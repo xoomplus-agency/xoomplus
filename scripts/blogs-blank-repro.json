@@ -1,0 +1,119 @@
+{
+  "before": {
+    "cardCount": 9,
+    "skeletonCount": 0,
+    "countText": "9 of 131 articles",
+    "grid": {
+      "opacity": "1",
+      "visibility": "visible",
+      "display": "grid",
+      "height": "1483.73px",
+      "transform": "none",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "gridAttrs": {
+      "ariaBusy": null,
+      "className": "blog-listing__grid m-0 list-none p-0",
+      "dataRevealGroup": true
+    },
+    "firstCard": {
+      "opacity": "0",
+      "visibility": "visible",
+      "display": "list-item",
+      "height": "478.578px",
+      "transform": "matrix(1, 0, 0, 1, 0, 20)",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "firstCardAttrs": {
+      "dataReveal": "up",
+      "isVisible": false,
+      "hidden": false,
+      "className": "blog-listing__item"
+    },
+    "busyAncestors": [],
+    "htmlJs": true
+  },
+  "afterScroll": {
+    "cardCount": 9,
+    "skeletonCount": 0,
+    "countText": "9 of 131 articles",
+    "grid": {
+      "opacity": "1",
+      "visibility": "visible",
+      "display": "grid",
+      "height": "1483.73px",
+      "transform": "none",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "gridAttrs": {
+      "ariaBusy": null,
+      "className": "blog-listing__grid m-0 list-none p-0",
+      "dataRevealGroup": true
+    },
+    "firstCard": {
+      "opacity": "0",
+      "visibility": "visible",
+      "display": "list-item",
+      "height": "478.578px",
+      "transform": "matrix(1, 0, 0, 1, 0, 20)",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "firstCardAttrs": {
+      "dataReveal": "up",
+      "isVisible": false,
+      "hidden": false,
+      "className": "blog-listing__item"
+    },
+    "busyAncestors": [],
+    "htmlJs": true
+  },
+  "afterResize": {
+    "cardCount": 9,
+    "skeletonCount": 0,
+    "countText": "9 of 131 articles",
+    "grid": {
+      "opacity": "1",
+      "visibility": "visible",
+      "display": "grid",
+      "height": "1330.17px",
+      "transform": "none",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "gridAttrs": {
+      "ariaBusy": null,
+      "className": "blog-listing__grid m-0 list-none p-0",
+      "dataRevealGroup": true
+    },
+    "firstCard": {
+      "opacity": "0",
+      "visibility": "visible",
+      "display": "list-item",
+      "height": "427.391px",
+      "transform": "matrix(1, 0, 0, 1, 0, 20)",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "firstCardAttrs": {
+      "dataReveal": "up",
+      "isVisible": false,
+      "hidden": false,
+      "className": "blog-listing__item"
+    },
+    "busyAncestors": [],
+    "htmlJs": true
+  },
+  "logs": [
+    "[pageerror] Cannot read properties of null (reading 'classList')"
+  ]
+}

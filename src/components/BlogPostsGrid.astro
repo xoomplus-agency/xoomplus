@@ -1,0 +1,126 @@
+---
+/**
+ * Deferred posts grid for /blogs. Fetched via server:defer so the listing
+ * shell (header, title, filters) streams first with BlogGridSkeleton.
+ */
+import BlogCard from './BlogCard.astro';
+import Button from './Button.astro';
+import { BLOG_IMAGE_PLACEHOLDER, categoryKey } from '../lib/wp';
+import { BLOG_LIST_PAGE_SIZE, getPosts } from '../lib/wp-posts';
+
+const PAGE_SIZE = BLOG_LIST_PAGE_SIZE;
+
+let blogs: Awaited<ReturnType<typeof getPosts>>['posts'] = [];
+let total = 0;
+let totalPages = 1;
+let listError = '';
+try {
+	const page = await getPosts({ page: 1, perPage: PAGE_SIZE });
+	blogs = page.posts;
+	total = page.total;
+	totalPages = page.totalPages;
+} catch (err) {
+	console.error('[BlogPostsGrid] getPosts failed:', err);
+	listError = 'Articles could not be loaded. Refresh the page to try again.';
+}
+
+const initialVisible = blogs.length;
+const hasMore = totalPages > 1;
+---
+
+<div class="blog-listing__meta">
+	<p class="blog-listing__meta-left">
+		<span data-blog-perspective>All perspectives</span>
+		{' '}· <span data-blog-count>{initialVisible}</span> of{' '}
+		<span data-blog-matching>{total}</span> articles shown
+	</p>
+</div>
+
+{
+	listError ? (
+		<p class="blog-listing__empty" role="alert" data-blog-empty>
+			{listError}{' '}
+			<a href="/blogs/">Try again</a>
+		</p>
+	) : blogs.length === 0 ? (
+		<p class="blog-listing__empty" role="status" data-blog-empty>
+			No articles in this category.
+		</p>
+	) : (
+		<p class="blog-listing__empty" role="status" aria-live="polite" hidden data-blog-empty>
+			No articles in this category.
+		</p>
+	)
+}
+
+<ul
+	id="blog-listing-grid"
+	class="blog-listing__grid m-0 list-none p-0"
+	role="list"
+	data-page-size={String(PAGE_SIZE)}
+	data-page="1"
+	data-total={String(total)}
+	data-blog-grid
+	data-reveal-group
+	hidden={Boolean(listError) || blogs.length === 0}
+>
+	{
+		blogs.map((post, index) => (
+			<li
+				class:list={['blog-listing__item', index >= 3 && 'blog-listing__item--cv']}
+				data-reveal="up"
+				data-post-card
+				data-category={categoryKey(post.category || post.categorySlug || '')}
+			>
+				<BlogCard
+					headingLevel="h3"
+					post={post}
+					image={post.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
+					alt={post.image?.alt ?? post.title ?? ''}
+					srcset={post.image?.srcset}
+					width={post.image?.width ?? 400}
+					height={post.image?.height ?? 240}
+					category={post.category ?? ''}
+					title={post.title ?? 'Untitled'}
+					excerpt={post.excerpt ?? ''}
+					loading={index < 3 ? 'eager' : 'lazy'}
+					fetchpriority={index < 3 ? 'high' : undefined}
+				/>
+			</li>
+		))
+	}
+</ul>
+
+<div class="blog-listing__load-more" data-blog-load-more hidden={!hasMore}>
+	<Button
+		type="button"
+		id="load-more"
+		class="!w-[220px]"
+		aria-controls="blog-listing-grid"
+		aria-label="Load more articles"
+		hidden={!hasMore}
+	>
+		Load more
+		<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+			<path
+				d="M8 3v10M4 9l4 4 4-4"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.75"
+				stroke-linecap="round"
+				stroke-linejoin="round"></path>
+		</svg>
+	</Button>
+	<p
+		class="blog-listing__load-status"
+		role="status"
+		aria-live="polite"
+		data-blog-load-status
+	>
+		Showing {initialVisible} of {total} articles
+	</p>
+</div>
+
+<script>
+	import '../scripts/blog-list.ts';
+</script>

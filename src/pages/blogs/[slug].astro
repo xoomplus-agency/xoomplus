@@ -1,31 +1,31 @@
 ---
 /**
- * Permanent redirect: legacy /blogs/<slug>/ → WordPress-shaped /<category>/<slug>/
- * Does not match /blogs itself (that stays on the listing).
+ * Permanent redirect: legacy /blogs/<slug>/ → WordPress-shaped /<category>/<slug>/.
+ * On-demand so new/unpublished slugs resolve from live WordPress status.
  */
-export const prerender = true;
+export const prerender = false;
 
-import { getPosts, postUrl, type WpPost } from '../../lib/wp';
+import { postUrl } from '../../lib/wp';
+import { BLOG_NO_STORE, getPostBySlug } from '../../lib/wp-posts';
 
-export async function getStaticPaths() {
-	const posts = await getPosts({ all: true });
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: { post },
-	}));
-}
-
-interface Props {
-	post: WpPost;
-}
-
-const postFromProps = Astro.props.post as WpPost | undefined;
 const { slug } = Astro.params;
-const allPosts = await getPosts({ all: true });
-const post =
-	postFromProps ?? (slug ? allPosts.find((p) => p.slug === slug) : undefined);
+
+if (!slug) {
+	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
+	return Astro.rewrite('/404');
+}
+
+let post: Awaited<ReturnType<typeof getPostBySlug>> = null;
+try {
+	post = await getPostBySlug(slug);
+} catch (err) {
+	console.error('[blogs/slug] getPostBySlug failed:', err);
+	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
+	return Astro.rewrite('/404');
+}
 
 if (!post) {
+	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
 	return Astro.rewrite('/404');
 }
 
@@ -33,9 +33,9 @@ const target = postUrl(post);
 const siteOrigin = Astro.site?.href.replace(/\/+$/, '') ?? '';
 const absoluteTarget = siteOrigin ? `${siteOrigin}${target}` : target;
 
-// Prefer HTTP 301 via the adapter; HTML below is the static-host / crawl fallback.
 Astro.response.status = 301;
 Astro.response.headers.set('Location', target);
+Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
 ---
 
 <!doctype html>

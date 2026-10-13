@@ -1,7 +1,7 @@
 ---
 /**
- * On-demand /blogs listing — fetches publish-only posts from WordPress on each
- * request so draft/unpublish is reflected after a normal refresh (no rebuild).
+ * On-demand /blogs listing. First page of `status=publish` posts via wp-posts.
+ * Cache-Control: no-store — publish/draft sync after one refresh (no rebuild).
  * Takes priority over CMS [slug].astro for `/blogs`.
  */
 export const prerender = false;

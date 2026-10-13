@@ -58,7 +58,38 @@ async function fetchText(url) {
 	return { res, text };
 }
 
-function summarize(label, xml) {
+/** Yoast xml-stylesheet href; Astro proxy rewrites to same-origin `/main-sitemap.xsl`. */
+function stylesheetHref(xml) {
+	const m = xml.match(/<\?xml-stylesheet\b[^?]*?\bhref=(["'])([^"']*)\1/i);
+	return m ? m[2] : null;
+}
+
+/**
+ * Astro-proxied sitemaps must use the same-origin XSL path so http://localhost
+ * never resolves Yoast’s protocol-relative `//public-host/.../main-sitemap.xsl`
+ * to a blocked cross-origin http:// load.
+ */
+function stylesheetOk(xml, siteOrigin) {
+	const href = stylesheetHref(xml);
+	if (!href) return { href, ok: true }; // Yoast always emits one; missing is non-fatal for crawlers
+	if (href === '/main-sitemap.xsl') return { href, ok: true };
+	// Accept WP-direct production only when testing the public HTTPS host itself.
+	try {
+		const testingPublic = new URL(siteOrigin).host.toLowerCase() === PUBLIC_HOST;
+		if (
+			testingPublic &&
+			(href.startsWith('//') || href.startsWith('https://')) &&
+			/main-sitemap\.xsl$/i.test(href)
+		) {
+			return { href, ok: true };
+		}
+	} catch {
+		/* ignore */
+	}
+	return { href, ok: false };
+}
+
+function summarize(label, xml, { checkStylesheet = true } = {}) {
 	const all = locs(xml);
 	const images = imageLocs(xml);
 	const locHosts = all.map((u) => {
@@ -80,6 +111,9 @@ function summarize(label, xml) {
 					u === `${PUBLIC}/` ||
 					u.startsWith(`${PUBLIC}/`),
 			));
+	const xsl = checkStylesheet
+		? stylesheetOk(xml, site)
+		: { href: stylesheetHref(xml), ok: true };
 	return {
 		label,
 		locCount: all.length,
@@ -87,8 +121,10 @@ function summarize(label, xml) {
 		cmsHostInLoc: cmsInLoc,
 		publicHostInLoc: publicInLoc,
 		nonPublicHosts: [...new Set(nonPublic)],
+		stylesheetHref: xsl.href,
+		stylesheetOk: xsl.ok,
 		sample: all.slice(0, 3),
-		ok: locOk,
+		ok: locOk && xsl.ok,
 	};
 }
 
@@ -96,7 +132,7 @@ function summarize(label, xml) {
 const liveIndex = await fetchText(`${PUBLIC}/sitemap_index.xml`);
 const synthetic = liveIndex.text.replaceAll(PUBLIC, CMS);
 const rewritten = rewriteLocsOnly(synthetic, CMS, PUBLIC);
-const unit = summarize('rewrite-unit', rewritten);
+const unit = summarize('rewrite-unit', rewritten, { checkStylesheet: false });
 const unitImagesOk =
 	imageLocs(synthetic).length === 0
 		? true
@@ -128,6 +164,30 @@ for (const url of childUrls) {
 
 const indexSummary = summarize(indexUrl, index.text);
 
+// 3) Same-origin XSL proxy (Astro only — skip when target is bare public WP)
+let xslProxy = null;
+const wantsAstroXsl = indexSummary.stylesheetHref === '/main-sitemap.xsl';
+if (wantsAstroXsl) {
+	const xslUrl = `${site}/main-sitemap.xsl`;
+	const xsl = await fetchText(xslUrl);
+	xslProxy = {
+		url: xslUrl,
+		status: xsl.res.status,
+		contentType: xsl.res.headers.get('content-type'),
+		ok:
+			xsl.res.status === 200 &&
+			/(xml|xsl)/i.test(xsl.res.headers.get('content-type') || '') &&
+			/<xsl:stylesheet\b/i.test(xsl.text),
+	};
+}
+
+const allOk =
+	unit.ok &&
+	unitImagesOk &&
+	indexSummary.ok &&
+	children.every((c) => c.ok) &&
+	(xslProxy === null || xslProxy.ok);
+
 console.log(
 	JSON.stringify(
 		{
@@ -140,13 +200,14 @@ console.log(
 			unit,
 			index: indexSummary,
 			children,
-			allOk: unit.ok && unitImagesOk && indexSummary.ok && children.every((c) => c.ok),
+			xslProxy,
+			allOk,
 		},
 		null,
 		2,
 	),
 );
 
-if (!(unit.ok && unitImagesOk && indexSummary.ok && children.every((c) => c.ok))) {
+if (!allOk) {
 	process.exitCode = 1;
 }

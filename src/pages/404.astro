@@ -1,4 +1,10 @@
 ---
+/**
+ * On-demand so SSR routes can `Astro.rewrite('/404')` (server output forbids
+ * rewriting to a prerendered static 404.html).
+ */
+export const prerender = false;
+
 import Layout from '../layouts/Layout.astro';
 
 Astro.response.status = 404;

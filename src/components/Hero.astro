@@ -49,15 +49,28 @@ const trust = [
 		aria-hidden="true"
 	>
 		<video
+			id="hero-bg-video"
 			class="absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
-			autoplay
 			muted
 			loop
 			playsinline
-			preload="auto"
+			preload="none"
 		>
 			<source src="/videos/bg-hero-video.webm" type="video/webm" />
 		</video>
+		<script is:inline>
+			(function () {
+				var video = document.getElementById('hero-bg-video');
+				if (!video) return;
+				function start() {
+					video.preload = 'auto';
+					var play = video.play();
+					if (play && typeof play.catch === 'function') play.catch(function () {});
+				}
+				if (document.readyState === 'complete') start();
+				else window.addEventListener('load', start, { once: true });
+			})();
+		</script>
 
 		<div
 			class="pointer-events-none absolute inset-0 z-[1] bg-black/[0.85]"

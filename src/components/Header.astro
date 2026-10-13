@@ -1,7 +1,7 @@
 ---
 import Button from './Button.astro';
 import ServicesMegaMenu from './ServicesMegaMenu.astro';
-import { getNavItemsResolved, isNavActive } from '../data/nav';
+import { getNavItemsResolved, isNavActive, type NavItem } from '../data/nav';
 import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
 
 interface Props {
@@ -11,12 +11,22 @@ interface Props {
 	theme?: 'dark' | 'light';
 	/** When true, no nav item is marked active (404 and similar). */
 	suppressActive?: boolean;
+	/**
+	 * Pre-resolved nav (e.g. fetched in parallel with the post). When set,
+	 * skips a second getNavItemsResolved() round-trip.
+	 */
+	navItems?: NavItem[];
 }
 
-const { variant = 'default', theme = 'dark', suppressActive = false } = Astro.props;
+const {
+	variant = 'default',
+	theme = 'dark',
+	suppressActive = false,
+	navItems: navItemsProp,
+} = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const nav = await getNavItemsResolved();
+const nav = navItemsProp ?? (await getNavItemsResolved());
 const allServicesHref =
 	nav.find((item) => item.label === 'Services')?.href ?? '/services';
 const megaPanelId = 'services-mega-menu';
@@ -1586,88 +1596,121 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		return window.matchMedia('(max-width: 1023px)').matches;
 	}
 
+	/** Cleared on unlock; errors cannot leave the page scroll-locked. */
+	let scrollLockFailsafe = 0;
+
+	function unlockPageScroll() {
+		document.documentElement.style.overflow = '';
+		document.body.style.overflow = '';
+		document.body.style.pointerEvents = '';
+		if (scrollLockFailsafe) {
+			window.clearTimeout(scrollLockFailsafe);
+			scrollLockFailsafe = 0;
+		}
+	}
+
 	function lockPageScroll(lock) {
-		document.documentElement.style.overflow = lock ? 'hidden' : '';
+		try {
+			if (lock) {
+				document.documentElement.style.overflow = 'hidden';
+				if (scrollLockFailsafe) window.clearTimeout(scrollLockFailsafe);
+				scrollLockFailsafe = window.setTimeout(() => {
+					unlockPageScroll();
+				}, 3000);
+			} else {
+				unlockPageScroll();
+			}
+		} catch {
+			unlockPageScroll();
+		}
 	}
 
 	function setMobileDrawerOpen(open) {
-		if (
-			!(mobileMenuToggle instanceof HTMLButtonElement) ||
-			!(mobileDrawerRoot instanceof HTMLElement) ||
-			!(mobileDrawer instanceof HTMLElement)
-		) {
-			return;
-		}
+		try {
+			if (
+				!(mobileMenuToggle instanceof HTMLButtonElement) ||
+				!(mobileDrawerRoot instanceof HTMLElement) ||
+				!(mobileDrawer instanceof HTMLElement)
+			) {
+				return;
+			}
 
-		if (!isMobileNav() && open) open = false;
+			if (!isMobileNav() && open) open = false;
 
-		mobileDrawerOpen = open;
-		mobileMenuToggle.setAttribute('aria-expanded', String(open));
-		mobileMenuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+			mobileDrawerOpen = open;
+			mobileMenuToggle.setAttribute('aria-expanded', String(open));
+			mobileMenuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 
-		if (open) {
-			if (mobileServicesOpen) setMobileServicesOpen(false, { skipFocus: true });
-			mobileDrawerRoot.hidden = false;
-			mobileDrawerRoot.removeAttribute('inert');
-			requestAnimationFrame(() => {
-				mobileDrawerRoot.setAttribute('data-open', '');
-			});
-			lockPageScroll(true);
-			mobileDrawerClose instanceof HTMLButtonElement
-				? mobileDrawerClose.focus()
-				: mobileDrawer.focus();
-		} else {
-			mobileDrawerRoot.removeAttribute('data-open');
-			mobileDrawerRoot.setAttribute('inert', '');
-			if (!mobileServicesOpen) lockPageScroll(false);
-			const finish = () => {
-				if (mobileDrawerOpen) return;
-				mobileDrawerRoot.hidden = true;
-			};
-			mobileDrawer.addEventListener('transitionend', finish, { once: true });
-			window.setTimeout(finish, 320);
-			mobileMenuToggle.focus();
+			if (open) {
+				if (mobileServicesOpen) setMobileServicesOpen(false, { skipFocus: true });
+				mobileDrawerRoot.hidden = false;
+				mobileDrawerRoot.removeAttribute('inert');
+				requestAnimationFrame(() => {
+					mobileDrawerRoot.setAttribute('data-open', '');
+				});
+				lockPageScroll(true);
+				mobileDrawerClose instanceof HTMLButtonElement
+					? mobileDrawerClose.focus()
+					: mobileDrawer.focus();
+			} else {
+				mobileDrawerRoot.removeAttribute('data-open');
+				mobileDrawerRoot.setAttribute('inert', '');
+				if (!mobileServicesOpen) lockPageScroll(false);
+				const finish = () => {
+					if (mobileDrawerOpen) return;
+					mobileDrawerRoot.hidden = true;
+				};
+				mobileDrawer.addEventListener('transitionend', finish, { once: true });
+				window.setTimeout(finish, 320);
+				mobileMenuToggle.focus();
+			}
+		} catch {
+			lockPageScroll(false);
 		}
 	}
 
 	function setMobileServicesOpen(open, { skipFocus = false } = {}) {
-		if (!(mobileServicesRoot instanceof HTMLElement) || !(mobileServicesSheet instanceof HTMLElement)) {
-			return;
-		}
-
-		if (!isMobileNav() && open) open = false;
-
-		mobileServicesOpen = open;
-		if (mobileDrawerServices instanceof HTMLButtonElement) {
-			mobileDrawerServices.setAttribute('aria-expanded', String(open));
-		}
-
-		if (open) {
-			if (mobileDrawerOpen) setMobileDrawerOpen(false);
-			mobileServicesRoot.hidden = false;
-			mobileServicesRoot.removeAttribute('inert');
-			requestAnimationFrame(() => {
-				mobileServicesRoot.setAttribute('data-open', '');
-			});
-			lockPageScroll(true);
-			if (!skipFocus) {
-				const back = mobileServicesRoot.querySelector('[data-mobile-services-close]');
-				if (back instanceof HTMLButtonElement) back.focus();
+		try {
+			if (!(mobileServicesRoot instanceof HTMLElement) || !(mobileServicesSheet instanceof HTMLElement)) {
+				return;
 			}
-		} else {
-			mobileServicesRoot.removeAttribute('data-open');
-			mobileServicesRoot.setAttribute('inert', '');
-			if (!mobileDrawerOpen) lockPageScroll(false);
-			const finish = () => {
-				if (mobileServicesOpen) return;
-				mobileServicesRoot.hidden = true;
-			};
-			mobileServicesSheet.addEventListener('transitionend', finish, { once: true });
-			window.setTimeout(finish, 320);
-			if (!skipFocus && mobileDrawerServices instanceof HTMLButtonElement) {
-				/* Re-open drawer so Services remains reachable after closing the sheet */
-				setMobileDrawerOpen(true);
+
+			if (!isMobileNav() && open) open = false;
+
+			mobileServicesOpen = open;
+			if (mobileDrawerServices instanceof HTMLButtonElement) {
+				mobileDrawerServices.setAttribute('aria-expanded', String(open));
 			}
+
+			if (open) {
+				if (mobileDrawerOpen) setMobileDrawerOpen(false);
+				mobileServicesRoot.hidden = false;
+				mobileServicesRoot.removeAttribute('inert');
+				requestAnimationFrame(() => {
+					mobileServicesRoot.setAttribute('data-open', '');
+				});
+				lockPageScroll(true);
+				if (!skipFocus) {
+					const back = mobileServicesRoot.querySelector('[data-mobile-services-close]');
+					if (back instanceof HTMLButtonElement) back.focus();
+				}
+			} else {
+				mobileServicesRoot.removeAttribute('data-open');
+				mobileServicesRoot.setAttribute('inert', '');
+				if (!mobileDrawerOpen) lockPageScroll(false);
+				const finish = () => {
+					if (mobileServicesOpen) return;
+					mobileServicesRoot.hidden = true;
+				};
+				mobileServicesSheet.addEventListener('transitionend', finish, { once: true });
+				window.setTimeout(finish, 320);
+				if (!skipFocus && mobileDrawerServices instanceof HTMLButtonElement) {
+					/* Re-open drawer so Services remains reachable after closing the sheet */
+					setMobileDrawerOpen(true);
+				}
+			}
+		} catch {
+			lockPageScroll(false);
 		}
 	}
 

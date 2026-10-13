@@ -24,6 +24,17 @@ export const WP_SEO_PAGES: Record<WpPageKey, { id: number }> = {
 	services: { id: 1062 },
 };
 
+/** Stable fallback paths when the CMS is unreachable (Vercel cold start / missing env). */
+export const WP_PAGE_FALLBACK_ROUTES: Record<WpPageKey, string> = {
+	home: '/',
+	about: '/about',
+	industries: '/industries',
+	caseStudies: '/projects',
+	contact: '/contact',
+	blogs: '/blogs',
+	services: '/services',
+};
+
 export const CASE_STUDIES_WP_ID = WP_SEO_PAGES.caseStudies.id;
 
 /**
@@ -52,17 +63,17 @@ export const PAGE_SEO_ROUTES: Record<string, { id: number; slug?: string; syncSl
 export const WP_SEO_REVALIDATE = 3600;
 
 /**
- * Route/slug map TTL. Short so CMS slug edits appear without a long wait.
- * Dev: 5s (dedupes one request burst; still picks up CMS edits quickly).
- * Prod: 60s.
+ * Route/slug map TTL.
+ * Fresh for 60s, then served stale for up to 5 minutes while a refresh runs
+ * in the background. `/api/revalidate` still drops the cache immediately.
+ * Dev used to be 5s, which refetched every mapped page on almost every click.
  */
 function routeCacheTtlMs(): number {
-	try {
-		if (import.meta.env.DEV) return 5_000;
-	} catch {
-		/* scripts outside Vite */
-	}
 	return 60_000;
+}
+
+function routeStaleTtlMs(): number {
+	return 5 * 60_000;
 }
 
 const SEO_FIELDS =
@@ -184,7 +195,8 @@ function readServerEnv(
 	const fromProcess =
 		typeof process !== 'undefined' ? process.env?.[name] : undefined;
 
-	const raw = fromAstro || fromProcess;
+	// Prefer process.env so Vercel runtime env wins over build-time Vite inlining.
+	const raw = fromProcess || fromAstro;
 	if (!raw) return undefined;
 	if (
 		name === 'REVALIDATE_SECRET' ||
@@ -239,7 +251,12 @@ export function pathsMatch(a: string, b: string): boolean {
 }
 
 const liveSlugCache = new Map<number, { expires: number; slug: string }>();
-let allRoutesCache: { expires: number; routes: WpResolvedRoute[] } | null = null;
+let allRoutesCache: {
+	expires: number;
+	staleUntil: number;
+	routes: WpResolvedRoute[];
+} | null = null;
+let allRoutesInflight: Promise<WpResolvedRoute[]> | null = null;
 
 function routeFromWpSlug(key: WpPageKey, slug: string): string {
 	if (key === 'home') return '/';
@@ -267,12 +284,11 @@ export async function getLiveWpSlugForId(id: number): Promise<string | null> {
 		return null;
 	}
 
-	const { raw, status } = await fetchWpPageById(id, undefined, wpBase);
-	const slug = typeof raw?.slug === 'string' && raw.slug.length > 0 ? raw.slug : null;
+	// Slug only. The full Yoast payload is fetched later for the one page being rendered.
+	const { slug, status } = await fetchWpSlugById(id, wpBase);
 	if (!slug) {
-		// Never keep serving an expired cached slug after a failed refresh.
+		// Drop this id only. A single failed lookup must not wipe a complete route map.
 		liveSlugCache.delete(id);
-		allRoutesCache = null;
 		console.error(
 			`[wp-seo] getLiveWpSlugForId(${id}): fetch failed (HTTP ${status}) — no slug (not using stale cache)`,
 		);
@@ -286,16 +302,7 @@ export async function getLiveWpSlugForId(id: number): Promise<string | null> {
 	return slug;
 }
 
-/**
- * Resolve every mapped WP page to its current CMS slug + frontend route.
- * Used by on-demand [slug] routing, nav, and check:wp-routes.
- */
-export async function getAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
-	const ttl = routeCacheTtlMs();
-	if (ttl > 0 && allRoutesCache && allRoutesCache.expires > Date.now()) {
-		return allRoutesCache.routes;
-	}
-
+async function loadAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
 	const entries = Object.entries(WP_SEO_PAGES) as [WpPageKey, { id: number }][];
 	const resolved = await Promise.all(
 		entries.map(async ([key, { id }]) => {
@@ -316,12 +323,50 @@ export async function getAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
 	const missing = routes.length !== entries.length;
 
 	// Only cache a complete map — never freeze a partial/stale route table.
-	if (!missing && ttl > 0) {
-		allRoutesCache = { expires: Date.now() + ttl, routes };
-	} else {
-		allRoutesCache = null;
+	// A failed refresh keeps the previous complete map.
+	if (!missing) {
+		const now = Date.now();
+		allRoutesCache = {
+			expires: now + routeCacheTtlMs(),
+			staleUntil: now + routeStaleTtlMs(),
+			routes,
+		};
 	}
 	return routes;
+}
+
+/**
+ * Resolve every mapped WP page to its current CMS slug + frontend route.
+ * Used by on-demand [slug] routing, nav, and check:wp-routes.
+ * Concurrent callers share one in-flight request.
+ */
+export async function getAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
+	const now = Date.now();
+	if (allRoutesCache && allRoutesCache.expires > now) {
+		return allRoutesCache.routes;
+	}
+
+	if (allRoutesCache && allRoutesCache.staleUntil > now) {
+		if (!allRoutesInflight) {
+			const previous = allRoutesCache.routes;
+			allRoutesInflight = loadAllWpPageRoutes()
+				.catch((err) => {
+					console.error('[wp-seo] background route refresh failed:', err);
+					return previous;
+				})
+				.finally(() => {
+					allRoutesInflight = null;
+				});
+		}
+		return allRoutesCache.routes;
+	}
+
+	if (!allRoutesInflight) {
+		allRoutesInflight = loadAllWpPageRoutes().finally(() => {
+			allRoutesInflight = null;
+		});
+	}
+	return allRoutesInflight;
 }
 
 /** Frontend path for a stable page key (e.g. `services` → `/services` from live CMS slug). */
@@ -329,22 +374,30 @@ export async function getWpPagePath(key: WpPageKey): Promise<string> {
 	const routes = await getAllWpPageRoutes();
 	const hit = routes.find((r) => r.key === key);
 	if (hit) return hit.route;
+	const fallback = WP_PAGE_FALLBACK_ROUTES[key];
 	console.error(
-		`[wp-seo] getWpPagePath("${key}"): live CMS slug unavailable — refusing hardcoded fallback`,
+		`[wp-seo] getWpPagePath("${key}"): live CMS slug unavailable — using fallback ${fallback}. Check WP_BASE_URL / page publish status.`,
 	);
-	throw new Error(
-		`[wp-seo] cannot resolve path for "${key}" (WP id ${WP_SEO_PAGES[key].id}). Check WP_BASE_URL and that the page is published.`,
-	);
+	return fallback;
 }
 
 /**
  * If `pathname` is a known former path for a mapped page whose CMS slug moved,
  * return the current frontend route (caller should 301). Otherwise null.
  */
+const ALIAS_PATHS = new Set(
+	Object.values(WP_SEO_PATH_ALIASES)
+		.flat()
+		.map((alias) => normalizeSeoPath(alias)),
+);
+
 export async function resolveAliasRedirect(
 	pathname: string,
 ): Promise<string | null> {
 	const normalized = normalizeSeoPath(pathname);
+	// Most requests (home, services, posts) are not historical aliases.
+	// Do not wait on WordPress just to discover that.
+	if (!ALIAS_PATHS.has(normalized)) return null;
 	const routes = await getAllWpPageRoutes();
 
 	for (const [key, aliases] of Object.entries(WP_SEO_PATH_ALIASES) as [
@@ -852,6 +905,37 @@ export async function fetchWpJson(
 	}
 }
 
+/** `id` + `slug` only — used to build the nav/route map without Yoast or embeds. */
+async function fetchWpSlugById(
+	id: number,
+	wpBase: string,
+): Promise<{ status: number; slug: string | null }> {
+	const url = `${wpBase}/wp-json/wp/v2/pages/${id}?_fields=id,slug`;
+	const result = await fetchWpJson(url, id);
+	if (!result.ok || !result.data || Array.isArray(result.data)) {
+		return { status: result.status, slug: null };
+	}
+	const slug =
+		typeof (result.data as { slug?: unknown }).slug === 'string'
+			? (result.data as { slug: string }).slug
+			: null;
+	return { status: result.status, slug: slug && slug.length > 0 ? slug : null };
+}
+
+function knownPageIdForPath(normalized: string): number | null {
+	if (allRoutesCache) {
+		const hit = allRoutesCache.routes.find((route) => route.route === normalized);
+		if (hit) return hit.id;
+	}
+	for (const [key, route] of Object.entries(WP_PAGE_FALLBACK_ROUTES) as [
+		WpPageKey,
+		string,
+	][]) {
+		if (normalizeSeoPath(route) === normalized) return WP_SEO_PAGES[key].id;
+	}
+	return null;
+}
+
 /**
  * Fetch a WP page by ID (primary). On 404, optionally retry by informational slug.
  */
@@ -909,20 +993,44 @@ export async function fetchWpPageById(
  * On failure: logs and returns null-filled defaults (never throws).
  */
 export async function getPageSEO(path: string): Promise<PageSEO> {
-	const entry = await resolvePageSeoRoute(path);
+	const normalized = normalizeSeoPath(path);
+	const optimisticId = knownPageIdForPath(normalized);
+	const wpBase = getWpBaseUrl();
+	const siteUrl = getSiteUrl();
+	const cachedOptimistic =
+		optimisticId != null ? seoCache.get(cacheKeyForId(optimisticId)) : undefined;
+	const optimisticCacheHit =
+		cachedOptimistic && cachedOptimistic.expires > Date.now()
+			? cachedOptimistic.data
+			: null;
+	// Overlap the Yoast fetch with the slug map. Discard it if the live route
+	// does not belong to that page id (slug moved).
+	const earlyFetch =
+		!optimisticCacheHit && optimisticId != null && wpBase && siteUrl
+			? fetchWpPageById(optimisticId, undefined, wpBase)
+			: null;
+
+	const routes = await getAllWpPageRoutes();
+	const entry = routes.find((route) => route.route === normalized);
 	if (!entry) {
 		return emptyPageSEO();
 	}
 
-	const { route, id, slug, syncSlug } = entry;
+	const { route, id, slug, syncSlug } = {
+		route: entry.route,
+		id: entry.id,
+		slug: entry.slug,
+		syncSlug: true as const,
+	};
 	const key = cacheKeyForId(id);
+	if (optimisticCacheHit && id === optimisticId) {
+		return optimisticCacheHit;
+	}
 	const cached = seoCache.get(key);
 	if (cached && cached.expires > Date.now()) {
 		return cached.data;
 	}
 
-	const wpBase = getWpBaseUrl();
-	const siteUrl = getSiteUrl();
 	if (!wpBase || !siteUrl) {
 		console.error(
 			'WordPress SEO: missing WP_BASE_URL or SITE_URL. Set them in .env (server-side only).',
@@ -931,7 +1039,10 @@ export async function getPageSEO(path: string): Promise<PageSEO> {
 	}
 
 	try {
-		const { raw, status } = await fetchWpPageById(id, slug, wpBase);
+		const { raw, status } =
+			earlyFetch && id === optimisticId
+				? await earlyFetch
+				: await fetchWpPageById(id, slug, wpBase);
 		if (!raw) {
 			console.error(
 				`[wp-seo] no SEO payload for path "${path}" (id ${id}, status ${status}) — returning empty defaults (not stale cache)`,
@@ -946,8 +1057,10 @@ export async function getPageSEO(path: string): Promise<PageSEO> {
 			} else {
 				liveSlugCache.delete(id);
 			}
-			allRoutesCache = null;
+			// Drop the route map only when the slug actually changed.
+			// Clearing it on every SEO fetch forced the header to refetch all pages.
 			if (previous && previous !== raw.slug) {
+				allRoutesCache = null;
 				console.warn(
 					`[wp-seo] slug change for id ${id}: "${previous}" → "${raw.slug}" — route map cleared; on-demand [slug] will serve the new path`,
 				);

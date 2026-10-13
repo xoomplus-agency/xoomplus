@@ -21,14 +21,17 @@ interface Props {
 	sizes?: string;
 	width?: number;
 	height?: number;
+	/** First-row cards use `eager`; the rest stay `lazy`. */
+	loading?: 'eager' | 'lazy';
+	fetchpriority?: 'high' | 'low' | 'auto';
 }
 
 const {
-	image,
-	alt,
-	category,
-	title,
-	excerpt,
+	image: imageProp,
+	alt: altProp,
+	category: categoryProp,
+	title: titleProp,
+	excerpt: excerptProp,
 	post,
 	href: hrefProp,
 	size = 'default',
@@ -37,20 +40,33 @@ const {
 	sizes = '(min-width:1024px) 33vw, 100vw',
 	width = 400,
 	height = 240,
+	loading = 'lazy',
+	fetchpriority,
 } = Astro.props;
 
-const href = post
-	? postUrl(post)
-	: hrefProp
-		? postUrl({ path: hrefProp, slug: title, id: 0, title })
-		: (() => {
-				throw new Error(
-					`[BlogCard] "${title}" needs a post (or href from postUrl) — no /blogs/<slug> fallback`,
-				);
-			})();
+/** Null-safe — a missing field must not blank the whole listing grid. */
+const title = (titleProp ?? post?.title ?? 'Untitled').toString();
+const excerpt = (excerptProp ?? '').toString();
+const category = (categoryProp ?? '').toString();
+const image = (imageProp || '/images/1st.webp').toString();
+const alt = (altProp || title).toString();
+
+let href = '#';
+try {
+	href = post
+		? postUrl(post)
+		: hrefProp
+			? postUrl({ path: hrefProp, slug: post?.slug || title, id: post?.id ?? 0, title })
+			: post?.path
+				? postUrl({ path: post.path, slug: post.slug || title, id: post.id ?? 0, title })
+				: '#';
+} catch (err) {
+	console.error(`[BlogCard] href resolve failed for "${title}":`, err);
+	href = '#';
+}
 
 const TitleTag = headingLevel;
-const showCategory = Boolean(category?.trim());
+const showCategory = Boolean(category.trim());
 ---
 
 <article class:list={['blog-card-wrap', size === 'compact' && 'blog-card-wrap--compact']}>
@@ -62,10 +78,11 @@ const showCategory = Boolean(category?.trim());
 				srcset={srcset || undefined}
 				sizes={srcset ? sizes : undefined}
 				alt={alt}
-				width={width}
-				height={height}
-				loading="lazy"
+				width={width || 400}
+				height={height || 240}
+				loading={loading}
 				decoding="async"
+				fetchpriority={fetchpriority}
 			/>
 		</div>
 

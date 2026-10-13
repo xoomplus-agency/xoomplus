@@ -1,4 +1,4 @@
-import { type WpPageKey } from '../lib/wp-seo';
+import { type WpPageKey, WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 import { getBlogCategoryPrefixes } from '../lib/wp';
 
 /** Primary site navigation — shared by desktop Header and mobile nav. */
@@ -42,17 +42,19 @@ const NAV_KEYS: { label: string; key: WpPageKey; hasDropdown?: boolean }[] = [
 /** Nav with hrefs resolved from live WordPress CMS slugs. */
 export async function getNavItemsResolved(): Promise<NavItem[]> {
 	const { getAllWpPageRoutes } = await import('../lib/wp-seo');
-	const routes = await getAllWpPageRoutes();
+	const [routes, blogCategoryPrefixes] = await Promise.all([
+		getAllWpPageRoutes(),
+		getBlogCategoryPrefixes(),
+	]);
 	const byKey = new Map(routes.map((r) => [r.key, r.route]));
 	const servicesHref = byKey.get('services') ?? '/services';
-	const blogCategoryPrefixes = await getBlogCategoryPrefixes();
 
 	const items: NavItem[] = [];
 	for (const def of NAV_KEYS) {
-		const href = byKey.get(def.key);
-		if (!href) {
-			throw new Error(
-				`[nav] live CMS path missing for "${def.key}" — check WP_BASE_URL / page publish status`,
+		const href = byKey.get(def.key) ?? WP_PAGE_FALLBACK_ROUTES[def.key];
+		if (!byKey.get(def.key)) {
+			console.error(
+				`[nav] live CMS path missing for "${def.key}" — using fallback ${href}`,
 			);
 		}
 		let matchPrefixes: string[] | undefined;

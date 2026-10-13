@@ -1,0 +1,106 @@
+{
+  "label": "preview",
+  "url": "http://127.0.0.1:4321/blogs/",
+  "screenshot": "C:\\Xoomplus\\scripts\\blogs-blank-preview.png",
+  "evidence": {
+    "cardCount": 9,
+    "countText": "9",
+    "matchingText": "131",
+    "grid": {
+      "tag": "UL",
+      "classes": "blog-listing__grid m-0 list-none p-0",
+      "ariaBusy": null,
+      "dataReveal": null,
+      "armed": false,
+      "isVisibleClass": false,
+      "isLoading": false,
+      "isHidden": false,
+      "opacity": "1",
+      "visibility": "visible",
+      "display": "grid",
+      "height": "1483.734375px",
+      "transform": "none",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "firstCard": {
+      "tag": "LI",
+      "classes": "blog-listing__item is-visible",
+      "ariaBusy": null,
+      "dataReveal": "up",
+      "armed": false,
+      "isVisibleClass": true,
+      "isLoading": false,
+      "isHidden": false,
+      "opacity": "1",
+      "visibility": "visible",
+      "display": "list-item",
+      "height": "478.578125px",
+      "transform": "none",
+      "clipPath": "none",
+      "contentVisibility": "visible",
+      "containIntrinsicSize": "none"
+    },
+    "ancestors": [
+      {
+        "tag": "UL",
+        "classes": "blog-listing__grid m-0 list-none p-0",
+        "ariaBusy": null,
+        "isLoading": false,
+        "isHidden": false
+      },
+      {
+        "tag": "DIV",
+        "classes": "",
+        "ariaBusy": null,
+        "isLoading": false,
+        "isHidden": false
+      },
+      {
+        "tag": "DIV",
+        "classes": "container relative z-[1]",
+        "ariaBusy": null,
+        "isLoading": false,
+        "isHidden": false
+      },
+      {
+        "tag": "SECTION",
+        "classes": "page-section py-section bg-secondary-white",
+        "ariaBusy": null,
+        "isLoading": false,
+        "isHidden": false
+      },
+      {
+        "tag": "MAIN",
+        "classes": "flex-1",
+        "ariaBusy": null,
+        "isLoading": false,
+        "isHidden": false
+      }
+    ],
+    "skeletonStill": false
+  },
+  "afterScrollResize": [
+    {
+      "opacity": "1",
+      "height": 428.4375,
+      "isVisible": true,
+      "armed": false
+    },
+    {
+      "opacity": "1",
+      "height": 428.4375,
+      "isVisible": true,
+      "armed": false
+    },
+    {
+      "opacity": "1",
+      "height": 428.4375,
+      "isVisible": true,
+      "armed": false
+    }
+  ],
+  "console": [],
+  "pageErrors": []
+}

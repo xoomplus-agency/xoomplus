@@ -5,6 +5,8 @@ import Footer from '../components/Footer.astro';
 import ScrollToTop from '../components/ScrollToTop.astro';
 import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
 import { getPageSEO, isMappedSeoPath, type PageSEO } from '../lib/wp-seo';
+import { getBlogCategoryPrefixes } from '../lib/wp';
+import type { NavItem } from '../data/nav';
 import '../styles/global.css';
 import '../styles/motion.css';
 import sfProDisplayBold from '../assets/fonts/SFPRODISPLAYBOLD.OTF';
@@ -40,6 +42,21 @@ interface Props {
 	robots?: string;
 	/** When true, no nav item is marked active (e.g. 404 under /blogs/…). */
 	suppressNavActive?: boolean;
+	/**
+	 * Skip WordPress page SEO lookup (blog posts pass title/description themselves).
+	 * Cuts TTFB on `/[category]/[slug]` where getPageSEO is wasted work.
+	 */
+	skipWpSeo?: boolean;
+	/** Optional `<link rel="preload" as="image">` for the LCP featured image. */
+	lcpImagePreload?: {
+		href: string;
+		imagesrcset?: string;
+		imagesizes?: string;
+	};
+	/** Cross-origin image hosts to preconnect (e.g. WP media origin). */
+	preconnectOrigins?: string[];
+	/** Pre-resolved nav items — avoids a duplicate WP round-trip in Header. */
+	navItems?: NavItem[];
 }
 
 const {
@@ -55,15 +72,30 @@ const {
 	noindex = false,
 	robots: robotsProp,
 	suppressNavActive = false,
+	skipWpSeo = false,
+	lcpImagePreload,
+	preconnectOrigins = [],
+	navItems,
 } = Astro.props;
 
 const theme = themeProp ?? headerTheme;
 
 const path = seoPath ?? Astro.url.pathname;
-const mapped = !noindex && (await isMappedSeoPath(path));
+
+// Start the blog-category lookup with SEO/route resolution so the header
+// does not wait on it after the page body is otherwise ready.
+if (!noindex) {
+	void getBlogCategoryPrefixes();
+}
+
+const mappedPromise =
+	noindex || skipWpSeo ? Promise.resolve(false) : isMappedSeoPath(path);
+const pageSeoPromise =
+	noindex || skipWpSeo ? Promise.resolve(null) : getPageSEO(path);
+const [mapped, pageSeoResult] = await Promise.all([mappedPromise, pageSeoPromise]);
 
 /** Yoast SEO for mapped routes — fetched once in the shared layout. */
-const pageSeo: PageSEO | null = mapped ? await getPageSEO(path) : null;
+const pageSeo: PageSEO | null = mapped ? pageSeoResult : null;
 
 if (isStaging()) {
 	Astro.response.headers.set('X-Robots-Tag', STAGING_ROBOTS);
@@ -79,6 +111,27 @@ if (isStaging()) {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		{/* LCP image discovery first — before fonts/CSS compete for the connection */}
+		{
+			preconnectOrigins.map((origin) => (
+				<>
+					<link rel="preconnect" href={origin} crossorigin />
+					<link rel="dns-prefetch" href={origin} />
+				</>
+			))
+		}
+		{
+			lcpImagePreload && (
+				<link
+					rel="preload"
+					as="image"
+					href={lcpImagePreload.href}
+					imagesrcset={lcpImagePreload.imagesrcset || undefined}
+					imagesizes={lcpImagePreload.imagesizes || undefined}
+					fetchpriority="high"
+				/>
+			)
+		}
 		<link
 			rel="preload"
 			href={sfProDisplayBold}
@@ -91,6 +144,52 @@ if (isStaging()) {
 		<meta name="generator" content={Astro.generator} />
 		<script is:inline>
 			document.documentElement.classList.add('js');
+			/* Preloader guard: skip on /blogs and blog posts; once per session; hard-cap 1.5s.
+			   Only acts when a preloader node/class is present — never fights nav scroll-lock. */
+			(function () {
+				var KEY = 'xp-preloader-seen';
+				var path = location.pathname.replace(/\/+$/, '') || '/';
+				var isBlogs = path === '/blogs';
+				var isBlogPost =
+					/^\/[^/]+\/[^/]+$/.test(path) &&
+					path.indexOf('/services/') !== 0 &&
+					path.indexOf('/api/') !== 0;
+				function hasPreloader() {
+					var body = document.body;
+					return Boolean(
+						document.querySelector('[data-preloader], .preloader, #preloader') ||
+							(body && body.classList.contains('is-loading')) ||
+							(body && body.classList.contains('preload-active')),
+					);
+				}
+				function release() {
+					if (!hasPreloader()) return;
+					var body = document.body;
+					document.documentElement.style.overflow = '';
+					if (body) {
+						body.style.overflow = '';
+						body.style.pointerEvents = '';
+						body.style.position = '';
+						body.classList.remove('is-loading', 'preload-active');
+					}
+					var el = document.querySelector('[data-preloader], .preloader, #preloader');
+					if (el) el.remove();
+				}
+				if (isBlogs || isBlogPost) {
+					release();
+					return;
+				}
+				if (!hasPreloader()) return;
+				try {
+					if (sessionStorage.getItem(KEY) === '1') {
+						release();
+						return;
+					}
+					sessionStorage.setItem(KEY, '1');
+				} catch (_) {}
+				window.setTimeout(release, 1500);
+				window.setTimeout(release, 3000);
+			})();
 		</script>
 		<Seo
 			title={mapped ? undefined : title}
@@ -110,6 +209,7 @@ if (isStaging()) {
 			variant={headerVariant}
 			theme={theme}
 			suppressActive={suppressNavActive}
+			navItems={navItems}
 		/>
 		<slot />
 		<Footer />

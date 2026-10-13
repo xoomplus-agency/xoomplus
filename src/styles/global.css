@@ -4,37 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* SF Pro Display — local files from src/assets/fonts (metadata-mapped) */
-@font-face {
-	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYULTRALIGHTITALIC.OTF") format("opentype");
-	font-weight: 100;
-	font-style: italic;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYTHINITALIC.OTF") format("opentype");
-	font-weight: 200;
-	font-style: italic;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYLIGHTITALIC.OTF") format("opentype");
-	font-weight: 300;
-	font-style: italic;
-	font-display: block;
-}
-
+/* SF Pro Display — used weights only; font-display:swap so LCP is not blocked */
 @font-face {
 	font-family: "SF Pro Display";
 	src: url("../assets/fonts/SFPRODISPLAYREGULAR.OTF") format("opentype");
 	font-weight: 400;
 	font-style: normal;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -42,40 +18,15 @@
 	src: url("../assets/fonts/SFPRODISPLAYMEDIUM.OTF") format("opentype");
 	font-weight: 500;
 	font-style: normal;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYSEMIBOLDITALIC.OTF") format("opentype");
-	font-weight: 600;
-	font-style: italic;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
 	font-family: "SF Pro Display";
 	src: url("../assets/fonts/SFPRODISPLAYBOLD.OTF") format("opentype");
-	font-weight: 700;
+	font-weight: 600 700;
 	font-style: normal;
-	/* Critical hero heading face — block avoids fallback → SF Pro flash */
-	font-display: block;
-}
-
-@font-face {
-	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYHEAVYITALIC.OTF") format("opentype");
-	font-weight: 800;
-	font-style: italic;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYBLACKITALIC.OTF") format("opentype");
-	font-weight: 900;
-	font-style: italic;
-	font-display: block;
+	font-display: swap;
 }
 
 /* Inter — self-hosted for pills, body, and other explicit Inter usage */

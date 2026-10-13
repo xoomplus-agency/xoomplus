@@ -1,18 +1,18 @@
 ---
-import { getAllWpPageRoutes } from '../lib/wp-seo';
+import { getAllWpPageRoutes, WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 
 const year = new Date().getFullYear();
 
 const routes = await getAllWpPageRoutes();
 const byKey = new Map(routes.map((r) => [r.key, r.route]));
-const aboutHref = byKey.get('about');
-const servicesHref = byKey.get('services');
-const industriesHref = byKey.get('industries');
-const caseStudiesHref = byKey.get('caseStudies');
-const contactHref = byKey.get('contact');
-const blogsHref = byKey.get('blogs');
-if (!aboutHref || !servicesHref || !industriesHref || !caseStudiesHref || !contactHref || !blogsHref) {
-	throw new Error('[footer] live CMS paths incomplete — check WP_BASE_URL / page publish status');
+const aboutHref = byKey.get('about') ?? WP_PAGE_FALLBACK_ROUTES.about;
+const servicesHref = byKey.get('services') ?? WP_PAGE_FALLBACK_ROUTES.services;
+const industriesHref = byKey.get('industries') ?? WP_PAGE_FALLBACK_ROUTES.industries;
+const caseStudiesHref = byKey.get('caseStudies') ?? WP_PAGE_FALLBACK_ROUTES.caseStudies;
+const contactHref = byKey.get('contact') ?? WP_PAGE_FALLBACK_ROUTES.contact;
+const blogsHref = byKey.get('blogs') ?? WP_PAGE_FALLBACK_ROUTES.blogs;
+if (routes.length === 0) {
+	console.error('[footer] live CMS paths unavailable — using fallback routes');
 }
 
 const linkColumns = [

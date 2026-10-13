@@ -1,0 +1,68 @@
+---
+/**
+ * Related posts sidebar — server:defer so the featured LCP image is not
+ * blocked by the secondary getPosts({ perPage: 12 }) fetch.
+ */
+import BlogCard from './BlogCard.astro';
+import { BLOG_IMAGE_PLACEHOLDER, getRelatedPosts, type WpPost } from '../lib/wp';
+import { getPosts } from '../lib/wp-posts';
+
+interface Props {
+	postId: number;
+	categorySlug: string;
+	postSlug: string;
+	category?: string;
+}
+
+const { postId, categorySlug, postSlug, category = '' } = Astro.props;
+
+let related: WpPost[] = [];
+try {
+	const pool = (await getPosts({ perPage: 12 })).posts;
+	const current = {
+		id: postId,
+		slug: postSlug,
+		categorySlug,
+		path: `/${categorySlug}/${postSlug}/`,
+		title: '',
+		excerpt: '',
+		category,
+		date: '',
+		status: 'publish',
+		noindex: false,
+		image: null,
+		content: '',
+		postSlug,
+	} satisfies WpPost;
+	related = getRelatedPosts(pool, current, 3);
+} catch (err) {
+	console.error('[BlogRelatedPosts] getPosts failed:', err);
+}
+---
+
+{
+	related.length > 0 && (
+		<div class="blog-sidebar__related">
+			<h2 class="blog-sidebar__related-heading">Related Blogs</h2>
+			<ul class="blog-sidebar__list m-0 list-none p-0" role="list">
+				{related.map((item) => (
+					<li class="blog-sidebar__item">
+						<BlogCard
+							post={item}
+							image={item.image?.src ?? BLOG_IMAGE_PLACEHOLDER}
+							alt={item.image?.alt ?? item.title}
+							srcset={item.image?.srcset}
+							width={item.image?.width ?? 400}
+							height={item.image?.height ?? 240}
+							category={item.category}
+							title={item.title}
+							excerpt={item.excerpt}
+							size="compact"
+							loading="lazy"
+						/>
+					</li>
+				))}
+			</ul>
+		</div>
+	)
+}
