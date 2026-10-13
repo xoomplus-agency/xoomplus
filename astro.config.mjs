@@ -38,5 +38,10 @@ export default defineConfig({
     optimizeDeps: {
       include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },
+    // Keep Astro CSP/encryption deps in the server bundle. Leaving them external
+    // breaks Vercel when .vercel/output is committed without nested node_modules.
+    ssr: {
+      noExternal: ['@oslojs/encoding'],
+    },
   },
 });
