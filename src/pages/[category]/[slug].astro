@@ -23,10 +23,10 @@ import {
 	BLOG_POST_CACHE_CONTROL,
 	getPostBySlug,
 } from '../../lib/wp-posts';
-import { getNavItemsResolved } from '../../data/nav';
 import { cleanWpPostHtml } from '../../lib/wp-content';
 import { enhanceTables } from '../../lib/enhance-post-html';
 import { extractFaqs } from '../../lib/extract-faqs';
+import { extractCta } from '../../lib/extract-cta';
 import { BLOG_AUTHOR, RESPECT_CMS_NOINDEX } from '../../config';
 import '../../styles/prose-blog.css';
 
@@ -40,9 +40,6 @@ if (
 	Astro.response.headers.set('Cache-Control', BLOG_NO_STORE);
 	return Astro.rewrite('/404');
 }
-
-// Kick off nav in parallel with the post fetch so Header does not wait again.
-const navPromise = getNavItemsResolved();
 
 let post: Awaited<ReturnType<typeof getPostBySlug>> = null;
 try {
@@ -68,11 +65,12 @@ Astro.response.headers.set('Vercel-CDN-Cache-Control', cacheControl);
 /** Strip Elementor chrome for Astro prose — not applied to the shared catalog. */
 const cleanedHtml = cleanWpPostHtml(post.content);
 const enhancedHtml = enhanceTables(cleanedHtml);
-const extracted = extractFaqs(enhancedHtml);
+const { html: htmlWithoutCta, cta: blogCta } = extractCta(enhancedHtml);
+const extracted = extractFaqs(htmlWithoutCta);
 const hasContentFaqs = extracted.faqs.length > 0;
 const articleHtml = hasContentFaqs
 	? extracted.before
-	: enhancedHtml;
+	: htmlWithoutCta;
 const articleAfterHtml = hasContentFaqs ? extracted.after : '';
 const readTime = readTimeMinutes(enhancedHtml);
 const canonicalPath = postUrl(post);
@@ -240,7 +238,6 @@ const faqJsonLd =
 			}
 		: null;
 
-const navItems = await navPromise;
 ---
 
 <Layout
@@ -254,7 +251,6 @@ const navItems = await navPromise;
 	skipWpSeo
 	lcpImagePreload={lcpImagePreload}
 	preconnectOrigins={preconnectOrigins}
-	navItems={navItems}
 >
 	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
 	<script slot="json-ld" type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
@@ -374,6 +370,18 @@ const navItems = await navPromise;
 						<div class="prose-blog blog-article__body" set:html={articleHtml} />
 
 						{
+							blogCta && (
+								<CTASection
+									embedded
+									heading={blogCta.heading || undefined}
+									text={blogCta.text}
+									buttonHref={blogCta.href}
+									buttonLabel={blogCta.buttonLabel}
+								/>
+							)
+						}
+
+						{
 							faqItems.length > 0 && (
 								<section
 									class="blog-article__faqs"
@@ -386,7 +394,6 @@ const navItems = await navPromise;
 									>
 										FAQs
 									</h2>
-									{/* Below-fold: hydrate when visible so it does not compete with LCP */}
 									<FAQAccordion client:visible items={faqItems} defaultOpen={0} />
 								</section>
 							)
@@ -417,8 +424,6 @@ const navItems = await navPromise;
 				</div>
 			</article>
 		</Section>
-
-		<CTASection />
 	</main>
 </Layout>
 
@@ -592,30 +597,7 @@ const navItems = await navPromise;
 		min-width: 0;
 	}
 
-	.blog-sidebar__related-heading {
-		margin: 0 0 16px;
-		font-family: var(--font-inter);
-		font-size: var(--text-h3);
-		font-weight: 500;
-		line-height: 1.25;
-		color: var(--color-primary-black);
-	}
-
-	.blog-sidebar__list {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 16px;
-	}
-
-	.blog-sidebar__item {
-		min-width: 0;
-	}
-
 	@media (min-width: 640px) and (max-width: 1023px) {
-		.blog-sidebar__list {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
 		.blog-sidebar__cta {
 			width: 100%;
 			max-width: 480px;

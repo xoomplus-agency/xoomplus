@@ -7,7 +7,7 @@
 const REDUCE = '(prefers-reduced-motion: reduce)';
 const MAX_STAGGER = 6;
 const MAX_BATCH = 12;
-const FAILSAFE_MS = 1000;
+const FAILSAFE_MS = 2500;
 
 let io: IntersectionObserver | null = null;
 let mo: MutationObserver | null = null;
@@ -109,11 +109,14 @@ function hasLayout(el: HTMLElement): boolean {
 	return r.width > 0 || r.height > 0;
 }
 
-function isInViewport(el: HTMLElement): boolean {
+/** True only when the element is already well into the first viewport (above-fold). */
+function isAboveFold(el: HTMLElement): boolean {
 	const rect = el.getBoundingClientRect();
 	const vh = window.innerHeight || document.documentElement.clientHeight;
 	const vw = window.innerWidth || document.documentElement.clientWidth;
-	return rect.bottom > 0 && rect.top < vh && rect.right > 0 && rect.left < vw;
+	if (rect.right <= 0 || rect.left >= vw) return false;
+	/* Leave room so near-fold sections (e.g. Brands) still get a scroll reveal. */
+	return rect.top < vh * 0.55 && rect.bottom > 0;
 }
 
 function observeNewTargets(): void {
@@ -136,7 +139,13 @@ function observeNewTargets(): void {
 		}
 
 		// Wait for layout before deciding; zero-size nodes would get stuck armed.
-		if (!hasLayout(el) || isInViewport(el)) {
+		if (!hasLayout(el)) {
+			forceVisible(el);
+			continue;
+		}
+
+		/* Above-fold: show immediately (no opacity:0 flash on LCP content). */
+		if (isAboveFold(el)) {
 			forceVisible(el);
 			continue;
 		}

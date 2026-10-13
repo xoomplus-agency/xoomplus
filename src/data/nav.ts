@@ -1,5 +1,4 @@
 import { type WpPageKey, WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
-import { getBlogCategoryPrefixes } from '../lib/wp';
 
 /** Primary site navigation — shared by desktop Header and mobile nav. */
 export type NavItem = {
@@ -8,11 +7,13 @@ export type NavItem = {
 	hasDropdown?: boolean;
 	/** Extra path prefixes that also mark this item active (trailing slashes ignored). */
 	matchPrefixes?: string[];
+	/** When true, also active on /{category}/{slug}/ blog posts (not under /blogs). */
+	matchBlogPosts?: boolean;
 };
 
 /**
- * Static labels only — hrefs here are unused at runtime.
- * Prefer getNavItemsResolved() which always uses live CMS slugs by page ID.
+ * Build-time / static nav — no per-request WordPress calls.
+ * Hrefs match WP_PAGE_FALLBACK_ROUTES (verified by `check:wp-routes` at build).
  */
 export const navItems: NavItem[] = [
 	{ label: 'Home', href: '/' },
@@ -26,26 +27,42 @@ export const navItems: NavItem[] = [
 	{ label: 'Industries', href: '/industries' },
 	{ label: 'Case Studies', href: '/projects' },
 	{ label: 'Contact', href: '/contact' },
-	{ label: 'Blog', href: '/blogs' },
+	{
+		label: 'Blog',
+		href: '/blogs',
+		matchPrefixes: ['/blogs'],
+		matchBlogPosts: true,
+	},
 ];
 
-const NAV_KEYS: { label: string; key: WpPageKey; hasDropdown?: boolean }[] = [
+const NAV_KEYS: {
+	label: string;
+	key: WpPageKey;
+	hasDropdown?: boolean;
+	matchBlogPosts?: boolean;
+}[] = [
 	{ label: 'Home', key: 'home' },
 	{ label: 'Services', key: 'services', hasDropdown: true },
 	{ label: 'About', key: 'about' },
 	{ label: 'Industries', key: 'industries' },
 	{ label: 'Case Studies', key: 'caseStudies' },
 	{ label: 'Contact', key: 'contact' },
-	{ label: 'Blog', key: 'blogs' },
+	{ label: 'Blog', key: 'blogs', matchBlogPosts: true },
 ];
 
-/** Nav with hrefs resolved from live WordPress CMS slugs. */
+/** Sync nav for Header/Layout — zero WordPress round-trips. */
+export function getNavItemsStatic(): NavItem[] {
+	return navItems.map((item) => ({ ...item }));
+}
+
+/**
+ * Nav with hrefs resolved from live WordPress CMS slugs.
+ * Prefer `getNavItemsStatic()` for request-path TTFB; use this only when
+ * a live CMS slug map is already warm (e.g. scripts / revalidate).
+ */
 export async function getNavItemsResolved(): Promise<NavItem[]> {
 	const { getAllWpPageRoutes } = await import('../lib/wp-seo');
-	const [routes, blogCategoryPrefixes] = await Promise.all([
-		getAllWpPageRoutes(),
-		getBlogCategoryPrefixes(),
-	]);
+	const routes = await getAllWpPageRoutes();
 	const byKey = new Map(routes.map((r) => [r.key, r.route]));
 	const servicesHref = byKey.get('services') ?? '/services';
 
@@ -59,18 +76,16 @@ export async function getNavItemsResolved(): Promise<NavItem[]> {
 		}
 		let matchPrefixes: string[] | undefined;
 		if (def.hasDropdown) {
-			// Keep nested /services/* detail pages highlighting Services even if the
-			// CMS listing slug differs (detail routes stay under /services/…).
 			matchPrefixes = [href, servicesHref, '/services'];
 		} else if (def.key === 'blogs') {
-			// Post URLs are /<category>/<slug>/ (not under /blogs) — still highlight Blog.
-			matchPrefixes = [href, '/blogs', ...blogCategoryPrefixes];
+			matchPrefixes = [href, '/blogs'];
 		}
 		items.push({
 			label: def.label,
 			href,
 			hasDropdown: def.hasDropdown,
 			matchPrefixes,
+			matchBlogPosts: def.matchBlogPosts,
 		});
 	}
 	return items;
@@ -81,14 +96,26 @@ export function normalizePath(pathname: string): string {
 	return pathname.replace(/\/+$/, '') || '/';
 }
 
+function isBlogPostPath(pathname: string): boolean {
+	const p = normalizePath(pathname);
+	return (
+		/^\/[^/]+\/[^/]+$/.test(p) &&
+		!p.startsWith('/services/') &&
+		!p.startsWith('/api/') &&
+		!p.startsWith('/locations/')
+	);
+}
+
 export function isNavActive(
 	pathname: string,
 	href: string,
 	matchPrefixes?: string[],
+	matchBlogPosts?: boolean,
 ): boolean {
 	const path = normalizePath(pathname);
 	const itemPath = normalizePath(href);
 	if (itemPath === '/') return path === '/';
+	if (matchBlogPosts && isBlogPostPath(path)) return true;
 	const prefixes = (matchPrefixes?.length ? matchPrefixes : [itemPath]).map(normalizePath);
 	return prefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }

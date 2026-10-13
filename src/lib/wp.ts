@@ -35,8 +35,12 @@ export type WpPost = {
 
 const DEFAULT_API = 'https://xoomplus.co.uk/wp-json/wp/v2';
 
-/** @deprecated Use BLOG_NO_STORE from `./wp-posts` — blog routes must not be edge-cached. */
-export { BLOG_NO_STORE as BLOG_LIST_CACHE_CONTROL, BLOG_NO_STORE as BLOG_POST_CACHE_CONTROL, BLOG_LIST_PAGE_SIZE, BLOG_NO_STORE } from './wp-posts';
+export {
+	BLOG_LIST_CACHE_CONTROL,
+	BLOG_POST_CACHE_CONTROL,
+	BLOG_LIST_PAGE_SIZE,
+	BLOG_NO_STORE,
+} from './wp-posts';
 
 /** Path prefixes owned by the Astro app — not WordPress blog categories. */
 export const RESERVED_BLOG_CATEGORY_SLUGS = new Set([

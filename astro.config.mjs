@@ -25,10 +25,39 @@ export default defineConfig({
     ? vercel({
         maxDuration: 60,
         // Match package.json engines (22.x). Avoid auto-picking unsupported local Node majors.
+        // Cache SSR HTML at the edge after first render; purge via /api/revalidate + bypass token.
+        isr: {
+          expiration: 300,
+          bypassToken:
+            env.ISR_BYPASS_TOKEN || env.REVALIDATE_SECRET || undefined,
+          exclude: [
+            '/api/revalidate',
+            '/api/health',
+            '/api/blog-posts',
+            '/api/contact',
+            /^\/api\/.+/,
+          ],
+        },
       })
     : node({ mode: 'standalone' }),
 
   integrations: [react()],
+
+  // Prefetch in-site links so first navigation after landing feels like a cache hit.
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
+
+  experimental: {
+    // Speculation Rules — Chrome prerenders likely next pages when supported.
+    clientPrerender: true,
+  },
+
+  // Total CSS is small (~25KB) — inline to eliminate render-blocking stylesheet requests.
+  build: {
+    inlineStylesheets: 'always',
+  },
 
   // /services is served by src/pages/services/index.astro (WP page ID 1062).
   // No redirects — clean URLs only.

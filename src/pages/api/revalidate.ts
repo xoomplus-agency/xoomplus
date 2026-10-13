@@ -6,24 +6,27 @@
  * Body (pages):
  *   { "id": 215 } | { "slug": "about" } | { "all": true } | { "rebuild": true }
  * Body (posts — WordPress webhook):
- *   { "type": "post", "id": 123, "slug": "my-post", "status": "publish", "oldStatus": "draft" }
+ *   { "type": "post", "id": 123, "slug": "my-post", "status": "publish", "oldStatus": "draft",
+ *     "category": "seo", "path": "/seo/my-post" }
  *
- * Astro SSR blog routes use `cache: "no-store"` and do not need Next.js
- * `revalidateTag`. This endpoint still accepts post webhooks, logs them, and
- * clears any residual SEO/post helpers so publish/draft sync is one refresh.
+ * Clears in-memory WP memos and purges Vercel ISR HTML via x-prerender-revalidate.
  */
 import type { APIRoute } from 'astro';
 import { timingSafeEqual } from 'node:crypto';
 import {
 	getLiveWpSlugForId,
 	getRevalidateSecret,
+	getAllWpPageRoutes,
 	invalidateWpSeoCache,
 	peekCachedWpSlug,
 	resolveIdFromSlugAsync,
 	triggerDeployHook,
 	WP_SEO_PAGES,
+	WP_PAGE_FALLBACK_ROUTES,
+	type WpPageKey,
 } from '../../lib/wp-seo';
 import { clearWpPostsCache } from '../../lib/wp-posts';
+import { purgeIsrPaths, normalizePurgePath } from '../../lib/isr-purge';
 
 export const prerender = false;
 
@@ -33,6 +36,27 @@ function secretsEqual(provided: string | null, expected: string): boolean {
 	const b = Buffer.from(expected);
 	if (a.length !== b.length) return false;
 	return timingSafeEqual(a, b);
+}
+
+async function pathsForPageId(id: number): Promise<string[]> {
+	try {
+		const routes = await getAllWpPageRoutes();
+		const hit = routes.find((r) => r.id === id);
+		if (hit) return [hit.route];
+	} catch (err) {
+		console.warn('[revalidate] getAllWpPageRoutes failed:', err);
+	}
+	for (const [key, entry] of Object.entries(WP_SEO_PAGES) as [
+		WpPageKey,
+		{ id: number },
+	][]) {
+		if (entry.id === id) return [WP_PAGE_FALLBACK_ROUTES[key]];
+	}
+	return [];
+}
+
+function coreNavPaths(): string[] {
+	return Object.values(WP_PAGE_FALLBACK_ROUTES).map(normalizePurgePath);
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -52,6 +76,8 @@ export const POST: APIRoute = async ({ request }) => {
 		slug?: string;
 		status?: string;
 		oldStatus?: string;
+		category?: string;
+		path?: string;
 		all?: boolean;
 		rebuild?: boolean;
 	} = {};
@@ -70,40 +96,57 @@ export const POST: APIRoute = async ({ request }) => {
 	if (body.type === 'post') {
 		clearWpPostsCache();
 		invalidateWpSeoCache(typeof body.id === 'number' ? body.id : undefined);
+
+		const paths = new Set<string>(['/blogs', '/']);
+		if (typeof body.path === 'string' && body.path.length > 0) {
+			paths.add(normalizePurgePath(body.path));
+		} else if (
+			typeof body.slug === 'string' &&
+			body.slug.length > 0 &&
+			typeof body.category === 'string' &&
+			body.category.length > 0
+		) {
+			paths.add(normalizePurgePath(`/${body.category}/${body.slug}`));
+		} else if (typeof body.slug === 'string' && body.slug.length > 0) {
+			paths.add(normalizePurgePath(`/blogs/${body.slug}`));
+		}
+
+		const purged = await purgeIsrPaths([...paths]);
 		const revalidated = {
 			tag: 'wp-posts',
-			paths: ['/blogs', '/'],
+			paths: [...paths],
+			purged,
 			id: body.id ?? null,
 			slug: body.slug ?? null,
 			status: body.status ?? null,
 			oldStatus: body.oldStatus ?? null,
-			note: 'Astro SSR: posts are fetched with cache:no-store; nothing to purge beyond SEO memo',
 		};
 		console.log(
-			`[revalidate] post id=${revalidated.id} slug=${revalidated.slug} status=${revalidated.status} oldStatus=${revalidated.oldStatus} → cleared wp-posts + SEO`,
+			`[revalidate] post id=${revalidated.id} slug=${revalidated.slug} status=${revalidated.status} → purged ${paths.size} ISR path(s)`,
 		);
-		return new Response(
-			JSON.stringify({ revalidated: true, ...revalidated }),
-			{
-				status: 200,
-				headers: { 'Content-Type': 'application/json' },
-			},
-		);
+		return new Response(JSON.stringify({ revalidated: true, ...revalidated }), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		});
 	}
 
 	if (body.all === true) {
 		invalidateWpSeoCache();
 		clearWpPostsCache();
+		const paths = coreNavPaths();
+		const purged = await purgeIsrPaths(paths);
 		const deploy = forceRebuild
 			? await triggerDeployHook('revalidate all + rebuild')
 			: { triggered: false, ok: false };
-		console.log(`[revalidate] all rebuild=${forceRebuild}`);
+		console.log(`[revalidate] all rebuild=${forceRebuild} purged=${paths.length}`);
 		return new Response(
 			JSON.stringify({
 				revalidated: true,
 				slug: 'all',
 				id: null,
 				rebuild: forceRebuild,
+				paths,
+				purged,
 				deploy,
 			}),
 			{
@@ -123,6 +166,17 @@ export const POST: APIRoute = async ({ request }) => {
 		const mapped = Object.values(WP_SEO_PAGES).some((p) => p.id === id);
 		const shouldRebuild = forceRebuild || slugChanged;
 
+		const paths = await pathsForPageId(id);
+		// Also purge previous path if slug moved
+		if (previousSlug && slugChanged) {
+			const prevPath =
+				previousSlug === 'home' || previousSlug === ''
+					? '/'
+					: `/${previousSlug.replace(/^\/+|\/+$/g, '')}`;
+			paths.push(normalizePurgePath(prevPath));
+		}
+		const purged = await purgeIsrPaths(paths);
+
 		let deploy: Awaited<ReturnType<typeof triggerDeployHook>> | {
 			triggered: boolean;
 			ok: boolean;
@@ -134,13 +188,13 @@ export const POST: APIRoute = async ({ request }) => {
 				: `rebuild requested for id ${id}`;
 			deploy = await triggerDeployHook(reason);
 		} else if (mapped) {
-			console.warn(
-				`[wp-seo] revalidated id ${id} (SEO cache only). Slug unchanged — no rebuild.`,
+			console.log(
+				`[revalidate] id ${id} — ISR purge + SEO memo clear (no rebuild)`,
 			);
 		}
 
 		console.log(
-			`[revalidate] page id=${id} slug=${label ?? nextSlug} slugChanged=${slugChanged} rebuild=${shouldRebuild}`,
+			`[revalidate] page id=${id} slug=${label ?? nextSlug} slugChanged=${slugChanged} rebuild=${shouldRebuild} paths=${paths.join(',')}`,
 		);
 
 		return {
@@ -151,6 +205,8 @@ export const POST: APIRoute = async ({ request }) => {
 			nextSlug,
 			slugChanged,
 			rebuild: shouldRebuild,
+			paths,
+			purged,
 			deploy,
 		};
 	}

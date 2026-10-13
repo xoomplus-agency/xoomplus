@@ -48,27 +48,92 @@ const trust = [
 		class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
 		aria-hidden="true"
 	>
+		{/* Poster visible at first paint (LCP). Video fades in after canplay. */}
+		<picture>
+			<source srcset="/videos/bg-hero-poster.avif" type="image/avif" />
+			<source srcset="/videos/bg-hero-poster.webp" type="image/webp" />
+			<img
+				id="hero-bg-poster"
+				class="absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
+				src="/videos/bg-hero-poster.webp"
+				alt=""
+				width="1280"
+				height="720"
+				fetchpriority="high"
+				decoding="async"
+			/>
+		</picture>
 		<video
 			id="hero-bg-video"
-			class="absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
+			class="hero-bg-video absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
 			muted
 			loop
 			playsinline
 			preload="none"
-		>
-			<source src="/videos/bg-hero-video.webm" type="video/webm" />
-		</video>
+			poster="/videos/bg-hero-poster.webp"
+			aria-hidden="true"
+		></video>
 		<script is:inline>
 			(function () {
 				var video = document.getElementById('hero-bg-video');
 				if (!video) return;
-				function start() {
-					video.preload = 'auto';
-					var play = video.play();
-					if (play && typeof play.catch === 'function') play.catch(function () {});
+
+				function shouldSkipVideo() {
+					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+					var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+					if (conn && (conn.saveData || /2g/.test(conn.effectiveType || ''))) return true;
+					return false;
 				}
-				if (document.readyState === 'complete') start();
-				else window.addEventListener('load', start, { once: true });
+
+				function fadeIn() {
+					video.classList.add('is-playing');
+				}
+
+				function attachSources() {
+					if (shouldSkipVideo()) return;
+					if (video.querySelector('source')) return;
+
+					var isNarrow = window.matchMedia('(max-width: 1023px)').matches;
+					var sources = isNarrow
+						? [
+								{ src: '/videos/bg-hero-mobile.webm', type: 'video/webm' },
+								{ src: '/videos/bg-hero-mobile.mp4', type: 'video/mp4' },
+							]
+						: [
+								{ src: '/videos/bg-hero-desktop.webm', type: 'video/webm' },
+								{ src: '/videos/bg-hero-desktop.mp4', type: 'video/mp4' },
+							];
+
+					for (var i = 0; i < sources.length; i++) {
+						var s = document.createElement('source');
+						s.src = sources[i].src;
+						s.type = sources[i].type;
+						video.appendChild(s);
+					}
+
+					video.addEventListener('canplay', fadeIn, { once: true });
+					video.preload = 'auto';
+					video.load();
+					var play = video.play();
+					if (play && typeof play.then === 'function') {
+						play.catch(function () {});
+					}
+				}
+
+				function schedule() {
+					if (shouldSkipVideo()) return;
+					var run = function () {
+						if ('requestIdleCallback' in window) {
+							requestIdleCallback(attachSources, { timeout: 2000 });
+						} else {
+							setTimeout(attachSources, 1);
+						}
+					};
+					if (document.readyState === 'complete') run();
+					else window.addEventListener('load', run, { once: true });
+				}
+
+				schedule();
 			})();
 		</script>
 
@@ -187,6 +252,15 @@ const trust = [
 </section>
 
 <style>
+	.hero-bg-video {
+		opacity: 0;
+		transition: opacity 500ms ease;
+	}
+
+	.hero-bg-video.is-playing {
+		opacity: 1;
+	}
+
 	.hero-trust {
 		-webkit-backdrop-filter: blur(22.1px);
 		backdrop-filter: blur(22.1px);
@@ -199,7 +273,6 @@ const trust = [
 	:global(.btn-book-call svg) {
 		display: block;
 		transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
-		will-change: transform;
 	}
 
 	:global(.btn-book-call:hover svg) {
@@ -207,6 +280,10 @@ const trust = [
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.hero-bg-video {
+			transition: none;
+		}
+
 		:global(.btn-book-call svg) {
 			transition: none;
 		}

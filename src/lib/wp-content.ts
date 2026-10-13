@@ -145,11 +145,17 @@ function isEditorialCallout(node: ElementNode): boolean {
 	);
 }
 
+/** In-post CTA block — extracted later into CTASection; must survive sanitizer. */
+function isCtaSection(node: ElementNode): boolean {
+	return classList(node).some((c) => c === 'cta-section');
+}
+
 function shouldUnwrap(node: ElementNode): boolean {
 	const name = node.name.toLowerCase();
 	if (!UNWRAP_TAGS.has(name)) return false;
-	// Never unwrap CMS callout/takeaways wrappers (class must survive sanitizer).
+	// Never unwrap CMS callout/takeaways/CTA wrappers (class must survive sanitizer).
 	if (isEditorialCallout(node)) return false;
+	if (isCtaSection(node)) return false;
 	if (isElementorChrome(node)) return true;
 	if (hasClass(node, /^e-con-inner$/i)) return true;
 	if (hasClass(node, /^elementor-widget-container$/i)) return true;
@@ -254,8 +260,8 @@ function cleanNode(node: Node): Node[] {
 		return el.children || [];
 	}
 
-	// Keep editorial callout wrappers even if momentarily empty after clean.
-	if (isEditorialCallout(el)) {
+	// Keep editorial callout / CTA wrappers even if momentarily empty after clean.
+	if (isEditorialCallout(el) || isCtaSection(el)) {
 		return [el];
 	}
 

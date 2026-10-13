@@ -66,3 +66,31 @@ try {
 		</div>
 	)
 }
+
+<style>
+	.blog-sidebar__related-heading {
+		margin: 0 0 16px;
+		font-family: var(--font-sans);
+		font-size: 32px;
+		font-weight: 500;
+		line-height: 1.25;
+		letter-spacing: -0.02em;
+		color: var(--color-primary-black);
+	}
+
+	.blog-sidebar__list {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.blog-sidebar__item {
+		min-width: 0;
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.blog-sidebar__list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+</style>

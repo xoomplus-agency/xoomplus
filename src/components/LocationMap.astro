@@ -1,12 +1,11 @@
 ---
 /**
- * Shared Google Maps embed (home ContactSection + contact page full-bleed).
- *
- * Note: This embed currently points to Islamabad (Xoomplus pin), while the
- * site address is Blackburn. Swap MAP_EMBED_SRC for a Blackburn embed when ready.
+ * Static map image (home ContactSection + contact page full-bleed).
+ * Image only for now — not an interactive Google Maps embed.
  */
-const MAP_EMBED_SRC =
-	'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3321.045703617947!2d73.04037407515959!3d33.65597763855125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38df95000d84e457%3A0xe13a404eab3f5547!2sXoomplus!5e0!3m2!1sen!2s!4v1791444163528!5m2!1sen!2s';
+const MAP_IMAGE_SRC = '/images/mall-blackburn-map.webp';
+const MAP_LINK_HREF =
+	'https://www.google.com/maps/place/The+Mall+Blackburn/@53.7484012,-2.4846822,17z';
 
 interface Props {
 	/** Border radius in px — home uses 20; full-bleed contact map uses 0 */
@@ -17,33 +16,46 @@ interface Props {
 const { radius = 20, class: className = '' } = Astro.props;
 ---
 
-<div
+<a
 	class:list={['location-map', className]}
+	href={MAP_LINK_HREF}
+	target="_blank"
+	rel="noopener noreferrer"
 	style={`--map-radius: ${radius}px`}
+	aria-label="Open The Mall Blackburn on Google Maps"
 >
-	<iframe
-		src={MAP_EMBED_SRC}
-		title="Xoomplus location map"
-		width="600"
-		height="450"
-		allowfullscreen
+	<img
+		src={MAP_IMAGE_SRC}
+		alt="Map showing The Mall Blackburn, Church Street, Blackburn"
+		width="1600"
+		height="520"
 		loading="lazy"
-		referrerpolicy="strict-origin-when-cross-origin"
-	></iframe>
-</div>
+		decoding="async"
+	/>
+</a>
 
 <style>
 	.location-map {
+		display: block;
 		width: 100%;
 		overflow: hidden;
 		line-height: 0;
 		border-radius: var(--map-radius, 20px);
+		outline: none;
 	}
 
-	.location-map iframe {
+	.location-map:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 3px;
+	}
+
+	.location-map img {
 		display: block;
 		width: 100%;
+		max-width: none;
 		height: 100%;
-		border: 0;
+		/* Beat global `img { h-auto }` so cover fill works in fixed-height slots */
+		object-fit: cover;
+		object-position: center;
 	}
 </style>

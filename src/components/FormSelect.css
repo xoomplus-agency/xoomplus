@@ -102,6 +102,15 @@
 	font-weight: 400;
 }
 
+.form-select .glide-select__menu[hidden] {
+	display: none !important;
+}
+
+.form-select .glide-select__option:focus-visible {
+	outline: none;
+	background: #f7f7f5;
+}
+
 /* Progressive enhancement: native select only used when JS is off */
 .form-select__noscript {
 	display: block;

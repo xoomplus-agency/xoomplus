@@ -21,10 +21,19 @@ import { getPosts } from '../lib/wp-posts';
 import type { WpPost } from '../lib/wp';
 
 // Start the 3-card fetch before layout SEO/nav work so it does not run after them.
-const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 }).then((r) => r.posts);
+const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
+	.then((r) => r.posts)
+	.catch((err) => {
+		console.error('[home] getPosts failed:', err);
+		return [] as WpPost[];
+	});
 ---
 
-<Layout>
+<Layout
+	lcpImagePreload={{
+		href: '/videos/bg-hero-poster.avif',
+	}}
+>
 	<main class="page-home flex-1">
 		<Hero />
 		<Brands />

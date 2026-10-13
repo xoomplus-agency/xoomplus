@@ -1,0 +1,229 @@
+---
+/**
+ * CSS-only infinite logo marquee (no React / no per-frame JS measurement).
+ * Duplicates the sequence once; animates transform translateX(-50%).
+ * Pause on hover (matches former hoverSpeed={0}) and when off-screen.
+ */
+interface LogoItem {
+	src: string;
+	alt: string;
+	width?: number;
+	height?: number;
+	srcSet?: string;
+	sizes?: string;
+}
+
+interface Props {
+	logos: LogoItem[];
+	/** Pixels per second (matches former React LogoLoop `speed`). */
+	speed?: number;
+	direction?: 'left' | 'right';
+	logoHeight?: number;
+	gap?: number;
+	fadeOut?: boolean;
+	fadeOutColor?: string;
+	/** Pause animation while hovered (former hoverSpeed={0}). */
+	pauseOnHover?: boolean;
+	ariaLabel?: string;
+	class?: string;
+}
+
+const {
+	logos,
+	speed = 70,
+	direction = 'left',
+	logoHeight = 68,
+	gap = 56,
+	fadeOut = true,
+	fadeOutColor = '#FFFFFF',
+	pauseOnHover = true,
+	ariaLabel = 'Partner logos',
+	class: className = '',
+} = Astro.props;
+
+/** Approximate sequence width for duration (displayed 300×68 cards). */
+const itemWidth = 300;
+const seqWidth = logos.length * (itemWidth + gap);
+const durationSec = Math.max(8, seqWidth / Math.max(1, speed));
+---
+
+<div
+	class:list={[
+		'logoloop',
+		fadeOut && 'logoloop--fade',
+		pauseOnHover && 'logoloop--pause-hover',
+		className,
+	]}
+	style={`--logoloop-gap: ${gap}px; --logoloop-logoHeight: ${logoHeight}px; --logoloop-fadeColor: ${fadeOutColor}; --logoloop-duration: ${durationSec}s; --logoloop-direction: ${direction === 'right' ? 'reverse' : 'normal'};`}
+	role="region"
+	aria-label={ariaLabel}
+	data-logoloop
+>
+	<div class="logoloop__track" data-logoloop-track>
+		{
+			[0, 1].map((copyIndex) => (
+				<ul
+					class="logoloop__list"
+					role="list"
+					aria-hidden={copyIndex > 0 ? 'true' : undefined}
+				>
+					{logos.map((item) => (
+						<li class="logoloop__item" role="listitem">
+							<img
+								src={item.src}
+								srcset={item.srcSet}
+								sizes={item.sizes}
+								width={item.width ?? 300}
+								height={item.height ?? logoHeight}
+								alt={copyIndex === 0 ? item.alt : ''}
+								loading="lazy"
+								decoding="async"
+								draggable="false"
+							/>
+						</li>
+					))}
+				</ul>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	.logoloop {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		--logoloop-gap: 32px;
+		--logoloop-logoHeight: 28px;
+		--logoloop-fadeColorAuto: #ffffff;
+		--logoloop-duration: 20s;
+		--logoloop-direction: normal;
+	}
+
+	.logoloop__track {
+		display: flex;
+		width: max-content;
+		user-select: none;
+		animation: logoloop-scroll var(--logoloop-duration) linear infinite;
+		animation-direction: var(--logoloop-direction);
+		animation-play-state: paused;
+	}
+
+	/* Play only while on-screen (JS toggles .is-inview) */
+	.logoloop.is-inview .logoloop__track {
+		animation-play-state: running;
+		will-change: transform;
+	}
+
+	.logoloop--pause-hover:hover .logoloop__track,
+	.logoloop.is-paused .logoloop__track {
+		animation-play-state: paused;
+	}
+
+	.logoloop__list {
+		display: flex;
+		align-items: center;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.logoloop__item {
+		flex: 0 0 auto;
+		margin-right: var(--logoloop-gap);
+		font-size: var(--logoloop-logoHeight);
+		line-height: 1;
+	}
+
+	.logoloop__item img {
+		height: var(--logoloop-logoHeight);
+		width: auto;
+		display: block;
+		object-fit: contain;
+		-webkit-user-drag: none;
+		pointer-events: none;
+	}
+
+	.logoloop--fade::before,
+	.logoloop--fade::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: clamp(24px, 8%, 120px);
+		pointer-events: none;
+		z-index: 10;
+	}
+
+	.logoloop--fade::before {
+		left: 0;
+		background: linear-gradient(
+			to right,
+			var(--logoloop-fadeColor, var(--logoloop-fadeColorAuto)) 0%,
+			rgba(0, 0, 0, 0) 100%
+		);
+	}
+
+	.logoloop--fade::after {
+		right: 0;
+		background: linear-gradient(
+			to left,
+			var(--logoloop-fadeColor, var(--logoloop-fadeColorAuto)) 0%,
+			rgba(0, 0, 0, 0) 100%
+		);
+	}
+
+	@keyframes logoloop-scroll {
+		from {
+			transform: translate3d(0, 0, 0);
+		}
+		to {
+			transform: translate3d(-50%, 0, 0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.logoloop__track,
+		.logoloop.is-inview .logoloop__track {
+			animation: none;
+			transform: translate3d(0, 0, 0);
+			will-change: auto;
+		}
+	}
+</style>
+
+<script>
+	function bindLogoLoops() {
+		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		document.querySelectorAll<HTMLElement>('[data-logoloop]').forEach((root) => {
+			if (root.dataset.logoloopBound) return;
+			root.dataset.logoloopBound = 'true';
+
+			if (reduce) {
+				root.classList.remove('is-inview');
+				return;
+			}
+
+			const io = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries) {
+						root.classList.toggle('is-inview', entry.isIntersecting);
+						const track = root.querySelector<HTMLElement>('[data-logoloop-track]');
+						if (track && !entry.isIntersecting) {
+							track.style.removeProperty('will-change');
+						}
+					}
+				},
+				{ root: null, threshold: 0, rootMargin: '80px 0px' },
+			);
+			io.observe(root);
+		});
+	}
+
+	document.addEventListener('astro:page-load', bindLogoLoops);
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', bindLogoLoops, { once: true });
+	} else {
+		bindLogoLoops();
+	}
+</script>

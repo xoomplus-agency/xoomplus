@@ -11,7 +11,8 @@
     "prebuild": "npm run check:wp-routes",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "warm:cache": "node scripts/warm-cache.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.7",
@@ -38,7 +39,11 @@
     "esbuild": true
   },
   "devDependencies": {
+    "fontverter": "^2.0.0",
+    "harfbuzzjs": "^1.6.3",
     "lighthouse": "^13.5.0",
-    "playwright": "^1.64.0"
+    "playwright": "^1.64.0",
+    "sharp": "^0.35.5",
+    "subset-font": "^2.9.0"
   }
 }

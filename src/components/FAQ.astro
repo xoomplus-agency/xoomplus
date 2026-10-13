@@ -83,7 +83,7 @@ const faqJsonLd = {
 		<p class="text-on-light mx-auto max-w-[860px]">{text}</p>
 	</div>
 
-	<FAQAccordion client:load items={faqItems} defaultOpen={defaultOpen} />
+	<FAQAccordion client:visible items={faqItems} defaultOpen={defaultOpen} />
 </Section>
 
 {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />}

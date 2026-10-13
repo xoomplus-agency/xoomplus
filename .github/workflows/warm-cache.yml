@@ -1,0 +1,25 @@
+# Warm Vercel ISR HTML after a successful production deploy.
+# Requires repo secrets: SITE_URL (Astro frontend origin, not WordPress).
+name: Warm cache
+
+on:
+  workflow_dispatch:
+  # Uncomment when Vercel deploy hooks / GitHub deploy events are wired:
+  # deployment_status:
+
+jobs:
+  warm:
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Warm sitemap URLs
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CONCURRENCY: '8'
+        run: npm run warm:cache

@@ -54,12 +54,15 @@ const classes = [
 	.join(' ');
 
 const Tag = href && !isDisabled ? 'a' : 'button';
+const prefetchViewport =
+	Tag === 'a' && typeof href === 'string' && href.startsWith('/') && !href.startsWith('/#');
 ---
 
 <Tag
 	class={classes}
 	id={id}
 	href={Tag === 'a' ? href : undefined}
+	data-astro-prefetch={prefetchViewport ? 'viewport' : undefined}
 	type={Tag === 'button' ? type : undefined}
 	disabled={Tag === 'button' ? isDisabled : undefined}
 	aria-busy={loading || undefined}

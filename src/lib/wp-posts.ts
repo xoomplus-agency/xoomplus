@@ -17,22 +17,20 @@ const LISTING_FIELDS =
 const POST_FIELDS =
 	'id,slug,link,date,status,title,excerpt,content,featured_media,categories,yoast_head_json,_links,_embedded';
 
-/** Response Cache-Control for blog listing HTML/JSON — never edge-cache the list. */
+/** Error / 404 / redirect responses — never edge-cache. */
 export const BLOG_NO_STORE = 'private, no-store, no-cache, must-revalidate, max-age=0';
 
 /**
- * Single post HTML — short CDN TTL + SWR. Origin still fetches WP on miss;
- * `/api/revalidate` + `?refresh=1` clear the in-memory post memo so publish
- * shows on the next origin render (CDN max staleness = s-maxage).
+ * Blog listing + single-post HTML — CDN TTL aligned with Vercel ISR (300s).
+ * `/api/revalidate` purges ISR via bypass token; `?refresh=1` forces no-store.
  */
+export const BLOG_LIST_CACHE_CONTROL =
+	'public, s-maxage=300, stale-while-revalidate=86400';
+
 export const BLOG_POST_CACHE_CONTROL =
-	'public, s-maxage=60, stale-while-revalidate=86400';
+	'public, s-maxage=300, stale-while-revalidate=86400';
 
 export const BLOG_LIST_PAGE_SIZE = 9;
-
-/** In-memory memo for getPostBySlug — cleared by clearWpPostsCache / ?refresh=1. */
-const postBySlugMemo = new Map<string, { at: number; post: WpPost | null }>();
-const POST_MEMO_TTL_MS = 60_000;
 
 export type GetPostsParams = {
 	page?: number;
@@ -51,6 +49,11 @@ export type PostsResult = {
 	/** From `X-WP-TotalPages` on the same response. */
 	totalPages: number;
 };
+
+/** In-memory memos — cleared by clearWpPostsCache / ?refresh=1. */
+const postBySlugMemo = new Map<string, { at: number; post: WpPost | null }>();
+const postsListMemo = new Map<string, { at: number; result: PostsResult }>();
+const POST_MEMO_TTL_MS = 60_000;
 
 function getApiBase(): string {
 	let fromEnv: string | undefined;
@@ -116,7 +119,7 @@ async function maybeDevFetchDelay(): Promise<void> {
 
 /**
  * Fetch a page of published posts. `total` is always `Number(X-WP-Total)`.
- * No auth header. No in-memory or disk memo.
+ * Short in-memory memo (same instance) — cleared on revalidate / ?refresh=1.
  */
 export async function getPosts(params: GetPostsParams = {}): Promise<PostsResult> {
 	await maybeDevFetchDelay();
@@ -130,6 +133,12 @@ export async function getPosts(params: GetPostsParams = {}): Promise<PostsResult
 		params.category && params.category > 0 ? Math.floor(params.category) : undefined;
 	const search = params.search?.trim() || undefined;
 	const includeContent = Boolean(params.includeContent);
+
+	const memoKey = `${page}|${perPage}|${category ?? ''}|${search ?? ''}|${includeContent ? 1 : 0}`;
+	const memoHit = postsListMemo.get(memoKey);
+	if (memoHit && Date.now() - memoHit.at < POST_MEMO_TTL_MS) {
+		return memoHit.result;
+	}
 
 	const base = getApiBase();
 	const query = new URLSearchParams({
@@ -188,11 +197,13 @@ export async function getPosts(params: GetPostsParams = {}): Promise<PostsResult
 		Number(res.headers.get('X-WP-TotalPages') ?? res.headers.get('x-wp-totalpages') ?? '1') ||
 		1;
 
-	return {
+	const result: PostsResult = {
 		posts: await mapRawPosts(data),
 		total,
 		totalPages,
 	};
+	postsListMemo.set(memoKey, { at: Date.now(), result });
+	return result;
 }
 
 /**
@@ -258,4 +269,5 @@ export async function getPostsPages(
  */
 export function clearWpPostsCache(_opts?: { disk?: boolean }): void {
 	postBySlugMemo.clear();
+	postsListMemo.clear();
 }

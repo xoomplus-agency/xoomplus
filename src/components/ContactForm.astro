@@ -184,11 +184,11 @@ const ids = {
 					Budget <span class="contact-field__optional">(optional)</span>
 				</label>
 				{/*
-					client:load — client:visible left islands unhydrated (SSR button inert).
-					Trigger still SSRs at 44px so layout does not jump.
+					client:visible — hydrate when the form approaches the viewport so
+					GlideSelect motion is off the critical path (not on the home page).
 				*/}
 				<FormSelect
-					client:load
+					client:visible
 					id={ids.budget}
 					name="budget"
 					placeholder="Select a budget range"
@@ -207,7 +207,7 @@ const ids = {
 					Ideal timeline <span class="contact-field__optional">(optional)</span>
 				</label>
 				<FormSelect
-					client:load
+					client:visible
 					id={ids.timeline}
 					name="timeline"
 					placeholder="When would you like to start?"
@@ -454,42 +454,71 @@ const ids = {
 <script>
 	import { initContactForms } from '../scripts/contact-form';
 
-	initContactForms();
-
 	const NOT_SURE = 'not-sure';
 
-	document.querySelectorAll<HTMLFormElement>('[data-enquiry-form]').forEach((form) => {
-		if (form.dataset.enquiryChipsBound) return;
-		form.dataset.enquiryChipsBound = 'true';
+	function bindEnquiryChips() {
+		document.querySelectorAll<HTMLFormElement>('[data-enquiry-form]').forEach((form) => {
+			if (form.dataset.enquiryChipsBound) return;
+			form.dataset.enquiryChipsBound = 'true';
 
-		const serviceInputs = [
-			...form.querySelectorAll<HTMLInputElement>(
-				'.enquiry-chips input[type="checkbox"][name="services"]',
-			),
-		];
+			const serviceInputs = [
+				...form.querySelectorAll<HTMLInputElement>(
+					'.enquiry-chips input[type="checkbox"][name="services"]',
+				),
+			];
 
-		function syncChip(input: HTMLInputElement) {
-			input.closest('.enquiry-chip')?.classList.toggle('enquiry-chip--checked', input.checked);
-		}
+			function syncChip(input: HTMLInputElement) {
+				input.closest('.enquiry-chip')?.classList.toggle('enquiry-chip--checked', input.checked);
+			}
 
-		serviceInputs.forEach((input) => {
-			input.addEventListener('change', () => {
-				if (input.value === NOT_SURE && input.checked) {
-					serviceInputs.forEach((other) => {
-						if (other === input) return;
-						other.checked = false;
-						syncChip(other);
-					});
-				} else if (input.value !== NOT_SURE && input.checked) {
-					const notSure = serviceInputs.find((el) => el.value === NOT_SURE);
-					if (notSure?.checked) {
-						notSure.checked = false;
-						syncChip(notSure);
+			serviceInputs.forEach((input) => {
+				input.addEventListener('change', () => {
+					if (input.value === NOT_SURE && input.checked) {
+						serviceInputs.forEach((other) => {
+							if (other === input) return;
+							other.checked = false;
+							syncChip(other);
+						});
+					} else if (input.value !== NOT_SURE && input.checked) {
+						const notSure = serviceInputs.find((el) => el.value === NOT_SURE);
+						if (notSure?.checked) {
+							notSure.checked = false;
+							syncChip(notSure);
+						}
 					}
-				}
+					syncChip(input);
+				});
 				syncChip(input);
 			});
-			syncChip(input);
 		});
-	});
+	}
+
+	function boot() {
+		initContactForms();
+		bindEnquiryChips();
+	}
+
+	function scheduleContactBoot() {
+		const form = document.querySelector('[data-contact-form]');
+		if (!form) {
+			boot();
+			return;
+		}
+		if ('IntersectionObserver' in window) {
+			const io = new IntersectionObserver(
+				(entries) => {
+					if (!entries.some((e) => e.isIntersecting)) return;
+					io.disconnect();
+					boot();
+				},
+				{ rootMargin: '200px 0px' },
+			);
+			io.observe(form);
+		} else {
+			boot();
+		}
+	}
+
+	document.addEventListener('astro:page-load', scheduleContactBoot);
+	scheduleContactBoot();
 </script>

@@ -1,27 +1,35 @@
 ---
-import LogoLoop from './LogoLoop.tsx';
+import LogoLoop from './LogoLoop.astro';
 
 const logos = [
 	{
 		src: '/images/brand-concisemedico.webp',
+		srcSet: '/images/brand-concisemedico.webp 300w, /images/brand-concisemedico-2x.webp 600w',
+		sizes: '300px',
 		alt: 'ConciseMedico',
 		width: 300,
 		height: 68,
 	},
 	{
 		src: '/images/brand-sterling-cooper.webp',
+		srcSet: '/images/brand-sterling-cooper.webp 300w, /images/brand-sterling-cooper-2x.webp 600w',
+		sizes: '300px',
 		alt: 'Sterling Cooper Consultants Ltd.',
 		width: 300,
 		height: 68,
 	},
 	{
 		src: '/images/brand-bodykite.webp',
+		srcSet: '/images/brand-bodykite.webp 300w, /images/brand-bodykite-2x.webp 600w',
+		sizes: '300px',
 		alt: 'Bodykite',
 		width: 300,
 		height: 68,
 	},
 	{
 		src: '/images/brand-gopsych.webp',
+		srcSet: '/images/brand-gopsych.webp 300w, /images/brand-gopsych-2x.webp 600w',
+		sizes: '300px',
 		alt: 'Go Psych',
 		width: 300,
 		height: 68,
@@ -49,16 +57,13 @@ const logos = [
 		</div>
 		<div class="brands-logo-loop mx-auto w-full max-w-full">
 			<LogoLoop
-				client:load
 				logos={logos}
 				speed={70}
 				direction="left"
 				logoHeight={68}
 				gap={56}
-				hoverSpeed={0}
 				fadeOut
 				fadeOutColor="#FFFFFF"
-				scaleOnHover={false}
 				ariaLabel="Xoomplus clients and technology partners"
 			/>
 		</div>

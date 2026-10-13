@@ -4,38 +4,59 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* SF Pro Display — used weights only; font-display:swap so LCP is not blocked */
+/*
+ * SF Pro Display — Latin-subset woff2 (used weights only).
+ * TODO: SF Pro is Apple's font; confirm web licensing. If not licensed for web,
+ * replace with a visually similar open font (e.g. Inter Display / Inter Tight).
+ * Metrics overrides reduce CLS while swap fallback (system UI) is showing.
+ */
 @font-face {
 	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYREGULAR.OTF") format("opentype");
+	src: url("../assets/fonts/SFPRODISPLAYREGULAR.woff2") format("woff2");
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 95%;
+	descent-override: 24%;
+	line-gap-override: 0%;
 }
 
 @font-face {
 	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYMEDIUM.OTF") format("opentype");
+	src: url("../assets/fonts/SFPRODISPLAYMEDIUM.woff2") format("woff2");
 	font-weight: 500;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 95%;
+	descent-override: 24%;
+	line-gap-override: 0%;
 }
 
 @font-face {
 	font-family: "SF Pro Display";
-	src: url("../assets/fonts/SFPRODISPLAYBOLD.OTF") format("opentype");
+	src: url("../assets/fonts/SFPRODISPLAYBOLD.woff2") format("woff2");
 	font-weight: 600 700;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 95%;
+	descent-override: 24%;
+	line-gap-override: 0%;
 }
 
-/* Inter — self-hosted for pills, body, and other explicit Inter usage */
+/* Inter — self-hosted weights actually used site-wide (400–700) */
 @font-face {
 	font-family: "Inter";
 	src: url("../assets/fonts/Inter-400.woff2") format("woff2");
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 90%;
+	descent-override: 22%;
+	line-gap-override: 0%;
 }
 
 @font-face {
@@ -44,6 +65,10 @@
 	font-weight: 500;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 90%;
+	descent-override: 22%;
+	line-gap-override: 0%;
 }
 
 @font-face {
@@ -52,6 +77,10 @@
 	font-weight: 600;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 90%;
+	descent-override: 22%;
+	line-gap-override: 0%;
 }
 
 @font-face {
@@ -60,6 +89,10 @@
 	font-weight: 700;
 	font-style: normal;
 	font-display: swap;
+	size-adjust: 100%;
+	ascent-override: 90%;
+	descent-override: 22%;
+	line-gap-override: 0%;
 }
 
 @theme {

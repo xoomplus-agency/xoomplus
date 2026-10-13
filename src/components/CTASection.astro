@@ -1,37 +1,88 @@
 ---
 import Button from './Button.astro';
+
+interface Props {
+	heading?: string;
+	text?: string;
+	buttonHref?: string;
+	buttonLabel?: string;
+	/** Compact card for in-article placement (no page-section / container). */
+	embedded?: boolean;
+	id?: string;
+}
+
+const {
+	heading: headingProp,
+	text = "Tell us what you're working towards. We'll explore the challenge, the possibilities and the right place to start.",
+	buttonHref = '#contact',
+	buttonLabel = 'Discuss your project',
+	embedded = false,
+	id = embedded ? 'blog-cta' : 'cta',
+} = Astro.props;
+
+/** Site CTA keeps the design default heading; blog/embedded only shows a WP-provided heading. */
+const heading = embedded
+	? (headingProp?.trim() || '')
+	: (headingProp?.trim() || "Let's move your business forward.");
+const headingId = `${id}-heading`;
 ---
 
-<section
-	id="cta"
-	data-bg="dark"
-	class="page-section bg-secondary-white py-section"
-	aria-labelledby="cta-heading"
->
-	<div class="container">
+{
+	embedded ? (
 		<div
-			class="cta-card"
+			class="cta-card cta-card--embedded"
 			style="background-image: url('/images/cta-bg-image.webp')"
+			aria-label="Call to action"
 		>
 			<div class="cta-card__inner">
 				<div class="cta-card__left" data-reveal="up">
-					<p class="pill-dark text-primary m-0">Your next chapter</p>
-					<h2 id="cta-heading" class="cta-card__heading text-hero-h1 m-0 mt-4">
-						Let's move your business forward.
-					</h2>
-					<p class="cta-card__copy m-0">
-						Tell us what you're working towards. We'll explore the challenge, the possibilities
-						and the right place to start.
+					{
+						heading ? (
+							<h2 id={headingId} class="cta-card__heading text-hero-h1 m-0">
+								{heading}
+							</h2>
+						) : null
+					}
+					<p class:list={['cta-card__copy', 'm-0', heading && 'cta-card__copy--after-heading']}>
+						{text}
 					</p>
 				</div>
 				<div class="cta-card__right">
-					<Button href="#contact">Discuss your project</Button>
+					<Button href={buttonHref}>{buttonLabel}</Button>
 					<a class="cta-card__email" href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	) : (
+		<section
+			id={id}
+			data-bg="dark"
+			class="page-section bg-secondary-white py-section"
+			aria-labelledby={headingId}
+		>
+			<div class="container">
+				<div
+					class="cta-card"
+					style="background-image: url('/images/cta-bg-image.webp')"
+				>
+					<div class="cta-card__inner">
+						<div class="cta-card__left" data-reveal="up">
+							<p class="pill-dark text-primary m-0">Your next chapter</p>
+							<h2 id={headingId} class="cta-card__heading text-hero-h1 m-0 mt-4">
+								{heading}
+							</h2>
+							<p class="cta-card__copy m-0">{text}</p>
+						</div>
+						<div class="cta-card__right">
+							<Button href={buttonHref}>{buttonLabel}</Button>
+							<a class="cta-card__email" href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	)
+}
 
 <style>
 	.cta-card {
@@ -43,6 +94,11 @@ import Button from './Button.astro';
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: cover;
+	}
+
+	.cta-card--embedded {
+		margin: 32px 0 0;
+		border-radius: 24px;
 	}
 
 	.cta-card__inner {
@@ -77,8 +133,13 @@ import Button from './Button.astro';
 		margin-inline: 0;
 	}
 
+	/* Blog/embedded CTA: hero gradient treatment at fixed 36px */
+	.cta-card--embedded .cta-card__heading {
+		font-size: 36px;
+		line-height: 1.25;
+	}
+
 	.cta-card__copy {
-		margin-top: 0.5em;
 		max-width: 65ch;
 		font-family: var(--font-inter);
 		font-size: var(--text-body);
@@ -86,6 +147,12 @@ import Button from './Button.astro';
 		line-height: var(--text-body--line-height);
 		text-wrap: pretty;
 		color: var(--text-body-dark);
+	}
+
+	.cta-card__copy--after-heading,
+	.cta-card__left > .pill-dark + .cta-card__heading + .cta-card__copy,
+	.cta-card__left > .cta-card__heading + .cta-card__copy {
+		margin-top: 0.5em;
 	}
 
 	.cta-card__right {

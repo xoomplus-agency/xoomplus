@@ -1,10 +1,10 @@
 ---
 import Button from './Button.astro';
 import { servicesMenu } from '../data/services-menu';
-import { getWpPagePath } from '../lib/wp-seo';
+import { WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 
 const { columns, footer } = servicesMenu;
-const allServicesHref = await getWpPagePath('services');
+const allServicesHref = WP_PAGE_FALLBACK_ROUTES.services;
 const panelId = 'services-mega-menu';
 ---
 
@@ -30,7 +30,7 @@ const panelId = 'services-mega-menu';
 								colIndex > 0 && 'services-mega__col--divided',
 							]}
 						>
-							<a class="services-mega__title-row" href={column.href} data-mega-link>
+							<a class="services-mega__title-row" href={column.href} data-mega-link data-astro-prefetch="viewport">
 								<span class="services-mega__title">{column.title}</span>
 								<svg
 									class="services-mega__title-arrow"
@@ -55,7 +55,7 @@ const panelId = 'services-mega-menu';
 								<ul class="services-mega__links">
 									{column.links.map((item) => (
 										<li>
-											<a class="services-mega__link" href={item.href} data-mega-link>
+											<a class="services-mega__link" href={item.href} data-mega-link data-astro-prefetch="viewport">
 												<span>{item.label}</span>
 												<svg
 													class="services-mega__link-arrow"
@@ -84,7 +84,7 @@ const panelId = 'services-mega-menu';
 									<ul class="services-mega__links">
 										{group.links.map((item) => (
 											<li>
-												<a class="services-mega__link" href={item.href} data-mega-link>
+												<a class="services-mega__link" href={item.href} data-mega-link data-astro-prefetch="viewport">
 													<span>{item.label}</span>
 													<svg
 														class="services-mega__link-arrow"
@@ -127,7 +127,7 @@ const panelId = 'services-mega-menu';
 									itemIndex > 0 && 'services-mega__stack-block--divided',
 								]}
 							>
-								<a class="services-mega__title-row" href={item.href} data-mega-link>
+								<a class="services-mega__title-row" href={item.href} data-mega-link data-astro-prefetch="viewport">
 									<span class="services-mega__title">{item.title}</span>
 									<svg
 										class="services-mega__title-arrow"
@@ -151,7 +151,7 @@ const panelId = 'services-mega-menu';
 								<ul class="services-mega__text-links">
 									{item.textLinks.map((tl) => (
 										<li>
-											<a class="services-mega__text-link" href={tl.href} data-mega-link>
+											<a class="services-mega__text-link" href={tl.href} data-mega-link data-astro-prefetch="viewport">
 												{tl.label}
 											</a>
 										</li>
@@ -166,7 +166,7 @@ const panelId = 'services-mega-menu';
 	</div>
 
 	<div class="services-mega__footer">
-		<a class="services-mega__all" href={allServicesHref} data-mega-link>
+		<a class="services-mega__all" href={allServicesHref} data-mega-link data-astro-prefetch="viewport">
 			<span>All Services</span>
 			<svg
 				class="services-mega__all-arrow"

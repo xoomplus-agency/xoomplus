@@ -147,12 +147,23 @@ const cards = [
 		margin-top: 10px;
 	}
 
-	/* Full-bleed under the dark section — no gap, edge-to-edge */
-	:global(.what-next-map) {
+	/* Full-bleed under the dark section — edge-to-edge of the viewport */
+	:global(.what-next-map.location-map) {
+		display: block;
 		width: 100%;
+		max-width: none;
 		height: 320px;
 		margin: 0;
 		border-radius: 0;
+		align-self: stretch;
+	}
+
+	:global(.what-next-map.location-map img) {
+		width: 100%;
+		max-width: none;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
 	}
 
 	/*
@@ -179,7 +190,7 @@ const cards = [
 			gap: 24px;
 		}
 
-		:global(.what-next-map) {
+		:global(.what-next-map.location-map) {
 			height: 450px;
 		}
 	}

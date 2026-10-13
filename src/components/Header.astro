@@ -1,7 +1,7 @@
 ---
 import Button from './Button.astro';
 import ServicesMegaMenu from './ServicesMegaMenu.astro';
-import { getNavItemsResolved, isNavActive, type NavItem } from '../data/nav';
+import { getNavItemsStatic, isNavActive, type NavItem } from '../data/nav';
 import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
 
 interface Props {
@@ -12,8 +12,7 @@ interface Props {
 	/** When true, no nav item is marked active (404 and similar). */
 	suppressActive?: boolean;
 	/**
-	 * Pre-resolved nav (e.g. fetched in parallel with the post). When set,
-	 * skips a second getNavItemsResolved() round-trip.
+	 * Optional override. Default is build-time static nav (no WP per request).
 	 */
 	navItems?: NavItem[];
 }
@@ -26,7 +25,7 @@ const {
 } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const nav = navItemsProp ?? (await getNavItemsResolved());
+const nav = navItemsProp ?? getNavItemsStatic();
 const allServicesHref =
 	nav.find((item) => item.label === 'Services')?.href ?? '/services';
 const megaPanelId = 'services-mega-menu';
@@ -34,10 +33,10 @@ const mobileDrawerId = 'mobile-nav-drawer';
 const mobileServicesId = 'mobile-services-sheet';
 const servicesSections = getServicesMenuSections();
 
-function isActive(href: string, matchPrefixes?: string[]) {
+function isActive(item: NavItem) {
 	if (suppressActive) return false;
-	if (href.startsWith('#')) return false;
-	return isNavActive(pathname, href, matchPrefixes);
+	if (item.href.startsWith('#')) return false;
+	return isNavActive(pathname, item.href, item.matchPrefixes, item.matchBlogPosts);
 }
 
 ---
@@ -47,6 +46,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	data-site-header
 	data-variant={variant}
 	data-theme={theme === 'light' ? 'light' : undefined}
+	transition:persist="site-header"
 >
 	<!--
 		Default: Logo left · glass nav (links only) center · CTA right
@@ -63,19 +63,24 @@ function isActive(href: string, matchPrefixes?: string[]) {
 			data-nav-logo
 		>
 			<img
-				src="/images/logo-xoomplus.webp"
+				src="/images/logo-xoomplus-104.webp"
+				srcset="/images/logo-xoomplus-104.webp 104w, /images/logo-xoomplus-208.webp 208w"
+				sizes="(max-width: 1023px) 104px, clamp(104px, 10vw, 132px)"
 				alt="Xoomplus"
-				width="132"
-				height="36"
+				width="104"
+				height="24"
 				class="logo logo--white"
 				loading="eager"
 				decoding="async"
+				fetchpriority="high"
 			/>
 			<img
-				src="/images/logo-black.webp"
+				src="/images/logo-black-104.webp"
+				srcset="/images/logo-black-104.webp 104w, /images/logo-black-208.webp 208w"
+				sizes="(max-width: 1023px) 104px, clamp(104px, 10vw, 132px)"
 				alt=""
-				width="132"
-				height="36"
+				width="104"
+				height="24"
 				class="logo logo--black"
 				loading="eager"
 				decoding="async"
@@ -98,7 +103,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 			<ul class="nav-pill-links relative z-[1] m-0 flex list-none items-center gap-0 p-1" data-nav-links>
 				{
 					nav.map((item) => {
-						const active = isActive(item.href, item.matchPrefixes);
+						const active = isActive(item);
 						const isServices = Boolean(item.hasDropdown);
 
 						if (isServices) {
@@ -110,6 +115,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 											active && 'nav-link-active font-semibold',
 										]}
 										href={item.href}
+										data-astro-prefetch="viewport"
 										aria-current={active ? 'page' : undefined}
 										aria-haspopup="true"
 										aria-expanded="false"
@@ -148,6 +154,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 										active && 'nav-link-active font-semibold',
 									]}
 									href={item.href}
+									data-astro-prefetch="viewport"
 									aria-current={active ? 'page' : undefined}
 									data-nav-link
 								>
@@ -172,19 +179,24 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	>
 		<a class="nav-logo-link shrink-0" href="/" aria-label="Xoomplus home" data-nav-logo-mobile>
 			<img
-				src="/images/logo-xoomplus.webp"
+				src="/images/logo-xoomplus-104.webp"
+				srcset="/images/logo-xoomplus-104.webp 104w, /images/logo-xoomplus-208.webp 208w"
+				sizes="104px"
 				alt="Xoomplus"
-				width="132"
-				height="36"
+				width="104"
+				height="24"
 				class="logo logo--white"
 				loading="eager"
 				decoding="async"
+				fetchpriority="high"
 			/>
 			<img
-				src="/images/logo-black.webp"
+				src="/images/logo-black-104.webp"
+				srcset="/images/logo-black-104.webp 104w, /images/logo-black-208.webp 208w"
+				sizes="104px"
 				alt=""
-				width="132"
-				height="36"
+				width="104"
+				height="24"
 				class="logo logo--black"
 				loading="eager"
 				decoding="async"
@@ -237,7 +249,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 				<ul class="mobile-drawer__list">
 					{
 						nav.map((item) => {
-							const active = isActive(item.href, item.matchPrefixes);
+							const active = isActive(item);
 							const isServices = Boolean(item.hasDropdown);
 
 							if (isServices) {
@@ -278,6 +290,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 									<a
 										class:list={['mobile-drawer__link', active && 'is-active']}
 										href={item.href}
+										data-astro-prefetch="viewport"
 										aria-current={active ? 'page' : undefined}
 										data-mobile-drawer-link
 									>
@@ -574,7 +587,8 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		object-fit: fill;
 		object-position: center;
 		transform: translateY(-5px);
-		transition: none;
+		transform-origin: left center;
+		transition: transform var(--nav-shrink-duration) var(--nav-shrink-ease);
 	}
 
 	.nav-logo-link .logo--black {
@@ -585,6 +599,8 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		height: calc(clamp(104px, 10vw, 132px) * 57 / 244);
 		object-fit: fill;
 		transform: translateY(calc(-50% - 5px));
+		transform-origin: left center;
+		transition: transform var(--nav-shrink-duration) var(--nav-shrink-ease), opacity var(--nav-theme-duration);
 	}
 
 	[data-site-header] .nav-logo-link .logo--white {
@@ -612,24 +628,75 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		background-color: transparent;
 	}
 
+	/*
+	 * Shrink-on-scroll (original geometry + perf-safe motion):
+	 * - Trigger: 100px (SCROLL_THRESHOLD)
+	 * - Timing: 250ms / cubic-bezier(0.23, 1, 0.32, 1)
+	 * - Width/padding on the fixed bar (no page reflow / CLS)
+	 * - Logo: transform scale; glass shell: ::after opacity
+	 */
 	[data-nav-desktop],
 	[data-nav-mobile] {
+		/* Explicit lengths so width can interpolate (auto → length does not). */
+		width: 100%;
+		max-width: 1920px;
+		margin-inline: auto;
 		transition:
 			width var(--nav-shrink-duration) var(--nav-shrink-ease),
 			max-width var(--nav-shrink-duration) var(--nav-shrink-ease),
-			margin-top var(--nav-shrink-duration) var(--nav-shrink-ease),
-			margin-inline var(--nav-shrink-duration) var(--nav-shrink-ease),
 			padding var(--nav-shrink-duration) var(--nav-shrink-ease),
+			margin-top var(--nav-shrink-duration) var(--nav-shrink-ease),
 			border-radius var(--nav-shrink-duration) var(--nav-shrink-ease),
 			gap var(--nav-shrink-duration) var(--nav-shrink-ease);
 	}
 
-	[data-nav-cluster] {
-		position: relative;
-		transition: none;
+	/* Glass shell — always present, fades in when scrolled (no box-shadow animation) */
+	[data-nav-desktop]::after,
+	[data-nav-mobile]::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: var(--nav-pill-bg);
+		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
+		box-shadow: var(--nav-glass-shadow);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 0;
+		transition: opacity var(--nav-shrink-duration) var(--nav-shrink-ease);
 	}
 
-	/* Scrolled: move the ONE glass surface to the unified shell */
+	[data-nav-desktop]::before,
+	[data-nav-mobile]::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: var(--nav-rim);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box exclude,
+			linear-gradient(#000 0 0);
+		pointer-events: none;
+		z-index: 0;
+		opacity: 0;
+		transition: opacity var(--nav-shrink-duration) var(--nav-shrink-ease);
+	}
+
+	[data-nav-cluster] {
+		position: relative;
+		transition:
+			background-color var(--nav-shrink-duration) var(--nav-shrink-ease),
+			box-shadow var(--nav-shrink-duration) var(--nav-shrink-ease);
+	}
+
+	/* Scrolled: unified glass pill around logo + links + CTA */
+	[data-site-header].is-scrolled [data-nav-desktop],
 	[data-site-header][data-scrolled] [data-nav-desktop] {
 		width: min(94vw, 1100px);
 		max-width: 1100px;
@@ -638,31 +705,18 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		border: none;
 		border-radius: 9999px;
 		gap: 0.75rem;
-		background: var(--nav-pill-bg);
-		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
-		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
-		box-shadow: var(--nav-glass-shadow);
+		background: transparent;
 	}
 
+	[data-site-header].is-scrolled [data-nav-desktop]::after,
+	[data-site-header][data-scrolled] [data-nav-desktop]::after,
+	[data-site-header].is-scrolled [data-nav-desktop]::before,
 	[data-site-header][data-scrolled] [data-nav-desktop]::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		padding: 1px;
-		background: var(--nav-rim);
-		-webkit-mask:
-			linear-gradient(#000 0 0) content-box,
-			linear-gradient(#000 0 0);
-		-webkit-mask-composite: xor;
-		mask:
-			linear-gradient(#000 0 0) content-box exclude,
-			linear-gradient(#000 0 0);
-		pointer-events: none;
-		z-index: 0;
+		opacity: 1;
 	}
 
 	@media (min-width: 1024px) {
+		[data-site-header].is-scrolled [data-nav-desktop],
 		[data-site-header][data-scrolled] [data-nav-desktop] {
 			padding-left: 20px;
 			padding-right: 20px;
@@ -670,12 +724,14 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	}
 
 	@media (min-width: 1280px) {
+		[data-site-header].is-scrolled [data-nav-desktop],
 		[data-site-header][data-scrolled] [data-nav-desktop] {
 			padding-left: 24px;
 			padding-right: 24px;
 		}
 	}
 
+	[data-site-header].is-scrolled [data-nav-cluster],
 	[data-site-header][data-scrolled] [data-nav-cluster] {
 		background: transparent;
 		-webkit-backdrop-filter: none;
@@ -683,37 +739,55 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		box-shadow: none;
 	}
 
+	[data-site-header].is-scrolled [data-nav-cluster]::before,
 	[data-site-header][data-scrolled] [data-nav-cluster]::before {
-		display: none;
+		opacity: 0 !important;
 	}
 
+	[data-site-header].is-scrolled [data-nav-desktop] > .nav-logo-link,
 	[data-site-header][data-scrolled] [data-nav-desktop] > .nav-logo-link,
+	[data-site-header].is-scrolled [data-nav-desktop] > [data-nav-cluster],
 	[data-site-header][data-scrolled] [data-nav-desktop] > [data-nav-cluster],
+	[data-site-header].is-scrolled [data-nav-desktop] > [data-nav-cta],
 	[data-site-header][data-scrolled] [data-nav-desktop] > [data-nav-cta] {
 		position: relative;
 		z-index: 1;
 	}
 
+	[data-site-header].is-scrolled .nav-logo-link .logo--white,
+	[data-site-header][data-scrolled] .nav-logo-link .logo--white {
+		transform: translateY(-5px) scale(0.8);
+	}
+
+	[data-site-header].is-scrolled .nav-logo-link .logo--black,
+	[data-site-header][data-scrolled] .nav-logo-link .logo--black {
+		transform: translateY(calc(-50% - 5px)) scale(0.8);
+	}
+
 	@media (max-width: 1023px), (prefers-reduced-transparency: reduce) {
-		[data-site-header][data-scrolled] [data-nav-desktop] {
+		[data-site-header].is-scrolled [data-nav-desktop]::after,
+		[data-site-header][data-scrolled] [data-nav-desktop]::after {
 			background: rgba(20, 19, 18, 0.78);
 			-webkit-backdrop-filter: none;
 			backdrop-filter: none;
 			box-shadow: none;
 		}
+		[data-site-header].is-scrolled [data-nav-desktop]::before,
 		[data-site-header][data-scrolled] [data-nav-desktop]::before {
-			display: none;
+			opacity: 0;
 		}
 	}
 
 	@media (prefers-contrast: more) {
-		[data-site-header][data-scrolled] [data-nav-desktop] {
+		[data-site-header].is-scrolled [data-nav-desktop]::after,
+		[data-site-header][data-scrolled] [data-nav-desktop]::after {
 			background: rgba(20, 19, 18, 0.9);
 			-webkit-backdrop-filter: none;
 			backdrop-filter: none;
 		}
+		[data-site-header].is-scrolled [data-nav-desktop]::before,
 		[data-site-header][data-scrolled] [data-nav-desktop]::before {
-			display: none;
+			opacity: 0;
 		}
 	}
 
@@ -722,6 +796,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	}
 
 	/* ── Mobile top: scroll glass behind logo + menu ── */
+	[data-site-header].is-scrolled [data-nav-mobile],
 	[data-site-header][data-scrolled] [data-nav-mobile] {
 		width: min(94vw, 100%);
 		max-width: 100%;
@@ -730,28 +805,14 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		padding: 0.5rem 14px;
 		padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
 		border-radius: 9999px;
-		background: var(--nav-pill-bg);
-		-webkit-backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
-		backdrop-filter: blur(var(--nav-pill-blur)) saturate(var(--nav-pill-saturate));
-		box-shadow: var(--nav-glass-shadow);
+		background: transparent;
 	}
 
+	[data-site-header].is-scrolled [data-nav-mobile]::after,
+	[data-site-header][data-scrolled] [data-nav-mobile]::after,
+	[data-site-header].is-scrolled [data-nav-mobile]::before,
 	[data-site-header][data-scrolled] [data-nav-mobile]::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		padding: 1px;
-		background: var(--nav-rim);
-		-webkit-mask:
-			linear-gradient(#000 0 0) content-box,
-			linear-gradient(#000 0 0);
-		-webkit-mask-composite: xor;
-		mask:
-			linear-gradient(#000 0 0) content-box exclude,
-			linear-gradient(#000 0 0);
-		pointer-events: none;
-		z-index: 0;
+		opacity: 1;
 	}
 
 	[data-nav-mobile] {
@@ -764,16 +825,19 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	}
 
 	@media (prefers-reduced-transparency: reduce) {
-		[data-site-header][data-scrolled] [data-nav-mobile] {
+		[data-site-header].is-scrolled [data-nav-mobile]::after,
+		[data-site-header][data-scrolled] [data-nav-mobile]::after {
 			background: rgba(20, 19, 18, 0.85);
 			-webkit-backdrop-filter: none;
 			backdrop-filter: none;
 			box-shadow: none;
 		}
+		[data-site-header].is-scrolled [data-nav-mobile]::before,
 		[data-site-header][data-scrolled] [data-nav-mobile]::before {
-			display: none;
+			opacity: 0;
 		}
-		[data-site-header][data-theme='light'][data-scrolled] [data-nav-mobile] {
+		[data-site-header][data-theme='light'].is-scrolled [data-nav-mobile]::after,
+		[data-site-header][data-theme='light'][data-scrolled] [data-nav-mobile]::after {
 			background: rgba(247, 247, 245, 0.95);
 		}
 	}
@@ -1250,6 +1314,11 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	@media (prefers-reduced-motion: reduce) {
 		[data-site-header] [data-nav-desktop],
 		[data-site-header] [data-nav-mobile],
+		[data-site-header] [data-nav-desktop]::before,
+		[data-site-header] [data-nav-desktop]::after,
+		[data-site-header] [data-nav-mobile]::before,
+		[data-site-header] [data-nav-mobile]::after,
+		[data-site-header] .nav-logo-link .logo,
 		.mobile-drawer,
 		.mobile-drawer__backdrop,
 		.mobile-services-sheet,
@@ -1264,67 +1333,44 @@ function isActive(href: string, matchPrefixes?: string[]) {
 <script>
 	const header = document.querySelector('[data-site-header]');
 
+	/** Original trigger — shrink once the top 100px has scrolled away. */
 	const SCROLL_THRESHOLD = 100;
 	const desktop = document.querySelector('[data-nav-desktop]');
 	const mobile = document.querySelector('[data-nav-mobile]');
 
-	/** Shrink trigger — 1px sentinel at scroll threshold (no scroll listener). */
+	/**
+	 * Shrink trigger — original 100px threshold.
+	 * Passive scroll + rAF throttle; only reads window.scrollY (no layout reads).
+	 * Toggles `.is-scrolled` (+ data-scrolled for legacy selectors).
+	 */
 	function initNavScrollSentinel() {
 		if (!(header instanceof HTMLElement)) return;
 
-		let sentinel = document.querySelector('[data-nav-scroll-sentinel]');
-		if (!(sentinel instanceof HTMLElement)) {
-			sentinel = document.createElement('div');
-			sentinel.setAttribute('data-nav-scroll-sentinel', '');
-			sentinel.setAttribute('aria-hidden', 'true');
-			Object.assign(sentinel.style, {
-				position: 'absolute',
-				top: `${SCROLL_THRESHOLD}px`,
-				left: '0',
-				width: '1px',
-				height: '1px',
-				pointerEvents: 'none',
-				visibility: 'hidden',
-			});
-			document.body.prepend(sentinel);
+		let scrollRaf = 0;
+		let scrolled = header.classList.contains('is-scrolled');
+
+		function applyScrolledState(next) {
+			if (scrolled === next) return;
+			scrolled = next;
+			header.classList.toggle('is-scrolled', next);
+			header.toggleAttribute('data-scrolled', next);
+			header.classList.add('is-shrinking');
+			for (const el of [desktop, mobile]) {
+				if (el instanceof HTMLElement) el.style.willChange = 'width, padding';
+			}
 		}
 
-		let scrollRaf = 0;
-		let pendingScrolled = null;
-
-		function applyScrolledState(scrolled) {
-			if (pendingScrolled === scrolled) return;
-			pendingScrolled = scrolled;
+		function onScroll() {
 			if (scrollRaf) return;
 			scrollRaf = requestAnimationFrame(() => {
 				scrollRaf = 0;
-				if (!(header instanceof HTMLElement)) return;
-				const next = pendingScrolled;
-				pendingScrolled = null;
-				if (next === null) return;
-				const was = header.hasAttribute('data-scrolled');
-				if (was === next) return;
-
-				header.toggleAttribute('data-scrolled', next);
-				header.classList.add('is-shrinking');
-				for (const el of [desktop, mobile]) {
-					if (el instanceof HTMLElement) el.style.willChange = 'width';
-				}
+				applyScrolledState(window.scrollY > SCROLL_THRESHOLD);
 			});
 		}
 
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (!entry) return;
-				applyScrolledState(!entry.isIntersecting);
-			},
-			{ root: null, threshold: 0, rootMargin: '0px' },
-		);
-
-		observer.observe(sentinel);
+		window.addEventListener('scroll', onScroll, { passive: true });
+		applyScrolledState(window.scrollY > SCROLL_THRESHOLD);
 	}
-
-	initNavScrollSentinel();
 
 	function finishNavShrinkTransition() {
 		if (!(header instanceof HTMLElement)) return;
@@ -1338,7 +1384,8 @@ function isActive(href: string, matchPrefixes?: string[]) {
 	for (const el of [desktop, mobile]) {
 		if (!(el instanceof HTMLElement)) continue;
 		el.addEventListener('transitionend', (event) => {
-			if (event.target !== el || event.propertyName !== 'width') return;
+			if (event.target !== el) return;
+			if (event.propertyName !== 'width' && event.propertyName !== 'padding-top') return;
 			finishNavShrinkTransition();
 		});
 	}
@@ -1355,14 +1402,19 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		let pendingTheme = null;
 		let resizeTimer = 0;
 
+		let cachedProbeY = 40;
 		function probeY() {
+			return cachedProbeY;
+		}
+		function refreshProbeY() {
 			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
 			const topBar = isMobile ? mobile : desktop;
 			const navH =
 				(topBar instanceof HTMLElement && topBar.offsetHeight) ||
 				header.offsetHeight ||
 				80;
-			return Math.max(1, Math.round(navH / 2));
+			cachedProbeY = Math.max(1, Math.round(navH / 2));
+			return cachedProbeY;
 		}
 
 		function themeRootMargin() {
@@ -1430,6 +1482,7 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		function bindThemeObserver() {
 			themeObserver?.disconnect();
 			intersecting.clear();
+			refreshProbeY();
 			themeObserver = new IntersectionObserver(
 				(entries) => {
 					for (const entry of entries) {
@@ -1448,19 +1501,21 @@ function isActive(href: string, matchPrefixes?: string[]) {
 			resolveThemeFromBand();
 		}
 
+		refreshProbeY();
 		bindThemeObserver();
 
-		window.addEventListener(
-			'resize',
-			() => {
-				window.clearTimeout(resizeTimer);
-				resizeTimer = window.setTimeout(bindThemeObserver, 120);
-			},
-			{ passive: true },
-		);
+		const onResize = () => {
+			window.clearTimeout(resizeTimer);
+			resizeTimer = window.setTimeout(bindThemeObserver, 120);
+		};
+		window.addEventListener('resize', onResize, { passive: true });
+		window.__xoomplusThemeCleanup = () => {
+			themeObserver?.disconnect();
+			window.removeEventListener('resize', onResize);
+			window.clearTimeout(resizeTimer);
+			if (themeRaf) cancelAnimationFrame(themeRaf);
+		};
 	}
-
-	initNavPillThemeObserver();
 
 	function snapDevicePx(value) {
 		const dpr = window.devicePixelRatio || 1;
@@ -1479,8 +1534,11 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		if (!links.length) return;
 
 		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const activeLink =
-			links.find((link) => link.getAttribute('aria-current') === 'page') || null;
+
+		/** Always read live aria-current — ClientRouter keeps this header DOM persisted. */
+		function getActiveLink() {
+			return links.find((link) => link.getAttribute('aria-current') === 'page') || null;
+		}
 
 		function measure(link) {
 			if (!(link instanceof HTMLElement)) return null;
@@ -1504,45 +1562,53 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		});
 
 		function apply(link, { immediate = false } = {}) {
+			/* Read layout first, then write styles in rAF — avoid forced reflow. */
 			const m = measure(link);
-			if (!m) {
-				indicator.style.setProperty('--nav-ind-opacity', '0');
-				setGliding(false);
-				return;
-			}
 			const skipMotion = immediate || reduceMotion.matches;
-			if (skipMotion) indicator.style.transition = 'none';
-			else setGliding(true);
-			indicator.style.setProperty('--nav-ind-x', `${m.x}px`);
-			indicator.style.setProperty('--nav-ind-w', `${m.w}px`);
-			indicator.style.setProperty('--nav-ind-opacity', '1');
-			if (skipMotion) {
-				void indicator.offsetWidth;
-				indicator.style.transition = '';
-				setGliding(false);
-			}
+			requestAnimationFrame(() => {
+				if (!m) {
+					indicator.style.setProperty('--nav-ind-opacity', '0');
+					setGliding(false);
+					return;
+				}
+				if (skipMotion) indicator.style.transition = 'none';
+				else setGliding(true);
+				indicator.style.setProperty('--nav-ind-x', `${m.x}px`);
+				indicator.style.setProperty('--nav-ind-w', `${m.w}px`);
+				indicator.style.setProperty('--nav-ind-opacity', '1');
+				if (skipMotion) {
+					requestAnimationFrame(() => {
+						indicator.style.transition = '';
+						setGliding(false);
+					});
+				}
+			});
 		}
 
 		function goRest({ immediate = false } = {}) {
+			const activeLink = getActiveLink();
 			if (activeLink) apply(activeLink, { immediate });
 			else indicator.style.setProperty('--nav-ind-opacity', '0');
 		}
 
-		function remasure() {
-			const focused = links.find((link) => link.matches(':focus-visible'));
-			if (focused) {
-				apply(focused, { immediate: true });
-				return;
-			}
-			const hovered = links.find((link) => link.matches(':hover'));
-			if (hovered) {
-				apply(hovered, { immediate: true });
-				return;
+		function remasure({ forceActive = false } = {}) {
+			if (!forceActive) {
+				const focused = links.find((link) => link.matches(':focus-visible'));
+				if (focused) {
+					apply(focused, { immediate: true });
+					return;
+				}
+				const hovered = links.find((link) => link.matches(':hover'));
+				if (hovered) {
+					apply(hovered, { immediate: true });
+					return;
+				}
 			}
 			goRest({ immediate: true });
 		}
 
 		goRest({ immediate: true });
+		window.__xoomplusNavRemeasure = remasure;
 
 		for (const link of links) {
 			link.addEventListener('pointerenter', () => {
@@ -1577,7 +1643,73 @@ function isActive(href: string, matchPrefixes?: string[]) {
 		);
 	}
 
-	initNavIndicator();
+	/** Sync active nav + chrome after ClientRouter navigations (header persists). */
+	function syncNavActiveFromLocation() {
+		if (header instanceof HTMLElement) {
+			const variant = document.body.getAttribute('data-header-variant') || 'default';
+			const themeAttr = document.body.getAttribute('data-header-theme') || 'dark';
+			header.setAttribute('data-variant', variant);
+			if (themeAttr === 'light') header.setAttribute('data-theme', 'light');
+			else header.removeAttribute('data-theme');
+		}
+
+		const path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
+		const links = document.querySelectorAll('[data-nav-link], [data-mobile-drawer-link]');
+		for (const link of links) {
+			if (!(link instanceof HTMLAnchorElement)) continue;
+			const href = (link.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+			if (href.startsWith('#')) continue;
+			let active = false;
+			if (href === '/') active = path === '/';
+			else if (href === '/blogs') {
+				active =
+					path === '/blogs' ||
+					path.startsWith('/blogs/') ||
+					(/^\/[^/]+\/[^/]+$/.test(path) &&
+						!path.startsWith('/services/') &&
+						!path.startsWith('/locations/'));
+			} else if (href === '/services') {
+				active = path === '/services' || path.startsWith('/services/');
+			} else {
+				active = path === href || path.startsWith(`${href}/`);
+			}
+			link.classList.toggle('nav-link-active', active);
+			link.classList.toggle('font-semibold', active);
+			link.classList.toggle('is-active', active);
+			if (active) link.setAttribute('aria-current', 'page');
+			else link.removeAttribute('aria-current');
+		}
+	}
+
+	function syncPersistedNavChrome() {
+		syncNavActiveFromLocation();
+		/* Move glass indicator to the newly active link (ignore leftover hover from the click). */
+		requestAnimationFrame(() => {
+			window.__xoomplusNavRemeasure?.({ forceActive: true });
+		});
+		if (typeof window.__xoomplusThemeCleanup === 'function') {
+			window.__xoomplusThemeCleanup();
+			window.__xoomplusThemeCleanup = undefined;
+		}
+		initNavPillThemeObserver();
+	}
+
+	/* Scroll shrink + theme must run ASAP (original behaviour). Indicator
+	   measures layout — schedule on next frames to avoid LCP forced reflow.
+	   Header uses transition:persist — bind once; sync active on navigation. */
+	if (!window.__xoomplusNavBooted) {
+		window.__xoomplusNavBooted = true;
+		initNavScrollSentinel();
+		initNavPillThemeObserver();
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				initNavIndicator();
+			});
+		});
+		/* after-swap: before paint, so the old About pill is not visible on /blogs */
+		document.addEventListener('astro:after-swap', syncPersistedNavChrome);
+		document.addEventListener('astro:page-load', syncPersistedNavChrome);
+	}
 
 	/* ── Mobile right drawer + Services sheet ── */
 	const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
