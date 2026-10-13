@@ -1,5 +1,4 @@
 import { defineMiddleware } from 'astro:middleware';
-import { clearWpPostsCache } from './lib/wp';
 import {
 	isMappedSeoPath,
 	resolveAliasRedirect,
@@ -19,6 +18,8 @@ function isBlogsListingPath(pathname: string): boolean {
  */
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.url.searchParams.get('refresh') === '1') {
+		// Dynamic import keeps node:fs out of the middleware module graph unless needed.
+		const { clearWpPostsCache } = await import('./lib/wp');
 		clearWpPostsCache();
 	}
 

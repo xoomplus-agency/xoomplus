@@ -20,7 +20,10 @@ export default defineConfig({
   site: env.SITE_URL || undefined,
 
   // Static by default; SEO pages + revalidate API opt into on-demand via `prerender = false`.
-  adapter: useVercel ? vercel() : node({ mode: 'standalone' }),
+  // Vercel Hobby defaults to a short function limit; homepage hits WP several times.
+  adapter: useVercel
+    ? vercel({ maxDuration: 60 })
+    : node({ mode: 'standalone' }),
 
   integrations: [react()],
 

@@ -492,9 +492,16 @@ async function fetchPostsPage(
 		params.set('_', String(Date.now()));
 	}
 	const url = `${base}/posts?${params}`;
-	const res = await fetch(url, {
-		headers: { 'Cache-Control': 'no-cache' },
-	});
+	let res: Response;
+	try {
+		res = await fetch(url, {
+			headers: { 'Cache-Control': 'no-cache' },
+			signal: AbortSignal.timeout(25_000),
+		});
+	} catch (err) {
+		const reason = err instanceof Error ? err.name : 'Error';
+		throw new Error(`WordPress posts fetch failed (${reason}) ${url}`);
+	}
 	const text = await res.text();
 	const clean = stripLeadingStyles(text);
 
@@ -608,11 +615,35 @@ export type GetPostsOptions = {
 
 /**
  * Fetch published blog posts from WordPress (`/posts`).
- * Always `status=publish` only. Production SSR does not keep a sticky process cache
- * so /blogs reflects draft/publish on refresh. Build keeps a longer memo for SSG.
+ * Always `status=publish` only.
+ * - `perPage` (without `all`): single lightweight page request — safe for homepage SSR.
+ * - `all` / no perPage: full catalog (listing, static paths). Prod SSR memo TTL is 0.
  */
 export async function getPosts(options: GetPostsOptions = {}): Promise<WpPost[]> {
 	const { perPage, all = false } = options;
+
+	// Homepage and similar: never download the full 5MB+ catalog for a teaser strip.
+	if (!all && perPage != null) {
+		try {
+			const page = await fetchPostsPage(1, perPage);
+			const mapped: WpPost[] = [];
+			for (const raw of page.posts) {
+				const post = mapWpPost(raw);
+				if (post) mapped.push(post);
+			}
+			mapped.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+			return mapped.slice(0, perPage);
+		} catch (err) {
+			if (isDev()) {
+				console.error('[wp] getPosts(perPage) failed (dev — returning []):', err);
+				return [];
+			}
+			throw new Error(
+				`[wp] getPosts failed — cannot serve blog teaser without live CMS data: ${String(err)}`,
+			);
+		}
+	}
+
 	const now = Date.now();
 
 	if (forceRefresh || !allPostsPromise || now >= allPostsExpiresAt) {
@@ -630,9 +661,7 @@ export async function getPosts(options: GetPostsOptions = {}): Promise<WpPost[]>
 	}
 
 	try {
-		const posts = await allPostsPromise;
-		if (all || perPage == null) return posts;
-		return posts.slice(0, perPage);
+		return await allPostsPromise;
 	} catch (err) {
 		if (isDev()) {
 			console.error('[wp] getPosts failed (dev — returning []):', err);
@@ -683,10 +712,43 @@ export async function getPostByPath(segments: string[]): Promise<WpPost | undefi
 
 /** Unique category path prefixes for nav active-state (e.g. `/web-solutions`). */
 export async function getBlogCategoryPrefixes(): Promise<string[]> {
-	const posts = await getPosts({ all: true });
-	const set = new Set<string>();
-	for (const post of posts) {
-		if (post.categorySlug) set.add(`/${post.categorySlug}`);
+	// Use the categories collection — do NOT fetch every post (that times out on Vercel).
+	const base = getApiBase();
+	const params = new URLSearchParams({
+		per_page: '100',
+		hide_empty: 'true',
+		_fields: 'slug',
+	});
+	if (!isDev()) {
+		params.set('_', String(Date.now()));
 	}
-	return [...set];
+	const url = `${base}/categories?${params}`;
+	try {
+		const res = await fetch(url, {
+			headers: { 'Cache-Control': 'no-cache' },
+			signal: AbortSignal.timeout(15_000),
+		});
+		const text = await res.text();
+		const clean = stripLeadingStyles(text);
+		if (!res.ok) {
+			console.error(`[wp] categories fetch failed (${res.status}) ${url}`);
+			return [];
+		}
+		const data = JSON.parse(clean) as unknown;
+		if (!Array.isArray(data)) return [];
+		const set = new Set<string>();
+		for (const row of data) {
+			const slug =
+				row && typeof row === 'object' && 'slug' in row
+					? String((row as { slug?: string }).slug || '').trim()
+					: '';
+			if (!slug) continue;
+			if (/^uncategorized$/i.test(slug) || /^uncategorised$/i.test(slug)) continue;
+			set.add(`/${slug}`);
+		}
+		return [...set];
+	} catch (err) {
+		console.error('[wp] getBlogCategoryPrefixes failed:', err);
+		return [];
+	}
 }

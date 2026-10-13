@@ -297,23 +297,23 @@ export async function getAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
 	}
 
 	const entries = Object.entries(WP_SEO_PAGES) as [WpPageKey, { id: number }][];
-	const routes: WpResolvedRoute[] = [];
-	let missing = false;
-
-	for (const [key, { id }] of entries) {
-		const slug = await getLiveWpSlugForId(id);
-		if (!slug) {
-			missing = true;
-			console.error(`[wp-seo] could not resolve slug for key "${key}" (id ${id})`);
-			continue;
-		}
-		routes.push({
-			key,
-			id,
-			slug,
-			route: routeFromWpSlug(key, slug),
-		});
-	}
+	const resolved = await Promise.all(
+		entries.map(async ([key, { id }]) => {
+			const slug = await getLiveWpSlugForId(id);
+			if (!slug) {
+				console.error(`[wp-seo] could not resolve slug for key "${key}" (id ${id})`);
+				return null;
+			}
+			return {
+				key,
+				id,
+				slug,
+				route: routeFromWpSlug(key, slug),
+			} satisfies WpResolvedRoute;
+		}),
+	);
+	const routes = resolved.filter((r): r is WpResolvedRoute => r != null);
+	const missing = routes.length !== entries.length;
 
 	// Only cache a complete map — never freeze a partial/stale route table.
 	if (!missing && ttl > 0) {
