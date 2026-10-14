@@ -8,12 +8,16 @@
   "scripts": {
     "dev": "astro dev",
     "check:wp-routes": "npx --yes tsx scripts/check-wp-routes.ts",
+    "check:no-gsap": "node scripts/check-no-static-gsap.mjs",
     "prebuild": "node scripts/prebuild.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",
     "astro": "astro",
-    "warm:cache": "node scripts/warm-cache.mjs"
+    "warm:cache": "node scripts/warm-cache.mjs",
+    "lhci": "lhci autorun --config=lighthouserc.cjs",
+    "lh:verify": "node scripts/lh-verify.mjs",
+    "subset:fonts": "node scripts/subset-fonts.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.7",
@@ -28,7 +32,6 @@
     "astro": "^7.3.5",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
-    "gsap": "^3.15.0",
     "lucide-react": "^1.53.0",
     "radix-ui": "^1.7.0",
     "react": "^19.3.0",
@@ -41,6 +44,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "fontverter": "^2.0.0",
     "harfbuzzjs": "^1.6.3",
     "lighthouse": "^13.5.0",

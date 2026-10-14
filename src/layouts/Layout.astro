@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import Seo from '../components/Seo.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -9,7 +8,7 @@ import { getPageSEO, isMappedSeoPath, type PageSEO } from '../lib/wp-seo';
 import type { NavItem } from '../data/nav';
 import '../styles/global.css';
 import '../styles/motion.css';
-/* Above-the-fold fonts only — hero H1 (SF Pro 600) + body (Inter 400) */
+/* Above-the-fold fonts only — hero H1 (SF Pro Bold) + body (Inter 400) */
 import sfProDisplayBold from '../assets/fonts/SFPRODISPLAYBOLD.woff2';
 import interRegular from '../assets/fonts/Inter-400.woff2';
 
@@ -103,37 +102,15 @@ if (isStaging()) {
 ---
 
 <!doctype html>
-<html
-	lang="en"
-	data-theme={theme === 'light' ? 'light' : undefined}
-	transition:animate="none"
->
+<html lang="en" data-theme={theme === 'light' ? 'light' : undefined}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		{/* LCP image discovery first — before fonts/CSS compete for the connection */}
-		{
-			preconnectOrigins.map((origin) => (
-				<>
-					<link rel="preconnect" href={origin} crossorigin />
-					<link rel="dns-prefetch" href={origin} />
-				</>
-			))
-		}
-		{
-			lcpImagePreload && (
-				<link
-					rel="preload"
-					as="image"
-					href={lcpImagePreload.href}
-					imagesrcset={lcpImagePreload.imagesrcset || undefined}
-					imagesizes={lcpImagePreload.imagesizes || undefined}
-					fetchpriority="high"
-					type={lcpImagePreload.href.endsWith('.avif') ? 'image/avif' : undefined}
-				/>
-			)
-		}
-		{/* Hero H1 (SF Pro 600) + hero body (Inter 400) — only these two preloaded */}
+		{/*
+			Critical path: meta → (inlined CSS via build.inlineStylesheets) → font preloads →
+			optional LCP image preload → deferred modules. No render-blocking JS.
+		*/}
+		{/* Hero H1 (SF Pro Bold) + body (Inter 400) — only these two preloaded */}
 		<link
 			rel="preload"
 			href={sfProDisplayBold}
@@ -148,14 +125,34 @@ if (isStaging()) {
 			type="font/woff2"
 			crossorigin
 		/>
+		{
+			lcpImagePreload && (
+				<link
+					rel="preload"
+					as="image"
+					href={lcpImagePreload.href}
+					imagesrcset={lcpImagePreload.imagesrcset || undefined}
+					imagesizes={lcpImagePreload.imagesizes || undefined}
+					fetchpriority="high"
+					type={lcpImagePreload.href.endsWith('.avif') ? 'image/avif' : undefined}
+				/>
+			)
+		}
+		{/* Blog/media origins only — never on the critical path for pages without remote LCP */}
+		{
+			preconnectOrigins.map((origin) => (
+				<>
+					<link rel="preconnect" href={origin} crossorigin />
+					<link rel="dns-prefetch" href={origin} />
+				</>
+			))
+		}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<script is:inline>
 			document.documentElement.classList.add('js');
 		</script>
-		{/* Soft nav only — no fade on first paint; swap fallback avoids simulated fade reflow */}
-		<ClientRouter fallback="swap" />
 		<Seo
 			title={mapped ? undefined : title}
 			description={mapped ? undefined : description}
@@ -188,8 +185,13 @@ if (isStaging()) {
 </html>
 
 <style is:global>
+	/* Native cross-document view transitions — CSS only, progressive enhancement, zero JS */
+	@view-transition {
+		navigation: auto;
+	}
+
+	/* body only — clipping html breaks IntersectionObserver / scroll reveals on mobile */
 	@media (max-width: 1023px) {
-		html,
 		body {
 			overflow-x: clip;
 		}

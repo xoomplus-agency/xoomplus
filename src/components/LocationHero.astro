@@ -1,7 +1,7 @@
 ---
 /**
  * Location page hero — full-bleed photo, top-right amber glow, centered copy.
- * All text/image come from location data; no Section wrapper.
+ * LCP uses a real <img> (not CSS background) so it is discoverable + prioritizable.
  */
 import Button from './Button.astro';
 
@@ -22,8 +22,17 @@ const headingId = 'location-hero-heading';
 	class="location-hero page-section page-section--flush-top"
 	data-bg="dark"
 	aria-labelledby={headingId}
-	style={`--location-hero-bg: url('${image}')`}
 >
+	<img
+		class="location-hero__media"
+		src={image}
+		alt=""
+		width="1920"
+		height="1080"
+		fetchpriority="high"
+		decoding="async"
+		aria-hidden="true"
+	/>
 	{/* Decorative glow — aria-hidden via CSS pointer-events + empty ::before */}
 	<div class="location-hero__content container container--prose" data-hero-enter>
 		<p class="pill-dark location-hero__pill m-0" aria-hidden="true" data-hero-item>
@@ -59,18 +68,25 @@ const headingId = 'location-hero-heading';
 		padding-top: 80px; /* ~navbar height */
 		text-align: center;
 		background-color: var(--color-primary-black);
-		background-image: var(--location-hero-bg);
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
 	}
 
-	/* Amber glow from top right — only added layer */
+	.location-hero__media {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+		pointer-events: none;
+	}
+
+	/* Amber glow from top right — above media, below copy */
 	.location-hero::before {
 		content: '';
 		position: absolute;
 		inset: 0;
-		z-index: 0;
+		z-index: 1;
 		pointer-events: none;
 		background: radial-gradient(
 			circle 640px at 100% 0%,
@@ -81,7 +97,7 @@ const headingId = 'location-hero-heading';
 
 	.location-hero__content {
 		position: relative;
-		z-index: 1;
+		z-index: 2;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -122,7 +138,6 @@ const headingId = 'location-hero-heading';
 		.location-hero {
 			height: 560px;
 		}
-
 	}
 
 	@media (max-width: 639px) {
@@ -132,6 +147,5 @@ const headingId = 'location-hero-heading';
 			padding-top: 72px;
 			padding-bottom: 48px;
 		}
-
 	}
 </style>

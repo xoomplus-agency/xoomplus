@@ -43,10 +43,10 @@ export default defineConfig({
 
   integrations: [react()],
 
-  // Prefetch after load — keeps nav fast without competing on the critical path.
+  // Prefetch on hover — fast nav without ClientRouter or competing on the critical path.
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'load',
+    defaultStrategy: 'hover',
   },
 
   experimental: {

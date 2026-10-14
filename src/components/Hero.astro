@@ -80,10 +80,6 @@ const trust = [
 			preload="none"
 			aria-hidden="true"
 		></video>
-		{/*
-		  ClientRouter swaps the body on soft nav, so this video node is new each
-		  homepage visit. Init must run on astro:page-load (not only first paint).
-		*/}
 		<script>
 			type NetworkInformationLike = { saveData?: boolean; effectiveType?: string };
 
@@ -100,7 +96,6 @@ const trust = [
 			}
 
 			function tryPlayHeroVideo(video: HTMLVideoElement): void {
-				/* Re-assert after ClientRouter swaps — attribute alone is not always enough for autoplay. */
 				video.muted = true;
 				video.defaultMuted = true;
 				video.playsInline = true;
@@ -163,12 +158,16 @@ const trust = [
 					}
 				};
 
-				/* Defer until load on first visit so poster can be LCP; soft nav is already complete. */
+				/* Defer until load so poster can be LCP. */
 				if (document.readyState === 'complete') run();
 				else window.addEventListener('load', run, { once: true });
 			}
 
-			document.addEventListener('astro:page-load', initHeroBgVideo);
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', initHeroBgVideo, { once: true });
+			} else {
+				initHeroBgVideo();
+			}
 		</script>
 
 		<div

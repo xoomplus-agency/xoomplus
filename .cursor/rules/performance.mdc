@@ -39,6 +39,8 @@ alwaysApply: false
 
 - Minimal maintainable CSS; no unused frameworks; avoid expensive effects when simpler matches the design.
 - Prefer Astro default rendering; hydrate only interactive islands; no React/Vue/Svelte for static UI.
+- **Never** statically `import 'gsap'` (or ScrollTrigger) in layouts or shared components. Scroll reveals use CSS + `src/scripts/reveal.ts`. If a complex timeline is unavoidable, dynamic `import('gsap')` only when the section is within ~1 viewport. Enforce with `npm run check:no-gsap`.
+- Do not reintroduce `astro:transitions` / `<ClientRouter />` — use Astro prefetch + optional CSS `@view-transition`.
 
 ## Third-party
 

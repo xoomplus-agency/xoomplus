@@ -25,8 +25,16 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 	class="service-hero page-section page-section--flush-top"
 	data-bg="dark"
 	aria-labelledby={headingId}
-	style={`--service-hero-bg: url('${bgImage}')`}
 >
+	<img
+		class="service-hero__media"
+		src={bgImage}
+		alt=""
+		width="1920"
+		height="1080"
+		decoding="async"
+		aria-hidden="true"
+	/>
 	<div class="service-hero__inner container container--wide">
 		<div class="service-hero__grid">
 			<div class="service-hero__copy" data-hero-enter>
@@ -124,13 +132,22 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		padding-bottom: 32px;
 		/* Same horizontal inset as shared <Section> (Built around people, etc.) */
 		background-color: var(--color-primary-black);
-		background-image: var(--service-hero-bg);
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
+	}
+
+	.service-hero__media {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+		pointer-events: none;
 	}
 
 	.service-hero__inner {
+		position: relative;
+		z-index: 1;
 		box-sizing: border-box;
 		width: 100%;
 	}

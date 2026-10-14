@@ -220,7 +220,6 @@ const durationSec = Math.max(8, seqWidth / Math.max(1, speed));
 		});
 	}
 
-	document.addEventListener('astro:page-load', bindLogoLoops);
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', bindLogoLoops, { once: true });
 	} else {

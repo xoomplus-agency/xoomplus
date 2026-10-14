@@ -156,7 +156,7 @@ function initBlogList(root: HTMLElement): void {
 		const li = fragment.querySelector('[data-post-card]');
 		if (!(li instanceof HTMLElement)) return null;
 		fillCard(li, post);
-		// Keep data-reveal so GSAP ScrollTrigger (reveal.ts MutationObserver) can bind.
+		// Keep data-reveal so reveal.ts MutationObserver can bind.
 		// Cards inside [data-blog-grid] are forced visible — never left at opacity 0.
 		return li;
 	}
@@ -419,5 +419,8 @@ function boot(): void {
 	gridObserver.observe(root, { childList: true, subtree: true });
 }
 
-boot();
-document.addEventListener('astro:page-load', boot);
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', boot, { once: true });
+} else {
+	boot();
+}

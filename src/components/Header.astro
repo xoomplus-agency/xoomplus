@@ -46,7 +46,6 @@ function isActive(item: NavItem) {
 	data-site-header
 	data-variant={variant}
 	data-theme={theme === 'light' ? 'light' : undefined}
-	transition:persist="site-header"
 >
 	<!--
 		Default: Logo left · glass nav (links only) center · CTA right
@@ -1339,14 +1338,12 @@ function isActive(item: NavItem) {
 	const mobile = document.querySelector('[data-nav-mobile]');
 
 	/**
-	 * Shrink trigger — original 100px threshold.
-	 * Passive scroll + rAF throttle; only reads window.scrollY (no layout reads).
-	 * Toggles `.is-scrolled` (+ data-scrolled for legacy selectors).
+	 * Shrink trigger — IntersectionObserver sentinel at SCROLL_THRESHOLD.
+	 * No scroll handler, no layout reads — IO reports when the top band leaves view.
 	 */
 	function initNavScrollSentinel() {
 		if (!(header instanceof HTMLElement)) return;
 
-		let scrollRaf = 0;
 		let scrolled = header.classList.contains('is-scrolled');
 
 		function applyScrolledState(next) {
@@ -1360,16 +1357,23 @@ function isActive(item: NavItem) {
 			}
 		}
 
-		function onScroll() {
-			if (scrollRaf) return;
-			scrollRaf = requestAnimationFrame(() => {
-				scrollRaf = 0;
-				applyScrolledState(window.scrollY > SCROLL_THRESHOLD);
-			});
+		let sentinel = document.querySelector('[data-nav-scroll-sentinel]');
+		if (!(sentinel instanceof HTMLElement)) {
+			sentinel = document.createElement('div');
+			sentinel.setAttribute('data-nav-scroll-sentinel', '');
+			sentinel.setAttribute('aria-hidden', 'true');
+			sentinel.style.cssText = `position:absolute;top:0;left:0;width:1px;height:${SCROLL_THRESHOLD}px;pointer-events:none;visibility:hidden;z-index:-1;`;
+			document.body.prepend(sentinel);
 		}
 
-		window.addEventListener('scroll', onScroll, { passive: true });
-		applyScrolledState(window.scrollY > SCROLL_THRESHOLD);
+		const io = new IntersectionObserver(
+			([entry]) => {
+				if (!entry) return;
+				applyScrolledState(!entry.isIntersecting);
+			},
+			{ threshold: 0 },
+		);
+		io.observe(sentinel);
 	}
 
 	function finishNavShrinkTransition() {
@@ -1406,22 +1410,9 @@ function isActive(item: NavItem) {
 		function probeY() {
 			return cachedProbeY;
 		}
-		function refreshProbeY() {
-			/* Prefer CSS custom property / estimate — avoid sync layout thrash on boot. */
+		function refreshProbeYEstimate() {
 			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
-			const estimated = isMobile ? 64 : 80;
-			cachedProbeY = Math.max(1, Math.round(estimated / 2));
-			return cachedProbeY;
-		}
-
-		function refreshProbeYFromLayout() {
-			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
-			const topBar = isMobile ? mobile : desktop;
-			const navH =
-				(topBar instanceof HTMLElement && topBar.offsetHeight) ||
-				header.offsetHeight ||
-				80;
-			cachedProbeY = Math.max(1, Math.round(navH / 2));
+			cachedProbeY = Math.max(1, Math.round((isMobile ? 64 : 80) / 2));
 			return cachedProbeY;
 		}
 
@@ -1429,6 +1420,27 @@ function isActive(item: NavItem) {
 			const y = Math.round(probeY());
 			const bottom = Math.max(0, window.innerHeight - y - 1);
 			return `-${y}px 0px -${bottom}px 0px`;
+		}
+
+		/** ResizeObserver: read size in RO callback, write probe + rebind on next frame. */
+		function bindNavSizeObserver() {
+			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+			const topBar = isMobile ? mobile : desktop;
+			const target = topBar instanceof HTMLElement ? topBar : header;
+			if (!(target instanceof HTMLElement) || typeof ResizeObserver === 'undefined') {
+				refreshProbeYEstimate();
+				return;
+			}
+			const ro = new ResizeObserver((entries) => {
+				const entry = entries[0];
+				if (!entry) return;
+				const h = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
+				const nextY = Math.max(1, Math.round(h / 2));
+				if (nextY === cachedProbeY) return;
+				cachedProbeY = nextY;
+				requestAnimationFrame(() => bindThemeObserver());
+			});
+			ro.observe(target);
 		}
 
 		function applyTheme(wantLight) {
@@ -1508,20 +1520,13 @@ function isActive(item: NavItem) {
 			resolveThemeFromBand();
 		}
 
-		/* Estimate first; refine layout after paint to avoid forced reflow on LCP. */
-		refreshProbeY();
+		refreshProbeYEstimate();
 		bindThemeObserver();
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				refreshProbeYFromLayout();
-				bindThemeObserver();
-			});
-		});
+		bindNavSizeObserver();
 
 		const onResize = () => {
 			window.clearTimeout(resizeTimer);
 			resizeTimer = window.setTimeout(() => {
-				refreshProbeYFromLayout();
 				bindThemeObserver();
 			}, 120);
 		};
@@ -1552,7 +1557,6 @@ function isActive(item: NavItem) {
 
 		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-		/** Always read live aria-current — ClientRouter keeps this header DOM persisted. */
 		function getActiveLink() {
 			return links.find((link) => link.getAttribute('aria-current') === 'page') || null;
 		}
@@ -1660,73 +1664,14 @@ function isActive(item: NavItem) {
 		);
 	}
 
-	/** Sync active nav + chrome after ClientRouter navigations (header persists). */
-	function syncNavActiveFromLocation() {
-		if (header instanceof HTMLElement) {
-			const variant = document.body.getAttribute('data-header-variant') || 'default';
-			const themeAttr = document.body.getAttribute('data-header-theme') || 'dark';
-			header.setAttribute('data-variant', variant);
-			if (themeAttr === 'light') header.setAttribute('data-theme', 'light');
-			else header.removeAttribute('data-theme');
-		}
-
-		const path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
-		const links = document.querySelectorAll('[data-nav-link], [data-mobile-drawer-link]');
-		for (const link of links) {
-			if (!(link instanceof HTMLAnchorElement)) continue;
-			const href = (link.getAttribute('href') || '').replace(/\/+$/, '') || '/';
-			if (href.startsWith('#')) continue;
-			let active = false;
-			if (href === '/') active = path === '/';
-			else if (href === '/blogs') {
-				active =
-					path === '/blogs' ||
-					path.startsWith('/blogs/') ||
-					(/^\/[^/]+\/[^/]+$/.test(path) &&
-						!path.startsWith('/services/') &&
-						!path.startsWith('/locations/'));
-			} else if (href === '/services') {
-				active = path === '/services' || path.startsWith('/services/');
-			} else {
-				active = path === href || path.startsWith(`${href}/`);
-			}
-			link.classList.toggle('nav-link-active', active);
-			link.classList.toggle('font-semibold', active);
-			link.classList.toggle('is-active', active);
-			if (active) link.setAttribute('aria-current', 'page');
-			else link.removeAttribute('aria-current');
-		}
-	}
-
-	function syncPersistedNavChrome() {
-		syncNavActiveFromLocation();
-		/* Move glass indicator to the newly active link (ignore leftover hover from the click). */
+	/* Scroll shrink + theme ASAP. Indicator measures layout — defer two frames to avoid LCP reflow. */
+	initNavScrollSentinel();
+	initNavPillThemeObserver();
+	requestAnimationFrame(() => {
 		requestAnimationFrame(() => {
-			window.__xoomplusNavRemeasure?.({ forceActive: true });
+			initNavIndicator();
 		});
-		if (typeof window.__xoomplusThemeCleanup === 'function') {
-			window.__xoomplusThemeCleanup();
-			window.__xoomplusThemeCleanup = undefined;
-		}
-		initNavPillThemeObserver();
-	}
-
-	/* Scroll shrink + theme must run ASAP (original behaviour). Indicator
-	   measures layout — schedule on next frames to avoid LCP forced reflow.
-	   Header uses transition:persist — bind once; sync active on navigation. */
-	if (!window.__xoomplusNavBooted) {
-		window.__xoomplusNavBooted = true;
-		initNavScrollSentinel();
-		initNavPillThemeObserver();
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				initNavIndicator();
-			});
-		});
-		/* after-swap: before paint, so the old About pill is not visible on /blogs */
-		document.addEventListener('astro:after-swap', syncPersistedNavChrome);
-		document.addEventListener('astro:page-load', syncPersistedNavChrome);
-	}
+	});
 
 	/* ── Mobile right drawer + Services sheet ── */
 	const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');

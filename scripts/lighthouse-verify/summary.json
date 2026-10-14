@@ -1,0 +1,267 @@
+{
+  "home": {
+    "url": "http://127.0.0.1:4335/",
+    "runs": [
+      {
+        "FCP": 2600.780067265425,
+        "LCP": 3392.670100898137,
+        "TBT": 536.8900336327124,
+        "CLS": 0.0002746223899137112,
+        "SI": 3791.576879256856,
+        "perfScore": 0.73,
+        "fontCount": 3,
+        "scriptKB": 17,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2463.526,
+        "LCP": 3081.526,
+        "TBT": 5,
+        "CLS": 0.0002746223899137112,
+        "SI": 2463.526,
+        "perfScore": 0.91,
+        "fontCount": 3,
+        "scriptKB": 17,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2955.007123254916,
+        "LCP": 3402.0213697647487,
+        "TBT": 442.4999999999998,
+        "CLS": 0.0002746223899137112,
+        "SI": 3334.682612212263,
+        "perfScore": 0.75,
+        "fontCount": 3,
+        "scriptKB": 17,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      }
+    ],
+    "median": {
+      "FCP": 2600.780067265425,
+      "LCP": 3392.670100898137,
+      "TBT": 442.4999999999998,
+      "CLS": 0.0002746223899137112,
+      "fontCount": 3,
+      "scriptKB": 17,
+      "chainMs": null
+    }
+  },
+  "services": {
+    "url": "http://127.0.0.1:4335/services/",
+    "runs": [
+      {
+        "FCP": 2538.9627466857946,
+        "LCP": 3266.944120028692,
+        "TBT": 602.5093133285513,
+        "CLS": 0,
+        "SI": 3866.3126835671537,
+        "perfScore": 0.72,
+        "fontCount": 3,
+        "scriptKB": 14,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2511.0280000000002,
+        "LCP": 3155.0280000000002,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 3633.003526018748,
+        "perfScore": 0.89,
+        "fontCount": 3,
+        "scriptKB": 14,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2486.0808415325137,
+        "LCP": 3089.161683065028,
+        "TBT": 10,
+        "CLS": 0,
+        "SI": 2982.4567207983737,
+        "perfScore": 0.9,
+        "fontCount": 3,
+        "scriptKB": 14,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      }
+    ],
+    "median": {
+      "FCP": 2511.0280000000002,
+      "LCP": 3155.0280000000002,
+      "TBT": 10,
+      "CLS": 0,
+      "fontCount": 3,
+      "scriptKB": 14,
+      "chainMs": null
+    }
+  },
+  "location": {
+    "url": "http://127.0.0.1:4335/locations/blackburn/",
+    "runs": [
+      {
+        "FCP": 2172.1998574023983,
+        "LCP": 5726.3997148047965,
+        "TBT": 0,
+        "CLS": 0.000347372095650352,
+        "SI": 3179.8454089634965,
+        "perfScore": 0.76,
+        "fontCount": 3,
+        "scriptKB": 14,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2161.3923,
+        "LCP": 5726.784599999999,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 2161.3923,
+        "perfScore": 0.77,
+        "fontCount": 3,
+        "scriptKB": 14,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2153.6419,
+        "LCP": 5715.283799999999,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 2153.6419,
+        "perfScore": 0.77,
+        "fontCount": 3,
+        "scriptKB": 14,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      }
+    ],
+    "median": {
+      "FCP": 2161.3923,
+      "LCP": 5726.3997148047965,
+      "TBT": 0,
+      "CLS": 0,
+      "fontCount": 3,
+      "scriptKB": 14,
+      "chainMs": null
+    }
+  },
+  "blogs": {
+    "url": "http://127.0.0.1:4335/blogs/",
+    "runs": [
+      {
+        "FCP": 2034.4367599404245,
+        "LCP": 2790.098815904679,
+        "TBT": 0,
+        "CLS": 0.00009304297751532229,
+        "SI": 4079.768308675594,
+        "perfScore": 0.92,
+        "fontCount": 3,
+        "scriptKB": 22,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2223.3432999999995,
+        "LCP": 3990.5149499999998,
+        "TBT": 130,
+        "CLS": 0.00009304297751532229,
+        "SI": 2223.3432999999995,
+        "perfScore": 0.84,
+        "fontCount": 3,
+        "scriptKB": 22,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2100.668238486729,
+        "LCP": 3990.8018861840746,
+        "TBT": 65,
+        "CLS": 0.00009304297751532229,
+        "SI": 2100.668238486729,
+        "perfScore": 0.85,
+        "fontCount": 3,
+        "scriptKB": 22,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      }
+    ],
+    "median": {
+      "FCP": 2100.668238486729,
+      "LCP": 3990.5149499999998,
+      "TBT": 65,
+      "CLS": 0.00009304297751532229,
+      "fontCount": 3,
+      "scriptKB": 22,
+      "chainMs": null
+    }
+  },
+  "contact": {
+    "url": "http://127.0.0.1:4335/contact/",
+    "runs": [
+      {
+        "FCP": 2472.3405999999995,
+        "LCP": 3098.7608999999993,
+        "TBT": 0.5,
+        "CLS": 0,
+        "SI": 3227.962920511549,
+        "perfScore": 0.9,
+        "fontCount": 3,
+        "scriptKB": 17,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 2401.2533426496993,
+        "LCP": 3007.402674119759,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 2401.2533426496993,
+        "perfScore": 0.91,
+        "fontCount": 3,
+        "scriptKB": 17,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      },
+      {
+        "FCP": 3170.178,
+        "LCP": 3356.767,
+        "TBT": 489.58899999999994,
+        "CLS": 0.0001161042516989958,
+        "SI": 3248.389352000234,
+        "perfScore": 0.73,
+        "fontCount": 3,
+        "scriptKB": 17,
+        "chainMs": null,
+        "forcedReflow": null,
+        "lcpEl": null
+      }
+    ],
+    "median": {
+      "FCP": 2472.3405999999995,
+      "LCP": 3098.7608999999993,
+      "TBT": 0.5,
+      "CLS": 0,
+      "fontCount": 3,
+      "scriptKB": 17,
+      "chainMs": null
+    }
+  }
+}

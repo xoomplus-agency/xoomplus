@@ -331,9 +331,9 @@ const contactItems = [
 		}
 	}
 
-	document.addEventListener('astro:page-load', () => {
-		booted = false;
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', scheduleContactBoot, { once: true });
+	} else {
 		scheduleContactBoot();
-	});
-	scheduleContactBoot();
+	}
 </script>

@@ -135,18 +135,14 @@ import ButtonOutline from './ButtonOutline.astro';
 			});
 		};
 
-		const cleanup = () => {
-			window.removeEventListener('scroll', onScroll);
-			button.removeEventListener('click', onClick);
-			root.dataset.bound = 'false';
-		};
-
 		window.addEventListener('scroll', onScroll, { passive: true });
 		button.addEventListener('click', onClick);
-		document.addEventListener('astro:before-swap', cleanup, { once: true });
 		update();
 	}
 
-	initScrollToTop();
-	document.addEventListener('astro:page-load', initScrollToTop);
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initScrollToTop, { once: true });
+	} else {
+		initScrollToTop();
+	}
 </script>
