@@ -127,6 +127,8 @@ function initBlogList(root: HTMLElement): void {
 	let debounceId = 0;
 	let activeIndex = -1;
 	let searchSeq = 0;
+	let loadSeq = 0;
+	const filterSkel = root.querySelector('[data-blog-filter-skeleton]');
 
 	function shownCount(): number {
 		if (!gridEl) return 0;
@@ -174,14 +176,36 @@ function initBlogList(root: HTMLElement): void {
 		if (focusFirst) first?.querySelector('a')?.focus({ preventScroll: true });
 	}
 
+	function setFilterSkeleton(visible: boolean): void {
+		if (!(filterSkel instanceof HTMLElement) || !gridEl) return;
+		filterSkel.hidden = !visible;
+		const meta = root
+			.querySelector('[data-blog-perspective]')
+			?.closest('.blog-listing__meta');
+		if (meta instanceof HTMLElement) meta.hidden = visible;
+		if (emptyEl instanceof HTMLElement && visible) emptyEl.hidden = true;
+		if (loadMoreWrap instanceof HTMLElement && visible) loadMoreWrap.hidden = true;
+		if (visible) {
+			gridEl.hidden = true;
+			gridEl.setAttribute('aria-busy', 'true');
+		} else {
+			gridEl.removeAttribute('aria-busy');
+		}
+	}
+
 	async function loadPages(
 		pages: number[],
 		opts: { replace?: boolean; focusFirst?: boolean } = {},
 	): Promise<void> {
-		if (!gridEl || !pages.length || loading) return;
+		if (!gridEl || !pages.length) return;
+		const replace = Boolean(opts.replace);
+		// Load more stays serialized; category replace may supersede an in-flight fetch.
+		if (loading && !replace) return;
+		const seq = ++loadSeq;
 		loading = true;
 		if (loadMore) loadMore.disabled = true;
 		if (statusEl) statusEl.textContent = 'Loading articles…';
+		if (replace) setFilterSkeleton(true);
 		try {
 			const params = new URLSearchParams();
 			if (pages.length === 1) params.set('page', String(pages[0]));
@@ -190,26 +214,41 @@ function initBlogList(root: HTMLElement): void {
 			const res = await fetch(`${api}?${params}`);
 			if (!res.ok) throw new Error(`blog list ${res.status}`);
 			const body = (await res.json()) as ListResponse;
+			if (seq !== loadSeq) return;
 			const ordered = [...(body.pages || [])].sort((a, b) => a.page - b.page);
 			if (ordered[0]) {
 				total = ordered[0].total;
 				gridEl.setAttribute('data-total', String(total));
 			}
 			const posts = ordered.flatMap((page) => page.posts);
-			if (opts.replace) gridEl.replaceChildren();
-			if (posts.length === 0 && emptyEl instanceof HTMLElement) {
-				emptyEl.textContent = 'No articles in this category.';
+			if (replace) {
+				gridEl.replaceChildren();
+				setFilterSkeleton(false);
+			}
+			if (posts.length === 0) {
+				gridEl.hidden = true;
+				if (emptyEl instanceof HTMLElement) {
+					emptyEl.textContent = 'No articles in this category.';
+				}
+			} else {
+				gridEl.hidden = false;
 			}
 			loading = false;
 			appendPosts(posts, Boolean(opts.focusFirst));
 			const last = ordered[ordered.length - 1];
 			if (last) nextPage = last.page + 1;
 		} catch (err) {
+			if (seq !== loadSeq) return;
 			console.error('[blog-list] load failed:', err);
+			if (replace) {
+				setFilterSkeleton(false);
+				gridEl.hidden = shownCount() === 0;
+			}
 			if (statusEl) statusEl.textContent = "Couldn't load more articles.";
 			loading = false;
 			paintCounts({ keepStatus: true });
 		} finally {
+			if (seq !== loadSeq) return;
 			loading = false;
 			if (loadMore) loadMore.disabled = false;
 		}

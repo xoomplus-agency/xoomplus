@@ -57,9 +57,9 @@ const imageHeight = image.height ?? 458;
 <style>
 	.csh {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: minmax(0, 1fr) 708px;
 		align-items: center;
-		gap: 64px;
+		gap: 40px;
 	}
 
 	.csh__content {
@@ -89,15 +89,16 @@ const imageHeight = image.height ?? 458;
 	}
 
 	.csh__media {
-		min-width: 0;
-		width: 100%;
+		width: 708px;
+		max-width: 100%;
 		overflow: hidden;
 		border-radius: 24px;
 	}
 
 	.csh__image {
 		display: block;
-		width: 100%;
+		width: 708px;
+		max-width: 100%;
 		height: auto;
 		aspect-ratio: 708 / 458;
 		border-radius: 24px;
@@ -111,7 +112,8 @@ const imageHeight = image.height ?? 458;
 		}
 
 		.csh__media {
-			max-width: 560px;
+			width: 100%;
+			max-width: 708px;
 			margin-inline: auto;
 		}
 	}

@@ -116,7 +116,11 @@ try {
 	  Posts are a server island: shell (title, filters, search) streams first;
 	  BlogGridSkeleton shows until getPosts resolves. Freshness unchanged
 	  (getPosts still uses cache: no-store).
+	  Filter skeleton is client-toggled only while category chips refetch.
 	*/}
+	<div data-blog-filter-skeleton hidden>
+		<BlogGridSkeleton />
+	</div>
 	<BlogPostsGrid server:defer>
 		<BlogGridSkeleton slot="fallback" />
 	</BlogPostsGrid>
