@@ -26,18 +26,19 @@ const {
 
 const HeadingTag = headingLevel === 2 ? 'h2' : 'h3';
 
+/** Values must match CF7 form 15941 enum accept lists. */
 const serviceOptions = [
-	{ label: 'SEO', value: 'seo' },
-	{ label: 'Web Design & Development', value: 'web-design-development' },
-	{ label: 'Social Media Marketing', value: 'social-media-marketing' },
-	{ label: 'PPC & Google Ads', value: 'ppc-google-ads' },
-	{ label: 'Not sure yet', value: 'not-sure' },
+	{ label: 'SEO', value: 'SEO' },
+	{ label: 'Web Design & Development', value: 'Web Design & Development' },
+	{ label: 'Social Media Marketing', value: 'Social Media Marketing' },
+	{ label: 'PPC & Google Ads', value: 'PPC & Google Ads' },
+	{ label: 'Not sure yet', value: 'Not sure yet' },
 ] as const;
 
 const budgetOptions = [
 	'Under £1,000',
-	'£1,000 - £3,000',
-	'£3,000 - £5,000',
+	'£1,000 - £2,500',
+	'£2,500 - £5,000',
 	'£5,000 - £10,000',
 	'£10,000+',
 	'Not sure yet',
@@ -47,8 +48,8 @@ const timelineOptions = [
 	'As soon as possible',
 	'Within 1 month',
 	'1-3 months',
-	'3+ months',
-	'Just exploring',
+	'3-6 months',
+	'Flexible',
 ] as const;
 
 const ids = {
@@ -86,6 +87,7 @@ const ids = {
 		id={ids.form}
 		data-contact-form
 		data-enquiry-form
+		data-cf7-form="contact-services"
 		novalidate
 	>
 		<input type="hidden" name="source" value={source} />
@@ -114,6 +116,7 @@ const ids = {
 					autocomplete="name"
 					required
 				/>
+				<p class="contact-field-error m-0" data-cf7-error="name" hidden></p>
 			</div>
 			<div class="contact-field">
 				<label for={ids.email}>
@@ -127,6 +130,7 @@ const ids = {
 					autocomplete="email"
 					required
 				/>
+				<p class="contact-field-error m-0" data-cf7-error="email" hidden></p>
 			</div>
 		</div>
 
@@ -142,6 +146,7 @@ const ids = {
 					placeholder="Your business name"
 					autocomplete="organization"
 				/>
+				<p class="contact-field-error m-0" data-cf7-error="company" hidden></p>
 			</div>
 			<div class="contact-field">
 				<label for={ids.website}>
@@ -154,6 +159,7 @@ const ids = {
 					placeholder="Your website URL"
 					autocomplete="url"
 				/>
+				<p class="contact-field-error m-0" data-cf7-error="website" hidden></p>
 			</div>
 		</div>
 
@@ -176,6 +182,7 @@ const ids = {
 					))
 				}
 			</div>
+			<p class="contact-field-error m-0" data-cf7-error="services" hidden></p>
 		</fieldset>
 
 		<div class="enquiry__row">
@@ -201,6 +208,7 @@ const ids = {
 						{budgetOptions.map((option) => <option value={option}>{option}</option>)}
 					</select>
 				</noscript>
+				<p class="contact-field-error m-0" data-cf7-error="budget" hidden></p>
 			</div>
 			<div class="contact-field">
 				<label for={ids.timeline}>
@@ -220,6 +228,7 @@ const ids = {
 						{timelineOptions.map((option) => <option value={option}>{option}</option>)}
 					</select>
 				</noscript>
+				<p class="contact-field-error m-0" data-cf7-error="timeline" hidden></p>
 			</div>
 		</div>
 
@@ -238,6 +247,7 @@ const ids = {
 			<p class="enquiry-field-help m-0" id={ids.detailsHelp}>
 				No polished brief needed. A few sentences is a good start.
 			</p>
+			<p class="contact-field-error m-0" data-cf7-error="details" hidden></p>
 		</div>
 
 		<label class="enquiry-consent">
@@ -247,6 +257,7 @@ const ids = {
 				<a class="enquiry-consent__link" href="/privacy-policy">Privacy Policy</a>
 			</span>
 		</label>
+		<p class="contact-field-error m-0" data-cf7-error="consent" hidden></p>
 
 		<div class="enquiry__actions">
 			<Button type="submit" id={ids.submit}>
@@ -438,6 +449,15 @@ const ids = {
 		justify-content: flex-start;
 	}
 
+	.contact-field-error {
+		margin-top: 6px;
+		font-family: var(--font-inter);
+		font-size: 0.75rem;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #b42318;
+	}
+
 	@media (min-width: 640px) {
 		.enquiry__row {
 			grid-template-columns: 1fr 1fr;
@@ -454,7 +474,7 @@ const ids = {
 <script>
 	import { initContactForms } from '../scripts/contact-form';
 
-	const NOT_SURE = 'not-sure';
+	const NOT_SURE = 'Not sure yet';
 
 	function bindEnquiryChips() {
 		document.querySelectorAll<HTMLFormElement>('[data-enquiry-form]').forEach((form) => {

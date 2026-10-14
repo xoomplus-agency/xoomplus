@@ -1,28 +1,17 @@
 /**
- * Contact Form 7 REST submit helpers (browser + build).
+ * Contact Form 7 REST submit helpers (browser).
  *
- * Env:
- *   PUBLIC_WP_API          — e.g. https://cms.example.com/wp-json/wp/v2
- *   PUBLIC_CF7_FORM_ID     — CF7 form post ID (required for submit)
- *   PUBLIC_CF7_FORM_ID_ENQUIRY — optional second form for enquiry cards
- *
- * Map Astro field names → CF7 mail-tag names via PUBLIC_CF7_FIELD_MAP JSON, e.g.
- *   {"name":"your-name","email":"your-email","details":"your-message"}
- * Defaults below match common CF7 templates.
+ * Form IDs and field maps live in `./cf7-forms` (explicit per-form config).
+ * PUBLIC_WP_API is optional; defaults to the live WordPress origin.
  */
 
-const DEFAULT_FIELD_MAP: Record<string, string> = {
-	name: 'your-name',
-	email: 'your-email',
-	company: 'your-company',
-	phone: 'your-phone',
-	details: 'your-message',
-	message: 'your-message',
-	website: 'your-website',
-	budget: 'your-budget',
-	source: 'your-source',
-	services: 'your-services',
-};
+import {
+	type Cf7FormConfig,
+	getCf7FormConfig,
+} from './cf7-forms';
+
+const DEFAULT_WP_ORIGIN = 'https://xoomplus.co.uk';
+const CF7_VERSION = '6.2.2';
 
 function readPublic(name: string): string | undefined {
 	try {
@@ -38,74 +27,77 @@ function readPublic(name: string): string | undefined {
 	return undefined;
 }
 
-/** WP site origin from PUBLIC_WP_API (strip /wp-json/...). */
-export function getWpOrigin(): string | undefined {
+/** WP site origin from PUBLIC_WP_API, else production WordPress. */
+export function getWpOrigin(): string {
 	const api = readPublic('PUBLIC_WP_API');
-	if (!api) return undefined;
-	try {
-		const u = new URL(api);
-		return u.origin;
-	} catch {
-		return undefined;
+	if (api) {
+		try {
+			return new URL(api).origin;
+		} catch {
+			/* fall through */
+		}
 	}
+	return DEFAULT_WP_ORIGIN;
 }
 
-export function getCf7FormId(kind: 'default' | 'enquiry' = 'default'): string | undefined {
-	if (kind === 'enquiry') {
-		return readPublic('PUBLIC_CF7_FORM_ID_ENQUIRY') || readPublic('PUBLIC_CF7_FORM_ID');
-	}
-	return readPublic('PUBLIC_CF7_FORM_ID');
+export function getCf7FeedbackUrl(formId: string | number): string {
+	return `${getWpOrigin()}/wp-json/contact-form-7/v1/contact-forms/${formId}/feedback`;
 }
 
-export function getCf7FeedbackUrl(formId: string): string | undefined {
-	const origin = getWpOrigin();
-	if (!origin || !formId) return undefined;
-	return `${origin}/wp-json/contact-form-7/v1/contact-forms/${formId}/feedback`;
-}
-
-function fieldMap(): Record<string, string> {
-	const raw = readPublic('PUBLIC_CF7_FIELD_MAP');
-	if (!raw) return { ...DEFAULT_FIELD_MAP };
-	try {
-		const parsed = JSON.parse(raw) as Record<string, string>;
-		return { ...DEFAULT_FIELD_MAP, ...parsed };
-	} catch {
-		console.warn('[cf7] PUBLIC_CF7_FIELD_MAP is not valid JSON — using defaults');
-		return { ...DEFAULT_FIELD_MAP };
-	}
+export function resolveCf7FormConfig(
+	form: HTMLFormElement,
+): Cf7FormConfig | undefined {
+	return getCf7FormConfig(form.dataset.cf7Form);
 }
 
 /**
- * Build multipart body CF7 expects, mapping our input names → CF7 tags.
+ * Build multipart body CF7 expects from an Astro form + explicit config.
  */
 export function buildCf7FormData(
 	form: HTMLFormElement,
-	formId: string,
+	config: Cf7FormConfig,
 ): FormData {
-	const map = fieldMap();
 	const out = new FormData();
 	const src = new FormData(form);
+	const formId = String(config.id);
+	const multi = new Set(config.multi ?? []);
+	const skip = new Set(config.skip ?? ['hp_website']);
+	const omitEmpty = new Set(config.omitEmpty ?? []);
+	const multiValues: Record<string, string[]> = {};
 
 	out.append('_wpcf7', formId);
-	out.append('_wpcf7_version', '5.9.0');
+	out.append('_wpcf7_version', CF7_VERSION);
 	out.append('_wpcf7_locale', 'en_US');
 	out.append('_wpcf7_unit_tag', `wpcf7-f${formId}-o1`);
 	out.append('_wpcf7_container_post', '0');
 	out.append('_wpcf7_posted_data_hash', '');
 
-	const services: string[] = [];
 	for (const [key, value] of src.entries()) {
-		if (key === 'hp_website') continue;
-		if (key.startsWith('_wpcf7')) continue;
-		if (key === 'services') {
-			services.push(String(value));
+		if (skip.has(key) || key.startsWith('_wpcf7')) continue;
+
+		const dest = config.fields[key];
+		if (!dest) continue;
+
+		const raw = String(value);
+		if (omitEmpty.has(key) && !raw.trim()) continue;
+
+		const transformed = config.transform?.[key]?.(raw) ?? raw;
+
+		if (multi.has(key)) {
+			(multiValues[dest] ??= []).push(transformed);
 			continue;
 		}
-		const dest = map[key] || key;
-		out.append(dest, value);
+
+		out.append(dest, transformed);
 	}
-	if (services.length) {
-		out.append(map.services || 'your-services', services.join(', '));
+
+	for (const [dest, values] of Object.entries(multiValues)) {
+		for (const v of values) out.append(dest, v);
+	}
+
+	if (config.includePageContext && typeof document !== 'undefined') {
+		out.append('page-title', document.title);
+		out.append('page-url', window.location.href);
 	}
 
 	return out;
@@ -114,9 +106,11 @@ export function buildCf7FormData(
 export type Cf7Feedback = {
 	status?: string;
 	message?: string;
-	invalid_fields?: { field: string; message: string }[];
+	invalid_fields?: { field: string; message: string; error_id?: string }[];
 };
 
 export function isCf7Success(data: Cf7Feedback): boolean {
-	return data.status === 'mail_sent' || data.status === 'mail_sent_ng';
+	return data.status === 'mail_sent';
 }
+
+export { getCf7FormConfig, type Cf7FormConfig };

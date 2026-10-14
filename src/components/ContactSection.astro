@@ -77,7 +77,13 @@ const contactItems = [
 				A few details help us understand the right next step.
 			</p>
 
-			<form class="contact-form" id="contact-form" data-contact-form novalidate>
+			<form
+				class="contact-form"
+				id="contact-form"
+				data-contact-form
+				data-cf7-form="contact-homepage"
+				novalidate
+			>
 				{/* Honeypot — leave empty; bots that fill it are rejected client-side */}
 				<div class="contact-honeypot" aria-hidden="true">
 					<label for="contact-hp-website">Website</label>
@@ -99,6 +105,7 @@ const contactItems = [
 						autocomplete="name"
 						required
 					/>
+					<p class="contact-field-error m-0" data-cf7-error="name" hidden></p>
 				</div>
 
 				<div class="contact-field">
@@ -108,7 +115,9 @@ const contactItems = [
 						id="contact-company"
 						name="company"
 						autocomplete="organization"
+						required
 					/>
+					<p class="contact-field-error m-0" data-cf7-error="company" hidden></p>
 				</div>
 
 				<div class="contact-field">
@@ -120,16 +129,25 @@ const contactItems = [
 						autocomplete="email"
 						required
 					/>
+					<p class="contact-field-error m-0" data-cf7-error="email" hidden></p>
 				</div>
 
 				<div class="contact-field">
 					<label for="contact-phone">Phone</label>
-					<input type="tel" id="contact-phone" name="phone" autocomplete="tel" />
+					<input
+						type="tel"
+						id="contact-phone"
+						name="phone"
+						autocomplete="tel"
+						required
+					/>
+					<p class="contact-field-error m-0" data-cf7-error="phone" hidden></p>
 				</div>
 
 				<div class="contact-field">
 					<label for="contact-details">Project Details</label>
 					<textarea id="contact-details" name="details" rows="4"></textarea>
+					<p class="contact-field-error m-0" data-cf7-error="details" hidden></p>
 				</div>
 
 				<Button type="submit" id="contact-submit" size="nav" class="!w-full">
