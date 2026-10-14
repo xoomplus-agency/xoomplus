@@ -3,6 +3,7 @@ import Section from './Section.astro';
 import BlogCard from './BlogCard.astro';
 import BlogPostsGrid from './BlogPostsGrid.astro';
 import BlogGridSkeleton from './BlogGridSkeleton.astro';
+import BlogSearch from './BlogSearch.astro';
 import {
 	BLOG_IMAGE_PLACEHOLDER,
 	categoryKey,
@@ -63,53 +64,7 @@ try {
 			</h2>
 		</div>
 
-		<div class="blog-listing__search" data-blog-search-wrap>
-			<label class="sr-only" for="blog-search">Search articles</label>
-			<svg
-				class="blog-listing__search-icon"
-				width="16"
-				height="16"
-				viewBox="0 0 16 16"
-				fill="none"
-				aria-hidden="true"
-			>
-				<path
-					d="M7 12.5A5.5 5.5 0 1 0 7 1.5a5.5 5.5 0 0 0 0 11Z"
-					stroke="#555555"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"></path>
-				<path
-					d="m11.5 11.5 2.75 2.75"
-					stroke="#555555"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"></path>
-			</svg>
-			<input
-				id="blog-search"
-				class="blog-listing__search-input"
-				type="search"
-				name="q"
-				placeholder="Search articles"
-				autocomplete="off"
-				role="combobox"
-				aria-autocomplete="list"
-				aria-controls="blog-search-results"
-				aria-expanded="false"
-				aria-haspopup="listbox"
-				data-blog-search
-			/>
-			<div
-				id="blog-search-results"
-				class="blog-listing__search-results"
-				role="listbox"
-				aria-label="Search results"
-				hidden
-				data-blog-search-results
-			></div>
-			<p class="sr-only" role="status" aria-live="polite" data-blog-search-live></p>
-		</div>
+		<BlogSearch />
 	</div>
 
 	<div
@@ -294,192 +249,6 @@ try {
 		margin: 16px 0 0;
 	}
 
-	.blog-listing__search {
-		position: relative;
-		z-index: 20;
-		flex: 1 1 360px;
-		width: auto;
-		min-width: min(280px, 100%);
-		max-width: min(640px, 100%);
-	}
-
-	.blog-listing__search-icon {
-		position: absolute;
-		top: 20px;
-		left: 14px;
-		z-index: 2;
-		display: block;
-		transform: translateY(-50%);
-		pointer-events: none;
-	}
-
-	.blog-listing__search-input {
-		box-sizing: border-box;
-		position: relative;
-		z-index: 1;
-		width: 100%;
-		height: 40px;
-		padding: 0 14px 0 38px;
-		border: 1px solid #e9e9e7;
-		border-radius: 8px;
-		background: #ffffff;
-		font-family: var(--font-inter);
-		font-size: var(--text-small);
-		font-weight: 400;
-		line-height: 1.4;
-		color: var(--color-primary-black);
-		outline: none;
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease,
-			border-radius 0.15s ease;
-	}
-
-	.blog-listing__search-input::placeholder {
-		color: #888888;
-	}
-
-	.blog-listing__search-input:focus {
-		border-color: #ffa800;
-		box-shadow: 0 0 0 3px rgba(255, 168, 0, 0.15);
-	}
-
-	.blog-listing__search-results {
-		position: absolute;
-		top: calc(100% + 6px);
-		left: 0;
-		right: 0;
-		z-index: 30;
-		box-sizing: border-box;
-		max-height: min(360px, 70vh);
-		overflow-x: hidden;
-		overflow-y: auto;
-		padding: 12px;
-		border: 1px solid #e9e9e7;
-		border-radius: 12px;
-		background: #ffffff;
-		box-shadow: 0 12px 32px rgba(11, 10, 11, 0.12);
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-option) {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		align-items: flex-start;
-		gap: 12px;
-		box-sizing: border-box;
-		width: 100%;
-		padding: 10px 0;
-		border: 0;
-		border-bottom: 1px solid #e9e9e7;
-		border-radius: 0;
-		background: transparent;
-		color: inherit;
-		text-align: left;
-		text-decoration: none;
-		cursor: pointer;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-option:last-child) {
-		border-bottom: 0;
-		padding-bottom: 0;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-option:first-child) {
-		padding-top: 0;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-option.is-active),
-	.blog-listing__search-results :global(.blog-listing__search-option:focus-visible) {
-		background: #f7f7f5;
-		outline: none;
-	}
-
-	@media (hover: hover) {
-		.blog-listing__search-results :global(.blog-listing__search-option:hover) {
-			background: #f7f7f5;
-		}
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-media) {
-		flex: 0 0 64px;
-		width: 64px;
-		height: 48px;
-		overflow: hidden;
-		border-radius: 8px;
-		background: #f3f3f1;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-thumb) {
-		display: block;
-		width: 100%;
-		height: 100%;
-		max-width: none;
-		border-radius: 8px;
-		object-fit: cover;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-body) {
-		flex: 1 1 auto;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-title) {
-		margin: 0;
-		font-family: var(--font-inter);
-		font-size: 14px;
-		font-weight: 500;
-		line-height: 1.3;
-		color: var(--color-primary-black);
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-cat) {
-		margin: 0;
-		font-family: var(--font-inter);
-		font-size: 12px;
-		font-weight: 400;
-		line-height: 1.3;
-		color: #888888;
-	}
-
-	.blog-listing__search-results :global(.blog-listing__search-empty) {
-		margin: 0;
-		padding: 4px 2px;
-		font-family: var(--font-inter);
-		font-size: 13px;
-		font-weight: 400;
-		line-height: 1.4;
-		color: #888888;
-	}
-
-	@media (max-width: 639px) {
-		.blog-listing__search-results {
-			max-height: min(280px, 60vh);
-			padding: 10px;
-		}
-
-		.blog-listing__search-results :global(.blog-listing__search-option) {
-			gap: 10px;
-		}
-
-		.blog-listing__search-results :global(.blog-listing__search-media) {
-			flex: 0 0 56px;
-			width: 56px;
-			height: 42px;
-		}
-
-		.blog-listing__search-results :global(.blog-listing__search-title) {
-			font-size: 13px;
-		}
-	}
-
 	.blog-listing__filters {
 		display: flex;
 		flex-wrap: wrap;
@@ -532,12 +301,6 @@ try {
 	@media (max-width: 1023px) {
 		.blog-listing__header {
 			flex-wrap: wrap;
-		}
-
-		.blog-listing__search {
-			flex: 1 1 100%;
-			width: 100%;
-			max-width: 100%;
 		}
 	}
 

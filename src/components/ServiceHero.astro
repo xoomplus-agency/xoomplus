@@ -29,21 +29,21 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 >
 	<div class="service-hero__inner container container--wide">
 		<div class="service-hero__grid">
-			<div class="service-hero__copy">
-				<p class="pill-dark service-hero__pill m-0">
+			<div class="service-hero__copy" data-hero-enter>
+				<p class="pill-dark service-hero__pill m-0" data-hero-item>
 					<span class="service-hero__pill-text">{hero.pill}</span>
 					<span class="service-hero__pill-sep" aria-hidden="true"> · </span>
 					<span class="service-hero__pill-brand">{pillBrand}</span>
 				</p>
 
-				<h1 id={headingId} class="text-hero-h1 service-hero__title">
+				<h1 id={headingId} class="text-hero-h1 service-hero__title" data-hero-item>
 					<span class="service-hero__title-line">{titleLine1}</span>
 					<span class="service-hero__title-line">{titleLine2}</span>
 				</h1>
 
-				<p class="service-hero__text">{hero.text}</p>
+				<p class="service-hero__text" data-hero-item>{hero.text}</p>
 
-				<div class="service-hero__actions">
+				<div class="service-hero__actions" data-hero-item>
 					<Button href={hero.primaryButton.href}>{hero.primaryButton.label}</Button>
 					<a class="service-hero__secondary" href={hero.secondaryLink.href}>
 						{hero.secondaryLink.label}

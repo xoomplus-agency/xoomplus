@@ -48,14 +48,22 @@ const trust = [
 		class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
 		aria-hidden="true"
 	>
-		{/* Poster visible at first paint (LCP). Video fades in after canplay. */}
+		{/* Poster visible at first paint (LCP). No video poster attr — avoids double download. */}
 		<picture>
-			<source srcset="/videos/bg-hero-poster.avif" type="image/avif" />
-			<source srcset="/videos/bg-hero-poster.webp" type="image/webp" />
+			<source
+				type="image/avif"
+				srcset="/videos/bg-hero-poster-640.avif 640w, /videos/bg-hero-poster-960.avif 960w, /videos/bg-hero-poster-1280.avif 1280w, /videos/bg-hero-poster-1920.avif 1920w"
+				sizes="100vw"
+			/>
+			<source
+				type="image/webp"
+				srcset="/videos/bg-hero-poster-640.webp 640w, /videos/bg-hero-poster-960.webp 960w, /videos/bg-hero-poster-1280.webp 1280w, /videos/bg-hero-poster-1920.webp 1920w"
+				sizes="100vw"
+			/>
 			<img
 				id="hero-bg-poster"
 				class="absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
-				src="/videos/bg-hero-poster.webp"
+				src="/videos/bg-hero-poster-960.webp"
 				alt=""
 				width="1280"
 				height="720"
@@ -70,71 +78,97 @@ const trust = [
 			loop
 			playsinline
 			preload="none"
-			poster="/videos/bg-hero-poster.webp"
 			aria-hidden="true"
 		></video>
-		<script is:inline>
-			(function () {
-				var video = document.getElementById('hero-bg-video');
-				if (!video) return;
+		{/*
+		  ClientRouter swaps the body on soft nav, so this video node is new each
+		  homepage visit. Init must run on astro:page-load (not only first paint).
+		*/}
+		<script>
+			type NetworkInformationLike = { saveData?: boolean; effectiveType?: string };
 
-				function shouldSkipVideo() {
-					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
-					var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-					if (conn && (conn.saveData || /2g/.test(conn.effectiveType || ''))) return true;
-					return false;
+			function shouldSkipHeroVideo(): boolean {
+				if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+				const nav = navigator as Navigator & {
+					connection?: NetworkInformationLike;
+					mozConnection?: NetworkInformationLike;
+					webkitConnection?: NetworkInformationLike;
+				};
+				const conn = nav.connection || nav.mozConnection || nav.webkitConnection;
+				if (conn && (conn.saveData || /2g/.test(conn.effectiveType || ''))) return true;
+				return false;
+			}
+
+			function tryPlayHeroVideo(video: HTMLVideoElement): void {
+				/* Re-assert after ClientRouter swaps — attribute alone is not always enough for autoplay. */
+				video.muted = true;
+				video.defaultMuted = true;
+				video.playsInline = true;
+				const play = video.play();
+				if (play && typeof play.then === 'function') {
+					play.catch(() => {
+						/* Autoplay can be blocked; poster stays visible. */
+					});
 				}
+			}
 
-				function fadeIn() {
+			function initHeroBgVideo(): void {
+				const video = document.getElementById('hero-bg-video');
+				if (!(video instanceof HTMLVideoElement) || !video.isConnected) return;
+				if (shouldSkipHeroVideo()) return;
+
+				const fadeIn = () => {
 					video.classList.add('is-playing');
-				}
+				};
 
-				function attachSources() {
-					if (shouldSkipVideo()) return;
-					if (video.querySelector('source')) return;
+				const attachSources = () => {
+					if (!video.isConnected || shouldSkipHeroVideo()) return;
 
-					var isNarrow = window.matchMedia('(max-width: 1023px)').matches;
-					var sources = isNarrow
-						? [
-								{ src: '/videos/bg-hero-mobile.webm', type: 'video/webm' },
-								{ src: '/videos/bg-hero-mobile.mp4', type: 'video/mp4' },
-							]
-						: [
-								{ src: '/videos/bg-hero-desktop.webm', type: 'video/webm' },
-								{ src: '/videos/bg-hero-desktop.mp4', type: 'video/mp4' },
-							];
+					if (!video.querySelector('source')) {
+						const isNarrow = window.matchMedia('(max-width: 1023px)').matches;
+						const sources = isNarrow
+							? [
+									{ src: '/videos/bg-hero-mobile.webm', type: 'video/webm' },
+									{ src: '/videos/bg-hero-mobile.mp4', type: 'video/mp4' },
+								]
+							: [
+									{ src: '/videos/bg-hero-desktop.webm', type: 'video/webm' },
+									{ src: '/videos/bg-hero-desktop.mp4', type: 'video/mp4' },
+								];
 
-					for (var i = 0; i < sources.length; i++) {
-						var s = document.createElement('source');
-						s.src = sources[i].src;
-						s.type = sources[i].type;
-						video.appendChild(s);
-					}
-
-					video.addEventListener('canplay', fadeIn, { once: true });
-					video.preload = 'auto';
-					video.load();
-					var play = video.play();
-					if (play && typeof play.then === 'function') {
-						play.catch(function () {});
-					}
-				}
-
-				function schedule() {
-					if (shouldSkipVideo()) return;
-					var run = function () {
-						if ('requestIdleCallback' in window) {
-							requestIdleCallback(attachSources, { timeout: 2000 });
-						} else {
-							setTimeout(attachSources, 1);
+						for (const { src, type } of sources) {
+							const source = document.createElement('source');
+							source.src = src;
+							source.type = type;
+							video.appendChild(source);
 						}
-					};
-					if (document.readyState === 'complete') run();
-					else window.addEventListener('load', run, { once: true });
-				}
 
-				schedule();
-			})();
+						video.addEventListener('canplay', fadeIn, { once: true });
+						video.preload = 'auto';
+						video.load();
+					} else if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+						fadeIn();
+					} else {
+						video.addEventListener('canplay', fadeIn, { once: true });
+					}
+
+					tryPlayHeroVideo(video);
+				};
+
+				const run = () => {
+					if ('requestIdleCallback' in window) {
+						requestIdleCallback(attachSources, { timeout: 2000 });
+					} else {
+						setTimeout(attachSources, 1);
+					}
+				};
+
+				/* Defer until load on first visit so poster can be LCP; soft nav is already complete. */
+				if (document.readyState === 'complete') run();
+				else window.addEventListener('load', run, { once: true });
+			}
+
+			document.addEventListener('astro:page-load', initHeroBgVideo);
 		</script>
 
 		<div
@@ -143,20 +177,24 @@ const trust = [
 		></div>
 	</div>
 
-	<div class="container container--wide pt-[clamp(1.5rem,4vh,3rem)] text-center">
-		<p class="pill-dark mb-5 text-[#ff9a3c]">
+	<div
+		class="container container--wide pt-[clamp(1.5rem,4vh,3rem)] text-center"
+		data-hero-enter
+	>
+		<p class="pill-dark mb-5 text-[#ff9a3c]" data-hero-item>
 			Your All-in-one digital growth partner
 		</p>
-		<h1 class="text-hero-h1 mx-auto mb-[0.5em] max-w-[24ch]">
+		<h1 class="text-hero-h1 mx-auto mb-[0.5em] max-w-[24ch]" data-hero-item>
 			Digital Marketing That Moves Your Business Forward
 		</h1>
-		<p class="text-on-dark mx-auto mb-7 max-w-[640px] tracking-[-0.01em]">
+		<p class="text-on-dark mx-auto mb-7 max-w-[640px] tracking-[-0.01em]" data-hero-item>
 			We combine SEO, web design and development, social media marketing, and paid search to help
 			businesses build stronger digital experiences, reach the right audience, and create
 			opportunities for growth.
 		</p>
 		<div
 			class="flex flex-wrap items-center justify-center gap-x-7 gap-y-5 max-[560px]:flex-col max-[560px]:gap-4"
+			data-hero-item
 		>
 			<Button size="hero" class="btn-book-call" href="#contact">
 				Book a Call

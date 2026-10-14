@@ -1,35 +1,41 @@
 ---
 import LogoLoop from './LogoLoop.astro';
 
+const logoSizes = '(max-width: 767px) 150px, 200px';
+
 const logos = [
 	{
 		src: '/images/brand-concisemedico.webp',
-		srcSet: '/images/brand-concisemedico.webp 300w, /images/brand-concisemedico-2x.webp 600w',
-		sizes: '300px',
+		srcSet:
+			'/images/brand-concisemedico-150.webp 150w, /images/brand-concisemedico.webp 300w, /images/brand-concisemedico-2x.webp 450w',
+		sizes: logoSizes,
 		alt: 'ConciseMedico',
 		width: 300,
 		height: 68,
 	},
 	{
 		src: '/images/brand-sterling-cooper.webp',
-		srcSet: '/images/brand-sterling-cooper.webp 300w, /images/brand-sterling-cooper-2x.webp 600w',
-		sizes: '300px',
+		srcSet:
+			'/images/brand-sterling-cooper-150.webp 150w, /images/brand-sterling-cooper.webp 300w, /images/brand-sterling-cooper-2x.webp 450w',
+		sizes: logoSizes,
 		alt: 'Sterling Cooper Consultants Ltd.',
 		width: 300,
 		height: 68,
 	},
 	{
 		src: '/images/brand-bodykite.webp',
-		srcSet: '/images/brand-bodykite.webp 300w, /images/brand-bodykite-2x.webp 600w',
-		sizes: '300px',
+		srcSet:
+			'/images/brand-bodykite-150.webp 150w, /images/brand-bodykite.webp 300w, /images/brand-bodykite-2x.webp 450w',
+		sizes: logoSizes,
 		alt: 'Bodykite',
 		width: 300,
 		height: 68,
 	},
 	{
 		src: '/images/brand-gopsych.webp',
-		srcSet: '/images/brand-gopsych.webp 300w, /images/brand-gopsych-2x.webp 600w',
-		sizes: '300px',
+		srcSet:
+			'/images/brand-gopsych-150.webp 150w, /images/brand-gopsych.webp 300w, /images/brand-gopsych-2x.webp 450w',
+		sizes: logoSizes,
 		alt: 'Go Psych',
 		width: 300,
 		height: 68,
@@ -72,8 +78,14 @@ const logos = [
 
 <style>
 	.brands-logo-loop :global(.logoloop__item img) {
-		width: 300px;
+		width: 200px;
 		height: 68px;
 		object-fit: contain;
+	}
+
+	@media (max-width: 767px) {
+		.brands-logo-loop :global(.logoloop__item img) {
+			width: 150px;
+		}
 	}
 </style>

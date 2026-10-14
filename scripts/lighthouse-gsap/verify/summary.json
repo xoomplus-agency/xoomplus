@@ -1,0 +1,38 @@
+[
+    {
+        "run":  1,
+        "FCP":  3311.8828244912784,
+        "LCP":  3911.882824491279,
+        "CLS":  0.0001937220940385097,
+        "TTFB":  6.882,
+        "RenderDelay":  208.356,
+        "MaxReflow":  20.937,
+        "ImgScore":  0.5,
+        "Preconnect":  null,
+        "LcpLabel":  null
+    },
+    {
+        "run":  2,
+        "FCP":  3318.73269687876,
+        "LCP":  3918.732696878761,
+        "CLS":  0.0001937220940385097,
+        "TTFB":  7.19,
+        "RenderDelay":  221.645,
+        "MaxReflow":  21.123,
+        "ImgScore":  0.5,
+        "Preconnect":  null,
+        "LcpLabel":  null
+    },
+    {
+        "run":  3,
+        "FCP":  3315.3357888685005,
+        "LCP":  3915.335788868501,
+        "CLS":  0.0001994198026867011,
+        "TTFB":  6.41999951171875,
+        "RenderDelay":  221.13900048828125,
+        "MaxReflow":  23.231,
+        "ImgScore":  0.5,
+        "Preconnect":  null,
+        "LcpLabel":  null
+    }
+]

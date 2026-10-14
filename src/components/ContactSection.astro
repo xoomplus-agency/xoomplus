@@ -298,27 +298,42 @@ const contactItems = [
 </style>
 
 <script>
-	import { initContactForms } from '../scripts/contact-form';
+	let booted = false;
+
+	async function bootContactForms() {
+		if (booted) return;
+		booted = true;
+		const { initContactForms } = await import('../scripts/contact-form');
+		initContactForms();
+	}
 
 	function scheduleContactBoot() {
 		const form = document.querySelector('[data-contact-form]');
 		if (!form) return;
-		const boot = () => initContactForms();
+
+		const onFocus = () => {
+			void bootContactForms();
+		};
+		form.addEventListener('focusin', onFocus, { once: true });
+
 		if ('IntersectionObserver' in window) {
 			const io = new IntersectionObserver(
 				(entries) => {
 					if (!entries.some((e) => e.isIntersecting)) return;
 					io.disconnect();
-					boot();
+					void bootContactForms();
 				},
 				{ rootMargin: '200px 0px' },
 			);
 			io.observe(form);
 		} else {
-			boot();
+			void bootContactForms();
 		}
 	}
 
-	document.addEventListener('astro:page-load', scheduleContactBoot);
+	document.addEventListener('astro:page-load', () => {
+		booted = false;
+		scheduleContactBoot();
+	});
 	scheduleContactBoot();
 </script>

@@ -25,18 +25,18 @@ const headingId = 'location-hero-heading';
 	style={`--location-hero-bg: url('${image}')`}
 >
 	{/* Decorative glow — aria-hidden via CSS pointer-events + empty ::before */}
-	<div class="location-hero__content container container--prose">
-		<p class="pill-dark location-hero__pill m-0" aria-hidden="true">
+	<div class="location-hero__content container container--prose" data-hero-enter>
+		<p class="pill-dark location-hero__pill m-0" aria-hidden="true" data-hero-item>
 			<span class="location-hero__pill-text">{pill}</span>
 			<span class="location-hero__pill-sep"> · </span>
 			<span class="location-hero__pill-brand">{pillBrand}</span>
 		</p>
 
-		<h1 id={headingId} class="text-hero-h1 location-hero__title">{title}</h1>
+		<h1 id={headingId} class="text-hero-h1 location-hero__title" data-hero-item>{title}</h1>
 
-		<p class="location-hero__text">{text}</p>
+		<p class="location-hero__text" data-hero-item>{text}</p>
 
-		<div class="location-hero__actions">
+		<div class="location-hero__actions" data-hero-item>
 			<Button href={button.href}>{button.label}</Button>
 		</div>
 	</div>

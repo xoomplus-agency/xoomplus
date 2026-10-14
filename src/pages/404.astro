@@ -6,6 +6,8 @@
 export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import BlogSearch from '../components/BlogSearch.astro';
 
 Astro.response.status = 404;
 Astro.response.statusText = 'Not Found';
@@ -20,22 +22,154 @@ Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
 	suppressNavActive={true}
 >
 	<main id="main-content" class="page-404-main flex-1">
-		<!-- 404 content will be added here -->
+		<section class="page-section page-404" aria-labelledby="page-404-heading" data-bg="light">
+			<div class="container">
+				<div class="page-404__inner">
+					<p class="pill-light page-404__pill">Page not found</p>
+					<h1 id="page-404-heading" class="page-404__code">404</h1>
+					<p class="page-404__title text-h2 font-semibold tracking-[-0.02em] text-primary-black">
+						Looks like this page went off the map.
+					</p>
+					<p class="page-404__copy text-on-light">
+						The link may be broken or the page may have moved. Search our articles below, or head
+						back home.
+					</p>
+
+					<div
+						class="page-404__search"
+						data-blog-listing
+						data-blog-search-only
+						data-api="/api/blog-posts"
+					>
+						<BlogSearch class="page-404__search-field" inputId="page-404-blog-search" />
+					</div>
+
+					<div class="page-404__actions">
+						<Button href="/">Back to Home</Button>
+						<a class="page-404__blogs-link" href="/blogs" data-astro-prefetch="viewport">
+							Explore Blogs
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
 	</main>
 </Layout>
+
+<script>
+	import '../scripts/blog-list.ts';
+</script>
 
 <style>
 	/* Matches blog detail header clear (fixed navbar) + shared section padding */
 	.page-404-main {
 		--page-404-nav-offset: 100px;
 		padding-top: calc(var(--page-404-nav-offset) + var(--section-padding-y));
-		/* remove min-height when content is added */
-		min-height: 70vh;
+	}
+
+	.page-404 {
+		/* Outer section margin comes from .page-section; keep content padding modest */
+		padding-top: 0;
+		padding-bottom: var(--section-padding-y);
+	}
+
+	.page-404__inner {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		max-width: 40rem;
+		margin-inline: auto;
+		text-align: left;
+	}
+
+	.page-404__pill {
+		margin: 0;
+	}
+
+	.page-404__code {
+		margin: 20px 0 0;
+		font-family: var(--font-sans);
+		font-size: clamp(4rem, 2.5rem + 6vw, 7.5rem);
+		font-weight: 600;
+		line-height: 0.95;
+		letter-spacing: -0.04em;
+		color: var(--color-primary);
+	}
+
+	.page-404__title {
+		margin: 16px 0 0;
+	}
+
+	.page-404__copy {
+		margin: 16px 0 0;
+		max-width: 34rem;
+	}
+
+	.page-404__search {
+		width: 100%;
+		margin-top: 32px;
+	}
+
+	.page-404__search :global(.page-404__search-field) {
+		flex: none;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	.page-404__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 20px 28px;
+		margin-top: 32px;
+	}
+
+	.page-404__blogs-link {
+		font-family: var(--font-inter);
+		font-size: var(--text-small);
+		font-weight: 500;
+		line-height: 1;
+		letter-spacing: -0.01em;
+		color: var(--color-primary-black);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: rgba(10, 10, 10, 0.28);
+		transition: text-decoration-color 0.2s ease, color 0.2s ease;
+	}
+
+	.page-404__blogs-link:hover {
+		color: var(--color-primary-black);
+		text-decoration-color: var(--color-primary);
+	}
+
+	.page-404__blogs-link:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 3px;
+		border-radius: 2px;
 	}
 
 	@media (max-width: 639px) {
 		.page-404-main {
 			--page-404-nav-offset: 88px;
+		}
+
+		.page-404__code {
+			margin-top: 16px;
+		}
+
+		.page-404__actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+		}
+
+		.page-404__actions :global(.btn) {
+			width: 100%;
+		}
+
+		.page-404__blogs-link {
+			text-align: center;
 		}
 	}
 

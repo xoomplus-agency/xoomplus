@@ -103,7 +103,11 @@ if (isStaging()) {
 ---
 
 <!doctype html>
-<html lang="en" data-theme={theme === 'light' ? 'light' : undefined}>
+<html
+	lang="en"
+	data-theme={theme === 'light' ? 'light' : undefined}
+	transition:animate="none"
+>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -125,9 +129,11 @@ if (isStaging()) {
 					imagesrcset={lcpImagePreload.imagesrcset || undefined}
 					imagesizes={lcpImagePreload.imagesizes || undefined}
 					fetchpriority="high"
+					type={lcpImagePreload.href.endsWith('.avif') ? 'image/avif' : undefined}
 				/>
 			)
 		}
+		{/* Hero H1 (SF Pro 600) + hero body (Inter 400) — only these two preloaded */}
 		<link
 			rel="preload"
 			href={sfProDisplayBold}
@@ -142,15 +148,14 @@ if (isStaging()) {
 			type="font/woff2"
 			crossorigin
 		/>
-		<link rel="preconnect" href="https://xoomplus.co.uk" crossorigin />
-		<link rel="dns-prefetch" href="https://xoomplus.co.uk" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<script is:inline>
 			document.documentElement.classList.add('js');
 		</script>
-		<ClientRouter />
+		{/* Soft nav only — no fade on first paint; swap fallback avoids simulated fade reflow */}
+		<ClientRouter fallback="swap" />
 		<Seo
 			title={mapped ? undefined : title}
 			description={mapped ? undefined : description}

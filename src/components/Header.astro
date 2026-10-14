@@ -1407,6 +1407,14 @@ function isActive(item: NavItem) {
 			return cachedProbeY;
 		}
 		function refreshProbeY() {
+			/* Prefer CSS custom property / estimate — avoid sync layout thrash on boot. */
+			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+			const estimated = isMobile ? 64 : 80;
+			cachedProbeY = Math.max(1, Math.round(estimated / 2));
+			return cachedProbeY;
+		}
+
+		function refreshProbeYFromLayout() {
 			const isMobile = window.matchMedia('(max-width: 1023px)').matches;
 			const topBar = isMobile ? mobile : desktop;
 			const navH =
@@ -1482,7 +1490,6 @@ function isActive(item: NavItem) {
 		function bindThemeObserver() {
 			themeObserver?.disconnect();
 			intersecting.clear();
-			refreshProbeY();
 			themeObserver = new IntersectionObserver(
 				(entries) => {
 					for (const entry of entries) {
@@ -1501,12 +1508,22 @@ function isActive(item: NavItem) {
 			resolveThemeFromBand();
 		}
 
+		/* Estimate first; refine layout after paint to avoid forced reflow on LCP. */
 		refreshProbeY();
 		bindThemeObserver();
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				refreshProbeYFromLayout();
+				bindThemeObserver();
+			});
+		});
 
 		const onResize = () => {
 			window.clearTimeout(resizeTimer);
-			resizeTimer = window.setTimeout(bindThemeObserver, 120);
+			resizeTimer = window.setTimeout(() => {
+				refreshProbeYFromLayout();
+				bindThemeObserver();
+			}, 120);
 		};
 		window.addEventListener('resize', onResize, { passive: true });
 		window.__xoomplusThemeCleanup = () => {

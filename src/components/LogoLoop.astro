@@ -41,8 +41,8 @@ const {
 	class: className = '',
 } = Astro.props;
 
-/** Approximate sequence width for duration (displayed 300×68 cards). */
-const itemWidth = 300;
+/** Approximate sequence width for duration (displayed ~200×68 cards). */
+const itemWidth = 200;
 const seqWidth = logos.length * (itemWidth + gap);
 const durationSec = Math.max(8, seqWidth / Math.max(1, speed));
 ---

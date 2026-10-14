@@ -1,6 +1,7 @@
 /**
  * /blogs — one page of cards in the HTML. Load more, category chips, and
  * search each request the next slim page. Search never filters the grid.
+ * Search-only roots (e.g. 404) opt in with `data-blog-search-only`.
  */
 const PAGE_SIZE = 9;
 const KEY = 'xoomplus-blog-list-visible';
@@ -103,27 +104,37 @@ function initBlogList(root: HTMLElement): void {
 	const loadMoreWrap = root.querySelector('[data-blog-load-more]');
 	const template = root.querySelector('#blog-card-template');
 	const api = root.getAttribute('data-api') || '/api/blog-posts';
+	const searchOnly = root.hasAttribute('data-blog-search-only');
 
-	// Grid arrives via server:defer — do not mark ready until it exists.
-	if (!(grid instanceof HTMLElement) || !(template instanceof HTMLTemplateElement)) {
-		return;
+	const gridEl = grid instanceof HTMLElement ? grid : null;
+	const templateEl = template instanceof HTMLTemplateElement ? template : null;
+	const hasGrid = gridEl != null && templateEl != null;
+
+	// Grid arrives via server:defer — do not mark ready until it exists,
+	// unless this root is explicitly search-only (404).
+	if (!hasGrid) {
+		if (!searchOnly || !(search instanceof HTMLInputElement)) return;
 	}
 
 	root.setAttribute(INIT_ATTR, '1');
 
 	let categoryId = '';
-	let nextPage = Number(grid.getAttribute('data-page') || '1') + 1;
-	let total = Number(grid.getAttribute('data-total') || '0') || 0;
+	let nextPage = hasGrid
+		? Number(gridEl.getAttribute('data-page') || '1') + 1
+		: 1;
+	let total = hasGrid ? Number(gridEl.getAttribute('data-total') || '0') || 0 : 0;
 	let loading = false;
 	let debounceId = 0;
 	let activeIndex = -1;
 	let searchSeq = 0;
 
 	function shownCount(): number {
-		return grid.querySelectorAll('[data-post-card]').length;
+		if (!gridEl) return 0;
+		return gridEl.querySelectorAll('[data-post-card]').length;
 	}
 
 	function paintCounts(opts?: { keepStatus?: boolean }): void {
+		if (!gridEl) return;
 		const shown = shownCount();
 		const label = `Showing ${shown} of ${total} articles`;
 		if (countEl) countEl.textContent = String(shown);
@@ -139,23 +150,24 @@ function initBlogList(root: HTMLElement): void {
 	}
 
 	function makeCard(post: Card): HTMLElement | null {
-		const fragment = template.content.cloneNode(true);
+		if (!templateEl) return null;
+		const fragment = templateEl.content.cloneNode(true);
 		if (!(fragment instanceof DocumentFragment)) return null;
 		const li = fragment.querySelector('[data-post-card]');
 		if (!(li instanceof HTMLElement)) return null;
 		fillCard(li, post);
-		// reveal.ts only observes the first paint — do not leave Load More cards at opacity 0
-		li.removeAttribute('data-reveal');
-		li.classList.add('is-visible');
+		// Keep data-reveal so GSAP ScrollTrigger (reveal.ts MutationObserver) can bind.
+		// Cards inside [data-blog-grid] are forced visible — never left at opacity 0.
 		return li;
 	}
 
 	function appendPosts(posts: Card[], focusFirst: boolean): void {
+		if (!gridEl) return;
 		let first: HTMLElement | null = null;
 		for (const post of posts) {
 			const li = makeCard(post);
 			if (!li) continue;
-			grid.append(li);
+			gridEl.append(li);
 			if (!first) first = li;
 		}
 		paintCounts();
@@ -166,7 +178,7 @@ function initBlogList(root: HTMLElement): void {
 		pages: number[],
 		opts: { replace?: boolean; focusFirst?: boolean } = {},
 	): Promise<void> {
-		if (!pages.length || loading) return;
+		if (!gridEl || !pages.length || loading) return;
 		loading = true;
 		if (loadMore) loadMore.disabled = true;
 		if (statusEl) statusEl.textContent = 'Loading articles…';
@@ -181,10 +193,10 @@ function initBlogList(root: HTMLElement): void {
 			const ordered = [...(body.pages || [])].sort((a, b) => a.page - b.page);
 			if (ordered[0]) {
 				total = ordered[0].total;
-				grid.setAttribute('data-total', String(total));
+				gridEl.setAttribute('data-total', String(total));
 			}
 			const posts = ordered.flatMap((page) => page.posts);
-			if (opts.replace) grid.replaceChildren();
+			if (opts.replace) gridEl.replaceChildren();
 			if (posts.length === 0 && emptyEl instanceof HTMLElement) {
 				emptyEl.textContent = 'No articles in this category.';
 			}
@@ -292,7 +304,7 @@ function initBlogList(root: HTMLElement): void {
 		});
 	}
 
-	if (filtersEl instanceof HTMLElement) {
+	if (hasGrid && filtersEl instanceof HTMLElement) {
 		filtersEl.addEventListener('click', (e) => {
 			const chip = (e.target as Element | null)?.closest?.('[data-filter-chip]');
 			if (!(chip instanceof HTMLElement) || !filtersEl.contains(chip)) return;
@@ -361,11 +373,13 @@ function initBlogList(root: HTMLElement): void {
 		if (e.target instanceof Node && !searchWrap.contains(e.target)) closeResults();
 	});
 
-	if (loadMore instanceof HTMLButtonElement) {
+	if (hasGrid && loadMore instanceof HTMLButtonElement) {
 		loadMore.addEventListener('click', () => {
 			void loadPages([nextPage], { focusFirst: true });
 		});
 	}
+
+	if (!hasGrid) return;
 
 	const wanted = restore();
 	const already = shownCount();

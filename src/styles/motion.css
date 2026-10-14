@@ -20,43 +20,33 @@
 }
 
 /* ── Scroll reveals ──
- * Default: VISIBLE. JS sets data-reveal-armed only when an observer is ready,
- * so late-mounted nodes (server islands) never stay stuck at opacity 0.
+ * Default: VISIBLE. GSAP ScrollTrigger (reveal.ts) arms below-fold targets
+ * via inline styles only — no CSS hide, so failed/late JS never blanks content.
+ * Never hide hero copy (LCP): heroes use [data-hero-enter], not [data-reveal].
  */
 
 .js [data-reveal] {
 	opacity: 1;
 	transform: none;
-	transition:
-		opacity var(--dur-reveal) var(--ease-out),
-		transform var(--dur-reveal) var(--ease-out);
-	transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
 }
 
-.js [data-reveal][data-reveal-armed]:not(.is-visible) {
-	opacity: 0;
-	transform: translate3d(0, var(--reveal-distance), 0);
+/* ── Hero entrance (CSS-only, LCP-safe) ──
+ * Starts at opacity:.01 so the element still counts as painted for LCP,
+ * then finishes ≤300ms with no delay. No JS / GSAP on hero text.
+ */
+@keyframes heroIn {
+	from {
+		opacity: 0.01;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
 }
 
-.js [data-reveal='fade'][data-reveal-armed]:not(.is-visible) {
-	transform: none;
-}
-
-.js [data-reveal='left'][data-reveal-armed]:not(.is-visible) {
-	transform: translate3d(calc(var(--reveal-distance) * -1), 0, 0);
-}
-
-.js [data-reveal='right'][data-reveal-armed]:not(.is-visible) {
-	transform: translate3d(var(--reveal-distance), 0, 0);
-}
-
-.js [data-reveal='scale'][data-reveal-armed]:not(.is-visible) {
-	transform: scale(0.97);
-}
-
-.js [data-reveal].is-visible {
-	opacity: 1;
-	transform: none;
+[data-hero-enter] > [data-hero-item] {
+	animation: heroIn 280ms var(--ease-out) both;
 }
 
 /* ── Card hover (ADD only where class is applied) ── */
@@ -160,12 +150,16 @@
 @media (prefers-reduced-motion: reduce) {
 	.js [data-reveal],
 	.js [data-reveal][data-reveal-armed],
-	.js [data-reveal].is-visible {
+	.js [data-reveal].is-visible,
+	[data-hero-enter],
+	[data-hero-item],
+	[data-hero-enter] > [data-hero-item] {
 		opacity: 1 !important;
 		visibility: visible !important;
 		transform: none !important;
 		transition: none;
 		transition-delay: 0s;
+		animation: none !important;
 	}
 
 	.card-hover,

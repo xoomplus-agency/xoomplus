@@ -43,10 +43,10 @@ export default defineConfig({
 
   integrations: [react()],
 
-  // Prefetch in-site links so first navigation after landing feels like a cache hit.
+  // Prefetch after load — keeps nav fast without competing on the critical path.
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'hover',
+    defaultStrategy: 'load',
   },
 
   experimental: {

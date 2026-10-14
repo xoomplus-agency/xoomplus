@@ -7,8 +7,13 @@ const { title = '' } = Astro.props;
 const titleId = 'page-hero-title';
 ---
 
-<section class="page-hero page-section page-section--flush-top" data-bg="dark" aria-labelledby={titleId}>
-	<h1 id={titleId} class="text-hero-h1 page-hero__title">{title}</h1>
+<section
+	class="page-hero page-section page-section--flush-top"
+	data-bg="dark"
+	data-hero-enter
+	aria-labelledby={titleId}
+>
+	<h1 id={titleId} class="text-hero-h1 page-hero__title" data-hero-item>{title}</h1>
 </section>
 
 <style>

@@ -31,7 +31,10 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 
 <Layout
 	lcpImagePreload={{
-		href: '/videos/bg-hero-poster.avif',
+		href: '/videos/bg-hero-poster-640.avif',
+		imagesrcset:
+			'/videos/bg-hero-poster-640.avif 640w, /videos/bg-hero-poster-960.avif 960w, /videos/bg-hero-poster-1280.avif 1280w, /videos/bg-hero-poster-1920.avif 1920w',
+		imagesizes: '100vw',
 	}}
 >
 	<main class="page-home flex-1">
