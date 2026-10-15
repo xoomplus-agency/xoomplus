@@ -77,6 +77,7 @@ export function isHtmlCacheablePath(pathname: string): boolean {
 	if (p === '/favicon.ico' || p === '/favicon.svg' || p === '/robots.txt') {
 		return false;
 	}
+	if (p.endsWith('.xml') || p.endsWith('.xsl')) return false;
 	// /blogs uses server:defer — caching the shell leaves the grid on skeleton forever.
 	if (p === '/blogs' || p.startsWith('/blogs/')) return false;
 	return true;

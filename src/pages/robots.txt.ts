@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { isProduction } from '../lib/site-env';
 import { getSiteUrl } from '../lib/wp-seo';
 
+export const prerender = false;
+
 export const GET: APIRoute = () => {
 	let body: string;
 

@@ -111,13 +111,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const response = await next();
 	applyCacheHeaders(response, pathname, refresh);
 
-	if (await isMappedSeoPath(context.url.pathname)) {
+	const isXmlOrSitemap =
+		pathname.endsWith('.xml') ||
+		pathname === '/sitemap_index' ||
+		pathname === '/page-sitemap' ||
+		pathname === '/post-sitemap' ||
+		pathname === '/sitemap';
+
+	if (!isXmlOrSitemap && (await isMappedSeoPath(context.url.pathname))) {
 		const sMaxAge = pathname === '/' ? 300 : WP_SEO_REVALIDATE;
 		const htmlCache = `public, s-maxage=${sMaxAge}, stale-while-revalidate=86400`;
 		response.headers.set('Cache-Control', htmlCache);
 		response.headers.set('CDN-Cache-Control', htmlCache);
 		response.headers.set('Vercel-CDN-Cache-Control', htmlCache);
-	} else if (response.status === 200) {
+	} else if (!isXmlOrSitemap && response.status === 200) {
 		const isAsset =
 			pathname.startsWith('/_astro/') ||
 			pathname.startsWith('/images/') ||

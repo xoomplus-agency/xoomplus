@@ -26,6 +26,7 @@ import {
 	type WpPageKey,
 } from '../../lib/wp-seo';
 import { clearWpPostsCache } from '../../lib/wp-posts';
+import { clearWpCache } from '../../lib/wp-sitemap';
 import {
 	normalizePurgePath,
 	purgeAllHtmlCache,
@@ -99,6 +100,7 @@ export const POST: APIRoute = async ({ request }) => {
 	// WordPress post publish/draft/trash/delete webhook
 	if (body.type === 'post') {
 		clearWpPostsCache();
+		clearWpCache();
 		invalidateWpSeoCache(typeof body.id === 'number' ? body.id : undefined);
 
 		const paths = new Set<string>(['/blogs', '/']);
@@ -137,6 +139,7 @@ export const POST: APIRoute = async ({ request }) => {
 	if (body.all === true) {
 		invalidateWpSeoCache();
 		clearWpPostsCache();
+		clearWpCache();
 		const paths = coreNavPaths();
 		const cleared = await purgeAllHtmlCache();
 		const purged = await purgeCachedPaths(paths);
@@ -166,6 +169,7 @@ export const POST: APIRoute = async ({ request }) => {
 		const previousSlug = peekCachedWpSlug(id);
 		invalidateWpSeoCache(id);
 		clearWpPostsCache();
+		clearWpCache();
 		const nextSlug = await getLiveWpSlugForId(id);
 		const slugChanged =
 			previousSlug != null && nextSlug != null && previousSlug !== nextSlug;
