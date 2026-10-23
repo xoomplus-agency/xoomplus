@@ -1,0 +1,86 @@
+---
+import Section from '../Section.astro';
+import type { CaseStudyOverview } from '../../data/caseStudies';
+
+interface Props extends CaseStudyOverview {}
+
+const { pill, heading, paragraphs } = Astro.props;
+const headingId = 'case-study-overview-heading';
+---
+
+<Section id="case-study-content" aria-labelledby={headingId}>
+	<div class="cs-overview__row" data-reveal="up">
+		<div class="cs-overview__intro">
+			<p class="pill-light m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="cs-overview__heading text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+			>
+				{heading}
+			</h2>
+		</div>
+		<div class="cs-overview__copy text-on-light">
+			{
+				paragraphs.map((paragraph) => (
+					<p class="cs-overview__p m-0">
+						{paragraph.map((line) => (
+							<span class="cs-overview__line">{line}</span>
+						))}
+					</p>
+				))
+			}
+		</div>
+	</div>
+</Section>
+
+<style>
+	.cs-overview__row {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		align-items: start;
+		gap: 48px;
+	}
+
+	.cs-overview__intro {
+		min-width: 0;
+	}
+
+	.cs-overview__heading {
+		margin: 16px 0 0;
+	}
+
+	.cs-overview__copy {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 360px;
+		min-width: 0;
+		font-size: 18px;
+		line-height: 1.5;
+		overflow-wrap: break-word;
+	}
+
+	.cs-overview__line {
+		display: block;
+		max-width: 100%;
+	}
+
+	@media (min-width: 1024px) {
+		.cs-overview__copy {
+			max-width: 100%;
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.cs-overview__row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 20px;
+		}
+
+		.cs-overview__copy {
+			max-width: 100%;
+		}
+	}
+</style>

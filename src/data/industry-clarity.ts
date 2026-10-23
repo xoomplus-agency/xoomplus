@@ -1,6 +1,7 @@
 export type IndustryClarityItem = {
 	title: string;
-	text: string;
+	/** Supporting line. Omit to hide with no reserved space. */
+	text?: string;
 	/** Amber service-line tag (dark theme). Omit to hide with no reserved space. */
 	tag?: string;
 };
@@ -13,6 +14,8 @@ export type IndustryClarityColumn = {
 	/** Column intro. Omit to hide with no reserved space. */
 	text?: string;
 	items: IndustryClarityItem[];
+	/** Optional CTA under the items (e.g. Explore service →). */
+	button?: { label: string; href: string };
 };
 
 export type IndustryClarityVariant = 'default' | 'centered';

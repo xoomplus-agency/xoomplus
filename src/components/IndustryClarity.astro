@@ -95,13 +95,23 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 							{column.items.map((item) => (
 								<li class="industry-clarity__item">
 									<h4 class="industry-clarity__item-title m-0">{item.title}</h4>
-									<p class="industry-clarity__item-text m-0">{item.text}</p>
+									{item.text ? (
+										<p class="industry-clarity__item-text m-0">{item.text}</p>
+									) : null}
 									{item.tag ? (
 										<p class="industry-clarity__item-tag m-0">{item.tag}</p>
 									) : null}
 								</li>
 							))}
 						</ul>
+						{column.button ? (
+							<p class="industry-clarity__column-cta m-0">
+								<a class="industry-clarity__column-link" href={column.button.href}>
+									{column.button.label}
+									<span aria-hidden="true"> →</span>
+								</a>
+							</p>
+						) : null}
 					</div>
 				))
 			}
@@ -177,8 +187,33 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		column-gap: 48px;
+		row-gap: 48px;
 		align-items: start;
 		margin-top: 48px;
+	}
+
+	.industry-clarity__column-cta {
+		margin-top: 20px;
+	}
+
+	.industry-clarity__column-link {
+		font-family: var(--font-inter);
+		font-size: var(--text-body);
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--color-primary) !important;
+		text-decoration: underline !important;
+		text-underline-offset: 3px;
+	}
+
+	.industry-clarity__column-link:hover {
+		color: var(--color-primary) !important;
+		opacity: 0.85;
+	}
+
+	.industry-clarity__column-link:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 3px;
 	}
 
 	.industry-clarity__column {

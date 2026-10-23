@@ -1,0 +1,469 @@
+---
+/**
+ * Case study website showcase — Magic UI Safari + iPhone (SSR, no client JS).
+ * Screen overlay % from safari.tsx / iphone.tsx constants.
+ */
+import Section from './Section.astro';
+import { Safari } from './ui/safari';
+import { Iphone } from './ui/iphone';
+import type { CaseStudyShowcase } from '../data/caseStudies';
+
+interface Props {
+	showcase: CaseStudyShowcase;
+}
+
+const { showcase } = Astro.props;
+const { pill, heading, text, button, panel, frames } = showcase;
+const headingId = 'case-showcase-heading';
+
+/** Safari screen rect — SCREEN_X/Y/W/H over 1203×753 */
+const safariScreen = {
+	left: '0.0831%',
+	top: '6.9057%',
+	width: '99.7506%',
+	height: '92.9615%',
+};
+
+/** iPhone screen rect — SCREEN_X/Y/W/H over 433×882 */
+const phoneScreen = {
+	left: '4.9076%',
+	top: '2.1825%',
+	width: '89.9538%',
+	height: '95.6349%',
+	radius: '14.3132% / 6.6094%',
+};
+
+const desktopHasImage = Boolean(panel.desktop.imageSrc?.trim());
+const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
+---
+
+<Section id="showcase" background="light-gray" aria-labelledby={headingId}>
+	<div class="cs-showcase__header" data-reveal="up">
+		<div class="cs-showcase__intro">
+			<p class="pill-light m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="cs-showcase__heading text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+			>
+				{heading}
+			</h2>
+		</div>
+		<div class="cs-showcase__aside">
+			<p class="cs-showcase__text text-on-light m-0">{text}</p>
+			<a
+				class="btn cs-showcase__btn inline-flex items-center justify-center box-border rounded-button px-[28px] py-[18px] text-primary-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+				href={button.href}
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label={`${button.label} (opens in a new tab)`}
+			>
+				<span class="btn__label inline-flex items-center justify-center gap-2">
+					{button.label}
+				</span>
+			</a>
+		</div>
+	</div>
+
+	<div class="cs-showcase__panel" data-reveal="up">
+		<div class="cs-showcase__panel-top">
+			<p class="cs-showcase__panel-label m-0">{panel.label}</p>
+			<p class="cs-showcase__panel-note m-0">{panel.note}</p>
+		</div>
+
+		<div class="cs-showcase__stage">
+			<div class="cs-showcase__desktop">
+				<Safari
+					instanceId="cs-safari-desktop"
+					url={panel.desktop.url || undefined}
+					imageSrc={desktopHasImage ? panel.desktop.imageSrc : undefined}
+					className="cs-showcase__safari"
+				/>
+				{
+					!desktopHasImage && (
+						<div
+							class="cs-showcase__placeholder cs-showcase__placeholder--safari"
+							aria-hidden="true"
+							style={`left:${safariScreen.left};top:${safariScreen.top};width:${safariScreen.width};height:${safariScreen.height}`}
+						>
+							<span class="cs-showcase__ph-icon" aria-hidden="true">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<rect x="3" y="5" width="18" height="14" rx="2" stroke="#888888" stroke-width="1.5" />
+									<circle cx="8.5" cy="10" r="1.5" fill="#888888" />
+									<path d="M3 16l5-4 3 2.5L16 10l5 6" stroke="#888888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+								</svg>
+							</span>
+							<p class="cs-showcase__ph-title m-0">{panel.desktop.title}</p>
+							<p class="cs-showcase__ph-helper m-0">Website screenshot to be supplied</p>
+						</div>
+					)
+				}
+				{
+					desktopHasImage && panel.desktop.alt ? (
+						<span class="sr-only">{panel.desktop.alt}</span>
+					) : null
+				}
+			</div>
+
+			<div class="cs-showcase__phone">
+				<Iphone
+					instanceId="cs-iphone-mobile"
+					src={mobileHasImage ? panel.mobile.imageSrc : undefined}
+					className="cs-showcase__iphone"
+				/>
+				{
+					!mobileHasImage && (
+						<div
+							class="cs-showcase__placeholder cs-showcase__placeholder--phone"
+							aria-hidden="true"
+							style={`left:${phoneScreen.left};top:${phoneScreen.top};width:${phoneScreen.width};height:${phoneScreen.height};border-radius:${phoneScreen.radius}`}
+						>
+							<span class="cs-showcase__ph-icon" aria-hidden="true">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<rect x="7" y="2" width="10" height="20" rx="2" stroke="#888888" stroke-width="1.5" />
+									<path d="M11 18h2" stroke="#888888" stroke-width="1.5" stroke-linecap="round" />
+								</svg>
+							</span>
+							<p class="cs-showcase__ph-title m-0">{panel.mobile.title}</p>
+							<p class="cs-showcase__ph-helper m-0">Website screenshot to be supplied</p>
+						</div>
+					)
+				}
+				{
+					mobileHasImage && panel.mobile.alt ? (
+						<span class="sr-only">{panel.mobile.alt}</span>
+					) : null
+				}
+			</div>
+		</div>
+
+		<p class="cs-showcase__caption m-0">{panel.caption}</p>
+	</div>
+
+	<ul class="cs-showcase__frames m-0 list-none p-0" role="list" data-reveal-group>
+		{
+			frames.map((frame, index) => {
+				const hasImage = Boolean(frame.imageSrc?.trim());
+				const alt =
+					frame.alt?.trim() || `${frame.title} of the Sterling Cooper website`;
+				return (
+					<li class="cs-showcase__frame" data-reveal="up">
+						<div class="cs-showcase__frame-wrap">
+							<Safari
+								instanceId={`cs-safari-frame-${index}`}
+								url={frame.barLabel || undefined}
+								imageSrc={hasImage ? frame.imageSrc : undefined}
+								className="cs-showcase__safari"
+							/>
+							{!hasImage && (
+								<div
+									class="cs-showcase__placeholder cs-showcase__placeholder--safari"
+									aria-hidden="true"
+									style={`left:${safariScreen.left};top:${safariScreen.top};width:${safariScreen.width};height:${safariScreen.height}`}
+								>
+									<span class="cs-showcase__ph-icon" aria-hidden="true">
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<rect x="3" y="5" width="18" height="14" rx="2" stroke="#888888" stroke-width="1.5" />
+											<circle cx="8.5" cy="10" r="1.5" fill="#888888" />
+											<path d="M3 16l5-4 3 2.5L16 10l5 6" stroke="#888888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+										</svg>
+									</span>
+									<p class="cs-showcase__ph-title m-0">{frame.title}</p>
+									<p class="cs-showcase__ph-helper m-0">Website screenshot to be supplied</p>
+								</div>
+							)}
+							{hasImage ? <span class="sr-only">{alt}</span> : null}
+						</div>
+						<div class="cs-showcase__frame-meta">
+							<p class="cs-showcase__frame-title m-0">{frame.title}</p>
+							<p class="cs-showcase__frame-tag m-0">{frame.tag}</p>
+						</div>
+					</li>
+				);
+			})
+		}
+	</ul>
+</Section>
+
+<style>
+	.cs-showcase__header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.cs-showcase__intro {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.cs-showcase__heading {
+		margin: 16px 0 0;
+	}
+
+	.cs-showcase__aside {
+		display: flex;
+		flex: 0 0 auto;
+		max-width: 420px;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.cs-showcase__text {
+		font-size: 14px;
+		line-height: 1.5;
+		color: #555555;
+	}
+
+	.cs-showcase__btn {
+		margin-top: 16px;
+	}
+
+	.cs-showcase__panel {
+		position: relative;
+		box-sizing: border-box;
+		margin-top: 40px;
+		overflow: hidden;
+		border-radius: 24px;
+		background-color: var(--color-primary-black);
+		padding: 48px;
+	}
+
+	.cs-showcase__panel::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			circle at top right,
+			rgba(255, 168, 0, 0.18) 0%,
+			rgba(0, 0, 0, 0) 60%
+		);
+	}
+
+	.cs-showcase__panel-top,
+	.cs-showcase__stage,
+	.cs-showcase__caption {
+		position: relative;
+		z-index: 1;
+	}
+
+	.cs-showcase__panel-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.cs-showcase__panel-label {
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: #ffa800;
+	}
+
+	.cs-showcase__panel-note {
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--text-body-dark);
+		text-align: right;
+	}
+
+	.cs-showcase__stage {
+		position: relative;
+		margin-top: 24px;
+		padding-bottom: 12%;
+	}
+
+	.cs-showcase__desktop {
+		position: relative;
+		z-index: 1;
+		width: 88%;
+		max-width: 100%;
+	}
+
+	.cs-showcase__phone {
+		position: absolute;
+		right: 0;
+		bottom: -24px;
+		z-index: 10;
+		width: 19%;
+		min-width: 88px;
+	}
+
+	.cs-showcase__frame-wrap {
+		position: relative;
+		width: 100%;
+	}
+
+	.cs-showcase__placeholder {
+		position: absolute;
+		z-index: 5;
+		display: flex;
+		box-sizing: border-box;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		padding: 1rem;
+		background: #f7f7f5;
+		text-align: center;
+		pointer-events: none;
+	}
+
+	.cs-showcase__placeholder--safari {
+		border-radius: 0 0 11px 11px;
+	}
+
+	.cs-showcase__ph-icon {
+		display: inline-flex;
+		width: 40px;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid #e9e9e7;
+		border-radius: 10px;
+		background: #ffffff;
+	}
+
+	.cs-showcase__ph-title {
+		font-family: var(--font-inter);
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 1.3;
+		color: #555555;
+	}
+
+	.cs-showcase__ph-helper {
+		font-family: var(--font-inter);
+		font-size: 11px;
+		font-weight: 400;
+		line-height: 1.3;
+		color: #888888;
+	}
+
+	.cs-showcase__caption {
+		margin-top: 24px;
+		padding-top: 8px;
+		font-family: var(--font-inter);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: var(--text-body-dark);
+	}
+
+	.cs-showcase__frames {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+		margin-top: 24px;
+	}
+
+	.cs-showcase__frame-meta {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-top: 12px;
+	}
+
+	.cs-showcase__frame-title {
+		font-family: var(--font-inter);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.35;
+		color: var(--color-primary-black);
+	}
+
+	.cs-showcase__frame-tag {
+		flex-shrink: 0;
+		font-family: var(--font-inter);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.3;
+		color: #888888;
+	}
+
+	@media (max-width: 1199px) {
+		.cs-showcase__panel {
+			padding: 32px;
+		}
+
+		.cs-showcase__phone {
+			width: 22%;
+		}
+	}
+
+	@media (max-width: 899px) {
+		.cs-showcase__header {
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		.cs-showcase__aside {
+			max-width: none;
+			width: 100%;
+		}
+
+		.cs-showcase__frames {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1199px) {
+		.cs-showcase__frames {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.cs-showcase__panel {
+			padding: 20px;
+		}
+
+		.cs-showcase__panel-top {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+		}
+
+		.cs-showcase__panel-note {
+			text-align: left;
+		}
+
+		.cs-showcase__desktop {
+			width: 100%;
+		}
+
+		.cs-showcase__phone {
+			right: 4%;
+			bottom: -16px;
+			width: 28%;
+		}
+
+		.cs-showcase__stage {
+			padding-bottom: 16%;
+		}
+
+		.cs-showcase__frames {
+			grid-template-columns: 1fr;
+		}
+
+		.cs-showcase__frame-meta {
+			flex-wrap: wrap;
+		}
+
+		.cs-showcase__ph-title {
+			font-size: 13px;
+		}
+
+		.cs-showcase__ph-helper {
+			font-size: 10px;
+		}
+	}
+</style>

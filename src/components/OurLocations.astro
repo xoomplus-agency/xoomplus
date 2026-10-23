@@ -2,10 +2,22 @@
 import ButtonOutline from './ButtonOutline.astro';
 
 /**
- * Home “Our Locations” card.
- * Manchester → /locations/manchester
+ * Home “Our Locations” cards.
+ * Blackburn → /locations/blackburn · Manchester → /locations/manchester
  */
 const locations = [
+	{
+		slug: 'blackburn',
+		title: 'Blackburn',
+		image: '/images/blackburn-location-card.webp',
+		alt: 'Blackburn city centre and surrounding area',
+		items: [
+			'SEO Blackburn',
+			'Web Design Blackburn',
+			'PPC Blackburn',
+			'Social Media Blackburn',
+		],
+	},
 	{
 		slug: 'manchester',
 		title: 'Manchester',
@@ -121,8 +133,8 @@ const locations = [
 <style>
 	.locations-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		justify-items: center;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+		justify-items: stretch;
 		gap: 1.75rem;
 	}
 
@@ -131,7 +143,7 @@ const locations = [
 		display: grid;
 		grid-template-columns: 40% 60%;
 		width: 100%;
-		max-width: 720px;
+		max-width: none;
 		height: 311px;
 		overflow: hidden;
 		border: 1px solid #eeeeee;

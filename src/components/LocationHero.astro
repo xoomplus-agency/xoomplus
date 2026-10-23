@@ -19,6 +19,8 @@ interface Props {
 const { pill, pillBrand, title, text, primaryButton, secondaryButton, image } = Astro.props;
 const headingId = 'location-hero-heading';
 const paragraphs = Array.isArray(text) ? text : [text];
+/** Colon pre-headers use a space; otherwise the brand separator is “ · ”. */
+const pillSep = pill.trimEnd().endsWith(':') ? ' ' : ' · ';
 ---
 
 <section
@@ -43,7 +45,7 @@ const paragraphs = Array.isArray(text) ? text : [text];
 			{
 				pillBrand ? (
 					<>
-						<span class="location-hero__pill-sep"> · </span>
+						<span class="location-hero__pill-sep">{pillSep}</span>
 						<span class="location-hero__pill-brand">{pillBrand}</span>
 					</>
 				) : null
@@ -131,7 +133,7 @@ const paragraphs = Array.isArray(text) ? text : [text];
 	}
 
 	.location-hero__pill-brand {
-		color: #ffa800;
+		color: var(--color-primary);
 	}
 
 	/*

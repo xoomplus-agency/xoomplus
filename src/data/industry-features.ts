@@ -23,7 +23,8 @@ export type IndustryFeatureVariant = 'panel' | 'image-list' | 'image-text-rows';
  * - reverse true → text LEFT, image RIGHT
  * (Opposite boolean of panel/image-list, where reverse true = visual LEFT.)
  *
- * `paragraphs[1]` and `tag` are optional — omit to hide with no reserved space.
+ * `paragraphs[1]`, `subtitle`, `list`, and `tag` are optional — omit to hide with no reserved space.
+ * Prefer `paragraphs` and/or `list` for body copy (at least one should be present).
  * `id` is optional when rows are passed from location data (generated if missing).
  */
 export type IndustryFeatureRow = {
@@ -31,8 +32,12 @@ export type IndustryFeatureRow = {
 	reverse?: boolean;
 	titleLines: [string, string];
 	image: IndustryFeatureImage;
-	/** First paragraph required; second is optional (slightly darker when present). */
-	paragraphs: [string] | [string, string];
+	/** First paragraph; second is optional (slightly darker when present). */
+	paragraphs?: [string] | [string, string];
+	/** Optional card title under the H2. */
+	subtitle?: string;
+	/** Optional bullet list under the copy. */
+	list?: string[];
 	/** Amber service-line tag; omit when not needed. */
 	tag?: string;
 	/** Optional CTA under the copy. */

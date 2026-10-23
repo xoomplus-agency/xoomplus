@@ -1,0 +1,289 @@
+---
+/**
+ * The Outcome — white section; dark stat cards adapted from OurGrowth.
+ */
+import Section from '../Section.astro';
+import type { CaseStudyOutcome } from '../../data/caseStudies';
+
+interface Props extends CaseStudyOutcome {}
+
+const { pill, heading, paragraph, plusIcon, cards } = Astro.props;
+const headingId = 'case-study-outcome-heading';
+---
+
+<Section id="case-study-outcome" aria-labelledby={headingId}>
+	<div class="cs-outcome__header" data-reveal="up">
+		<div class="cs-outcome__intro">
+			<p class="pill-light m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="cs-outcome__heading text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+			>
+				{heading}
+			</h2>
+		</div>
+		<p class="cs-outcome__copy text-on-light m-0">{paragraph}</p>
+	</div>
+
+	<ul class="growth-grid m-0 list-none p-0" role="list" data-reveal-group>
+		{
+			cards.map((card) => (
+				<li class="growth-card growth-card--outcome" data-reveal="up">
+					<div class="growth-card__top">
+						<h3 class="growth-card__title m-0">{card.title}</h3>
+						<img
+							class="growth-card__plus"
+							src={plusIcon}
+							alt=""
+							width="20"
+							height="20"
+							decoding="async"
+							loading="lazy"
+							aria-hidden="true"
+						/>
+					</div>
+					<div class="growth-card__divider" aria-hidden="true" />
+					<p class="growth-card__label m-0">{card.label}</p>
+					<p class="growth-card__value m-0">{card.value}</p>
+				</li>
+			))
+		}
+	</ul>
+</Section>
+
+<style>
+	.cs-outcome__header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 48px;
+		margin-bottom: clamp(2.5rem, 5vw, 4rem);
+	}
+
+	.cs-outcome__intro {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.cs-outcome__heading {
+		margin: 16px 0 0;
+	}
+
+	.cs-outcome__copy {
+		flex: 0 0 auto;
+		max-width: 380px;
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+	/* Grid breakpoints copied from OurGrowth */
+	.growth-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 463px));
+		justify-content: center;
+		gap: 1rem;
+	}
+
+	/* Card chrome from OurGrowth + outcome layout differences */
+	.growth-card {
+		--growth-accent-strong: rgb(255 168 0 / 0.42);
+		--growth-glow-end: rgb(0 0 0 / 0);
+		--growth-card-border: rgb(237 237 237 / 0.1);
+		--growth-card-bg: linear-gradient(
+			180deg,
+			rgb(255 255 255 / 0.15) 0%,
+			rgb(255 255 255 / 0.03) 50%,
+			rgb(255 255 255 / 0.07) 100%
+		);
+		--growth-card-hover-bg: linear-gradient(
+			to bottom left,
+			rgb(255 168 0 / 0.3) 0%,
+			rgb(255 255 255 / 0.03) 50%,
+			rgb(255 255 255 / 0.07) 100%
+		);
+
+		box-sizing: border-box;
+		position: relative;
+		display: flex;
+		width: 100%;
+		max-width: 463px;
+		min-height: 220px;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+		isolation: isolate;
+		overflow: hidden;
+		border-radius: 24px;
+		border: 1px solid var(--growth-card-border);
+		background-color: #0b0a0b;
+		background-image: var(--growth-card-bg);
+		background-clip: padding-box;
+		padding: 28px;
+		-webkit-backdrop-filter: blur(40px);
+		backdrop-filter: blur(40px);
+	}
+
+	/* Warm top-left glow (Our Growth accent) */
+	.growth-card::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			ellipse 70% 65% at 0% 0%,
+			var(--growth-accent-strong) 0%,
+			var(--growth-glow-end) 70%
+		);
+	}
+
+	.growth-card::before {
+		content: '';
+		position: absolute;
+		inset: 1px;
+		z-index: 0;
+		border-radius: 23px;
+		pointer-events: none;
+		background: var(--growth-card-hover-bg);
+		opacity: 0;
+		transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.growth-card:hover::before {
+		opacity: 1;
+	}
+
+	.growth-card__top,
+	.growth-card__divider,
+	.growth-card__label,
+	.growth-card__value {
+		position: relative;
+		z-index: 1;
+	}
+
+	.growth-card__top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		width: 100%;
+	}
+
+	.growth-card__title {
+		font-family: var(--font-inter);
+		font-size: 24px;
+		font-weight: 500;
+		line-height: 1.3;
+		letter-spacing: -0.02em;
+		color: #ffffff;
+	}
+
+	.growth-card__plus {
+		display: block;
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+		object-fit: contain;
+	}
+
+	.growth-card__divider {
+		width: 100%;
+		height: 0;
+		margin: 1rem 0;
+		border: 0;
+		border-top: 1px solid rgb(255 255 255 / 0.15);
+	}
+
+	.growth-card__label {
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #b8b8b8;
+	}
+
+	.growth-card__value {
+		margin-top: auto;
+		padding-top: 1.25rem;
+		font-family: var(--font-inter);
+		font-size: 60px;
+		font-weight: 500;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
+		color: #e9e9e7;
+	}
+
+	@media (max-width: 1280px) {
+		.cs-outcome__header {
+			flex-direction: column;
+			gap: 1.25rem;
+		}
+
+		.cs-outcome__copy {
+			max-width: none;
+		}
+
+		.growth-grid {
+			grid-template-columns: repeat(2, minmax(0, 463px));
+		}
+	}
+
+	@media (max-width: 1023px) {
+		.cs-outcome__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.growth-grid {
+			grid-template-columns: minmax(0, 463px);
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1199px) {
+		.cs-outcome__header {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 40px;
+		}
+
+		.cs-outcome__copy {
+			max-width: 360px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 720px) {
+		.growth-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.growth-grid > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: min(463px, calc(50% - 0.5rem));
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.growth-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 639px) {
+		.growth-card__value {
+			font-size: clamp(2.5rem, 10vw, 3.75rem);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.growth-card::before {
+			transition: none;
+		}
+	}
+</style>

@@ -3,6 +3,12 @@ export type ProjectMetric = {
 	label: string;
 };
 
+export type ProjectTestimonial = {
+	quote: string;
+	author: string;
+	role: string;
+};
+
 export type Project = {
 	id: string;
 	slug: string;
@@ -23,6 +29,15 @@ export type Project = {
 	homeExcerpt?: string;
 	showOnHome?: boolean;
 	homeOrder?: number;
+	/** Detail page — client label (defaults to name when omitted) */
+	client?: string;
+	overview?: string;
+	challenge?: string;
+	solution?: string;
+	results?: string;
+	testimonial?: ProjectTestimonial;
+	metaTitle?: string;
+	metaDescription?: string;
 };
 
 const placeholderTags = ['Social Media', 'Web Design'] as const;
@@ -42,8 +57,15 @@ const placeholderExcerpt =
  * - Concise Medico → /images/concisemedico-project.webp
  * - Sterling Cooper → /images/sterling-cooper-project.webp
  *
- * Detail routes /case-studies/<slug> are placeholders until detail pages exist.
+ * Detail routes: /case-studies/<slug> (see pages/case-studies/[slug].astro).
  */
+const detailPlaceholder = {
+	overview: 'Short project overview. Replace with final copy.',
+	challenge: 'Short challenge summary. Replace with final copy.',
+	solution: 'Short solution summary. Replace with final copy.',
+	results: 'Short results summary. Replace with final copy.',
+} as const;
+
 export const projects: Project[] = [
 	{
 		id: 'concise-medico',
@@ -56,6 +78,15 @@ export const projects: Project[] = [
 		title: placeholderTitle,
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/concise-medico',
+		client: 'Concise Medico',
+		...detailPlaceholder,
+		metrics: [
+			{ value: '—', label: 'Metric placeholder' },
+			{ value: '—', label: 'Metric placeholder' },
+		],
+		metaTitle: 'Concise Medico Case Study | Xoomplus',
+		metaDescription:
+			'Case study: Concise Medico — overview, challenge, solution and results.',
 	},
 	{
 		id: 'bodykite',
@@ -79,6 +110,16 @@ export const projects: Project[] = [
 		],
 		showOnHome: true,
 		homeOrder: 2,
+		client: 'Bodykite',
+		overview:
+			'Conversion-led landing pages and restructured acquisition campaigns for a health and fitness brand.',
+		challenge: 'Rising customer acquisition costs and underperforming landing pages.',
+		solution:
+			'Built conversion-focused landing pages and restructured paid acquisition campaigns.',
+		results: 'Improved ROAS and reduced acquisition cost across key campaigns.',
+		metaTitle: 'Bodykite Case Study | Xoomplus',
+		metaDescription:
+			'Case study: Bodykite — landing pages and acquisition campaigns that improved ROAS.',
 	},
 	{
 		id: 'gopsych',
@@ -101,6 +142,16 @@ export const projects: Project[] = [
 		],
 		showOnHome: true,
 		homeOrder: 3,
+		client: 'Gopsych',
+		overview:
+			'Technical SEO and regional search work for a regulated psychology and healthcare service.',
+		challenge: 'Needed verified bookings in a strictly regulated healthcare space.',
+		solution:
+			'Authoritative technical SEO aligned with targeted regional search optimisation.',
+		results: 'Strong growth in organic inquiries and qualified leads.',
+		metaTitle: 'Gopsych Case Study | Xoomplus',
+		metaDescription:
+			'Case study: Gopsych — technical SEO and regional search for healthcare bookings.',
 	},
 	{
 		id: 'immolibre',
@@ -122,6 +173,16 @@ export const projects: Project[] = [
 		],
 		showOnHome: true,
 		homeOrder: 1,
+		client: 'Immolibre',
+		overview:
+			'Custom website and Manchester local SEO for a real estate solutions brand.',
+		challenge: 'Limited organic visibility and low inquiry conversion rates.',
+		solution:
+			'Bespoke website paired with targeted Manchester local SEO architecture.',
+		results: 'Higher organic traffic and more monthly leads within six months.',
+		metaTitle: 'Immolibre Case Study | Xoomplus',
+		metaDescription:
+			'Case study: Immolibre — custom website and local SEO for real estate growth.',
 	},
 	{
 		id: 'sterling-cooper-consultants',
@@ -135,6 +196,15 @@ export const projects: Project[] = [
 		title: placeholderTitle,
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/sterling-cooper-consultants',
+		client: 'Sterling Cooper Consultants',
+		...detailPlaceholder,
+		metrics: [
+			{ value: '—', label: 'Metric placeholder' },
+			{ value: '—', label: 'Metric placeholder' },
+		],
+		metaTitle: 'Sterling Cooper Consultants Case Study | Xoomplus',
+		metaDescription:
+			'Case study: Sterling Cooper Consultants — overview, challenge, solution and results.',
 	},
 ];
 
@@ -142,3 +212,7 @@ export const projects: Project[] = [
 export const homeProjects = projects
 	.filter((p) => p.showOnHome)
 	.sort((a, b) => (a.homeOrder ?? 0) - (b.homeOrder ?? 0));
+
+export function getProjectBySlug(slug: string): Project | undefined {
+	return projects.find((p) => p.slug === slug);
+}

@@ -41,6 +41,7 @@ const {
 	clarityLight,
 	fundamentals,
 	faq,
+	cta,
 } = location;
 ---
 
@@ -88,7 +89,13 @@ const {
 				items={faq.items}
 			/>
 		) : null}
-		<CTASection />
+		{
+			cta ? (
+				<CTASection pill={cta.pill} heading={cta.heading} text={cta.text} />
+			) : (
+				<CTASection />
+			)
+		}
 		<!-- Location page sections will be added here -->
 	</main>
 </Layout>

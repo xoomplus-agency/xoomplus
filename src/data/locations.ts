@@ -1,7 +1,8 @@
 /**
  * Location pages — one entry per `/locations/<slug>` route.
  * Hero image convention: `/images/<slug>-location-hero.webp`
- * Industries image: `/images/<slug>-industries-we-serve.webp`
+ * Industries image: `/images/<slug>-industries-we-serve.webp` (or location-specific override)
+ * Row images: `/images/<slug>-turn-interest-into.webp`, `/images/<slug>-let-the-details.webp`
  * Missing files fall back so builds never 404.
  */
 import fs from 'node:fs';
@@ -18,7 +19,7 @@ export interface LocationHeroButton {
 
 export interface LocationHero {
 	pill: string;
-	/** Optional brand segment after “ · ” in the pill. Omit for a single-label pre-header. */
+	/** Optional brand segment in the pill (primary orange). After “: ” or “ · ”. Omit for a single-label pre-header. */
 	pillBrand?: string;
 	title: string;
 	/** One string or multiple paragraphs. */
@@ -78,6 +79,12 @@ export type LocationClarity = IndustryClaritySection;
 export type LocationFundamentals = IndustryFundamentalsSection;
 export type LocationFaq = FaqSet;
 
+export interface LocationCta {
+	pill: string;
+	heading: string;
+	text: string;
+}
+
 export interface Location {
 	slug: string;
 	name: string;
@@ -101,6 +108,8 @@ export interface Location {
 	fundamentals?: LocationFundamentals;
 	/** When omitted, the FAQ section is not rendered. */
 	faq?: LocationFaq;
+	/** When omitted, CTASection uses its site-wide defaults. */
+	cta?: LocationCta;
 }
 
 const LOCATION_HERO_FALLBACK = '/images/blackburn-location-hero.webp';
@@ -303,20 +312,61 @@ const faqContent: LocationFaq = {
 
 /** Shared rows shape — image src resolved per slug at export time. */
 function buildLocationRows(slug: string): LocationRow[] {
+	const turnInterestImage = {
+		src: locationRowImage(
+			`/images/${slug}-turn-interest-into.webp`,
+			LOCATION_TURN_INTEREST_FALLBACK,
+		),
+		alt: 'Aerial view of green hills, a river and ruined abbey in the countryside',
+		width: LOCATION_ROW_IMAGE_SIZE.width,
+		height: LOCATION_ROW_IMAGE_SIZE.height,
+	};
+	const letDetailsImage = {
+		src: locationRowImage(
+			`/images/${slug}-let-the-details.webp`,
+			LOCATION_LET_DETAILS_FALLBACK,
+		),
+		alt: 'A row of traditional shopfronts including a fish restaurant',
+		caption: 'Illustrative sector photography — not client work.',
+		width: LOCATION_ROW_IMAGE_SIZE.width,
+		height: LOCATION_ROW_IMAGE_SIZE.height,
+	};
+
+	if (slug === 'blackburn') {
+		return [
+			{
+				id: 'turn-interest',
+				reverse: false,
+				titleLines: ['Turn interest into a', 'reason to get in touch.'],
+				image: turnInterestImage,
+				subtitle: 'Be Found When the Intent Is Local',
+				list: [
+					'Dominate competitive Google search queries across Blackburn and the UK.',
+					'Optimise your Google Business Profile and local citations for map pack visibility.',
+					'Connect nearby searchers directly to a live call or frictionless inquiry form.',
+				],
+			},
+			{
+				id: 'let-the-details',
+				reverse: true,
+				titleLines: ['Let the details do', 'the talking.'],
+				image: letDetailsImage,
+				subtitle: 'Make Your Service Easy to Buy',
+				list: [
+					'Explain complex services clearly to remove buyer friction and build trust.',
+					'Showcase relevant client proof and local case studies to validate your expertise.',
+					'Pre-qualified inquiries so your team focuses only on profitable work.',
+				],
+			},
+		];
+	}
+
 	return [
 		{
 			id: 'turn-interest',
 			reverse: false,
 			titleLines: ['Turn interest into a', 'reason to get in touch.'],
-			image: {
-				src: locationRowImage(
-					`/images/${slug}-turn-interest.webp`,
-					LOCATION_TURN_INTEREST_FALLBACK,
-				),
-				alt: 'Aerial view of green hills, a river and ruined abbey in the countryside',
-				width: LOCATION_ROW_IMAGE_SIZE.width,
-				height: LOCATION_ROW_IMAGE_SIZE.height,
-			},
+			image: turnInterestImage,
 			paragraphs: [
 				'Bring your facilities, programmes and approach to life. Give prospective members the information they need before an enquiry or introductory visit.',
 			],
@@ -325,16 +375,7 @@ function buildLocationRows(slug: string): LocationRow[] {
 			id: 'let-the-details',
 			reverse: true,
 			titleLines: ['Let the details do', 'the talking.'],
-			image: {
-				src: locationRowImage(
-					`/images/${slug}-let-the-details.webp`,
-					LOCATION_LET_DETAILS_FALLBACK,
-				),
-				alt: 'A row of traditional shopfronts including a fish restaurant',
-				caption: 'Illustrative sector photography — not client work.',
-				width: LOCATION_ROW_IMAGE_SIZE.width,
-				height: LOCATION_ROW_IMAGE_SIZE.height,
-			},
+			image: letDetailsImage,
 			paragraphs: [
 				'Help people explore your property offering through thoughtful imagery, useful location information and an intuitive browsing experience.',
 			],
@@ -350,27 +391,237 @@ const locationsSource: Location[] = [
 		metaDescription:
 			'Digital marketing, web design, SEO and social media for businesses in Blackburn, UK. Talk to Xoomplus about your project.',
 		hero: {
-			pill: 'Location',
-			pillBrand: 'XoomPlus',
-			title: 'Blackburn UK',
-			text: 'Connect search, websites and campaigns around the way your business works and the people you need to reach.',
+			pill: 'Location:',
+			pillBrand: 'Blackburn',
+			title: 'Blackburn Digital Growth Hub',
+			text: 'Whether you are a growing SME in Bradford, a specialist practice in Leeds or an established company across Blackburn, generic marketing does not cut it.',
 			primaryButton: { label: 'Book a Blackburn Strategy Call', href: '/contact' },
 			secondaryButton: { label: 'Explore Local Services', href: '#local-intent' },
 			image: '/images/blackburn-location-hero.webp',
 		},
 		industries: {
-			...industriesContent,
+			pill: 'Why We Serve',
+			title: 'Digital Marketing Agency in Blackburn Created for Measurable Business Growth',
+			text: 'Xoomplus builds connected digital engines that combine high-ranking Blackburn SEO, custom web development and precision paid advertising to turn online search intent into commercial revenue.',
+			heading: ['Built Around Your Commercial Growth.', 'Not Agency Overhead'],
+			paragraphs: [
+				'Too many Blackburn agencies charge premium retainers to pay for expensive city-centre office spaces while outsourcing your work or handing you off to junior account coordinators. Xoomplus takes a different approach.',
+				'We operate from our technical engineering centre in Blackburn and serve clients across the UK. We give you direct access to senior developers, SEO directors and paid media strategists to scale your digital business.',
+			],
+			button: { label: "Let's Talk", href: '/contact' },
 			image: {
 				...industriesContent.image,
-				src: '/images/blackburn-industries-we-serve.webp',
+				src: '/images/blackburn-why-we-serve.webp',
 			},
 		},
-		intent: intentContent,
+		intent: {
+			pill: 'Digital Growth: Localised',
+			titleLines: ['Build Your Digital Footprint', 'Where Your Audience Is'],
+			text: 'When your business targets the audience near you, your investment unfolds into valuable commercial returns and builds your authority within your reach.',
+			card: {
+				title: 'Let The Audience Find You',
+				items: [
+					{
+						title: 'Local Search',
+						text: 'High-intent local SEO with a clear strategy',
+					},
+					{
+						title: 'Unique Design',
+						text: 'Creative web design and precise landing pages',
+					},
+					{
+						title: 'Clear Directions',
+						text: 'Optimised Google Business Profile for clear positioning',
+					},
+					{
+						title: 'Authority and Relevance',
+						text: 'Reviews and Testimonials to build authority',
+					},
+					{
+						title: 'Social Queues',
+						text: 'Social media management to drive authority',
+					},
+					{
+						title: 'Focused Targeting',
+						text: 'Paid Ads run with precision',
+					},
+				],
+			},
+		},
 		rows: buildLocationRows('blackburn'),
-		clarity: clarityContent,
-		clarityLight: clarityLightContent,
-		fundamentals: fundamentalsContent,
-		faq: faqContent,
+		clarity: {
+			id: 'clarity',
+			variant: 'centered',
+			pill: 'Regional Market Expertise',
+			title: 'Digital Marketing Built Around Blackburn’s Key Industries',
+			text: 'Tailored digital strategies designed around how businesses and consumers buy across Blackburn.',
+			columns: [
+				{
+					items: [
+						{
+							title: 'Professional & Legal Services',
+							text: 'Authority-led local search optimisation and clean conversion paths for Blackburn law firms, corporate consultancies and financial advisers.',
+						},
+						{
+							title: 'Property & Construction',
+							text: 'High-speed development portals and geo-targeted buyer acquisition campaigns for North West property developers and estate agents.',
+						},
+						{
+							title: 'Healthcare & Private Clinics',
+							text: 'Compliant, trust-first web architecture and local patient acquisition funnels for private medical and diagnostic practices.',
+						},
+					],
+				},
+				{
+					items: [
+						{
+							title: 'B2B & Industrial Services',
+							text: 'Lead-generation funnels and technical SEO capturing corporate decision-makers across Blackburn’s industrial and logistics hubs.',
+						},
+						{
+							title: 'Trade & Home Services',
+							text: 'Dominating localised search queries to deliver consistent quote requests and incoming calls from regional homeowners.',
+						},
+						{
+							title: 'E-Commerce & Scale-Ups',
+							text: 'High-converting Shopify and custom web builds paired with performance media to scale online sales across the UK.',
+						},
+					],
+				},
+			],
+		},
+		clarityLight: {
+			id: 'clarity-light',
+			theme: 'light',
+			pill: 'Targeted Regional Pillars',
+			titleLines: ['Complete Digital Marketing Agency Services', 'in Blackburn'],
+			text: 'Dedicated services aligned with our core internal architecture to drive local market dominance.',
+			columns: [
+				{
+					eyebrow: '01',
+					title: 'SEO Agency Blackburn',
+					text: 'Dominate local search results and Google Map packs across Blackburn and surrounding boroughs.',
+					items: [
+						{ title: 'Local Blackburn Citation Building' },
+						{ title: 'Technical SEO Audits & Core Web Vitals' },
+						{ title: 'Generative Engine Optimisation (GEO)' },
+						{ title: 'Commercial Content Marketing' },
+					],
+					button: { label: 'Explore SEO Blackburn', href: '/services/seo' },
+				},
+				{
+					eyebrow: '02',
+					title: 'Web Design Blackburn',
+					text: 'Bespoke, fast-loading websites built on WordPress, Shopify and custom frameworks designed to convert visitors into clients.',
+					items: [
+						{ title: 'Mobile-First UI/UX Design' },
+						{ title: 'Conversion-Centred Landing Pages' },
+						{ title: 'Technical Speed Optimisation' },
+						{ title: 'Enterprise CMS Development' },
+					],
+					button: {
+						label: 'Explore Web Design Blackburn',
+						href: '/services/web-design-development',
+					},
+				},
+				{
+					eyebrow: '03',
+					title: 'Social Media Marketing Blackburn',
+					text: 'Build brand authority and capture customer attention across LinkedIn, Meta and TikTok.',
+					items: [
+						{ title: 'Data-Led Content Strategy' },
+						{ title: 'AI-Driven Visual Asset Design' },
+						{ title: 'Local Community Engagement' },
+						{ title: 'Multi-Channel Social Growth' },
+					],
+					button: {
+						label: 'Explore Social Media Blackburn',
+						href: '/services/social-media-marketing',
+					},
+				},
+				{
+					eyebrow: '04',
+					title: 'PPC Management Blackburn',
+					text: 'Target high-intent commercial buyers actively looking for your services across Blackburn.',
+					items: [
+						{ title: 'Google Search & Performance Max Ads' },
+						{ title: 'Precision Geo-Targeting' },
+						{ title: 'Negative Keyword Management' },
+						{ title: 'Transparent ROI Tracking' },
+					],
+					button: {
+						label: 'Explore PPC Blackburn',
+						href: '/services/ppc-google-ads',
+					},
+				},
+			],
+		},
+		fundamentals: {
+			id: 'location-fundamentals',
+			pill: 'The Path Forward',
+			title: 'Start with the Customer Journey. Not a List of Channels.',
+			text: 'Xoomplus builds tailored digital solutions for your businesses so you can focus on commercial growth.',
+			items: [
+				{
+					icon: 'be-found',
+					title: 'Be Found',
+					text: 'Show up when Blackburn decision-makers search for your solutions on Google or AI search tools.',
+				},
+				{
+					icon: 'bring-your-brand-into-focus',
+					title: 'Be Understood',
+					text: 'Explain your value simply, showcase verified proof and remove buyer hesitation.',
+				},
+				{
+					icon: 'make-the-next-step-clear',
+					title: 'Make It Easy to Act',
+					text: 'Provide fast, clear ways to get in touch, request a quote or schedule a consultation.',
+				},
+			],
+			cta: fundamentalsContent.cta,
+		},
+		faq: {
+			pill: 'Clear Answers',
+			heading: 'Frequently Asked Questions About Digital Marketing in Blackburn',
+			text: '',
+			items: [
+				{
+					question: 'Why should a Blackburn business choose Xoomplus?',
+					answer:
+						'<p>Blackburn businesses get the best of both worlds: direct access to senior digital specialists and high-level execution, without the inflated retainers common with city-centre agencies.</p><p>We run integrated SEO, web development and paid search campaigns that focus strictly on your commercial return.</p>',
+				},
+				{
+					question: 'How do you manage campaigns for clients from your Blackburn office?',
+					answer:
+						'Our operational headquarters at 33 King Street, Blackburn is situated within the North West commercial corridor, allowing us to regularly meet with clients across the North-West region.',
+				},
+				{
+					question: 'How do you help Blackburn companies rank locally on Google?',
+					answer:
+						'We combine targeted local keyword optimisation, Google Business Profile enhancements, location-specific schema markup and high-authority regional citations. This ensures your business appears prominently in the Google Local Map Pack and organic search results when nearby clients look for your services.',
+				},
+				{
+					question: 'Can we hire Xoomplus for a single service like SEO or Web Design?',
+					answer:
+						'Yes. Many of our Blackburn clients begin with a specific priority, such as rebuilding an underperforming website or fixing technical SEO issues. Once initial targets are met, we can expand into paid ads and social content to build an integrated growth engine.',
+				},
+				{
+					question: 'How quickly can we expect to see results in the Blackburn market?',
+					answer:
+						'Paid advertising (Google Ads) can generate qualified inbound traffic and leads within the first two to four weeks. Organic search (SEO) and content strategies compound over time, typically showing strong ranking growth and commercial traction within three to six months.',
+				},
+				{
+					question: 'What do we need to provide to get started?',
+					answer:
+						'Just your website URL, a quick summary of what your business does, your main growth goals and an approximate budget. We will review your current online presence and prepare a tailored strategy for our first conversation.',
+				},
+			],
+		},
+		cta: {
+			pill: 'Ready to Scale',
+			heading: 'Let’s Grow Your Business in Blackburn and Across the UK',
+			text: 'Speak directly with our senior strategy team. We will review your market presence, audit your competitors and map out a clear growth plan.',
+		},
 	},
 	// PLACEHOLDER: replace with real content
 	{
@@ -388,7 +639,7 @@ const locationsSource: Location[] = [
 			],
 			primaryButton: { label: 'Book a Manchester Strategy Call', href: '/contact' },
 			secondaryButton: { label: 'Explore Local Services', href: '#local-intent' },
-			image: '/images/manchester-location-hero.webp',
+			image: '/images/manchester-hero.webp',
 		},
 		industries: {
 			...industriesContent,

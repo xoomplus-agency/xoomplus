@@ -1,0 +1,231 @@
+---
+/**
+ * What We Delivered — mirrors Connected Services (ServicesBehind) layout/styles.
+ * Cards are static (no feature list / CTA link).
+ */
+import Section from '../Section.astro';
+import type { CaseStudyDelivered } from '../../data/caseStudies';
+
+interface Props extends CaseStudyDelivered {}
+
+const { pill, heading, paragraph, cards } = Astro.props;
+const headingId = 'case-study-delivered-heading';
+const cardCount = cards.length;
+const gridCols =
+	cardCount <= 1 ? 1 : cardCount % 3 === 0 ? 3 : cardCount % 2 === 0 ? 2 : cardCount >= 3 ? 3 : 2;
+---
+
+<Section
+	id="case-study-delivered"
+	background="dark"
+	aria-labelledby={headingId}
+	class="services-behind section-glow-top-left"
+>
+	<div class="services-behind__header" data-reveal="up">
+		<div class="services-behind__heading-group">
+			<p class="pill-dark text-primary m-0">{pill}</p>
+			<h2
+				id={headingId}
+				class="text-heading-dark dark-section-heading services-behind__title m-0"
+			>
+				{heading}
+			</h2>
+		</div>
+		<p class="services-behind__intro m-0">
+			{
+				paragraph.map((line) => (
+					<span class="services-behind__intro-line">{line}</span>
+				))
+			}
+		</p>
+	</div>
+
+	<div
+		class:list={[
+			'services-behind__grid',
+			`services-behind__grid--cols-${gridCols}`,
+		]}
+		data-reveal-group
+	>
+		{
+			cards.map((card) => (
+				<div data-reveal="up">
+					<article
+						class:list={[
+							'service-card',
+							'flex',
+							'h-full',
+							'flex-col',
+							gridCols === 3 ? 'service-card--wide service-card--grid-3' : 'service-card--wide',
+						]}
+					>
+						{card.icon ? (
+							<img
+								src={card.icon}
+								alt=""
+								width="47"
+								height="47"
+								class="mb-5 size-[47px] object-contain"
+								decoding="async"
+								loading="lazy"
+								aria-hidden="true"
+							/>
+						) : null}
+						<h3 class="mb-3 text-h3 font-medium tracking-[-0.02em] text-secondary-white">
+							{card.title}
+						</h3>
+						<p class="text-small m-0 text-[var(--text-body-dark)] [font-family:var(--font-inter)]">
+							{card.text}
+						</p>
+					</article>
+				</div>
+			))
+		}
+	</div>
+</Section>
+
+<style>
+	/* Copied from ServicesBehind — do not diverge */
+	.services-behind :global(.container) {
+		max-width: var(--container-max-wide);
+	}
+
+	.services-behind__header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 48px;
+	}
+
+	.services-behind__heading-group {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.services-behind__title {
+		margin-top: 16px;
+	}
+
+	.services-behind__intro {
+		flex: 0 0 auto;
+		max-width: 420px;
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--text-body-dark);
+		text-align: left;
+		overflow-wrap: break-word;
+	}
+
+	.services-behind__intro-line {
+		display: block;
+		max-width: 100%;
+	}
+
+	@media (min-width: 1200px) {
+		.services-behind__intro {
+			max-width: none;
+		}
+
+		.services-behind__intro-line {
+			white-space: nowrap;
+		}
+	}
+
+	.services-behind__grid {
+		display: grid;
+		justify-content: center;
+		gap: 24px;
+		align-items: stretch;
+		margin-top: 40px;
+	}
+
+	.services-behind__grid--cols-1 {
+		grid-template-columns: minmax(0, 708px);
+	}
+
+	.services-behind__grid--cols-2 {
+		grid-template-columns: repeat(2, minmax(0, 708px));
+	}
+
+	.services-behind__grid--cols-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.services-behind__grid :global(.service-card) {
+		width: 100%;
+		height: 100%;
+		min-width: 0;
+		max-width: 708px;
+	}
+
+	.services-behind__grid--cols-3 :global(.service-card),
+	.services-behind__grid--cols-3 :global(.service-card--grid-3) {
+		max-width: none;
+	}
+
+	.services-behind__grid :global(.service-card > p) {
+		font-size: 16px !important;
+		line-height: 1.5 !important;
+	}
+
+	@media (max-width: 1023px) {
+		.services-behind__header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.services-behind__intro {
+			max-width: none;
+			width: 100%;
+		}
+
+		.services-behind__grid--cols-3 {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.services-behind__grid--cols-3 :global(.service-card),
+		.services-behind__grid--cols-3 :global(.service-card--grid-3) {
+			max-width: none;
+		}
+	}
+
+	@media (max-width: 639px) {
+		.services-behind__grid,
+		.services-behind__grid--cols-1,
+		.services-behind__grid--cols-2,
+		.services-behind__grid--cols-3 {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.services-behind__header {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 40px;
+		}
+
+		.services-behind__intro {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.services-behind__intro {
+			max-width: 360px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.services-behind__grid--cols-3 > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: calc(50% - 8px);
+		}
+	}
+</style>

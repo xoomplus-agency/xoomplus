@@ -84,8 +84,15 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 			</div>
 
 			<div class="service-hero__panel">
-				{/* z0 glass → z1 plus (far right) → z2 devices image → z3 label/captions */}
-				<HeroGlassPanel client:visible />
+				{/*
+				  Mobile (<640): static clear panel (CSS on .service-hero__panel); no glass JS.
+				  Tablet/desktop: HeroGlassPanel hydrates via client:media — same absolute inset
+				  layer, so size/position match the static panel (no layout jump).
+				*/}
+				<div class="service-hero__panel-clear" aria-hidden="true"></div>
+				<div class="service-hero__panel-glass">
+					<HeroGlassPanel client:media="(min-width: 640px)" />
+				</div>
 
 				{
 					panelPlus ? (
@@ -304,6 +311,24 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		background: rgba(12, 11, 10, 0.14);
 	}
 
+	/* Static clear shell — visible only below 640px (see mobile block) */
+	.service-hero__panel-clear {
+		display: none;
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		border-radius: inherit;
+	}
+
+	.service-hero__panel-glass {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		pointer-events: none;
+		border-radius: inherit;
+	}
+
 	:global(.hero-glass-layer) {
 		position: absolute;
 		inset: 0;
@@ -500,7 +525,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 	}
 
 	.service-hero__metric-label {
-		color: #ffffff;
+		color: #b8b8b8;
 	}
 
 	.service-hero__metric-value {
@@ -733,6 +758,42 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 			width: 100%;
 			max-width: 100%;
 			border-radius: 20px;
+			/* Clear (no frost): faint dark tint for label/caption contrast over bright bg */
+			background: rgba(0, 0, 0, 0.18);
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			box-shadow: none;
+		}
+
+		/* No sheen / gradient overlay on mobile */
+		.service-hero__panel::after {
+			display: none;
+		}
+
+		/* Static clear panel shape (same inset box as glass island ≥640) */
+		.service-hero__panel-clear {
+			display: block;
+			background: rgba(255, 255, 255, 0.03);
+		}
+
+		/* Hide SSR glass HTML + never hydrate below 640 (client:media) */
+		.service-hero__panel-glass {
+			display: none;
+		}
+
+		:global(.hero-glass-layer),
+		:global(.hero-glass-surface.glass-surface--svg),
+		:global(.hero-glass-surface.glass-surface--fallback) {
+			display: none !important;
+			backdrop-filter: none !important;
+			-webkit-backdrop-filter: none !important;
+			background: transparent !important;
+			box-shadow: none !important;
+			filter: none !important;
+		}
+
+		:global(.hero-glass-layer .glass-surface__sheen),
+		:global(.hero-glass-layer .glass-surface__rim) {
+			display: none !important;
 		}
 
 		.service-hero__panel-label {
@@ -754,13 +815,59 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		}
 
 		.service-hero__footer {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			justify-content: flex-start;
+			gap: 20px;
+			width: 100%;
+			height: auto;
 			margin-top: 32px;
-			padding-top: 20px;
+			padding-top: 24px;
+			padding-bottom: 32px;
+			border-top: 1px solid rgba(255, 255, 255, 0.15);
+		}
+
+		.service-hero__metrics {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			justify-content: flex-start;
+			gap: 20px;
+			width: 100%;
+		}
+
+		.service-hero__metric,
+		.service-hero__metric:last-child {
+			align-items: flex-start;
+			width: 100%;
+			margin-left: 0;
+			padding-left: 0;
+			text-align: left;
+		}
+
+		.service-hero__metric-label {
+			font-size: 14px;
+			line-height: 1.4;
+			color: #b8b8b8;
+		}
+
+		.service-hero__metric-value {
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 1.35;
+			color: #ffffff;
+			white-space: normal;
+			overflow-wrap: break-word;
 		}
 
 		.service-hero__footer-left,
 		.service-hero__footer-right {
+			width: 100%;
+			margin-left: 0;
+			padding-left: 0;
 			font-size: var(--text-small);
+			text-align: left;
 		}
 	}
 </style>

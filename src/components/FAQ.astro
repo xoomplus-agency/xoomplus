@@ -80,7 +80,7 @@ const faqJsonLd = {
 		>
 			{heading}
 		</h2>
-		<p class="text-on-light mx-auto max-w-[860px]">{text}</p>
+		{text ? <p class="text-on-light mx-auto max-w-[860px]">{text}</p> : null}
 	</div>
 
 	<FAQAccordion client:visible items={faqItems} defaultOpen={defaultOpen} />
@@ -90,6 +90,14 @@ const faqJsonLd = {
 
 <style is:global>
 	/* Answer HTML from trusted FAQ data only */
+	.faq-answer p {
+		margin: 0;
+	}
+
+	.faq-answer p + p {
+		margin-top: 0.75em;
+	}
+
 	.faq-answer a {
 		color: var(--color-primary-black);
 		text-decoration: underline;
