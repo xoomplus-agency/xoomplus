@@ -7,7 +7,6 @@ import CaseStudyStrategy from '../../components/case-study/CaseStudyStrategy.ast
 import CaseStudyDelivered from '../../components/case-study/CaseStudyDelivered.astro';
 import CaseStudyOutcome from '../../components/case-study/CaseStudyOutcome.astro';
 import CaseShowcase from '../../components/CaseShowcase.astro';
-import FAQ from '../../components/FAQ.astro';
 import CTASection from '../../components/CTASection.astro';
 import { caseStudies, getCaseStudyBySlug, type CaseStudy } from '../../data/caseStudies';
 
@@ -62,15 +61,14 @@ const heroImage = study.heroImage ?? '/images/case-study-hero.webp';
 		<CaseStudyDelivered {...study.delivered} />
 		<CaseStudyOutcome {...study.outcome} />
 		{study.showcase ? <CaseShowcase showcase={study.showcase} /> : null}
-		<FAQ page="home" />
 		<CTASection
-			pill="Your Next Project Starts Here"
-			heading="Ready to Turn Your Website into a Business Asset?"
-			text="At Xoom Plus, we combine strategic thinking, UI/UX design and website development to create digital experiences built around your business goals. Whether you are launching a new website or improving an existing one, we can help you build a stronger digital presence."
+			pill="Your Next Chapter"
+			heading="Let’s Move Your Business Forward"
+			text="Tell us what you’re working towards. We’ll explore your challenges, discuss the possibilities and identify the right place to start."
 			buttonLabel="Discuss Your Project"
 			buttonHref="/contact"
-			secondaryLabel="Explore Our Services"
-			secondaryHref="/services"
+			secondaryLabel="info@xoomplus.co.uk"
+			secondaryHref="mailto:info@xoomplus.co.uk"
 		/>
 	</main>
 </Layout>

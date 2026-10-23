@@ -39,18 +39,6 @@ const linkColumns = [
 			{ label: 'PPC & Google Ads', href: '/services/ppc-google-ads' },
 		],
 	},
-	{
-		title: 'Industries',
-		ariaLabel: 'Industries',
-		links: [
-			{ label: 'Home & Trade Services', href: '/industries/home-trade-services' },
-			{ label: 'Retail & E-commerce', href: '/industries/retail-ecommerce' },
-			{ label: 'Property & Construction', href: '/industries/property-construction' },
-			{ label: 'Professional Services', href: '/industries/professional-services' },
-			{ label: 'Healthcare & Wellness', href: '/industries/healthcare-wellness' },
-			{ label: 'Hospitality & Leisure', href: '/industries/hospitality-leisure' },
-		],
-	},
 ];
 
 const locationLinks = [
@@ -216,8 +204,8 @@ const legalLinks = [{ label: 'Privacy Policy', href: '/privacy-policy/' }];
 
 	.site-footer__grid {
 		display: grid;
-		/* Brand fits 202px logo; last col ≥ ~150px for social icons */
-		grid-template-columns: 1.25fr 0.85fr 1.25fr 1.35fr 1fr;
+		/* Brand | Company | Services | Locations — last col ≥ ~150px for social icons */
+		grid-template-columns: 1.4fr 1fr 1.35fr 1fr;
 		column-gap: 28px;
 		align-items: start;
 	}
@@ -375,11 +363,11 @@ const legalLinks = [{ label: 'Privacy Policy', href: '/privacy-policy/' }];
 		}
 	}
 
-	/* Desktop narrow: allow long links to wrap; keep 5-col grid intact */
+	/* Desktop narrow: allow long links to wrap; keep 4-col grid intact */
 	@media (min-width: 1024px) and (max-width: 1279px) {
 		.site-footer__grid {
 			/* Brand ≥202px logo; Locations ≥150px social row */
-			grid-template-columns: 1.15fr 0.75fr 1.05fr 1.1fr 1.1fr;
+			grid-template-columns: 1.25fr 0.85fr 1.2fr 1fr;
 			column-gap: 20px;
 		}
 

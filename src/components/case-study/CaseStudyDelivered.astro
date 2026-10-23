@@ -108,7 +108,7 @@ const gridCols =
 
 	.services-behind__intro {
 		flex: 0 0 auto;
-		max-width: 420px;
+		max-width: min(420px, 100%);
 		font-family: var(--font-inter);
 		font-size: 16px;
 		font-weight: 400;
@@ -121,16 +121,7 @@ const gridCols =
 	.services-behind__intro-line {
 		display: block;
 		max-width: 100%;
-	}
-
-	@media (min-width: 1200px) {
-		.services-behind__intro {
-			max-width: none;
-		}
-
-		.services-behind__intro-line {
-			white-space: nowrap;
-		}
+		white-space: normal;
 	}
 
 	.services-behind__grid {

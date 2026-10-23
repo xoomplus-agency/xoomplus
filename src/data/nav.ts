@@ -31,7 +31,11 @@ export const navItems: NavItem[] = [
 	},
 	{ label: 'About', href: '/about' },
 	{ label: 'Industries', href: '/industries' },
-	{ label: 'Case Studies', href: '/projects' },
+	{
+		label: 'Case Studies',
+		href: '/projects',
+		matchPrefixes: ['/projects', '/case-studies'],
+	},
 	{ label: 'Contact', href: '/contact' },
 	{
 		label: 'Blog',
@@ -85,6 +89,8 @@ export async function getNavItemsResolved(): Promise<NavItem[]> {
 			matchPrefixes = [href, servicesHref, '/services'];
 		} else if (def.key === 'blogs') {
 			matchPrefixes = [href, '/blogs'];
+		} else if (def.key === 'caseStudies') {
+			matchPrefixes = [href, '/projects', '/case-studies'];
 		}
 		items.push({
 			label: def.label,
@@ -108,7 +114,8 @@ function isBlogPostPath(pathname: string): boolean {
 		/^\/[^/]+\/[^/]+$/.test(p) &&
 		!p.startsWith('/services/') &&
 		!p.startsWith('/api/') &&
-		!p.startsWith('/locations/')
+		!p.startsWith('/locations/') &&
+		!p.startsWith('/case-studies/')
 	);
 }
 

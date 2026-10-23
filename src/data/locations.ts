@@ -99,6 +99,8 @@ export interface Location {
 	rows?: LocationRow[];
 	/** When omitted, the dark Clarity section is not rendered. */
 	clarity?: LocationClarity;
+	/** Optional section rendered directly under Regional Market Expertise (e.g. Strategic Methodology). */
+	clarityStrategy?: LocationClarity;
 	/** When omitted, the light Clarity earns attention section is not rendered. */
 	clarityLight?: LocationClarity;
 	/**
@@ -332,7 +334,11 @@ function buildLocationRows(slug: string): LocationRow[] {
 		height: LOCATION_ROW_IMAGE_SIZE.height,
 	};
 
-	if (slug === 'blackburn') {
+	if (slug === 'blackburn' || slug === 'manchester') {
+		const searchArea =
+			slug === 'manchester'
+				? 'Manchester and Greater Manchester'
+				: 'Blackburn and the UK';
 		return [
 			{
 				id: 'turn-interest',
@@ -341,7 +347,7 @@ function buildLocationRows(slug: string): LocationRow[] {
 				image: turnInterestImage,
 				subtitle: 'Be Found When the Intent Is Local',
 				list: [
-					'Dominate competitive Google search queries across Blackburn and the UK.',
+					`Dominate competitive Google search queries across ${searchArea}.`,
 					'Optimise your Google Business Profile and local citations for map pack visibility.',
 					'Connect nearby searchers directly to a live call or frictionless inquiry form.',
 				],
@@ -623,7 +629,6 @@ const locationsSource: Location[] = [
 			text: 'Speak directly with our senior strategy team. We will review your market presence, audit your competitors and map out a clear growth plan.',
 		},
 	},
-	// PLACEHOLDER: replace with real content
 	{
 		slug: 'manchester',
 		name: 'Manchester',
@@ -631,29 +636,271 @@ const locationsSource: Location[] = [
 		metaDescription:
 			'Digital marketing, web design, SEO and social media for businesses in Manchester, UK. Talk to Xoomplus about your project.',
 		hero: {
-			pill: 'Manchester Digital Growth Hub',
-			title: 'Digital Marketing Agency in Manchester Engineered for Measurable Business Growth',
-			text: [
-				'Whether you are a growing SME in Spinningfields, a specialist practice in Salford Quays or an established company across Greater Manchester, generic marketing does not cut it.',
-				'Xoomplus builds connected digital engines that combine high-ranking Manchester SEO, custom web development and precision paid advertising to turn online search intent into predictable commercial revenue.',
-			],
+			pill: 'Location:',
+			pillBrand: 'Manchester',
+			title: 'Manchester Digital Growth Hub',
+			text: 'Whether you are a growing SME in Spinningfields, a specialist practice in Salford Quays or an established company across Greater Manchester, generic marketing does not cut it.',
 			primaryButton: { label: 'Book a Manchester Strategy Call', href: '/contact' },
 			secondaryButton: { label: 'Explore Local Services', href: '#local-intent' },
 			image: '/images/manchester-hero.webp',
 		},
 		industries: {
-			...industriesContent,
+			pill: 'Why We Serve',
+			title: 'Digital Marketing Agency in Manchester Created for Measurable Business Growth',
+			text: 'Xoomplus builds connected digital engines that combine high-ranking Manchester SEO, custom web development and precision paid advertising to turn online search intent into commercial revenue.',
+			heading: ['Built Around Your Commercial Growth.', 'Not Agency Overhead'],
+			paragraphs: [
+				'Too many Manchester agencies charge premium retainers to pay for expensive city-centre office spaces while outsourcing your work or handing you off to junior account coordinators. Xoomplus takes a different approach.',
+				'We operate from our technical engineering centre in Blackburn and serve clients across Manchester and the UK. We give you direct access to senior developers, SEO directors and paid media strategists to scale your digital business.',
+			],
+			button: { label: "Let's Talk", href: '/contact' },
 			image: {
 				...industriesContent.image,
 				src: '/images/manchester-industries-we-serve.webp',
 			},
 		},
-		intent: intentContent,
+		intent: {
+			pill: 'Digital Growth: Localised',
+			titleLines: ['Build Your Digital Footprint', 'Where Your Audience Is'],
+			text: 'When your business targets the audience near you, your investment unfolds into valuable commercial returns and builds your authority within your reach.',
+			card: {
+				title: 'Let The Audience Find You',
+				items: [
+					{
+						title: 'Local Search',
+						text: 'High-intent local SEO with a clear strategy',
+					},
+					{
+						title: 'Unique Design',
+						text: 'Creative web design and precise landing pages',
+					},
+					{
+						title: 'Clear Directions',
+						text: 'Optimised Google Business Profile for clear positioning',
+					},
+					{
+						title: 'Authority and Relevance',
+						text: 'Reviews and Testimonials to build authority',
+					},
+					{
+						title: 'Social Queues',
+						text: 'Social media management to drive authority',
+					},
+					{
+						title: 'Focused Targeting',
+						text: 'Paid Ads run with precision',
+					},
+				],
+			},
+		},
 		rows: buildLocationRows('manchester'),
-		clarity: clarityContent,
-		clarityLight: clarityLightContent,
-		fundamentals: fundamentalsContent,
-		faq: faqContent,
+		clarity: {
+			id: 'clarity',
+			variant: 'centered',
+			pill: 'Regional Market Expertise',
+			title: 'Digital Marketing Built Around Manchester’s Key Industries',
+			text: 'Tailored digital strategies designed around how businesses and consumers buy across Greater Manchester.',
+			columns: [
+				{
+					items: [
+						{
+							title: 'Professional & Legal Services',
+							text: 'Authority-led local search optimisation and clean conversion paths for Manchester law firms, corporate consultancies and financial advisers.',
+						},
+						{
+							title: 'Property & Construction',
+							text: 'High-speed development portals and geo-targeted buyer acquisition campaigns for North West property developers and estate agents.',
+						},
+						{
+							title: 'Healthcare & Private Clinics',
+							text: 'Compliant, trust-first web architecture and local patient acquisition funnels for private medical and diagnostic practices.',
+						},
+					],
+				},
+				{
+					items: [
+						{
+							title: 'B2B & Industrial Services',
+							text: 'Lead-generation funnels and technical SEO capturing corporate decision-makers across Manchester’s industrial and logistics hubs.',
+						},
+						{
+							title: 'Trade & Home Services',
+							text: 'Dominating localised search queries to deliver consistent quote requests and incoming calls from regional homeowners.',
+						},
+						{
+							title: 'E-Commerce & Scale-Ups',
+							text: 'High-converting Shopify and custom web builds paired with performance media to scale online sales across the UK.',
+						},
+					],
+				},
+			],
+		},
+		clarityStrategy: {
+			id: 'clarity-strategy',
+			theme: 'light',
+			pill: 'Strategic Methodology',
+			title: 'Help Potential Clients Understand Before Asking Them to Act',
+			text: 'Xoomplus builds clarity and ease with which your clients reach and understand you. Our philosophy is simple: ‘Make you accessible for the right audience.’',
+			columns: [
+				{
+					title: 'Make Expertise Understandable',
+					items: [
+						{ title: 'Put clarity before complex industry jargon.' },
+						{
+							title:
+								'Explain your services, processes and pricing structures in plain English.',
+						},
+						{
+							title:
+								'Answer the exact questions prospective clients search before making contact.',
+						},
+					],
+				},
+				{
+					title: 'Structure for Conversion',
+					items: [
+						{
+							title:
+								'Organise service and location information so visitors find answers in seconds.',
+						},
+						{
+							title:
+								'Give every ad campaign and search query a dedicated, relevant landing page.',
+						},
+						{
+							title: 'Keep user journeys fast, intuitive and mobile-optimised.',
+						},
+					],
+				},
+			],
+		},
+		clarityLight: {
+			id: 'clarity-light',
+			theme: 'light',
+			pill: 'Targeted Regional Pillars',
+			titleLines: ['Complete Digital Marketing Agency Services', 'in Manchester'],
+			text: 'Dedicated services aligned with our core internal architecture to drive local market dominance.',
+			columns: [
+				{
+					eyebrow: '01',
+					title: 'SEO Agency Manchester',
+					text: 'Dominate local search results and Google Map packs across Manchester and surrounding boroughs.',
+					items: [
+						{ title: 'Local Manchester Citation Building' },
+						{ title: 'Technical SEO Audits & Core Web Vitals' },
+						{ title: 'Generative Engine Optimisation (GEO)' },
+						{ title: 'Commercial Content Marketing' },
+					],
+					button: { label: 'Explore SEO Manchester', href: '/services/seo' },
+				},
+				{
+					eyebrow: '02',
+					title: 'Web Design Manchester',
+					text: 'Bespoke, fast-loading websites built on WordPress, Shopify and custom frameworks designed to convert visitors into clients.',
+					items: [
+						{ title: 'Mobile-First UI/UX Design' },
+						{ title: 'Conversion-Centred Landing Pages' },
+						{ title: 'Technical Speed Optimisation' },
+						{ title: 'Enterprise CMS Development' },
+					],
+					button: {
+						label: 'Explore Web Design Manchester',
+						href: '/services/web-design-development',
+					},
+				},
+				{
+					eyebrow: '03',
+					title: 'Social Media Marketing Manchester',
+					text: 'Build brand authority and capture customer attention across LinkedIn, Meta and TikTok.',
+					items: [
+						{ title: 'Data-Led Content Strategy' },
+						{ title: 'AI-Driven Visual Asset Design' },
+						{ title: 'Local Community Engagement' },
+						{ title: 'Multi-Channel Social Growth' },
+					],
+					button: {
+						label: 'Explore Social Media Manchester',
+						href: '/services/social-media-marketing',
+					},
+				},
+				{
+					eyebrow: '04',
+					title: 'PPC Management Manchester',
+					text: 'Target high-intent commercial buyers actively looking for your services across Manchester.',
+					items: [
+						{ title: 'Google Search & Performance Max Ads' },
+						{ title: 'Precision Geo-Targeting' },
+						{ title: 'Negative Keyword Management' },
+						{ title: 'Transparent ROI Tracking' },
+					],
+					button: {
+						label: 'Explore PPC Manchester',
+						href: '/services/ppc-google-ads',
+					},
+				},
+			],
+		},
+		fundamentals: {
+			id: 'location-fundamentals',
+			pill: 'The Path Forward',
+			title: 'Start with the Customer Journey. Not a List of Channels.',
+			text: 'Xoomplus builds tailored digital solutions for your businesses so you can focus on commercial growth.',
+			items: [
+				{
+					icon: 'be-found',
+					title: 'Be Found',
+					text: 'Show up when Manchester decision-makers search for your solutions on Google or AI search tools.',
+				},
+				{
+					icon: 'bring-your-brand-into-focus',
+					title: 'Be Understood',
+					text: 'Explain your value simply, showcase verified proof and remove buyer hesitation.',
+				},
+				{
+					icon: 'make-the-next-step-clear',
+					title: 'Make It Easy to Act',
+					text: 'Provide fast, clear ways to get in touch, request a quote or schedule a consultation.',
+				},
+			],
+			cta: fundamentalsContent.cta,
+		},
+		faq: {
+			pill: 'Clear Answers',
+			heading: 'Frequently Asked Questions About Digital Marketing in Manchester',
+			text: '',
+			items: [
+				{
+					question: 'Why should a Manchester business choose Xoomplus?',
+					answer:
+						'<p>Manchester businesses get the best of both worlds: direct access to senior digital specialists and high-level execution, without the inflated retainers common with city-centre agencies.</p><p>We run integrated SEO, web development and paid search campaigns that focus strictly on your commercial return.</p>',
+				},
+				{
+					question: 'How do you manage campaigns for Manchester clients from your Blackburn office?',
+					answer:
+						'Our operational headquarters at 33 King Street, Blackburn is situated within the North West commercial corridor, allowing us to regularly meet with clients across Manchester, Salford and the wider region.',
+				},
+				{
+					question: 'How do you help Manchester companies rank locally on Google?',
+					answer:
+						'We combine targeted local keyword optimisation, Google Business Profile enhancements, location-specific schema markup and high-authority regional citations. This ensures your business appears prominently in the Google Local Map Pack and organic search results when nearby clients look for your services.',
+				},
+				{
+					question: 'Can we hire Xoomplus for a single service like SEO or Web Design?',
+					answer:
+						'Yes. Many of our Manchester clients begin with a specific priority, such as rebuilding an underperforming website or fixing technical SEO issues. Once initial targets are met, we can expand into paid ads and social content to build an integrated growth engine.',
+				},
+				{
+					question: 'How quickly can we expect to see results in the Manchester market?',
+					answer:
+						'Paid advertising (Google Ads) can generate qualified inbound traffic and leads within the first two to four weeks. Organic search (SEO) and content strategies compound over time, typically showing strong ranking growth and commercial traction within three to six months.',
+				},
+				{
+					question: 'What do we need to provide to get started?',
+					answer:
+						'Just your website URL, a quick summary of what your business does, your main growth goals and an approximate budget. We will review your current online presence and prepare a tailored strategy for our first conversation.',
+				},
+			],
+		},
 	},
 ];
 

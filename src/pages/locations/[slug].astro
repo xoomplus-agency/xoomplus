@@ -38,6 +38,7 @@ const {
 	intent,
 	rows,
 	clarity,
+	clarityStrategy,
 	clarityLight,
 	fundamentals,
 	faq,
@@ -77,6 +78,7 @@ const {
 			/>
 		) : null}
 		{clarity ? <IndustryClarity section={clarity} /> : null}
+		{clarityStrategy ? <IndustryClarity section={clarityStrategy} /> : null}
 		{clarityLight ? <IndustryClarity section={clarityLight} /> : null}
 		{/* Falls back to Industries fundamentals when location has no fundamentals */}
 		<IndustryFundamentals content={fundamentals ?? industryFundamentals} />

@@ -41,7 +41,6 @@ export type Project = {
 };
 
 const placeholderTags = ['Social Media', 'Web Design'] as const;
-const placeholderTitle = 'Bodykite | Health and Fitness';
 const placeholderExcerpt =
 	'A modern carpentry website designed to generate leads and showcase custom work.';
 
@@ -51,7 +50,6 @@ const placeholderExcerpt =
  * Home uses metrics + optional homeCategory / homeTags / homeExcerpt when present.
  *
  * Image notes:
- * - Bodykite → /images/Bodykite-project.webp
  * - Immolibre → /images/Immolibre-project.webp
  * - Gopsych → /images/gopsych-project.webp
  * - Concise Medico → /images/concisemedico-project.webp
@@ -75,7 +73,7 @@ export const projects: Project[] = [
 		image: '/images/concisemedico-project.webp',
 		imageAlt: 'Concise Medico website mockup',
 		tags: [...placeholderTags],
-		title: placeholderTitle,
+		title: 'Concise Medico | Medico-Legal',
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/concise-medico',
 		client: 'Concise Medico',
@@ -89,47 +87,14 @@ export const projects: Project[] = [
 			'Case study: Concise Medico — overview, challenge, solution and results.',
 	},
 	{
-		id: 'bodykite',
-		slug: 'bodykite',
-		category: 'Health and Fitness',
-		name: 'Bodykite',
-		image: '/images/Bodykite-project.webp',
-		imageAlt: 'Bodykite website mockup',
-		imageClass: 'case-hero-img--bodykite',
-		tags: [...placeholderTags],
-		title: placeholderTitle,
-		excerpt: placeholderExcerpt,
-		href: '/case-studies/bodykite',
-		homeCategory: 'Health & Fitness',
-		homeTags: ['Social Media', 'Web Design'],
-		homeExcerpt:
-			'The client struggled with rising customer acquisition costs. So we built conversion-led landing pages paired with restructured acquisition campaigns.',
-		metrics: [
-			{ value: '3.8x', label: 'ROAS' },
-			{ value: '45%', label: 'Reduction in Acquisition Cost' },
-		],
-		showOnHome: true,
-		homeOrder: 2,
-		client: 'Bodykite',
-		overview:
-			'Conversion-led landing pages and restructured acquisition campaigns for a health and fitness brand.',
-		challenge: 'Rising customer acquisition costs and underperforming landing pages.',
-		solution:
-			'Built conversion-focused landing pages and restructured paid acquisition campaigns.',
-		results: 'Improved ROAS and reduced acquisition cost across key campaigns.',
-		metaTitle: 'Bodykite Case Study | Xoomplus',
-		metaDescription:
-			'Case study: Bodykite — landing pages and acquisition campaigns that improved ROAS.',
-	},
-	{
 		id: 'gopsych',
 		slug: 'gopsych',
-		category: 'Medico-Legal',
+		category: 'Psychology & Healthcare Services',
 		name: 'Gopsych',
 		image: '/images/gopsych-project.webp',
 		imageAlt: 'Gopsych website mockup',
-		tags: [...placeholderTags],
-		title: placeholderTitle,
+		tags: ['Web Design', 'SEO'],
+		title: 'Gopsych | Psychology & Healthcare Services',
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/gopsych',
 		homeCategory: 'Psychology & Healthcare Services',
@@ -141,7 +106,7 @@ export const projects: Project[] = [
 			{ value: '50+', label: 'Leads' },
 		],
 		showOnHome: true,
-		homeOrder: 3,
+		homeOrder: 2,
 		client: 'Gopsych',
 		overview:
 			'Technical SEO and regional search work for a regulated psychology and healthcare service.',
@@ -160,8 +125,8 @@ export const projects: Project[] = [
 		name: 'Immolibre',
 		image: '/images/Immolibre-project.webp',
 		imageAlt: 'Immolibre website mockup',
-		tags: [...placeholderTags],
-		title: placeholderTitle,
+		tags: ['Web Design', 'SEO'],
+		title: 'Immolibre | Real Estate Solutions',
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/immolibre',
 		homeTags: ['Web Design', 'SEO'],
@@ -187,13 +152,13 @@ export const projects: Project[] = [
 	{
 		id: 'sterling-cooper-consultants',
 		slug: 'sterling-cooper-consultants',
-		category: 'Smart Solutions, Secure Better Growth',
+		category: 'Accounting & Financial Services',
 		name: 'Sterling Cooper Consultants',
 		image: '/images/sterling-cooper-project.webp',
 		imageAlt: 'Sterling Cooper Consultants website mockup',
 		imageClass: 'project-img--sterling',
 		tags: [...placeholderTags],
-		title: placeholderTitle,
+		title: 'Sterling Cooper Consultants | Accounting & Financial Services',
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/sterling-cooper-consultants',
 		client: 'Sterling Cooper Consultants',
