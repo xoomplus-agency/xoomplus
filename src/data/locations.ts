@@ -99,8 +99,6 @@ export interface Location {
 	rows?: LocationRow[];
 	/** When omitted, the dark Clarity section is not rendered. */
 	clarity?: LocationClarity;
-	/** Optional section rendered directly under Regional Market Expertise (e.g. Strategic Methodology). */
-	clarityStrategy?: LocationClarity;
 	/** When omitted, the light Clarity earns attention section is not rendered. */
 	clarityLight?: LocationClarity;
 	/**
@@ -730,45 +728,6 @@ const locationsSource: Location[] = [
 						{
 							title: 'E-Commerce & Scale-Ups',
 							text: 'High-converting Shopify and custom web builds paired with performance media to scale online sales across the UK.',
-						},
-					],
-				},
-			],
-		},
-		clarityStrategy: {
-			id: 'clarity-strategy',
-			theme: 'light',
-			pill: 'Strategic Methodology',
-			title: 'Help Potential Clients Understand Before Asking Them to Act',
-			text: 'Xoomplus builds clarity and ease with which your clients reach and understand you. Our philosophy is simple: ‘Make you accessible for the right audience.’',
-			columns: [
-				{
-					title: 'Make Expertise Understandable',
-					items: [
-						{ title: 'Put clarity before complex industry jargon.' },
-						{
-							title:
-								'Explain your services, processes and pricing structures in plain English.',
-						},
-						{
-							title:
-								'Answer the exact questions prospective clients search before making contact.',
-						},
-					],
-				},
-				{
-					title: 'Structure for Conversion',
-					items: [
-						{
-							title:
-								'Organise service and location information so visitors find answers in seconds.',
-						},
-						{
-							title:
-								'Give every ad campaign and search query a dedicated, relevant landing page.',
-						},
-						{
-							title: 'Keep user journeys fast, intuitive and mobile-optimised.',
 						},
 					],
 				},
