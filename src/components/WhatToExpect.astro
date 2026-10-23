@@ -3,16 +3,16 @@ import Section from './Section.astro';
 
 const items = [
 	{
-		title: 'A plan you can understand',
-		text: 'Clear priorities, a practical scope and an honest conversation about the next step.',
+		title: 'Complete Attribution Transparency',
+		text: 'Direct visibility into campaign analytics, code assets and conversion data to track your investment against real revenue, not vanity metrics.',
 	},
 	{
-		title: 'A conversation that stays open',
-		text: 'Space for your questions, regular updates and decisions explained in context.',
+		title: 'Open & Direct Communication',
+		text: 'Direct access to the senior specialists working on your brand, with regular updates, clear conversations and zero account-handling layers.',
 	},
 	{
-		title: 'A focus that stays on your business',
-		text: 'Recommendations shaped around your audience, your needs and where you want to go.',
+		title: 'Revenue-Focused Growth',
+		text: 'A unified, long-term digital strategy designed around your specific profit margins, commercial goals and sustainable market expansion.',
 	},
 ];
 ---
@@ -20,17 +20,24 @@ const items = [
 <Section aria-labelledby="expect-heading">
 	<div class="expect">
 		<div class="expect__left" data-reveal="up">
-			<p class="pill-light m-0">What you can expect</p>
+			<p class="pill-light m-0">Regional Roots & Nationwide Capabilities</p>
 			<h2
 				id="expect-heading"
 				class="expect__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				A digital partner. Not just a delivery team.
+				Headquartered in Blackburn. Powering Growth Across Manchester and the UK.
 			</h2>
-			<p class="expect__intro text-on-light m-0">
-				The best partnerships make the work feel clearer. We aim to give you the context, confidence
-				and collaboration to move forward with purpose.
-			</p>
+			<div class="expect__intro">
+				<p class="text-on-light m-0">
+					Headquartered on King Street in Blackburn, Xoomplus provides dedicated digital marketing and
+					technical SEO services across Manchester and the wider UK commercial landscape.
+				</p>
+				<p class="text-on-light m-0">
+					We give ambitious businesses direct access to senior-level talent without the bloated
+					retainers of city-centre firms. Our focus is simple: building integrated digital engines
+					that deliver sustainable, long-term commercial scale.
+				</p>
+			</div>
 		</div>
 
 		<ul class="expect__list m-0 list-none p-0" role="list" data-reveal-group>
@@ -82,13 +89,24 @@ const items = [
 
 	.expect__heading {
 		margin-top: 16px;
-		max-width: 420px;
+		max-width: 540px;
 		line-height: 1.15;
 	}
 
 	.expect__intro {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
 		margin-top: 16px;
-		max-width: 420px;
+		max-width: 540px;
+	}
+
+	.expect__intro :global(p) {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--color-text-on-light);
 	}
 
 	.expect__list {
@@ -138,12 +156,14 @@ const items = [
 
 	.expect__item-text {
 		margin-top: 8px;
-		max-width: 380px;
+		max-width: none;
+		width: 100%;
 		font-family: var(--font-inter);
-		font-size: var(--text-lead);
+		font-size: 18px;
 		font-weight: 500;
-		line-height: 140%;
+		line-height: 1.5;
 		color: #555555;
+		text-wrap: pretty;
 	}
 
 	@media (max-width: 1023px) {
@@ -159,6 +179,20 @@ const items = [
 		}
 	}
 
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.expect {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 40px;
+		}
+
+		.expect__left,
+		.expect__list {
+			flex: 1 1 50%;
+			width: auto;
+		}
+	}
+
 	@media (max-width: 639px) {
 		.expect__heading {
 			font-size: clamp(1.75rem, 8vw, 2rem);
@@ -171,10 +205,6 @@ const items = [
 
 		.expect__item-title {
 			font-size: clamp(1.25rem, 5vw, 1.25rem);
-		}
-
-		.expect__item-text {
-			font-size: clamp(1rem, 4vw, 1rem);
 		}
 	}
 </style>

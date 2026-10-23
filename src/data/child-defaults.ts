@@ -1,18 +1,4 @@
-import type {
-	ChildClarityData,
-	ServiceFeaturesData,
-	ServiceProcessData,
-} from './services/types';
-import {
-	CHILD_PROCESS_IMAGE_DEFAULT,
-	CHILD_PROCESS_IMAGE_HEIGHT,
-	CHILD_PROCESS_IMAGE_WIDTH,
-} from './services/images';
-import {
-	industryImageTextRows,
-	type IndustryFeatureRow,
-} from './industry-features';
-import { defaultHowWeWork, type HowWeWorkContent } from './how-we-work';
+import type { ChildClarityData, ServiceFeaturesData } from './services/types';
 import { servicesBehind, type ServicesBehindSection } from './services-behind';
 import { FAQ_DEFAULTS, getFaqSet, type FaqSet } from './faqs';
 
@@ -43,33 +29,6 @@ export const defaultChildFeatures: ServiceFeaturesData = {
 			text: 'Shape the experience around the way people browse, from a first mobile visit to a deeper desktop exploration.',
 		},
 	],
-};
-
-// DEFAULT: replace per child service when real content is ready
-export const defaultChildProcess: ServiceProcessData = {
-	pill: 'Working together',
-	titleLines: ['Good work starts', 'with a good partnership.'],
-	image: {
-		src: CHILD_PROCESS_IMAGE_DEFAULT,
-		alt: 'Watercolour sketches of website wireframes on paper',
-		width: CHILD_PROCESS_IMAGE_WIDTH,
-		height: CHILD_PROCESS_IMAGE_HEIGHT,
-	},
-	items: [
-		{
-			title: 'A scope shaped around your needs',
-			text: 'Agree the pages, platform requirements and handover before the build. A shared brief keeps the work focused and makes decisions easier.',
-		},
-		{
-			title: 'A shared view of the work',
-			text: 'Bring your brand assets, content and business knowledge into the conversation. Review the direction together as the website takes shape.',
-		},
-		{
-			title: 'A considered handover',
-			text: 'Discuss content management and the practical information you need to take ownership of the website. Any ongoing support can be scoped separately.',
-		},
-	],
-	note: 'A useful starting point: your existing website, your goals, the pages you need and any content or brand assets you already have.',
 };
 
 // DEFAULT: replace per child service when real content is ready
@@ -104,7 +63,7 @@ export const defaultChildClarity: ChildClarityData = {
 				{
 					title: 'Build an informative first impression',
 					text: 'Structure practice-area pages and useful articles around the questions prospective enquirers are asking.',
-					tag: 'SEO Content Marketing · Website Redesign',
+					tag: 'On-Page SEO · Website Redesign',
 				},
 				{
 					title: 'Make the next step specific',
@@ -115,32 +74,6 @@ export const defaultChildClarity: ChildClarityData = {
 		},
 	],
 	note: 'Your subject experts review service information and any professional or regulatory wording. We shape the digital experience around that approved content.',
-};
-
-// DEFAULT: replace per child service when real content is ready
-export const defaultChildRows: IndustryFeatureRow[] = industryImageTextRows.map(
-	(row) => ({
-		...row,
-		image: { ...row.image },
-		paragraphs: [...row.paragraphs] as IndustryFeatureRow['paragraphs'],
-		titleLines: [...row.titleLines] as [string, string],
-	}),
-);
-
-// DEFAULT: replace per child service when real content is ready
-export const defaultChildHowWeWork: HowWeWorkContent = {
-	...defaultHowWeWork,
-	titleLines: [...defaultHowWeWork.titleLines] as HowWeWorkContent['titleLines'],
-	introLines: [...defaultHowWeWork.introLines] as HowWeWorkContent['introLines'],
-	images: [
-		{ ...defaultHowWeWork.images[0] },
-		{ ...defaultHowWeWork.images[1] },
-	],
-	cards: [
-		{ ...defaultHowWeWork.cards[0] },
-		{ ...defaultHowWeWork.cards[1] },
-		{ ...defaultHowWeWork.cards[2] },
-	],
 };
 
 // DEFAULT: replace per child service when real content is ready

@@ -4,12 +4,26 @@
  * Text left / image right on desktop; stacks on tablet/mobile.
  */
 import Section from './Section.astro';
-import Button from './Button.astro';
+import ChildCtaButtons from './ChildCtaButtons.astro';
 import type { ChildServiceHeroData } from '../data/main-services';
 
-interface Props extends ChildServiceHeroData {}
+interface Props extends ChildServiceHeroData {
+	primaryLabel: string;
+	primaryHref?: string;
+	secondaryLabel: string;
+	secondaryHref?: string;
+}
 
-const { pill, titleLines, paragraphs, button, image } = Astro.props;
+const {
+	pill,
+	titleLines,
+	paragraphs,
+	image,
+	primaryLabel,
+	primaryHref = '/contact',
+	secondaryLabel,
+	secondaryHref = '#process',
+} = Astro.props;
 const [titleLine1, titleLine2] = titleLines;
 const imageWidth = image.width ?? 708;
 const imageHeight = image.height ?? 458;
@@ -18,12 +32,9 @@ const imageHeight = image.height ?? 458;
 <Section aria-labelledby="child-hero-heading" class="child-service-hero">
 	<div class="csh">
 		<div class="csh__content">
-			<p class="pill-light m-0">{pill}</p>
+			<p class="pill-light m-0 self-start">{pill}</p>
 
-			<h1
-				id="child-hero-heading"
-				class="csh__heading m-0 text-h1 font-semibold tracking-[-0.02em] text-primary-black"
-			>
+			<h1 id="child-hero-heading" class="child-heading child-heading--hero m-0">
 				<span class="csh__heading-line">{titleLine1}</span>
 				<span class="csh__heading-line">{titleLine2}</span>
 			</h1>
@@ -34,8 +45,14 @@ const imageHeight = image.height ?? 458;
 				))}
 			</div>
 
+			{/* Wrapper keeps margin in this component's scoped CSS (ChildCtaButtons root is unscoped here) */}
 			<div class="csh__cta">
-				<Button href={button.href} class="!w-[212px]">{button.label}</Button>
+				<ChildCtaButtons
+					primaryLabel={primaryLabel}
+					primaryHref={primaryHref}
+					secondaryLabel={secondaryLabel}
+					secondaryHref={secondaryHref}
+				/>
 			</div>
 		</div>
 
@@ -63,13 +80,10 @@ const imageHeight = image.height ?? 458;
 	}
 
 	.csh__content {
+		display: flex;
+		flex-direction: column;
 		min-width: 0;
 		text-align: left;
-	}
-
-	.csh__heading {
-		margin-top: 16px;
-		font-size: 40px;
 	}
 
 	.csh__heading-line {
@@ -84,8 +98,9 @@ const imageHeight = image.height ?? 458;
 		margin-top: 20px;
 	}
 
+	/* padding-top — margin can collapse with the copy block above */
 	.csh__cta {
-		margin-top: 24px;
+		padding-top: 48px;
 	}
 
 	.csh__media {
@@ -105,16 +120,218 @@ const imageHeight = image.height ?? 458;
 		object-fit: cover;
 	}
 
-	@media (max-width: 1023px) {
+	/*
+	 * Tablet 640–1199: single column, text then image (DOM order).
+	 * Beats page-level WDD `.csh { 1.85fr 1fr }` at ≥1024 without editing [child].astro.
+	 */
+	@media (min-width: 640px) and (max-width: 1199px) {
 		.csh {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+			align-items: start;
 			gap: 40px;
+			min-height: 0;
+			height: auto;
+		}
+
+		:global(main.child-service-main.child-service-main--web-design-development) .csh {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 40px;
+		}
+
+		.csh__content,
+		.csh__media {
+			min-width: 0;
+			order: unset;
+		}
+
+		.csh__content {
+			max-width: 100%;
+			text-align: left;
+		}
+
+		.child-heading--hero {
+			font-size: clamp(36px, 4.8vw, 48px);
+			line-height: 1.12;
+			letter-spacing: -0.02em;
+			text-wrap: balance;
+			overflow-wrap: break-word;
+			hyphens: none;
+			white-space: normal;
+		}
+
+		.csh__content :global(.pill-light) {
+			box-sizing: border-box;
+			align-self: flex-start;
+			width: auto;
+			max-width: 100%;
+			height: auto;
+			min-height: 0;
+			padding: 6px 14px;
+			font-size: 12px;
+			line-height: 1.3;
+			white-space: normal;
+			text-align: center;
+			text-wrap: balance;
+		}
+
+		.csh__copy {
+			max-width: 680px;
+		}
+
+		.csh__copy p {
+			max-width: 680px;
+			font-size: clamp(16px, 1.05vw, 17px);
+			line-height: 1.6;
+		}
+
+		.csh__cta :global(.child-cta) {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 16px;
+		}
+
+		.csh__cta :global(.child-cta__primary),
+		.csh__cta :global(.child-cta__secondary) {
+			width: auto;
+			max-width: 100%;
 		}
 
 		.csh__media {
 			width: 100%;
-			max-width: 708px;
+			max-width: 100%;
+			margin-inline: 0;
+			border-radius: 24px;
+		}
+
+		.csh__image {
+			display: block;
+			width: 100%;
+			max-width: 100%;
+			height: auto;
+			aspect-ratio: 16 / 10;
+			object-fit: cover;
+			border-radius: 24px;
+		}
+	}
+
+	/* Large tablet: center the stacked hero column in the container */
+	@media (min-width: 900px) and (max-width: 1199px) {
+		.csh {
+			width: 100%;
+			max-width: 760px;
 			margin-inline: auto;
+			justify-items: stretch;
+		}
+
+		.csh__content,
+		.csh__media {
+			width: 100%;
+			max-width: 100%;
+			margin-inline: 0;
+		}
+	}
+
+	/* —— Mobile (<640): child hero only —— */
+	@media (max-width: 639px) {
+		.csh {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 32px;
+		}
+
+		.csh__content,
+		.csh__media {
+			min-width: 0;
+		}
+
+		/* Old .child-heading--hero: 40px → new clamp(26px, 7.2vw, 30px) */
+		.child-heading--hero {
+			font-size: clamp(26px, 7.2vw, 30px);
+			line-height: 1.15;
+			letter-spacing: -0.01em;
+			text-wrap: balance;
+			overflow-wrap: break-word;
+			hyphens: none;
+			white-space: normal;
+		}
+
+		.csh__content :global(.pill-light) {
+			box-sizing: border-box;
+			width: auto;
+			max-width: 100%;
+			height: auto;
+			min-height: 0;
+			padding: 5px 12px;
+			font-size: 11px;
+			line-height: 1.3;
+			white-space: normal;
+			text-align: center;
+			text-wrap: balance;
+		}
+
+		.csh__copy {
+			max-width: 100%;
+		}
+
+		.csh__copy p {
+			max-width: 100%;
+			font-size: 15px;
+			line-height: 1.55;
+		}
+
+		.csh__cta {
+			padding-top: 32px;
+		}
+
+		.csh__cta :global(.child-cta) {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 12px;
+		}
+
+		.csh__cta :global(.child-cta__primary),
+		.csh__cta :global(.child-cta__secondary) {
+			width: 100%;
+		}
+
+		.csh__media {
+			width: 100%;
+			max-width: 100%;
+			margin-inline: 0;
+			border-radius: 20px;
+		}
+
+		.csh__image {
+			width: 100%;
+			max-width: 100%;
+			height: auto;
+			border-radius: 20px;
+		}
+	}
+</style>
+
+<style is:global>
+	/*
+	 * Mobile only — this hero’s Section root (class set via Section prop).
+	 * main.child-service-main already clears the fixed top bar (--child-nav-offset).
+	 * Do not add another nav-height padding here (that caused the ~130px gap).
+	 */
+	@media (max-width: 639px) {
+		section.child-service-hero.page-section {
+			/* Cancel .page-section 10px top margin + main’s surplus above the bar (~88 − 64),
+			   then sit the pill ~20px under the top bar. */
+			margin-top: calc(0px - (var(--child-nav-offset, 88px) - 64px));
+			padding-top: 20px;
+			padding-bottom: 40px;
+		}
+	}
+
+	/* Tablet: content-sized hero height; ~56px bottom padding */
+	@media (min-width: 640px) and (max-width: 1199px) {
+		section.child-service-hero.page-section {
+			min-height: 0;
+			height: auto;
+			padding-bottom: 56px;
 		}
 	}
 </style>

@@ -21,18 +21,30 @@ export const CHILD_PLACEHOLDER_PARAGRAPHS: [string, string, string] = [
 	'We see ourselves as a digital partner: curious about your challenges, clear about our thinking and invested in building something useful together.',
 ];
 
+const WEB_DESIGN_NAME = 'Web Design & Development';
+
 export function makeChildService(
 	mainName: string,
 	slug: string,
 	name: string,
-	options: { placeholder?: boolean } = {},
+	options: {
+		placeholder?: boolean;
+		shortName?: string;
+		secondaryLabel?: string;
+	} = {},
 ): ChildService {
-	const { placeholder = true } = options;
+	const { placeholder = true, shortName, secondaryLabel } = options;
 	const imageSrc = childServiceHeroImage(slug);
 
 	return {
 		slug,
 		name,
+		shortName: shortName ?? name,
+		secondaryLabel:
+			secondaryLabel ??
+			(mainName === WEB_DESIGN_NAME
+				? 'Explore Our Design Process'
+				: 'Explore Our Process'),
 		metaTitle: `${name} | ${mainName} | Xoomplus`,
 		// PLACEHOLDER: replace with real content
 		metaDescription: placeholder
@@ -42,7 +54,6 @@ export function makeChildService(
 			pill: name,
 			titleLines: [...CHILD_PLACEHOLDER_TITLE],
 			paragraphs: [...CHILD_PLACEHOLDER_PARAGRAPHS],
-			button: { label: "Let's Talk", href: '/contact' },
 			image: {
 				src: imageSrc,
 				alt: `${name} — illustrative service visual`,

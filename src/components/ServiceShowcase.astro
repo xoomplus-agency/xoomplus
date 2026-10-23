@@ -11,12 +11,15 @@ interface Props {
 	pill: string;
 	titleLines: [string, string];
 	text: string;
+	compactHeading?: boolean;
+	plainPanel?: boolean;
 	panel: ServiceShowcasePanel;
 	items: string[];
 	icon: string;
 }
 
-const { id, pill, titleLines, text, panel, items, icon } = Astro.props;
+const { id, pill, titleLines, text, compactHeading, plainPanel, panel, items, icon } =
+	Astro.props;
 const headingId = `${id}-heading`;
 const [titleLine1, titleLine2] = titleLines;
 const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
@@ -26,11 +29,15 @@ const imgH = panel.image.height ?? 720;
 
 <Section id={id} aria-labelledby={headingId} class="service-showcase">
 	<div class="ss-layout">
-		<div class="ss-panel" data-reveal="fade">
-			<div class="ss-panel__top">
-				<p class="ss-panel__label m-0">{panel.label}</p>
-				<p class="ss-panel__note m-0">{panel.note}</p>
-			</div>
+		<div class:list={['ss-panel', plainPanel && 'ss-panel--plain']} data-reveal="fade">
+			{
+				panel.label || panel.note ? (
+					<div class="ss-panel__top">
+						{panel.label ? <p class="ss-panel__label m-0">{panel.label}</p> : null}
+						{panel.note ? <p class="ss-panel__note m-0">{panel.note}</p> : null}
+					</div>
+				) : null
+			}
 
 			<img
 				class="ss-panel__image"
@@ -42,15 +49,18 @@ const imgH = panel.image.height ?? 720;
 				decoding="async"
 			/>
 
-			<p class="ss-panel__caption m-0">{panel.caption}</p>
+			{panel.caption ? <p class="ss-panel__caption m-0">{panel.caption}</p> : null}
 		</div>
 
-		<div class="ss-copy">
+		<div class:list={['ss-copy', compactHeading && 'ss-copy--compact']}>
 			<div data-reveal="up">
 			<p class="pill-light m-0">{pill}</p>
 			<h2
 				id={headingId}
-				class="ss-copy__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
+				class:list={[
+					'ss-copy__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black',
+					compactHeading && 'ss-copy__heading--compact',
+				]}
 			>
 				<span class="ss-copy__line">{titleLine1}</span>
 				<span class="ss-copy__line">{titleLine2}</span>
@@ -104,6 +114,12 @@ const imgH = panel.image.height ?? 720;
 		background-color: var(--color-primary-black);
 	}
 
+	.ss-panel--plain {
+		padding: 0;
+		border-radius: 0;
+		background-color: transparent;
+	}
+
 	.ss-panel__top {
 		display: flex;
 		flex-wrap: wrap;
@@ -155,6 +171,11 @@ const imgH = panel.image.height ?? 720;
 		margin-top: 20px;
 	}
 
+	.ss-copy__heading--compact {
+		font-size: clamp(1.5rem, 1.9vw, 1.875rem);
+		line-height: 1.15;
+	}
+
 	.ss-copy__line {
 		display: block;
 	}
@@ -162,6 +183,10 @@ const imgH = panel.image.height ?? 720;
 	.ss-copy__text {
 		margin-top: 16px;
 		max-width: 420px;
+	}
+
+	.ss-copy--compact .ss-copy__text {
+		max-width: 100%;
 	}
 
 	.ss-list {
@@ -206,6 +231,26 @@ const imgH = panel.image.height ?? 720;
 
 		.ss-panel {
 			order: 2;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.ss-layout {
+			grid-template-columns: 1.05fr 1fr;
+			gap: 40px;
+		}
+
+		.ss-copy,
+		.ss-panel {
+			order: unset;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 899px) {
+		.ss-panel {
+			max-width: 640px;
+			margin-inline: auto;
+			width: 100%;
 		}
 	}
 

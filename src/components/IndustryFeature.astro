@@ -8,7 +8,7 @@ import {
 interface Props {
 	/**
 	 * Catalog id (panel / image-list / industry-rows) or section id when passing `rows`.
-	 * Child pages use `child-rows`.
+	 * Location pages pass `rows` with a location-specific id.
 	 */
 	id?: string;
 	/** Override `reverse` from the data entry (panel / image-list only). */
@@ -122,6 +122,14 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 								{row.tag ? (
 									<p class="industry-feature__row-tag m-0">{row.tag}</p>
 								) : null}
+								{row.button ? (
+									<p class="industry-feature__row-cta m-0">
+										<a class="industry-feature__row-link" href={row.button.href}>
+											{row.button.label}
+											<span aria-hidden="true"> →</span>
+										</a>
+									</p>
+								) : null}
 							</div>
 							{caption ? (
 								<figure class="industry-feature__figure m-0" data-reveal="fade">
@@ -175,7 +183,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 					</p>
 					{isPanel ? <span class="industry-feature__accent" aria-hidden="true" /> : null}
 					{isImageList && feature?.list ? (
-						<ul class="industry-feature__plain-list m-0 list-none p-0">
+						<ul class="industry-feature__plain-list m-0">
 							{feature.list.map((item) => (
 								<li class="industry-feature__plain-item text-on-light">{item}</li>
 							))}
@@ -213,7 +221,9 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 									<div class="industry-feature__card-text">
 										<h3 class="industry-feature__card-title m-0">{item.title}</h3>
 										<p class="industry-feature__card-desc m-0">{item.text}</p>
-										<p class="industry-feature__card-tag m-0">{item.tag}</p>
+										{item.tag ? (
+											<p class="industry-feature__card-tag m-0">{item.tag}</p>
+										) : null}
 									</div>
 								</li>
 							))}
@@ -336,6 +346,30 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 		color: #ffa800;
 	}
 
+	.industry-feature__row-cta {
+		margin-top: 28px;
+	}
+
+	.industry-feature__row-link {
+		font-family: var(--font-inter);
+		font-size: var(--text-body);
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--color-primary) !important;
+		text-decoration: underline !important;
+		text-underline-offset: 3px;
+	}
+
+	.industry-feature__row-link:hover {
+		color: var(--color-primary) !important;
+		opacity: 0.85;
+	}
+
+	.industry-feature__row-link:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 3px;
+	}
+
 	.industry-feature__accent {
 		display: block;
 		width: 72px;
@@ -350,10 +384,25 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 		flex-direction: column;
 		gap: 14px;
 		margin-top: 20px;
+		padding: 0;
+		list-style: none;
 	}
 
 	.industry-feature__plain-item {
+		position: relative;
 		margin: 0;
+		padding-left: 1.15em;
+	}
+
+	.industry-feature__plain-item::before {
+		content: '';
+		position: absolute;
+		top: 0.55em;
+		left: 0;
+		width: 0.375em;
+		height: 0.375em;
+		border-radius: 50%;
+		background-color: currentColor;
 	}
 
 	.industry-feature__figure {
@@ -504,6 +553,35 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 
 		.industry-feature__layout--rows .industry-feature__copy {
 			order: 2;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.industry-feature__layout--panel {
+			grid-template-columns: 0.9fr 1fr;
+			gap: 40px;
+		}
+
+		.industry-feature__layout--image-list,
+		.industry-feature__layout--rows {
+			grid-template-columns: 1.05fr 1fr;
+			gap: 40px;
+		}
+
+		.industry-feature__layout--rows .industry-feature__media,
+		.industry-feature__layout--rows .industry-feature__figure,
+		.industry-feature__layout--rows .industry-feature__copy {
+			order: unset;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 899px) {
+		.industry-feature__media,
+		.industry-feature__figure,
+		.industry-feature__panel {
+			max-width: 640px;
+			margin-inline: auto;
+			width: 100%;
 		}
 	}
 

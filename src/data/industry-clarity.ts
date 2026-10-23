@@ -6,10 +6,12 @@ export type IndustryClarityItem = {
 };
 
 export type IndustryClarityColumn = {
-	title: string;
+	/** Column heading. Omit to hide with no reserved space. */
+	title?: string;
 	/** Eyebrow label. Dark: amber under title. Light: gray above title. */
 	eyebrow?: string;
-	text: string;
+	/** Column intro. Omit to hide with no reserved space. */
+	text?: string;
 	items: IndustryClarityItem[];
 };
 
@@ -35,44 +37,41 @@ export type IndustryClaritySection = {
 
 export const industryClarity: IndustryClaritySection = {
 	id: 'clarity',
-	pill: 'Clarity before the enquiry',
-	title: 'Make complex services easier to understand.',
-	text: 'When people need to make a considered decision, clear information and a purposeful next step matter more than noise.',
+	pill: 'Authority & Compliance',
+	title: 'Simplify Complex Services for Easier Conversion',
+	text: 'In high-trust, regulated industries, clear explanations build confidence much faster than buzzwords.',
 	columns: [
 		{
-			title: 'Medical Reporting',
-			eyebrow: 'Local visibility · Quote enquiries',
-			text: 'Help potential referrers and enquirers understand your reporting services, coverage and enquiry requirements.',
 			items: [
 				{
-					title: 'Explain the service clearly',
-					text: 'Organise service pages around report types, how an enquiry begins and what information your team needs.',
-					tag: 'UI/UX Design · WordPress Development',
+					title: 'Medical Reporting',
+					text: 'We help your audience understand what you offer, how you can deliver and the credentials you have for the job.',
 				},
 				{
-					title: 'Connect discovery to a quote request',
-					text: 'Align location and service content with clear contact routes, without asking visitors to navigate unnecessary steps.',
-					tag: 'Local SEO · On-Page SEO · Landing Page Design',
+					title: 'Legal Practices',
+					text: 'We break down complex casework, legal steps and fee structures so clients feel confident booking an initial consultation.',
+				},
+				{
+					title: 'Accounting & Finance',
+					text: 'We simplify corporate tax advice, payroll, and bookkeeping retainers with total clarity and zero ambiguity for better conversion.',
 				},
 			],
 		},
 		{
-			title: 'Legal',
-			eyebrow: 'Authority building · Qualified enquiries',
-			text: 'Give visitors a clear view of your practice areas and help them find the most relevant route to your team.',
 			items: [
 				{
-					title: 'Build an informative first impression',
-					text: 'Structure practice-area pages and useful articles around the questions prospective enquirers are asking.',
-					tag: 'SEO Content Marketing · Website Redesign',
+					title: 'Property Valuation & Development',
+					text: 'We help you explain planning permissions, development yields and property specifications for buyers and investors.',
 				},
 				{
-					title: 'Make the next step specific',
-					text: 'Bring search intent, campaign messaging and enquiry pages together around the services you want to communicate.',
-					tag: 'PPC & Google Ads · Landing Page Design',
+					title: 'Fleet & Logistics',
+					text: 'Our strategy highlights fleet capacity, nationwide route networks and quick rate calculations for commercial logistics contracts.',
+				},
+				{
+					title: 'Specialist Health Clinics',
+					text: 'We help you build medically accurate information that answers patient concerns and makes private consultations simple to book.',
 				},
 			],
 		},
 	],
-	note: 'Your subject experts review service information and any professional or regulatory wording. We shape the digital experience around that approved content.',
 };

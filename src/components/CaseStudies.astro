@@ -7,7 +7,7 @@ import { getWpPagePath } from '../lib/wp-seo';
 const caseStudiesHref = await getWpPagePath('caseStudies');
 
 const intro =
-	'Your digital presence should do more than look good. We bring strategy, creativity, technology, and performance together to create digital experiences that support your business objectives.';
+	'We don’t just say we deliver; we deliver. Here are a few stories of how we brought strategy, creativity and performance to achieve digital success for our clients.';
 ---
 
 <section
@@ -47,8 +47,8 @@ const intro =
 								imageClass={project.imageClass}
 								tags={tags}
 								title={title}
-								excerpt={project.excerpt}
-								href="#case-studies"
+								excerpt={project.homeExcerpt ?? project.excerpt}
+								href={project.href}
 								metrics={project.metrics}
 								shiftBodykite={project.id === 'bodykite'}
 							/>
@@ -92,6 +92,27 @@ const intro =
 	@media (max-width: 720px) {
 		.case-grid {
 			grid-template-columns: minmax(0, 464px);
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 720px) {
+		.case-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.case-grid > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: min(464px, calc(50% - 0.625rem));
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.case-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 </style>

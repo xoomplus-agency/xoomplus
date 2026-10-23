@@ -1,18 +1,18 @@
 ---
 const stats = [
 	{
-		value: '50+',
-		label: 'Projects Done',
-		icon: '/icons/projects-done.svg',
-	},
-	{
-		value: '2K+',
+		value: '43',
 		label: 'Happy Clients',
 		icon: '/icons/happy-clients.svg',
 	},
 	{
-		value: '25+',
-		label: 'Team Members',
+		value: '250+',
+		label: 'Bespoke Digital Projects Delivered',
+		icon: '/icons/projects-done.svg',
+	},
+	{
+		value: '4.2x',
+		label: 'Average Campaign Return on Investment (ROAS)',
 		icon: '/icons/team-members.svg',
 	},
 ];
@@ -31,14 +31,10 @@ const stats = [
 			<p class="growth-pill mb-5">OUR GROWTH</p>
 			<div class="growth-header">
 			<h2 id="growth-heading" class="text-heading-dark growth-heading m-0">
-				Everything You Need to Build a Stronger Digital
-				<br />
-				Presence
+				Measurable Performance Backed by Real Data
 			</h2>
 			<p class="growth-intro m-0">
-				Every number here reflects our journey helping
-				<br />
-				tech companies grow smarter and faster.
+				Our results are a confirmation of our precise digital efforts.
 			</p>
 			</div>
 		</div>
@@ -264,6 +260,60 @@ const stats = [
 		.growth-card {
 			height: auto;
 			min-height: 141px;
+		}
+	}
+
+	/* Tablet: header side-by-side from 900; 2-col grid through 640–1023; 3-col 1024–1199 */
+	@media (min-width: 900px) and (max-width: 1199px) {
+		.growth-header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.growth-intro {
+			max-width: 360px;
+			margin-left: auto;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 720px) {
+		.growth-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.growth-grid > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: min(463px, calc(50% - 0.5rem));
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.growth-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	/* Tablet: grow with content so stats/labels are never clipped */
+	@media (min-width: 640px) and (max-width: 1199px) {
+		.growth-grid {
+			align-items: stretch;
+		}
+
+		.growth-card {
+			height: 100%;
+			min-height: 141px;
+			max-width: none;
+			align-items: center;
+			padding: 28px;
+		}
+
+		.growth-label {
+			font-size: clamp(1.125rem, 1rem + 0.4vw, 1.375rem); /* ~18–22px */
 		}
 	}
 

@@ -6,6 +6,28 @@ import { WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 const { columns, footer } = servicesMenu;
 const allServicesHref = WP_PAGE_FALLBACK_ROUTES.services;
 const panelId = 'services-mega-menu';
+
+/** Build-time path match: strip trailing slash, lowercase. */
+function normalizeMenuPath(path: string): string {
+	return path.replace(/\/+$/, '').toLowerCase() || '/';
+}
+
+const pathname = normalizeMenuPath(Astro.url.pathname);
+
+function isMainCurrent(href: string): boolean {
+	const h = normalizeMenuPath(href);
+	return pathname === h || pathname.startsWith(`${h}/`);
+}
+
+function isExactCurrent(href: string | undefined): boolean {
+	if (!href) return false;
+	return pathname === normalizeMenuPath(href);
+}
+
+function mainAriaCurrent(href: string): 'page' | 'true' | undefined {
+	if (!isMainCurrent(href)) return undefined;
+	return isExactCurrent(href) ? 'page' : 'true';
+}
 ---
 
 <div
@@ -23,6 +45,7 @@ const panelId = 'services-mega-menu';
 			columns.map((column, colIndex) => {
 				if (column.type === 'service') {
 					const isGrouped = Boolean(column.groups?.length);
+					const titleCurrent = isMainCurrent(column.href);
 					return (
 						<div
 							class:list={[
@@ -30,7 +53,14 @@ const panelId = 'services-mega-menu';
 								colIndex > 0 && 'services-mega__col--divided',
 							]}
 						>
-							<a class="services-mega__title-row" href={column.href} data-mega-link data-astro-prefetch="viewport">
+							<a
+								class="services-mega__title-row"
+								href={column.href}
+								data-mega-link
+								data-astro-prefetch="viewport"
+								data-current={titleCurrent ? '' : undefined}
+								aria-current={mainAriaCurrent(column.href)}
+							>
 								<span class="services-mega__title">{column.title}</span>
 								<svg
 									class="services-mega__title-arrow"
@@ -53,38 +83,18 @@ const panelId = 'services-mega-menu';
 							{!isGrouped && <div class="services-mega__rule" aria-hidden="true" />}
 							{column.links && (
 								<ul class="services-mega__links">
-									{column.links.map((item) => (
-										<li>
-											<a class="services-mega__link" href={item.href} data-mega-link data-astro-prefetch="viewport">
-												<span>{item.label}</span>
-												<svg
-													class="services-mega__link-arrow"
-													width="12"
-													height="12"
-													viewBox="0 0 12 12"
-													fill="none"
-													aria-hidden="true"
-												>
-													<path
-														d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5"
-														stroke="currentColor"
-														stroke-width="1.25"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-													/>
-												</svg>
-											</a>
-										</li>
-									))}
-								</ul>
-							)}
-							{column.groups?.map((group, groupIndex) => (
-								<div class:list={[groupIndex === 0 && 'services-mega__group--first']}>
-									<p class="services-mega__group-label">{group.label}</p>
-									<ul class="services-mega__links">
-										{group.links.map((item) => (
+									{column.links.map((item) => {
+										const linkCurrent = isExactCurrent(item.href);
+										return (
 											<li>
-												<a class="services-mega__link" href={item.href} data-mega-link data-astro-prefetch="viewport">
+												<a
+													class="services-mega__link"
+													href={item.href}
+													data-mega-link
+													data-astro-prefetch="viewport"
+													data-current={linkCurrent ? '' : undefined}
+													aria-current={linkCurrent ? 'page' : undefined}
+												>
 													<span>{item.label}</span>
 													<svg
 														class="services-mega__link-arrow"
@@ -104,7 +114,47 @@ const panelId = 'services-mega-menu';
 													</svg>
 												</a>
 											</li>
-										))}
+										);
+									})}
+								</ul>
+							)}
+							{column.groups?.map((group, groupIndex) => (
+								<div class:list={[groupIndex === 0 && 'services-mega__group--first']}>
+									<p class="services-mega__group-label">{group.label}</p>
+									<ul class="services-mega__links">
+										{group.links.map((item) => {
+											const linkCurrent = isExactCurrent(item.href);
+											return (
+												<li>
+													<a
+														class="services-mega__link"
+														href={item.href}
+														data-mega-link
+														data-astro-prefetch="viewport"
+														data-current={linkCurrent ? '' : undefined}
+														aria-current={linkCurrent ? 'page' : undefined}
+													>
+														<span>{item.label}</span>
+														<svg
+															class="services-mega__link-arrow"
+															width="12"
+															height="12"
+															viewBox="0 0 12 12"
+															fill="none"
+															aria-hidden="true"
+														>
+															<path
+																d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5"
+																stroke="currentColor"
+																stroke-width="1.25"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+															/>
+														</svg>
+													</a>
+												</li>
+											);
+										})}
 									</ul>
 								</div>
 							))}
@@ -120,45 +170,60 @@ const panelId = 'services-mega-menu';
 							colIndex > 0 && 'services-mega__col--divided',
 						]}
 					>
-						{column.items.map((item, itemIndex) => (
-							<div
-								class:list={[
-									'services-mega__stack-block',
-									itemIndex > 0 && 'services-mega__stack-block--divided',
-								]}
-							>
-								<a class="services-mega__title-row" href={item.href} data-mega-link data-astro-prefetch="viewport">
-									<span class="services-mega__title">{item.title}</span>
-									<svg
-										class="services-mega__title-arrow"
-										width="16"
-										height="16"
-										viewBox="0 0 16 16"
-										fill="none"
-										aria-hidden="true"
-									>
-										<path
-											d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
-											stroke="currentColor"
-											stroke-width="1.5"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-										/>
-									</svg>
+						{column.items.map((item, itemIndex) => {
+							const titleCurrent = isMainCurrent(item.href);
+							return (
+								<a
+									class:list={[
+										'services-mega__stack-block',
+										itemIndex > 0 && 'services-mega__stack-block--divided',
+									]}
+									href={item.href}
+									data-mega-link
+									data-astro-prefetch="viewport"
+									data-current={titleCurrent ? '' : undefined}
+									aria-current={mainAriaCurrent(item.href)}
+								>
+									<div class="services-mega__title-row">
+										<span class="services-mega__title">{item.title}</span>
+										<svg
+											class="services-mega__title-arrow"
+											width="16"
+											height="16"
+											viewBox="0 0 16 16"
+											fill="none"
+											aria-hidden="true"
+										>
+											<path
+												d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
+												stroke="currentColor"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</div>
+									<p class="services-mega__desc">{item.description}</p>
+									<div class="services-mega__rule" aria-hidden="true" />
+									<ul class="services-mega__text-links">
+										{item.textLinks.map((tl) => {
+											const linkCurrent = isExactCurrent(tl.href);
+											return (
+												<li>
+													<span
+														class="services-mega__text-link"
+														data-current={linkCurrent ? '' : undefined}
+														aria-current={linkCurrent ? 'page' : undefined}
+													>
+														{tl.label}
+													</span>
+												</li>
+											);
+										})}
+									</ul>
 								</a>
-								<p class="services-mega__desc">{item.description}</p>
-								<div class="services-mega__rule" aria-hidden="true" />
-								<ul class="services-mega__text-links">
-									{item.textLinks.map((tl) => (
-										<li>
-											<a class="services-mega__text-link" href={tl.href} data-mega-link data-astro-prefetch="viewport">
-												{tl.label}
-											</a>
-										</li>
-									))}
-								</ul>
-							</div>
-						))}
+							);
+						})}
 					</div>
 				);
 			})
@@ -313,6 +378,11 @@ const panelId = 'services-mega-menu';
 		white-space: nowrap;
 	}
 
+	.services-mega__title-row[data-current] .services-mega__title,
+	a.services-mega__stack-block[data-current] .services-mega__title {
+		color: #ffa800;
+	}
+
 	.services-mega__title-arrow {
 		flex-shrink: 0;
 		color: var(--mega-amber);
@@ -370,6 +440,14 @@ const panelId = 'services-mega-menu';
 			transform 0.15s ease;
 	}
 
+	.services-mega__link[data-current] {
+		color: #ffa800;
+	}
+
+	.services-mega__link[data-current] .services-mega__link-arrow {
+		color: #ffa800;
+	}
+
 	@media (hover: hover) {
 		.services-mega__link:hover {
 			color: var(--mega-amber);
@@ -392,6 +470,24 @@ const panelId = 'services-mega-menu';
 
 	.services-mega__group--first .services-mega__group-label {
 		margin-top: 12px;
+	}
+
+	a.services-mega__stack-block {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+		border-radius: 8px;
+	}
+
+	a.services-mega__stack-block:focus-visible {
+		outline: 2px solid var(--mega-amber);
+		outline-offset: 4px;
+	}
+
+	@media (hover: hover) {
+		a.services-mega__stack-block:hover .services-mega__title {
+			color: var(--mega-amber);
+		}
 	}
 
 	.services-mega__stack-block--divided {
@@ -419,14 +515,18 @@ const panelId = 'services-mega-menu';
 		text-decoration: none;
 	}
 
-	.services-mega__text-link:focus-visible {
+	.services-mega__text-link[data-current] {
+		color: #ffa800;
+	}
+
+	a.services-mega__text-link:focus-visible {
 		outline: 2px solid var(--mega-amber);
 		outline-offset: 2px;
 		border-radius: 6px;
 	}
 
 	@media (hover: hover) {
-		.services-mega__text-link:hover {
+		a.services-mega__text-link:hover {
 			color: var(--mega-amber);
 		}
 	}
@@ -509,6 +609,16 @@ const panelId = 'services-mega-menu';
 	@media (max-width: 1023px) {
 		.services-mega {
 			display: none !important;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.services-mega__body {
+			padding: 20px 24px 16px;
+		}
+
+		.services-mega__col--divided {
+			padding-left: 20px;
 		}
 	}
 </style>

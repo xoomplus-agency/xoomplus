@@ -11,20 +11,28 @@ import OurProcess from '../OurProcess.astro';
 import FAQ from '../FAQ.astro';
 import ContactSection from '@/components/ContactSection.astro';
 import CTASection from '@/components/CTASection.astro';
+import { aboutProcess } from '../../data/process';
 ---
 
 <main id="main-content" class="page-about flex-1">
-	<PageHero title="About us" />
+	<PageHero title="About us" titleTag="p" />
 	<OurStory />
 	<ExpertiseImpact />
 	<OurPurpose />
 	<WhatGuidesUs />
 	<OurExpertise />
-	<OurProcess />
+	<OurProcess content={aboutProcess} />
 	<HowWeWork />
 	<WhatToExpect />
 	<FAQ page="about" id="about-faq" />
-	<ContactSection />
+	<ContactSection
+		content={{
+			title: 'Ready to Build a Predictable Digital Growth Engine?',
+			intro:
+				'Book an introductory strategy call. We will review your current digital assets, assess competitive gaps and map out a clear growth plan.',
+			submitLabel: 'Claim Your Growth Strategy & Audit',
+		}}
+	/>
 	<CTASection />
 </main>
 

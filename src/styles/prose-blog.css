@@ -90,15 +90,38 @@
 	list-style: none;
 }
 
-.prose-blog li {
+.prose-blog ul li,
+.prose-blog ol li {
 	position: relative;
 	margin-bottom: 10px;
 	padding-left: 18px;
-	font-family: var(--font-inter);
-	font-size: var(--text-lead);
-	font-weight: 500;
-	line-height: 1.4;
-	color: var(--color-primary-black);
+	font-family: Inter, sans-serif;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--color-text-on-light);
+}
+
+.prose-blog ul li strong,
+.prose-blog ul li b,
+.prose-blog ol li strong,
+.prose-blog ol li b {
+	font-weight: 400;
+	color: var(--color-text-on-light);
+}
+
+.prose-blog ul li p,
+.prose-blog ol li p {
+	font-family: inherit;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--color-text-on-light);
+}
+
+.prose-blog ul li a:not(:hover),
+.prose-blog ol li a:not(:hover) {
+	color: var(--color-text-on-light);
 }
 
 .prose-blog ul > li::before {
@@ -107,7 +130,7 @@
 	left: 0;
 	top: 0;
 	font-weight: 700;
-	color: var(--color-primary-black);
+	color: var(--color-text-on-light);
 }
 
 .prose-blog ol {
@@ -124,7 +147,7 @@
 	left: 0;
 	top: 0;
 	font-weight: 700;
-	color: var(--color-primary-black);
+	color: var(--color-text-on-light);
 }
 
 .prose-blog a {
@@ -471,11 +494,7 @@
 	}
 }
 
-@media (max-width: 639px) {
-	.prose-blog li {
-		font-size: var(--text-body);
-	}
-}
+/* List size stays 18px on mobile — readable at 375px without shrinking. */
 
 /* Author byline mark (blog detail meta, not post body) */
 .blog-article__avatar {

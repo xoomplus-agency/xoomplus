@@ -21,8 +21,14 @@ const detailToMainSlug: Record<string, string> = {
 
 const mainSlug = detailToMainSlug[service.id];
 const headingId = `${service.id}-heading`;
-const [titleLine1, titleLine2] = service.title;
+const titleLines = service.title;
 const [colCapability, colHelps, colScope] = service.columns;
+const tableCols = service.tableCols ?? 'default';
+/** Per-entry column widths — `delivery` widens col 3 for Digital Infrastructure. */
+const colWidths =
+	tableCols === 'delivery'
+		? (['24%', '24%', '42%', '10%'] as const)
+		: (['24%', '32%', '38%', '64px'] as const);
 const caption = `${service.pill} capabilities, what each helps address and the scope to explore`;
 ---
 
@@ -38,8 +44,14 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 				id={headingId}
 				class="sd-header__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				{titleLine1}<br />
-				{titleLine2}
+				{
+					titleLines.map((line, index) => (
+						<>
+							{index > 0 ? <br /> : null}
+							{line}
+						</>
+					))
+				}
 			</h2>
 		</div>
 		<p class="sd-header__aside text-on-light m-0">{service.intro}</p>
@@ -48,21 +60,27 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 	<table class="sd-table">
 		<caption class="sr-only">{caption}</caption>
 		<colgroup>
-			<col class="sd-table__col sd-table__col--1" />
-			<col class="sd-table__col sd-table__col--2" />
-			<col class="sd-table__col sd-table__col--3" />
+			<col class="sd-table__col sd-table__col--1" style={`width: ${colWidths[0]}`} />
+			<col class="sd-table__col sd-table__col--2" style={`width: ${colWidths[1]}`} />
+			<col class="sd-table__col sd-table__col--3" style={`width: ${colWidths[2]}`} />
+			<col class="sd-table__col sd-table__col--4" style={`width: ${colWidths[3]}`} />
 		</colgroup>
 		<thead>
 			<tr>
 				<th scope="col">{colCapability}</th>
 				<th scope="col">{colHelps}</th>
 				<th scope="col">{colScope}</th>
+				<th scope="col">
+					<span class="sr-only">Open</span>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
 			{
 				service.rows.map((row) => {
-					const href = mainSlug ? getChildHrefByName(mainSlug, row.capability) : undefined;
+					const href =
+						row.href ?? (mainSlug ? getChildHrefByName(mainSlug, row.capability) : undefined);
+					const arrowLabel = row.linkLabel ?? `Explore ${row.capability}`;
 					return (
 						<tr>
 							<th scope="row">
@@ -75,7 +93,34 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 								)}
 							</th>
 							<td data-label={colHelps}>{row.helps}</td>
-							<td data-label={colScope}>{row.scope}</td>
+							<td data-label={colScope}>
+								{row.scopeLabel && row.scopeHref ? (
+									<a class="sd-table__capability-link" href={row.scopeHref}>
+										{row.scopeLabel}
+									</a>
+								) : (
+									row.scope
+								)}
+							</td>
+							<td class="sd-table__arrow">
+								{href ? (
+									<a
+										class="sd-table__arrow-link"
+										href={href}
+										aria-label={arrowLabel}
+									>
+										<img
+											src="/icons/arrow.svg"
+											alt=""
+											aria-hidden="true"
+											width="24"
+											height="24"
+											loading="lazy"
+											decoding="async"
+										/>
+									</a>
+								) : null}
+							</td>
 						</tr>
 					);
 				})
@@ -83,11 +128,21 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		</tbody>
 	</table>
 
-	<div class="sd-note" role="note">
-		<div class="sd-note__content">
-			<p class="sd-note__text m-0">{service.note}</p>
-		</div>
-	</div>
+	{
+		service.note || service.noteTitle || service.noteButtonLabel ? (
+			<div class="sd-note" role="note">
+				<div class="sd-note__content">
+					{service.noteTitle ? <h3 class="sd-note__title m-0">{service.noteTitle}</h3> : null}
+					{service.note ? <p class="sd-note__text m-0">{service.note}</p> : null}
+				</div>
+				{service.noteButtonLabel && service.noteButtonHref ? (
+					<a class="sd-note__link" href={service.noteButtonHref}>
+						{service.noteButtonLabel} →
+					</a>
+				) : null}
+			</div>
+		) : null
+	}
 </Section>
 
 <style>
@@ -124,17 +179,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		table-layout: fixed;
 	}
 
-	.sd-table__col--1 {
-		width: 26%;
-	}
-
-	.sd-table__col--2 {
-		width: 34%;
-	}
-
-	.sd-table__col--3 {
-		width: 40%;
-	}
+	/* Column widths set per entry via <col style> (default vs delivery preset). */
 
 	.sd-table th,
 	.sd-table td {
@@ -163,8 +208,53 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		border-bottom: 1px solid #e9e9e7;
 	}
 
-	.sd-table tbody td:last-child {
+	.sd-table tbody td.sd-table__arrow {
+		padding: 22px 0;
 		padding-right: 0;
+		text-align: right;
+		vertical-align: middle;
+	}
+
+	.sd-table__arrow-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		min-width: 44px;
+		min-height: 44px;
+		border-radius: 6px;
+		color: #ffa800;
+		text-decoration: none;
+		transition: transform var(--dur-fast) var(--ease-out);
+	}
+
+	.sd-table__arrow-link img {
+		display: block;
+		width: 24px;
+		height: 24px;
+	}
+
+	.sd-table__arrow-link:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 4px;
+		transform: translateX(4px);
+	}
+
+	@media (hover: hover) {
+		.sd-table__arrow-link:hover {
+			transform: translateX(4px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sd-table__arrow-link {
+			transition: none;
+		}
+
+		.sd-table__arrow-link:hover,
+		.sd-table__arrow-link:focus-visible {
+			transform: none;
+		}
 	}
 
 	.sd-table tbody th {
@@ -208,6 +298,8 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 	.sd-note {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
 		width: 100%;
 		min-height: 90px;
 		margin-top: 40px;
@@ -219,6 +311,8 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 
 	.sd-note__content {
 		position: relative;
+		flex: 1 1 auto;
+		min-width: 0;
 		padding-left: 19px; /* 3px bar + 16px gap */
 	}
 
@@ -240,6 +334,32 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		font-weight: 500;
 		line-height: 1.5;
 		color: var(--color-text-on-light);
+	}
+
+	.sd-note__title {
+		margin-bottom: 6px;
+		font-size: var(--text-lead);
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--color-primary-black);
+	}
+
+	.sd-note__link {
+		flex-shrink: 0;
+		margin-left: auto;
+		font-family: var(--font-inter);
+		font-size: var(--text-body);
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--color-primary-black);
+		text-decoration: underline;
+		text-decoration-color: var(--color-primary);
+		text-underline-offset: 4px;
+	}
+
+	.sd-note__link:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 4px;
 	}
 
 	@media (max-width: 1023px) {
@@ -294,6 +414,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 		}
 
 		.sd-table tbody tr {
+			position: relative;
 			padding: 20px 0;
 			border-top: none;
 		}
@@ -310,6 +431,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 
 		.sd-table tbody th {
 			margin-bottom: 12px;
+			padding-right: 48px;
 			font-size: var(--text-h3-sm);
 		}
 
@@ -330,6 +452,19 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 			color: var(--color-text-on-light);
 		}
 
+		.sd-table tbody td.sd-table__arrow {
+			position: absolute;
+			top: 20px;
+			right: 0;
+			width: auto;
+			margin: 0;
+			padding: 0;
+		}
+
+		.sd-table tbody td.sd-table__arrow::before {
+			content: none;
+		}
+
 		@media (hover: hover) {
 			.sd-table tbody tr:hover {
 				background-color: transparent;
@@ -339,12 +474,38 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 
 	@media (max-width: 639px) {
 		.sd-note {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.sd-note {
 			min-height: auto;
 			padding: 20px;
 		}
 
 		.sd-note__text {
 			font-size: clamp(1rem, 4vw, 1.125rem); /* ~16–18px */
+		}
+	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.sd-header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.sd-header__aside {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.sd-header__aside {
+			max-width: 360px;
 		}
 	}
 </style>

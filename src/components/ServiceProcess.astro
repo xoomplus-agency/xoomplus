@@ -15,12 +15,23 @@ interface Props {
 	id?: string;
 	pill: string;
 	titleLines: [string, string];
+	text?: string;
 	image: { src: string; alt: string; width?: number; height?: number };
 	items: [ServiceProcessItem, ServiceProcessItem, ServiceProcessItem] | ServiceProcessItem[];
+	itemTextSize?: '18px';
 	note?: string;
 }
 
-const { id = 'working-together', pill, titleLines, image, items, note } = Astro.props;
+const {
+	id = 'working-together',
+	pill,
+	titleLines,
+	text,
+	image,
+	items,
+	itemTextSize,
+	note,
+} = Astro.props;
 const headingId = `${id}-heading`;
 const [titleLine1, titleLine2] = titleLines;
 const imgW = image.width ?? 960;
@@ -39,6 +50,7 @@ const imgH = image.height ?? 540;
 					<span class="sp-heading__line">{titleLine1}</span>
 					<span class="sp-heading__line">{titleLine2}</span>
 				</h2>
+				{text ? <p class="sp-intro__text m-0">{text}</p> : null}
 			</div>
 			<div class="sp-media" data-reveal="fade">
 				<img
@@ -61,7 +73,14 @@ const imgH = image.height ?? 540;
 							<h3 class="sp-item__title m-0 text-h3 font-medium text-primary-black">
 								{item.title}
 							</h3>
-							<p class="sp-item__text m-0">{item.text}</p>
+							<p
+								class:list={[
+									'sp-item__text m-0',
+									itemTextSize === '18px' && 'sp-item__text--18',
+								]}
+							>
+								{item.text}
+							</p>
 						</li>
 					))
 				}
@@ -85,6 +104,16 @@ const imgH = image.height ?? 540;
 
 	.sp-heading__line {
 		display: block;
+	}
+
+	.sp-intro__text {
+		max-width: 540px;
+		margin-top: 16px;
+		font-family: var(--font-inter);
+		font-size: var(--text-body);
+		font-weight: 400;
+		line-height: 1.5;
+		color: #555555;
 	}
 
 	.sp-media {
@@ -133,6 +162,10 @@ const imgH = image.height ?? 540;
 
 	.sp-item__text {
 		margin-top: 10px;
+	}
+
+	.sp-item__text--18 {
+		font-size: 18px;
 	}
 
 	.sp-note {

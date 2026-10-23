@@ -1,7 +1,7 @@
 ---
 import Button from './Button.astro';
 import ServicesMegaMenu from './ServicesMegaMenu.astro';
-import { getNavItemsStatic, isNavActive, type NavItem } from '../data/nav';
+import { getNavItemsStatic, isNavActive, NAV_LETS_TALK_HREF, type NavItem } from '../data/nav';
 import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
 
 interface Props {
@@ -167,7 +167,7 @@ function isActive(item: NavItem) {
 		</nav>
 
 		<div class="z-[1] shrink-0 justify-self-end" data-nav-cta>
-			<Button size="nav" href="#contact">Let’s Talk</Button>
+			<Button size="nav" href={NAV_LETS_TALK_HREF}>Let’s Talk</Button>
 		</div>
 	</div>
 
@@ -302,7 +302,7 @@ function isActive(item: NavItem) {
 				</ul>
 			</nav>
 			<div class="mobile-drawer__cta">
-				<Button size="nav" class="!w-full" href="#contact">Let’s Talk</Button>
+				<Button size="nav" class="!w-full" href={NAV_LETS_TALK_HREF}>Let’s Talk</Button>
 			</div>
 		</aside>
 	</div>
@@ -379,9 +379,13 @@ function isActive(item: NavItem) {
 								</li>
 								{section.links.map((link) => (
 									<li>
-										<a href={link.href} data-mobile-services-link>
-											{link.label}
-										</a>
+										{link.href ? (
+											<a href={link.href} data-mobile-services-link>
+												{link.label}
+											</a>
+										) : (
+											<span>{link.label}</span>
+										)}
 									</li>
 								))}
 							</ul>
@@ -1263,7 +1267,8 @@ function isActive(item: NavItem) {
 		list-style: none;
 	}
 
-	.mobile-services-acc__list a {
+	.mobile-services-acc__list a,
+	.mobile-services-acc__list span {
 		display: flex;
 		align-items: center;
 		min-height: 40px;
@@ -1324,6 +1329,35 @@ function isActive(item: NavItem) {
 		.mobile-services__backdrop {
 			transition-duration: 0s !important;
 			transition: none !important;
+		}
+	}
+
+	/* Large tablet: tighten desktop nav so pill / logo / CTA fit at 1024–1199 */
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		[data-nav-desktop] {
+			gap: 0.75rem;
+			padding-left: 1.5rem;
+			padding-right: 1.5rem;
+		}
+
+		[data-nav-desktop] .nav-pill-link {
+			padding-left: 0.625rem;
+			padding-right: 0.625rem;
+			font-size: 0.8125rem;
+		}
+
+		[data-site-header].is-scrolled [data-nav-desktop],
+		[data-site-header][data-scrolled] [data-nav-desktop] {
+			width: min(96vw, 1000px);
+			max-width: 1000px;
+			gap: 0.5rem;
+			padding-left: 12px;
+			padding-right: 12px;
+		}
+
+		[data-nav-desktop] .nav-logo-link .logo {
+			max-height: 36px;
+			width: auto;
 		}
 	}
 </style>

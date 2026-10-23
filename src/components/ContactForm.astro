@@ -1,6 +1,8 @@
 ---
 import Button from './Button.astro';
 import FormSelect from './FormSelect';
+import { getCf7FeedbackUrl } from '../lib/cf7';
+import { CF7_CONTACT_SERVICES } from '../lib/cf7-forms';
 
 interface Props {
 	/** Prefix for every field/control id (default `"contact"`). Use `"enquiry"` on /contact. */
@@ -13,6 +15,8 @@ interface Props {
 	text?: string;
 	/** Card title heading level. /contact keeps `3`; Pricing uses `2`. */
 	headingLevel?: 2 | 3;
+	/** Submit button label. */
+	submitLabel?: string;
 }
 
 const {
@@ -22,9 +26,11 @@ const {
 	heading = 'Tell us about your project',
 	text = 'A few details help us understand the right next step. * Required fields',
 	headingLevel = 3,
+	submitLabel = 'Send enquiry',
 } = Astro.props;
 
 const HeadingTag = headingLevel === 2 ? 'h2' : 'h3';
+const formAction = getCf7FeedbackUrl(CF7_CONTACT_SERVICES.id);
 
 /** Values must match CF7 form 15941 enum accept lists. */
 const serviceOptions = [
@@ -85,6 +91,8 @@ const ids = {
 	<form
 		class="contact-form"
 		id={ids.form}
+		method="post"
+		action={formAction}
 		data-contact-form
 		data-enquiry-form
 		data-cf7-form="contact-services"
@@ -116,7 +124,7 @@ const ids = {
 					autocomplete="name"
 					required
 				/>
-				<p class="contact-field-error m-0" data-cf7-error="name" hidden></p>
+				<p class="contact-field-error m-0" data-cf7-error="name" id={`${ids.name}-error`} hidden></p>
 			</div>
 			<div class="contact-field">
 				<label for={ids.email}>
@@ -130,7 +138,7 @@ const ids = {
 					autocomplete="email"
 					required
 				/>
-				<p class="contact-field-error m-0" data-cf7-error="email" hidden></p>
+				<p class="contact-field-error m-0" data-cf7-error="email" id={`${ids.email}-error`} hidden></p>
 			</div>
 		</div>
 
@@ -191,11 +199,11 @@ const ids = {
 					Budget <span class="contact-field__optional">(optional)</span>
 				</label>
 				{/*
-					client:visible — hydrate when the form approaches the viewport so
-					GlideSelect motion is off the critical path (not on the home page).
+					client:load — Budget/Timeline must hydrate reliably; client:visible
+					left islands inert until late (menus never opened on /contact).
 				*/}
 				<FormSelect
-					client:visible
+					client:load
 					id={ids.budget}
 					name="budget"
 					placeholder="Select a budget range"
@@ -215,7 +223,7 @@ const ids = {
 					Ideal timeline <span class="contact-field__optional">(optional)</span>
 				</label>
 				<FormSelect
-					client:visible
+					client:load
 					id={ids.timeline}
 					name="timeline"
 					placeholder="When would you like to start?"
@@ -247,21 +255,21 @@ const ids = {
 			<p class="enquiry-field-help m-0" id={ids.detailsHelp}>
 				No polished brief needed. A few sentences is a good start.
 			</p>
-			<p class="contact-field-error m-0" data-cf7-error="details" hidden></p>
+			<p class="contact-field-error m-0" data-cf7-error="details" id={`${ids.details}-error`} hidden></p>
 		</div>
 
 		<label class="enquiry-consent">
-			<input type="checkbox" name="consent" value="yes" required />
+			<input type="checkbox" name="consent" value="yes" required id={`${idPrefix}-consent`} />
 			<span class="enquiry-consent__text">
 				I agree to XoomPlus using my details to respond to this enquiry.
-				<a class="enquiry-consent__link" href="/privacy-policy">Privacy Policy</a>
+				<a class="enquiry-consent__link" href="/privacy-policy/">Privacy Policy</a>
 			</span>
 		</label>
-		<p class="contact-field-error m-0" data-cf7-error="consent" hidden></p>
+		<p class="contact-field-error m-0" data-cf7-error="consent" id={`${idPrefix}-consent-error`} hidden></p>
 
 		<div class="enquiry__actions">
 			<Button type="submit" id={ids.submit}>
-				Send enquiry
+				{submitLabel}
 				<svg
 					class="contact-submit__arrow"
 					width="16"
@@ -286,7 +294,15 @@ const ids = {
 	</form>
 </div>
 
+{/* Module script — Astro dedupes across pages that render ContactForm. */}
+<script src="../scripts/form.ts"></script>
+
 <style>
+	/* Menus must escape the card — never clip GlideSelect. */
+	.enquiry__card {
+		overflow: visible;
+	}
+
 	.enquiry__card--align-center .contact-card__title,
 	.enquiry__card--align-center .enquiry__card-subtitle {
 		text-align: center;
@@ -464,89 +480,24 @@ const ids = {
 		}
 	}
 
+	/* Tablet: 2-col fields from 700px; form card capped & centered */
+	@media (min-width: 640px) and (max-width: 699px) {
+		.enquiry__row {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1199px) {
+		.enquiry__card {
+			max-width: 680px;
+			margin-inline: auto;
+			width: 100%;
+		}
+	}
+
 	@media (max-width: 639px) {
 		.enquiry__card {
 			padding: 24px 20px;
 		}
 	}
 </style>
-
-<script>
-	const NOT_SURE = 'Not sure yet';
-	let booted = false;
-
-	function bindEnquiryChips() {
-		document.querySelectorAll<HTMLFormElement>('[data-enquiry-form]').forEach((form) => {
-			if (form.dataset.enquiryChipsBound) return;
-			form.dataset.enquiryChipsBound = 'true';
-
-			const serviceInputs = [
-				...form.querySelectorAll<HTMLInputElement>(
-					'.enquiry-chips input[type="checkbox"][name="services"]',
-				),
-			];
-
-			function syncChip(input: HTMLInputElement) {
-				input.closest('.enquiry-chip')?.classList.toggle('enquiry-chip--checked', input.checked);
-			}
-
-			serviceInputs.forEach((input) => {
-				input.addEventListener('change', () => {
-					if (input.value === NOT_SURE && input.checked) {
-						serviceInputs.forEach((other) => {
-							if (other === input) return;
-							other.checked = false;
-							syncChip(other);
-						});
-					} else if (input.value !== NOT_SURE && input.checked) {
-						const notSure = serviceInputs.find((el) => el.value === NOT_SURE);
-						if (notSure?.checked) {
-							notSure.checked = false;
-							syncChip(notSure);
-						}
-					}
-					syncChip(input);
-				});
-				syncChip(input);
-			});
-		});
-	}
-
-	async function boot() {
-		if (booted) return;
-		booted = true;
-		const { initContactForms } = await import('../scripts/contact-form');
-		initContactForms();
-		bindEnquiryChips();
-	}
-
-	function scheduleContactBoot() {
-		const form = document.querySelector('[data-contact-form]');
-		if (!form) {
-			void boot();
-			return;
-		}
-
-		form.addEventListener('focusin', () => void boot(), { once: true });
-
-		if ('IntersectionObserver' in window) {
-			const io = new IntersectionObserver(
-				(entries) => {
-					if (!entries.some((e) => e.isIntersecting)) return;
-					io.disconnect();
-					void boot();
-				},
-				{ rootMargin: '200px 0px' },
-			);
-			io.observe(form);
-		} else {
-			void boot();
-		}
-	}
-
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', scheduleContactBoot, { once: true });
-	} else {
-		scheduleContactBoot();
-	}
-</script>

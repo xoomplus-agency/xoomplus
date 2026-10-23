@@ -12,6 +12,12 @@ export type NavItem = {
 };
 
 /**
+ * Navbar "Let's Talk" CTA — always the home contact form (`ContactSection` id).
+ * Absolute path + hash so it works from every page.
+ */
+export const NAV_LETS_TALK_HREF = '/#contact';
+
+/**
  * Build-time / static nav — no per-request WordPress calls.
  * Hrefs match WP_PAGE_FALLBACK_ROUTES (verified by `check:wp-routes` at build).
  */

@@ -1,0 +1,123 @@
+{
+  "compare": [
+    {
+      "w": 1440,
+      "identical": false,
+      "before": "d2db330bb0685c4a",
+      "after": "268564ae6db469fb",
+      "beforeBytes": 586016,
+      "afterBytes": 584794
+    },
+    {
+      "w": 1280,
+      "identical": false,
+      "before": "67cb7f4f4a346829",
+      "after": "3f5ca891864555f0",
+      "beforeBytes": 523523,
+      "afterBytes": 525945
+    },
+    {
+      "w": 414,
+      "identical": false,
+      "before": "66eb6b7151108134",
+      "after": "e3341239b27a4429",
+      "beforeBytes": 182330,
+      "afterBytes": 182676
+    },
+    {
+      "w": 375,
+      "identical": false,
+      "before": "e45949db81678372",
+      "after": "903c355006343347",
+      "beforeBytes": 168583,
+      "afterBytes": 168371
+    },
+    {
+      "w": 320,
+      "identical": false,
+      "before": "37d57cdd1886717a",
+      "after": "06a801f124270843",
+      "beforeBytes": 151285,
+      "afterBytes": 151850
+    }
+  ],
+  "probes": [
+    {
+      "p": "/",
+      "w": 768,
+      "gutter": "32px",
+      "hScroll": false,
+      "storyFlex": null,
+      "svcCols": 2,
+      "adhocCols": null,
+      "pkgCols": null,
+      "btHeader": null
+    },
+    {
+      "p": "/",
+      "w": 1024,
+      "gutter": "40px",
+      "hScroll": false,
+      "storyFlex": null,
+      "svcCols": 3,
+      "adhocCols": null,
+      "pkgCols": null,
+      "btHeader": null
+    },
+    {
+      "p": "/about",
+      "w": 900,
+      "gutter": "32px",
+      "hScroll": false,
+      "storyFlex": "row",
+      "svcCols": null,
+      "adhocCols": null,
+      "pkgCols": null,
+      "btHeader": null
+    },
+    {
+      "p": "/pricing",
+      "w": 900,
+      "gutter": "32px",
+      "hScroll": false,
+      "storyFlex": null,
+      "svcCols": null,
+      "adhocCols": 3,
+      "pkgCols": 2,
+      "btHeader": null
+    },
+    {
+      "p": "/pricing",
+      "w": 768,
+      "gutter": "32px",
+      "hScroll": false,
+      "storyFlex": null,
+      "svcCols": null,
+      "adhocCols": 2,
+      "pkgCols": 2,
+      "btHeader": null
+    },
+    {
+      "p": "/services/seo",
+      "w": 1024,
+      "gutter": "40px",
+      "hScroll": false,
+      "storyFlex": null,
+      "svcCols": null,
+      "adhocCols": null,
+      "pkgCols": null,
+      "btHeader": null
+    },
+    {
+      "p": "/contact",
+      "w": 768,
+      "gutter": "32px",
+      "hScroll": false,
+      "storyFlex": null,
+      "svcCols": null,
+      "adhocCols": null,
+      "pkgCols": null,
+      "btHeader": null
+    }
+  ]
+}

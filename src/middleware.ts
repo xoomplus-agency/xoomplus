@@ -86,7 +86,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	if (refresh) {
 		const { clearWpPostsCache } = await import('./lib/wp-posts');
+		const { clearWpPageCache } = await import('./lib/wp');
 		clearWpPostsCache();
+		clearWpPageCache({ disk: true });
 		if (isHtmlCacheEnabled() && isHtmlCacheablePath(pathname)) {
 			await purgeHtmlCache([pathname]);
 		}

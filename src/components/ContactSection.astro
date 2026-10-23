@@ -1,17 +1,45 @@
 ---
+/**
+ * Homepage / About contact block — classic short form (name, company, email, phone, details).
+ * /contact and /pricing use ContactForm.astro (full enquiry).
+ */
 import Button from './Button.astro';
 import LocationMap from './LocationMap.astro';
+import { SITE_EMAIL, SITE_PHONE } from '../data/site-contact';
+import { getCf7FeedbackUrl } from '../lib/cf7';
+import { CF7_CONTACT_HOMEPAGE } from '../lib/cf7-forms';
+
+export type ContactSectionContent = {
+	/** Plain heading when set; otherwise the accent “Let’s Start…” default. */
+	title?: string;
+	intro: string;
+	submitLabel: string;
+};
+
+interface Props {
+	/** Page-specific overrides (home / about). */
+	content?: ContactSectionContent;
+}
+
+const { content } = Astro.props;
+
+const intro =
+	content?.intro ??
+	'Tell us what you are looking to achieve and let\'s discuss how Xoomplus can help with your digital marketing, website, SEO, social media, or paid search needs.';
+const submitLabel = content?.submitLabel ?? 'Submit';
+const title = content?.title;
+const formAction = getCf7FeedbackUrl(CF7_CONTACT_HOMEPAGE.id);
 
 const contactItems = [
 	{
 		icon: '/icons/phone.svg',
-		label: '+44 330 010 4786',
-		href: 'tel:+443300104786',
+		label: SITE_PHONE.display,
+		href: SITE_PHONE.href,
 	},
 	{
 		icon: '/icons/email.svg',
-		label: 'info@xoomplus.co.uk',
-		href: 'mailto:info@xoomplus.co.uk',
+		label: SITE_EMAIL.display,
+		href: SITE_EMAIL.href,
 	},
 	{
 		icon: '/icons/location.svg',
@@ -34,14 +62,21 @@ const contactItems = [
 					id="contact-heading"
 					class="contact-heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 				>
-					<span class="contact-heading__accent">Let's Start</span>
-					<br />
-					the Conversation
+					{
+						title ? (
+							title
+						) : (
+							<>
+								<span class="contact-heading__accent">Let's Start</span>
+								<br />
+								the Conversation
+							</>
+						)
+					}
 				</h2>
 
 				<p class="contact-intro text-on-light m-0 mt-4 max-w-[540px]">
-					Tell us what you are looking to achieve and let's discuss how Xoomplus can help with your
-					digital marketing, website, SEO, social media, or paid search needs.
+					{intro}
 				</p>
 
 				<ul class="contact-list m-0 list-none p-0" role="list">
@@ -49,10 +84,6 @@ const contactItems = [
 						contactItems.map((item) => (
 							<li class="contact-list__item">
 								<span class="contact-list__icon" aria-hidden="true">
-									{/*
-										SVGs already include the circular badge + amber (#FFA800) icon.
-										Rendered at 36px — no nested badge wrapper needed.
-									*/}
 									<img src={item.icon} alt="" width="36" height="36" decoding="async" />
 								</span>
 								{item.href ? (
@@ -80,11 +111,13 @@ const contactItems = [
 			<form
 				class="contact-form"
 				id="contact-form"
+				method="post"
+				action={formAction}
 				data-contact-form
+				data-enquiry-form
 				data-cf7-form="contact-homepage"
 				novalidate
 			>
-				{/* Honeypot — leave empty; bots that fill it are rejected client-side */}
 				<div class="contact-honeypot" aria-hidden="true">
 					<label for="contact-hp-website">Website</label>
 					<input
@@ -105,7 +138,8 @@ const contactItems = [
 						autocomplete="name"
 						required
 					/>
-					<p class="contact-field-error m-0" data-cf7-error="name" hidden></p>
+					<p class="contact-field-error m-0" data-cf7-error="name" id="contact-name-error" hidden
+					></p>
 				</div>
 
 				<div class="contact-field">
@@ -117,7 +151,12 @@ const contactItems = [
 						autocomplete="organization"
 						required
 					/>
-					<p class="contact-field-error m-0" data-cf7-error="company" hidden></p>
+					<p
+						class="contact-field-error m-0"
+						data-cf7-error="company"
+						id="contact-company-error"
+						hidden
+					></p>
 				</div>
 
 				<div class="contact-field">
@@ -129,7 +168,8 @@ const contactItems = [
 						autocomplete="email"
 						required
 					/>
-					<p class="contact-field-error m-0" data-cf7-error="email" hidden></p>
+					<p class="contact-field-error m-0" data-cf7-error="email" id="contact-email-error" hidden
+					></p>
 				</div>
 
 				<div class="contact-field">
@@ -141,17 +181,23 @@ const contactItems = [
 						autocomplete="tel"
 						required
 					/>
-					<p class="contact-field-error m-0" data-cf7-error="phone" hidden></p>
+					<p class="contact-field-error m-0" data-cf7-error="phone" id="contact-phone-error" hidden
+					></p>
 				</div>
 
 				<div class="contact-field">
 					<label for="contact-details">Project Details</label>
 					<textarea id="contact-details" name="details" rows="4"></textarea>
-					<p class="contact-field-error m-0" data-cf7-error="details" hidden></p>
+					<p
+						class="contact-field-error m-0"
+						data-cf7-error="details"
+						id="contact-details-error"
+						hidden
+					></p>
 				</div>
 
 				<Button type="submit" id="contact-submit" size="nav" class="!w-full">
-					Submit
+					{submitLabel}
 					<svg
 						class="contact-submit__arrow"
 						width="16"
@@ -166,8 +212,7 @@ const contactItems = [
 							stroke="currentColor"
 							stroke-width="1.75"
 							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
+							stroke-linejoin="round"></path>
 					</svg>
 				</Button>
 
@@ -178,7 +223,24 @@ const contactItems = [
 	</div>
 </section>
 
+{/* Same shared binder as ContactForm — Astro dedupes the module. */}
+<script src="../scripts/form.ts"></script>
+
 <style>
+	/*
+	 * Clear fixed navbar when landing on /#contact.
+	 * Desktop ~80px bar + 16px; mobile top bar (safe-area + pt + controls) + 16px.
+	 */
+	#contact {
+		scroll-margin-top: calc(80px + 16px);
+	}
+
+	@media (max-width: 1023px) {
+		#contact {
+			scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 1.5rem + 48px + 16px);
+		}
+	}
+
 	.contact-grid {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -248,7 +310,6 @@ const contactItems = [
 		border-radius: 2px;
 	}
 
-	/* Height/margin only — radius + image fill live on LocationMap */
 	:global(.contact-map) {
 		height: 220px;
 		margin-top: 1.5rem;
@@ -298,42 +359,14 @@ const contactItems = [
 </style>
 
 <script>
-	let booted = false;
-
-	async function bootContactForms() {
-		if (booted) return;
-		booted = true;
-		const { initContactForms } = await import('../scripts/contact-form');
-		initContactForms();
-	}
-
-	function scheduleContactBoot() {
-		const form = document.querySelector('[data-contact-form]');
-		if (!form) return;
-
-		const onFocus = () => {
-			void bootContactForms();
-		};
-		form.addEventListener('focusin', onFocus, { once: true });
-
-		if ('IntersectionObserver' in window) {
-			const io = new IntersectionObserver(
-				(entries) => {
-					if (!entries.some((e) => e.isIntersecting)) return;
-					io.disconnect();
-					void bootContactForms();
-				},
-				{ rootMargin: '200px 0px' },
-			);
-			io.observe(form);
-		} else {
-			void bootContactForms();
-		}
-	}
-
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', scheduleContactBoot, { once: true });
-	} else {
-		scheduleContactBoot();
+	/* After images/map settle, re-apply hash scroll once so #contact stays clear of the navbar. */
+	if (location.hash === '#contact') {
+		window.addEventListener(
+			'load',
+			() => {
+				document.getElementById('contact')?.scrollIntoView();
+			},
+			{ once: true },
+		);
 	}
 </script>

@@ -7,49 +7,55 @@ export type ServicesBehindCard = {
 	href: string;
 };
 
+export type ServicesBehindAdvisory = {
+	/** Optional supporting line. Omit to show the button only. */
+	text?: string;
+	buttonLabel: string;
+	href: string;
+};
+
 export type ServicesBehindSection = {
 	id: string;
 	pill: string;
 	title: string;
 	text: string;
-	/** Exactly 3 ServiceCards. */
-	cards: [ServicesBehindCard, ServicesBehindCard, ServicesBehindCard];
+	cards: ServicesBehindCard[];
+	/** Optional bottom CTA bar. Omit to hide. */
+	advisory?: ServicesBehindAdvisory;
 };
 
 /**
  * Icons match home Our Services cards (`src/data/services.ts`):
- * SEO / Social → service-circles.svg, Web → service-layers.svg.
- * Third card links to `/services/social-media-marketing` as a placeholder
- * (covers Social + Paid; no combined route yet).
+ * SEO / Social / PPC → service-circles.svg, Web → service-layers.svg.
  */
 export const servicesBehind: ServicesBehindSection = {
 	id: 'services-behind',
-	pill: 'The services behind the possibilities',
-	title: 'Different needs. Connected digital capabilities.',
-	text: 'The same core services can be shaped around different audiences, journeys and business priorities. Explore the full offer on our Services page.',
+	pill: 'Full-Funnel Digital Marketing Agency',
+	title: 'Every Need, Matched With Digital Speed',
+	text: 'Every sector relies on different channels to win clients. As a full-service digital marketing agency serving Manchester and the UK, we bring these capabilities together.',
 	cards: [
 		{
 			icon: '/icons/service-circles.svg',
-			title: 'SEO',
+			title: 'Search Engine Optimisation (SEO)',
 			description:
-				"Connect your audience's questions with useful content and stronger search foundations.",
+				'Our SEO specialists build high-ranking organic systems through rigorous technical site audits, authoritative backlink acquisition and Generative Engine Optimisation (GEO & AEO).',
 			items: [
 				'AI SEO (GEO & AEO)',
 				'Local SEO',
 				'Technical SEO',
 				'On-Page SEO',
-				'Link Building (Off-Page)',
+				'Off-Page SEO (Link Building)',
+				'Ecommerce SEO',
 				'SEO Audit',
-				'SEO Content Marketing',
 			],
-			buttonLabel: 'Explore search capabilities',
+			buttonLabel: 'Explore SEO Services',
 			href: '/services/seo',
 		},
 		{
 			icon: '/icons/service-layers.svg',
 			title: 'Web Design & Development',
 			description:
-				'Build a purposeful experience around your services, products and the way people choose.',
+				'Your website should be your most effective commercial asset. We engineer fast, responsive and purpose-driven websites from bespoke WordPress builds to enterprise Shopify solutions.',
 			items: [
 				'UI/UX Design',
 				'Landing Page Design',
@@ -58,26 +64,48 @@ export const servicesBehind: ServicesBehindSection = {
 				'Shopify Development',
 				'Ecommerce Development',
 				'Custom Website Development',
+				'Maintenance & Support',
+				'Hosting & Domain Management',
 			],
-			buttonLabel: 'Explore website capabilities',
+			buttonLabel: 'Explore Web Development',
 			href: '/services/web-design-development',
 		},
 		{
 			icon: '/icons/service-circles.svg',
-			title: 'Social & Paid Campaigns',
+			title: 'Social Media Marketing & AI Creative Strategy',
 			description:
-				'Connect creative, audience thinking and relevant landing pages in one shared direction.',
+				'We combine clear content strategies with bespoke AI-driven creative design and active community management to turn impressions into meaningful brand advocates.',
 			items: [
-				'Social Media Marketing',
-				'Content & creative direction',
-				'Campaign planning',
-				'PPC & Google Ads',
-				'Audience & keyword research',
-				'Landing page alignment',
-				'Reporting & refinement',
+				'Social Media Management',
+				'Commercial Content Strategy',
+				'Brand Storytelling',
+				'AI-Enhanced Visual Design',
+				'Creative Direction',
+				'Community Engagement',
+				'Brand Authority',
 			],
-			buttonLabel: 'Explore campaign services',
+			buttonLabel: 'Explore Social Media Marketing',
 			href: '/services/social-media-marketing',
 		},
+		{
+			icon: '/icons/service-circles.svg',
+			title: 'PPC & Paid Search Advertising',
+			description:
+				'Our performance media team develops and continuously refines Google Search, Display, and Shopping campaigns to reduce acquisition costs and scale your business predictably.',
+			items: [
+				'Google Ads Management',
+				'Precision Retargeting & Commercial Funnels',
+				'High-converting landing pages',
+				'Persuasive Ad Copy',
+				'Display Ads Optimisation',
+				'Performance Monitoring & Reporting',
+			],
+			buttonLabel: 'Explore PPC Solutions',
+			href: '/services/ppc-google-ads',
+		},
 	],
+	advisory: {
+		buttonLabel: 'Request an Audit',
+		href: '#contact',
+	},
 };

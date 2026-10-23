@@ -1,24 +1,19 @@
 ---
 import Section from './Section.astro';
 
-/**
- * Intro matches Services (and the reference). The phrase
- * "reach, engage, and the right audience" still reads incomplete
- * (likely missing a verb such as "convert") — kept as provided.
- */
 const intro =
-	'From search visibility to website experiences and social campaigns, Xoomplus brings key digital services together to help your business reach, engage, and the right audience.';
+	'Xoomplus was built with a clear purpose: to bridge the costly divide between great design, search visibility and real business revenue with an integrated, data-driven system.';
 
 const cards = [
 	{
-		pill: 'Our mission',
-		title: 'Make digital work harder for your business.',
-		text: 'Turn business challenges into clear digital direction. Create experiences and campaigns that connect with the right people, and keep improving the work as needs change.',
+		pill: 'The Problem',
+		title: 'Fragmented Marketing Waste',
+		text: 'A well-designed website underperforms without strong SEO foundations. Paid ad campaigns stall when landing page journeys are ignored. When digital marketing operates in divided groups, it remains an unpredictable business cost rather than a measurable growth driver.',
 	},
 	{
-		pill: 'Our vision',
-		title: 'A more connected way to move forward.',
-		text: 'A digital presence where brand, experience and marketing strengthen each other. Where businesses feel confident in their next step, and good ideas have room to grow.',
+		pill: 'The Solution',
+		title: 'The Xoomplus Synchronised Engine',
+		text: 'We approach digital growth as a single connected system. From high-converting UI/UX and custom Shopify or WordPress development to dominating competitive Manchester search rankings and precision Google Ads funnels. We build every element to support the next.',
 	},
 ];
 ---
@@ -29,8 +24,9 @@ const cards = [
 	class="our-purpose section-glow-top-left"
 >
 	<div class="purpose-header" data-reveal="up">
+		<p class="pill-dark text-primary mb-5">Brand Mission & Purpose</p>
 		<h2 id="purpose-heading" class="text-heading-dark dark-section-heading purpose-heading m-0">
-			Our purpose
+			Our Purpose
 		</h2>
 		<p class="dark-section-intro purpose-intro m-0">{intro}</p>
 	</div>
@@ -95,6 +91,18 @@ const cards = [
 		.purpose-card {
 			max-width: 708px;
 			margin-inline: auto;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.purpose-grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 40px;
+		}
+
+		.purpose-card {
+			max-width: none;
+			margin-inline: 0;
 		}
 	}
 </style>

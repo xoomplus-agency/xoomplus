@@ -23,16 +23,15 @@ export type PricingIntroSection = {
 
 export const pricingIntro: PricingIntroSection = {
 	id: 'pricing-intro',
-	pill: 'Simple, Transparent Pricing',
-	titleDark: 'Digital Marketing That',
-	titleAccent: 'Fits Your Goals',
+	pill: 'Transparent Commercial Investment',
+	titleDark: 'Digital Marketing Agency',
+	titleAccent: 'Engineered for Real Value',
 	paragraphs: [
-		'Choose the services that match your business needs. From SEO and website development to social media marketing and paid search, Xoomplus creates tailored solutions around your goals, audience, and growth opportunities.',
-		// PLACEHOLDER: paragraph 2 is a copy, replace with real text
-		'Choose the services that match your business needs. From SEO and website development to social media marketing and paid search, Xoomplus creates tailored solutions around your goals, audience, and growth opportunities.',
+		'We believe pricing should reflect genuine commercial returns, not generic agency retainers. That is what makes Xoomplus a different type of digital marketing agency.',
+		'Whether you need targeted local SEO across Manchester, a conversion-engineered custom website or a connected multi-channel growth system, Xoomplus designs flexible packages around your margins, audience and actual revenue targets.',
 	],
-	primaryButton: { label: 'Get a Custom Quote', href: '/contact' },
-	secondaryButton: { label: 'Talk to Our Team', href: '/contact' },
+	primaryButton: { label: 'Book a Strategy Call', href: '#pricing-form' },
+	secondaryButton: { label: 'Explore Packages', href: '#pricing-plans' },
 	image: {
 		src: '/images/pricing-section-image.webp',
 		alt: 'Illustration of marketing dashboards showing brand growth, services and website traffic',

@@ -20,7 +20,13 @@ import {
 	type MainService,
 } from '../../data/main-services';
 import OurProcess from '@/components/OurProcess.astro';
-import { defaultProcess } from '@/data/process';
+import {
+	defaultProcess,
+	ppcProcess,
+	seoProcess,
+	socialMediaProcess,
+	webDesignProcess,
+} from '@/data/process';
 
 export function getStaticPaths() {
 	return mainServices.map((service) => ({
@@ -57,9 +63,59 @@ const canonicalPath = `/services/${service.slug}`;
 		<ServiceBento {...service.bento} id="development-commerce" />
 		<ServiceShowcase {...service.showcase} id="connected-experience" />
 		<ServiceProcess {...service.process} id="working-together" />
-		<OurProcess content={defaultProcess} id="process" />
+		<OurProcess
+			content={
+				service.slug === 'seo'
+					? seoProcess
+					: service.slug === 'ppc-google-ads'
+						? ppcProcess
+						: service.slug === 'social-media-marketing'
+							? socialMediaProcess
+							: service.slug === 'web-design-development'
+								? webDesignProcess
+								: defaultProcess
+			}
+			id="process"
+		/>
 		{service.faqKey ? <FAQ page={service.faqKey} /> : null}
-		{/* Shared home-page CTA — no service-specific variant chosen yet */}
-		<CTASection />
+		{
+			service.slug === 'seo' ? (
+				<CTASection
+					pill="Ready to Rank"
+					heading="Ready to Dominate Search in Manchester and Across the UK?"
+					text="Share your website URL and current search hurdles. Our senior team will review your organic footprint and map out a clear roadmap to page-one rankings."
+				/>
+			) : service.slug === 'ppc-google-ads' ? (
+				<CTASection
+					heading="Let's grow your business through smarter PPC marketing services."
+					text="Let's create PPC campaigns that connect your business with the right customers."
+					buttonLabel="Discuss your campaign →"
+					buttonHref="/contact#enquiry-form"
+					secondaryHref="mailto:info@xoomplus.co.uk"
+					secondaryLabel="info@xoomplus.co.uk"
+				/>
+			) : service.slug === 'social-media-marketing' ? (
+				<CTASection
+					heading="Let's grow your business through social media marketing."
+					text="Tell us what you are working towards. We’ll explore the opportunities, challenges and the right social media marketing strategy to move your brand in the right direction."
+					buttonLabel="Discuss your project now."
+					buttonHref="/contact#enquiry-form"
+					secondaryHref="mailto:info@xoomplus.co.uk"
+					secondaryLabel="info@xoomplus.co.uk"
+				/>
+			) : service.slug === 'web-design-development' ? (
+				<CTASection
+					pill="Your Next Chapter"
+					heading="Let's Move Your Business Forward."
+					text="Tell us your goals, and we'll explore your requirements and recommend a practical approach from design to launch."
+					buttonLabel="Discuss Your Project"
+					buttonHref="/contact#enquiry-form"
+					secondaryHref="mailto:info@xoomplus.co.uk"
+					secondaryLabel="info@xoomplus.co.uk"
+				/>
+			) : (
+				<CTASection />
+			)
+		}
 	</main>
 </Layout>

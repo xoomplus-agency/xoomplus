@@ -10,6 +10,7 @@ import OurGrowth from '../components/OurGrowth.astro';
 import WhyXoomplus from '../components/WhyXoomplus.astro';
 import OurProcess from '../components/OurProcess.astro';
 import Industries from '../components/Industries.astro';
+import { homeIndustries } from '../data/home-industries';
 import CaseStudies from '../components/CaseStudies.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Blogs from '../components/Blogs.astro';
@@ -45,13 +46,27 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 		<OurProcess />
 		<OurGrowth />
 		<CaseStudies />
-		<Industries />
+		<Industries content={homeIndustries} />
 		<OurLocations />
 		<Testimonials />
 		<Blogs posts={blogPosts} />
 		<!-- <FAQ page="home" /> -->
-		<ContactSection />
-		<CTASection />
+		<ContactSection
+			content={{
+				title: 'Ready to Scale Your Digital Performance?',
+				intro:
+					'Schedule an introductory discovery call. We will review your current digital footprint, analyse market opportunities and map out a clear path to scale.',
+				submitLabel: 'Request Your Growth Strategy & Audit',
+			}}
+		/>
+		<CTASection
+			heading="Take Your 1st Step to Digital Growth"
+			text="Set an appointment with a bespoke digital marketing agency when it suits you."
+			buttonLabel="Book a call"
+			buttonHref="#contact"
+			secondaryLabel="View Services"
+			secondaryHref="/services"
+		/>
 	</main>
 </Layout>
 

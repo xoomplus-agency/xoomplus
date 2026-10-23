@@ -17,9 +17,10 @@ export type Project = {
 	href: string;
 	/** Home section only — metrics footer instead of “View Details” */
 	metrics?: ProjectMetric[];
-	/** Home section category/tags/title overrides (listing uses fields above) */
+	/** Home section category/tags/excerpt overrides (listing uses fields above) */
 	homeCategory?: string;
 	homeTags?: string[];
+	homeExcerpt?: string;
 	showOnHome?: boolean;
 	homeOrder?: number;
 };
@@ -29,15 +30,10 @@ const placeholderTitle = 'Bodykite | Health and Fitness';
 const placeholderExcerpt =
 	'A modern carpentry website designed to generate leads and showcase custom work.';
 
-const homeMetrics: ProjectMetric[] = [
-	{ value: '+180%', label: 'Organic Traffic' },
-	{ value: '+50', label: 'Leads / month' },
-];
-
 /**
  * Shared project data for the home Case Studies section and /case-studies.
  * Listing page uses category / tags / title / excerpt / href as defined here.
- * Home uses metrics + optional homeCategory / homeTags when present.
+ * Home uses metrics + optional homeCategory / homeTags / homeExcerpt when present.
  *
  * Image notes:
  * - Bodykite → /images/Bodykite-project.webp
@@ -73,8 +69,14 @@ export const projects: Project[] = [
 		title: placeholderTitle,
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/bodykite',
+		homeCategory: 'Health & Fitness',
 		homeTags: ['Social Media', 'Web Design'],
-		metrics: homeMetrics,
+		homeExcerpt:
+			'The client struggled with rising customer acquisition costs. So we built conversion-led landing pages paired with restructured acquisition campaigns.',
+		metrics: [
+			{ value: '3.8x', label: 'ROAS' },
+			{ value: '45%', label: 'Reduction in Acquisition Cost' },
+		],
 		showOnHome: true,
 		homeOrder: 2,
 	},
@@ -89,9 +91,14 @@ export const projects: Project[] = [
 		title: placeholderTitle,
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/gopsych',
-		homeCategory: 'Psychology Services',
+		homeCategory: 'Psychology & Healthcare Services',
 		homeTags: ['Web Design', 'SEO'],
-		metrics: homeMetrics,
+		homeExcerpt:
+			'The client needed verified client bookings in a strictly regulated healthcare space. Our strategy included an authoritative technical SEO aligned with targeted regional search optimisation.',
+		metrics: [
+			{ value: '+240%', label: 'Growth in Organic Inquiries' },
+			{ value: '50+', label: 'Leads' },
+		],
 		showOnHome: true,
 		homeOrder: 3,
 	},
@@ -107,7 +114,12 @@ export const projects: Project[] = [
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/immolibre',
 		homeTags: ['Web Design', 'SEO'],
-		metrics: homeMetrics,
+		homeExcerpt:
+			'The client faced limited organic search visibility and low inquiry conversion rates. We built a bespoke custom website paired with targeted Manchester local SEO architecture.',
+		metrics: [
+			{ value: '+180%', label: 'Organic Traffic Within 6 Months' },
+			{ value: '+50', label: 'Leads Per Month' },
+		],
 		showOnHome: true,
 		homeOrder: 1,
 	},

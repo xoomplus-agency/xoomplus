@@ -19,9 +19,9 @@ export type IndustryIntentSection = {
 
 export const industryIntent: IndustryIntentSection = {
 	id: 'local-intent',
-	pill: 'Local intent. Considered decisions.',
-	title: 'From a nearby search to a worthwhile conversation',
-	text: 'For trade and project-led businesses, useful digital work could connect the area you serve, the work you do and the enquiry you want.',
+	pill: 'Connecting Search to Revenue',
+	title: 'From Simple Searches to Commercial Conversation',
+	text: 'We link the areas you serve with the practical answers your clients want, turning simple search queries into commercial opportunities.',
 	cards: [
 		{
 			eyebrow: 'Home & Trade Services',
@@ -37,7 +37,7 @@ export const industryIntent: IndustryIntentSection = {
 			title: 'Make the work easier to understand.',
 			items: [
 				{ title: 'Show projects in context', text: 'Web Design & Development' },
-				{ title: 'Answer practical project questions', text: 'SEO Content Marketing + On-Page SEO' },
+				{ title: 'Answer practical project questions', text: 'On-Page SEO' },
 				{ title: 'Focus enquiries on the right work', text: 'PPC & Google Ads + audience research' },
 			],
 		},

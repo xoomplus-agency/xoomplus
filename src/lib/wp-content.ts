@@ -4,6 +4,7 @@
  * Uses `ultrahtml` (already present via Astro) — do not regex-parse nested HTML.
  */
 import { ELEMENT_NODE, TEXT_NODE, parse, renderSync, walkSync } from 'ultrahtml';
+import { normalizeCmsContactLinks } from './wp';
 
 type Node = {
 	type: number;
@@ -321,5 +322,160 @@ export function cleanWpPostHtml(html: string): string {
 
 	const ast = parse(html);
 	ast.children = collapseAnonymousWrappers(cleanNodes(ast.children || []));
+	return normalizeCmsContactLinks(renderSync(ast).trim());
+}
+
+const CMS_HOSTS = new Set(['xoomplus.co.uk', 'www.xoomplus.co.uk']);
+
+/** Astro app paths that may appear as absolute CMS links. */
+const ASTRO_SITE_PATH_PREFIXES = [
+	'/about',
+	'/contact',
+	'/services',
+	'/industries',
+	'/projects',
+	'/blogs',
+	'/pricing',
+	'/privacy-policy',
+	'/locations',
+	'/case-studies',
+	'/our-services',
+] as const;
+
+/** Mirrors RESERVED_BLOG_CATEGORY_SLUGS without importing wp.ts (cycle risk). */
+const RESERVED_LIKE = new Set([
+	'api',
+	'blogs',
+	'locations',
+	'pricing',
+	'services',
+	'about',
+	'contact',
+	'industries',
+	'case-studies',
+	'our-services',
+	'projects',
+	'privacy-policy',
+]);
+
+function stripGutenbergComments(html: string): string {
+	return html.replace(/<!--\s*\/?wp:[\s\S]*?-->/g, '');
+}
+
+function withTrailingSlashPath(pathname: string): string {
+	if (!pathname || pathname === '/') return '/';
+	const cleaned = pathname.split('?')[0].split('#')[0].replace(/\/+$/, '');
+	const withSlash = cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
+	return `${withSlash}/`;
+}
+
+function isAstroSitePath(pathname: string): boolean {
+	const p = pathname.replace(/\/+$/, '') || '/';
+	if (p === '/') return true;
+	if (
+		ASTRO_SITE_PATH_PREFIXES.some(
+			(prefix) => p === prefix || p.startsWith(`${prefix}/`),
+		)
+	) {
+		return true;
+	}
+	// Blog permalinks: /{category}/{slug}
+	const parts = p.split('/').filter(Boolean);
+	if (parts.length === 2 && !RESERVED_LIKE.has(parts[0])) return true;
+	return false;
+}
+
+function rewriteCmsPageLinks(nodes: Node[]): void {
+	for (const node of nodes) {
+		if (node.type !== ELEMENT_NODE) continue;
+		const el = node as ElementNode;
+		if (el.children?.length) rewriteCmsPageLinks(el.children);
+
+		if (el.name.toLowerCase() !== 'a') continue;
+		const href = attr(el, 'href').trim();
+		if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+			continue;
+		}
+
+		let absolute: URL | null = null;
+		try {
+			absolute = new URL(href, 'https://xoomplus.co.uk');
+		} catch {
+			continue;
+		}
+
+		const host = absolute.hostname.toLowerCase();
+		const isCmsHost = CMS_HOSTS.has(host);
+		const path = absolute.pathname || '/';
+
+		if (isCmsHost && /^\/wp-content\//i.test(path)) {
+			// Keep media absolute on the CMS host.
+			el.attributes.href = absolute.href;
+			continue;
+		}
+
+		if (isCmsHost && isAstroSitePath(path)) {
+			el.attributes.href = withTrailingSlashPath(path) + absolute.search + absolute.hash;
+			delete el.attributes.target;
+			delete el.attributes.rel;
+			continue;
+		}
+
+		if (!isCmsHost && /^https?:$/i.test(absolute.protocol)) {
+			el.attributes.target = '_blank';
+			el.attributes.rel = 'noopener noreferrer';
+		}
+	}
+}
+
+function plainTextOf(node: Node): string {
+	let out = '';
+	walkSync(node, (child) => {
+		if (child.type === TEXT_NODE) {
+			out += (child as { value?: string }).value ?? '';
+		}
+	});
+	return out.replace(/\s+/g, ' ').trim();
+}
+
+function stripLeadingTitleHeading(nodes: Node[], title: string): Node[] {
+	const want = title.replace(/\s+/g, ' ').trim().toLowerCase();
+	if (!want) return nodes;
+	const out = [...nodes];
+	while (out.length) {
+		const first = out[0];
+		if (first.type === TEXT_NODE) {
+			const text = ((first as { value?: string }).value ?? '').trim();
+			if (!text) {
+				out.shift();
+				continue;
+			}
+			break;
+		}
+		if (first.type !== ELEMENT_NODE) break;
+		const el = first as ElementNode;
+		const name = el.name.toLowerCase();
+		if (name !== 'h1' && name !== 'h2') break;
+		if (plainTextOf(el).toLowerCase() !== want) break;
+		out.shift();
+	}
+	return out;
+}
+
+/**
+ * CMS page HTML for static Astro pages (e.g. Privacy Policy).
+ * Strips Gutenberg markers / Elementor chrome / empty paragraphs / inline styles,
+ * rewrites own-site links to relative paths, leaves external links alone.
+ */
+export function prepareCmsPageHtml(html: string, pageTitle = ''): string {
+	if (!html || !html.trim()) return '';
+
+	const withoutComments = stripGutenbergComments(html);
+	const cleaned = cleanWpPostHtml(withoutComments);
+	if (!cleaned) return '';
+
+	const ast = parse(cleaned);
+	ast.children = stripLeadingTitleHeading(ast.children || [], pageTitle);
+	rewriteCmsPageLinks(ast.children || []);
 	return renderSync(ast).trim();
 }

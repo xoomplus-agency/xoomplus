@@ -19,29 +19,29 @@ export type IndustryFundamentalsSection = {
 
 export const industryFundamentals: IndustryFundamentalsSection = {
 	id: 'fundamentals',
-	pill: 'Different sectors. Shared fundamentals.',
-	title: 'Start with the journey. Not a list of channels.',
-	text: 'We connect what people are looking for with what your business can offer. Industry context shapes each step.',
+	pill: 'Strategic Roadmap',
+	title: 'Start with the Customer Journey. Not a Disconnected List of Channels',
+	text: 'Digital marketing works best when it reflects how real people make decisions in your industry.',
 	items: [
 		{
 			icon: 'be-found',
-			title: 'Be found',
-			text: 'Understand search intent, locations and audience needs. Choose organic, social or paid activity with a clear purpose.',
+			title: 'Be Found',
+			text: 'Show up when potential clients in Manchester and across the UK search for your services on Google or AI search tools.',
 		},
 		{
 			icon: 'bring-your-brand-into-focus',
-			title: 'Be understood',
-			text: 'Give your services a clear structure, useful content and a consistent message across your website and campaigns.',
+			title: 'Be Understood',
+			text: 'Explain what you do clearly, showcase real proof and answer buyer questions upfront so visitors feel secure.',
 		},
 		{
 			icon: 'make-the-next-step-clear',
-			title: 'Make it easy to act',
-			text: 'Connect the first click to a relevant enquiry, appointment or booking route, then review the journey together.',
+			title: 'Make It Easy to Act',
+			text: 'Give clients simple ways to call, book an appointment or request a quote without friction.',
 		},
 	],
 	cta: {
-		text: 'Not sure where to begin? Share the challenge — we can explore the right starting point.',
-		label: 'Help me choose',
+		text: 'Not sure which stage your website is missing right now?',
+		label: 'Request an Opportunity Audit',
 		href: '/contact',
 	},
 };

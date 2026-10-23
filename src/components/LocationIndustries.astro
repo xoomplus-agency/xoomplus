@@ -157,6 +157,24 @@ const imgHeight = industries.image.height ?? 458;
 		}
 	}
 
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.loc-industries__grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 40px;
+		}
+
+		.loc-industries__media {
+			max-width: none;
+			margin-inline: 0;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 899px) {
+		.loc-industries__media {
+			max-width: 640px;
+		}
+	}
+
 	@media (max-width: 639px) {
 		.loc-industries__subheading {
 			font-size: clamp(1.5rem, 5vw, 1.75rem);

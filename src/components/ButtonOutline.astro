@@ -3,6 +3,8 @@ interface Props {
 	href?: string;
 	type?: 'button' | 'submit' | 'reset';
 	disabled?: boolean;
+	/** `default` = white fill · `outline-dark` = transparent fill for dark sections */
+	variant?: 'default' | 'outline-dark';
 	class?: string;
 	id?: string;
 	'aria-label'?: string;
@@ -12,12 +14,19 @@ const {
 	href,
 	type = 'button',
 	disabled = false,
+	variant = 'default',
 	class: className = '',
 	id,
 	'aria-label': ariaLabel,
 } = Astro.props;
 
-const classes = ['btn-outline', className].filter(Boolean).join(' ');
+const classes = [
+	'btn-outline',
+	variant === 'outline-dark' && 'btn-outline--dark',
+	className,
+]
+	.filter(Boolean)
+	.join(' ');
 const Tag = href && !disabled ? 'a' : 'button';
 ---
 

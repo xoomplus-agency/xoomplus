@@ -16,14 +16,20 @@ import CTASection from '@/components/CTASection.astro';
 	description="Clear, flexible pricing for web design, SEO, social media and paid search from Xoomplus, a digital marketing agency in Blackburn."
 >
 	<main id="main-content" class="page-pricing flex-1">
-		<PageHero title="Pricing" />
+		<PageHero title="Pricing" titleTag="p" />
 		<PricingIntro />
 		<PricingPlans />
 		<PricingSteps />
 		<WhyXoomplus content={pricingWhy} id="why-xoomplus" buttonWidth="212px" />
 		<PricingForm />
 		<FAQ page="pricing" id="pricing-faq" />
-		<CTASection />
+		<CTASection
+			pill="Take the Next Step"
+			heading="Let’s Move Your Business Forward"
+			text="Share a few details about your business. We will review your current digital footprint and discuss the best place to start."
+			buttonHref="#pricing-form"
+			buttonLabel="Request Your Tailored Proposal"
+		/>
 	</main>
 </Layout>
 

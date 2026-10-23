@@ -2,37 +2,42 @@
 /**
  * Nested child service page — one path per (main service, child) from data.
  * Adding a child to mainServices[].children creates its page automatically.
+ *
+ * Section order:
+ * Hero → Built around people → Working together → Services (grid) → Clarity →
+ * Services stack → Services behind → FAQ → CTA
  */
 import Layout from '../../../layouts/Layout.astro';
 import ChildServiceHero from '../../../components/ChildServiceHero.astro';
 import ServiceFeatures from '../../../components/ServiceFeatures.astro';
-import ServiceProcess from '../../../components/ServiceProcess.astro';
+import ChildProcess from '../../../components/ChildProcess.astro';
+import ChildServices from '../../../components/ChildServices.astro';
 import IndustryClarity from '../../../components/IndustryClarity.astro';
-import OurProcess from '../../../components/OurProcess.astro';
-import IndustryFeature from '../../../components/IndustryFeature.astro';
-import HowWeWork from '../../../components/HowWeWork.astro';
+import ChildServiceStack from '../../../components/ChildServiceStack.astro';
 import ServicesBehind from '../../../components/ServicesBehind.astro';
 import FAQ from '../../../components/FAQ.astro';
 import {
 	defaultChildClarity,
 	defaultChildFaq,
 	defaultChildFeatures,
-	defaultChildHowWeWork,
-	defaultChildProcess,
-	defaultChildRows,
 	defaultChildServicesBehind,
 } from '../../../data/child-defaults';
-import { defaultProcess } from '../../../data/process';
 import {
-	childHowWeWorkImage,
-	childLetTheDetailsImage,
-	childProcessImage,
-	childTurnInterestImage,
+	CHILD_PROCESS_IMAGE_HEIGHT,
+	CHILD_PROCESS_IMAGE_WIDTH,
 	getChildService,
 	mainServices,
+	resolveChildProcessImage,
 	type ChildService,
 	type MainService,
 } from '../../../data/main-services';
+import {
+	CHILD_SERVICE_STACK_IMAGE_HEIGHT,
+	CHILD_SERVICE_STACK_IMAGE_WIDTH,
+	defaultChildServicesDraft,
+	defaultChildServiceStackDraft,
+	resolveChildServicesContent,
+} from '../../../data/child-services';
 import CTASection from '@/components/CTASection.astro';
 
 export function getStaticPaths() {
@@ -67,51 +72,76 @@ const canonicalPath = `/services/${service.slug}/${child.slug}/`;
 const site = Astro.site;
 const origin = site?.origin ?? '';
 
-/** Default process with build-time per-child image fallback. */
-const processData = child.process ?? {
-	...defaultChildProcess,
-	image: {
-		...defaultChildProcess.image,
-		src: childProcessImage(child.slug),
-	},
-};
-
-/**
- * Rows with build-time per-child image fallbacks when using defaults.
- * Full `child.rows` overrides keep their own image paths.
- */
-const rowsData = (child.rows ?? defaultChildRows).map((row, index) => {
-	const src = child.rows
-		? row.image.src
-		: index === 0
-			? childTurnInterestImage(child.slug)
-			: index === 1
-				? childLetTheDetailsImage(child.slug)
-				: row.image.src;
-	return {
-		...row,
-		id: row.id ?? `child-row-${index + 1}`,
-		image: { ...row.image, src },
-	};
-});
-
-/** How we work with build-time per-child image fallbacks when using defaults. */
-const howWeWorkData = child.howWeWork ?? {
-	...defaultChildHowWeWork,
-	images: [
-		{
-			...defaultChildHowWeWork.images[0],
-			src: childHowWeWorkImage(child.slug, 1),
-		},
-		{
-			...defaultChildHowWeWork.images[1],
-			src: childHowWeWorkImage(child.slug, 2),
-		},
-	] as typeof defaultChildHowWeWork.images,
-};
-
 /** FAQ — override per child with `child.faq` when ready. */
 const faqData = child.faq ?? defaultChildFaq;
+
+const shortName = child.shortName ?? child.name;
+const secondaryLabel =
+	child.secondaryLabel ??
+	(service.slug === 'web-design-development'
+		? 'Explore Our Design Process'
+		: 'Explore Our Process');
+const primaryLabel = child.hero.buttonLabel ?? `Book a ${shortName} Consultation`;
+
+const childProcessHeading =
+	child.processHeading ?? `What Better ${shortName} Can Do for Your Business`;
+// PLACEHOLDER: replace with real content
+const childProcessText =
+	child.processText ??
+	`${shortName} can strengthen how people discover, understand and act on your offer — from clearer journeys and messaging to a more confident next step. We shape the work around your audience, your goals and the channels that matter most.`;
+const childProcessPill = child.processPill ?? 'Working together';
+const childProcessPrimaryLabel = child.processPrimaryLabel ?? primaryLabel;
+const childProcessSecondaryLabel = child.processSecondaryLabel ?? secondaryLabel;
+
+const resolvedProcessImage = resolveChildProcessImage(child.slug, child.processImage);
+const childProcessImageData = {
+	src: resolvedProcessImage.src,
+	alt: child.processImage?.alt ?? `${child.name} design shown on a phone`,
+	width: child.processImage?.width ?? CHILD_PROCESS_IMAGE_WIDTH,
+	height: child.processImage?.height ?? CHILD_PROCESS_IMAGE_HEIGHT,
+};
+
+if (import.meta.env.DEV) {
+	console.log(
+		`ChildProcess image: ${resolvedProcessImage.path} (source: ${resolvedProcessImage.source})`,
+	);
+}
+
+/**
+ * Services card grid — below Working together.
+ * Set `child.services.cards` to [] to hide.
+ */
+const servicesDraft = child.services ?? defaultChildServicesDraft();
+const { content: childServicesContent, missing: childServicesMissing } =
+	servicesDraft.cards.length > 0
+		? resolveChildServicesContent(servicesDraft, shortName)
+		: { content: null, missing: [] as { title: string; expected: string[] }[] };
+
+/**
+ * Services scroll stack — below Clarity.
+ * Set `child.serviceStack.cards` to [] to hide.
+ */
+const serviceStackDraft = child.serviceStack ?? defaultChildServiceStackDraft();
+const { content: childServiceStackContent, missing: childServiceStackMissing } =
+	serviceStackDraft.cards.length > 0
+		? resolveChildServicesContent(serviceStackDraft, shortName, {
+				imageWidth: CHILD_SERVICE_STACK_IMAGE_WIDTH,
+				imageHeight: CHILD_SERVICE_STACK_IMAGE_HEIGHT,
+			})
+		: { content: null, missing: [] as { title: string; expected: string[] }[] };
+
+if (import.meta.env.DEV) {
+	for (const miss of childServicesMissing) {
+		console.warn(
+			`ChildServices (grid) missing image for "${miss.title}". Expected one of: ${miss.expected.join(', ')}`,
+		);
+	}
+	for (const miss of childServiceStackMissing) {
+		console.warn(
+			`ChildServiceStack missing image for "${miss.title}". Expected one of: ${miss.expected.join(', ')}`,
+		);
+	}
+}
 
 const breadcrumbJsonLd = {
 	'@context': 'https://schema.org',
@@ -162,17 +192,43 @@ const breadcrumbJsonLd = {
 			service.slug === 'web-design-development' ? 'child-service-main--web-design-development' : null,
 		]}
 	>
-		<ChildServiceHero {...child.hero} />
+		<ChildServiceHero
+			{...child.hero}
+			primaryLabel={primaryLabel}
+			primaryHref="/contact"
+			secondaryLabel={secondaryLabel}
+			secondaryHref="#process"
+		/>
 		<ServiceFeatures {...(child.features ?? defaultChildFeatures)} id="features" />
-		{/* id matches main service page — frees #process for home Our Process */}
-		<ServiceProcess {...processData} id="working-together" />
+		{/* Working together — hero secondary CTA target (#process) */}
+		<ChildProcess
+			id="process"
+			pill={childProcessPill}
+			heading={childProcessHeading}
+			text={childProcessText}
+			image={childProcessImageData}
+			primaryButton={{ label: childProcessPrimaryLabel, href: '/contact' }}
+			secondaryButton={{ label: childProcessSecondaryLabel, href: '#clarity' }}
+		/>
+		{childServicesContent ? (
+			<ChildServices
+				id="services"
+				pill={childServicesContent.pill ?? 'Services'}
+				heading={childServicesContent.heading ?? `Our ${shortName} Services`}
+				text={childServicesContent.text ?? ''}
+				cards={childServicesContent.cards}
+			/>
+		) : null}
 		<IndustryClarity content={child.clarity ?? defaultChildClarity} />
-		{/* DEFAULT: replace per child service when real content is ready */}
-		<OurProcess content={child.ourProcess ?? defaultProcess} id="process" />
-		{/* DEFAULT: replace per child service when real content is ready */}
-		<IndustryFeature id="child-rows" rows={rowsData} />
-		{/* DEFAULT: replace per child service when real content is ready */}
-		<HowWeWork content={howWeWorkData} id="how-we-work" />
+		{childServiceStackContent ? (
+			<ChildServiceStack
+				id="service-stack"
+				pill={childServiceStackContent.pill ?? 'Services'}
+				heading={childServiceStackContent.heading ?? `Our ${shortName} Services`}
+				text={childServiceStackContent.text ?? ''}
+				cards={childServiceStackContent.cards}
+			/>
+		) : null}
 		{/* DEFAULT: replace per child service when real content is ready */}
 		<ServicesBehind content={child.servicesBehind ?? defaultChildServicesBehind} />
 		{/* DEFAULT: replace per child via `child.faq` or `faqs['child-service']` */}
@@ -183,7 +239,17 @@ const breadcrumbJsonLd = {
 			text={faqData.text}
 			items={faqData.items}
 		/>
-		<CTASection />
+		<CTASection
+			pill={child.cta?.pill}
+			heading={child.cta?.heading}
+			text={child.cta?.text}
+			buttonLabel={child.cta?.buttonLabel}
+			buttonHref={child.cta?.buttonHref}
+			secondaryButtonLabel={child.cta?.secondaryButtonLabel}
+			secondaryButtonHref={child.cta?.secondaryButtonHref}
+			secondaryLabel={child.cta?.secondaryLabel}
+			secondaryHref={child.cta?.secondaryHref}
+		/>
 	</main>
 </Layout>
 
@@ -192,6 +258,14 @@ const breadcrumbJsonLd = {
 	.child-service-main {
 		--child-nav-offset: 100px;
 		padding-top: var(--child-nav-offset);
+	}
+
+	/* Anchor targets clear the fixed navbar */
+	.child-service-main :global(#process),
+	.child-service-main :global(#clarity),
+	.child-service-main :global(#services),
+	.child-service-main :global(#service-stack) {
+		scroll-margin-top: var(--child-nav-offset);
 	}
 
 	@media (max-width: 639px) {
@@ -220,31 +294,6 @@ const breadcrumbJsonLd = {
 
 		.child-service-main.child-service-main--web-design-development .industry-clarity__intro {
 			max-width: 530px;
-		}
-
-		.child-service-main.child-service-main--web-design-development #process .process-intro {
-			max-width: min(100%, 820px);
-		}
-
-		/* Widen the copy column whichever side it sits on */
-		.child-service-main.child-service-main--web-design-development
-			.industry-feature__layout--rows.industry-feature__layout--image-left {
-			grid-template-columns: 1fr 1.35fr;
-		}
-
-		.child-service-main.child-service-main--web-design-development
-			.industry-feature__layout--rows.industry-feature__layout--image-right {
-			grid-template-columns: 1.35fr 1fr;
-		}
-
-		.child-service-main.child-service-main--web-design-development .industry-feature__row-p1 {
-			max-width: 640px;
-		}
-
-		.child-service-main.child-service-main--web-design-development .hww-intro {
-			flex: 0 0 660px;
-			width: 660px;
-			max-width: 660px;
 		}
 
 		.child-service-main.child-service-main--web-design-development .services-behind__intro {

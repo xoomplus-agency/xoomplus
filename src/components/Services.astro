@@ -4,7 +4,7 @@ import ServiceCard from './ServiceCard.astro';
 import { services, helpCard } from '../data/services';
 
 const intro =
-	'From search visibility to website experiences and social campaigns, Xoomplus brings key digital services together to help your business reach, engage, and the right audience.';
+	'Sustainable growth demands a unified digital ecosystem. We combine search discovery, brand interaction and paid acquisition to build high-performance pathways for your business.'
 ---
 
 <section
@@ -22,7 +22,7 @@ const intro =
 				id="services-heading"
 				class="text-heading-dark mb-4"
 			>
-				Everything You Need to Build a Stronger Digital Presence
+			Full-Funnel Digital Solutions Built for Commercial Impact
 			</h2>
 			<p class="mx-auto max-w-[640px] text-lead font-normal leading-[1.55] text-[var(--text-body-dark)] [font-family:var(--font-inter)]">
 				{intro}
@@ -32,7 +32,7 @@ const intro =
 		<div class="services-grid" data-reveal-group>
 			{
 				services.map((service) => (
-					<div data-reveal="up">
+					<div class="services-grid__cell" data-reveal="up">
 						<ServiceCard
 							title={service.title}
 							icon={service.icon}
@@ -46,7 +46,7 @@ const intro =
 
 			<article class="service-card service-card--help flex h-full flex-col justify-between text-center" data-reveal="up">
 				<div class="flex flex-1 flex-col items-center justify-center px-2 py-6">
-					<h3 class="text-h3 mb-4 font-semibold tracking-[-0.02em] text-secondary-white">
+					<h3 class="text-h3 mb-4 font-medium tracking-[-0.02em] text-secondary-white">
 						{helpCard.title}
 					</h3>
 					<p class="text-small mx-auto max-w-[320px] text-[var(--text-body-dark)] [font-family:var(--font-inter)]">
@@ -62,9 +62,9 @@ const intro =
 
 		<div class="services-cta-bar mt-8 flex flex-col items-center justify-between gap-5 rounded-[1.25rem] bg-[rgb(255_255_255_/_0.06)] px-6 py-5 sm:flex-row sm:px-8">
 			<p class="text-h3-sm m-0 text-center font-semibold tracking-[-0.01em] text-[var(--text-body-dark)] sm:text-left">
-				Ready to find the right service for your business?
+				Unsure which channel offers the highest growth return?
 			</p>
-			<Button size="nav" href="#contact">Get in touch</Button>
+			<Button size="nav" href="#contact">Request an Audit</Button>
 		</div>
 	</div>
 </section>
@@ -101,13 +101,22 @@ const intro =
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 463px));
 		justify-content: center;
+		align-items: stretch;
 		gap: 1rem;
+	}
+
+	/* Reveal wrappers must fill the grid cell so cards can stretch equal height */
+	.services-grid__cell {
+		display: flex;
+		min-width: 0;
+		height: 100%;
 	}
 
 	/* Size only — glass chrome lives in global.css (.service-card) */
 	.services-grid :global(.service-card) {
 		max-width: 463px;
-		height: auto;
+		width: 100%;
+		height: 100%;
 		min-height: 547px;
 	}
 
@@ -120,6 +129,28 @@ const intro =
 	@media (max-width: 720px) {
 		.services-grid {
 			grid-template-columns: minmax(0, 463px);
+		}
+	}
+
+	/* Tablet: 2-col through 640–1023 (incl. former 1-col 640–720); 3-col when cards ≥280px */
+	@media (min-width: 640px) and (max-width: 720px) {
+		.services-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.services-grid > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: min(463px, calc(50% - 0.5rem));
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.services-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 </style>

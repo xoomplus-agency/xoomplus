@@ -88,18 +88,20 @@ const section = industryIntent;
 		text-align: left;
 	}
 
+	/* Force colors — beat global/Tailwind inheritance inside .service-card */
+	.industry-intent__card :global(.industry-intent__eyebrow),
 	.industry-intent__eyebrow {
 		font-family: var(--font-inter);
 		font-size: var(--text-small);
 		font-weight: 500;
 		line-height: 1.4;
-		color: #ffa800;
+		color: var(--color-primary) !important;
 	}
 
 	.industry-intent__card-title {
 		margin-top: 10px;
 		font-family: var(--font-sans);
-		color: #ffffff;
+		color: #ffffff !important;
 	}
 
 	.industry-intent__divider {
@@ -124,7 +126,7 @@ const section = industryIntent;
 		font-size: var(--text-h3-sm);
 		font-weight: 500;
 		line-height: 1.3;
-		color: #ffffff;
+		color: #ffffff !important;
 	}
 
 	.industry-intent__item-text {
@@ -171,6 +173,27 @@ const section = industryIntent;
 
 		.industry-intent__item-title {
 			font-size: var(--text-lead);
+		}
+	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.industry-intent__header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.industry-intent__intro {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.industry-intent__intro {
+			max-width: 360px;
 		}
 	}
 </style>

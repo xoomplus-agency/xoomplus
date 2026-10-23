@@ -52,6 +52,11 @@ const [titleLine1, titleLine2] = intent.titleLines;
 </Section>
 
 <style>
+	/* Offset fixed navbar when jumping from hero secondary CTA */
+	:global(#local-intent) {
+		scroll-margin-top: 80px;
+	}
+
 	.location-intent__header {
 		display: flex;
 		align-items: flex-end;
@@ -164,6 +169,27 @@ const [titleLine1, titleLine2] = intent.titleLines;
 
 		.location-intent__item-title {
 			font-size: var(--text-lead);
+		}
+	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.location-intent__header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.location-intent__intro {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.location-intent__intro {
+			max-width: 360px;
 		}
 	}
 </style>

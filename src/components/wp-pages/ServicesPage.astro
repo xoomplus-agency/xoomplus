@@ -14,14 +14,25 @@ import CTASection from '@/components/CTASection.astro';
 	<ServicesOverview />
 	<ServiceDetail serviceId="seo" />
 	<ServiceDetailPair serviceId="social-paid-media" />
-	<FAQ page="our-services" id="our-services-faq" />
-	<CTASection />
+	<ServiceDetail serviceId="digital-infrastructure" />
+	<FAQ
+		page="our-services"
+		id="our-services-faq"
+		pill="Straightforward Answers"
+		heading="Frequently Asked Questions About Our Services"
+		text="Clear answers about how our service pillars work together to grow your business."
+	/>
+	<CTASection
+		pill="Ready to Scale"
+		heading="Let’s Move Your Business Forward"
+		text="Tell us what you are working towards. We will look at your current digital setup, outline the possibilities and recommend the best place to start."
+	/>
 </main>
 
 <style is:global>
 	@media (min-width: 1024px) {
 		.page-our-services .bt-header__aside {
-			max-width: 420px;
+			max-width: 620px;
 		}
 
 		.page-our-services .service-detail .sd-header__aside {

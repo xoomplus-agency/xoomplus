@@ -1,0 +1,1265 @@
+[
+  {
+    "p": "/",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__list"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 640,
+    "hScroll": false,
+    "sw": 640,
+    "cw": 640,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__list"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "case-hero-img.case-hero-img--bodykite",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 768,
+    "hScroll": false,
+    "sw": 768,
+    "cw": 768,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__list"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 900,
+    "hScroll": false,
+    "sw": 900,
+    "cw": 900,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__list"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 960,
+    "hScroll": false,
+    "sw": 960,
+    "cw": 960,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__list"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 1023,
+    "hScroll": false,
+    "sw": 1023,
+    "cw": 1023,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "case-hero-img.case-hero-img--bodykite",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 1024,
+    "hScroll": false,
+    "sw": 1024,
+    "cw": 1024,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "case-hero-img.case-hero-img--bodykite",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 1032,
+    "hScroll": false,
+    "sw": 1032,
+    "cw": 1032,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__item"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 1100,
+    "hScroll": false,
+    "sw": 1100,
+    "cw": 1100,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "logoloop__track",
+      "logoloop__list",
+      "logoloop__item",
+      "IMG",
+      "logoloop__item"
+    ]
+  },
+  {
+    "p": "/about",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/services/seo/local-seo",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/pricing",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/industries",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/case-studies",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/locations/blackburn",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/contact",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "LABEL",
+      "INPUT",
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/blogs",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/privacy-policy",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  },
+  {
+    "p": "/nope-404",
+    "w": 1199,
+    "hScroll": false,
+    "sw": 1199,
+    "cw": 1199,
+    "overs": [
+      "site-footer__plus"
+    ]
+  }
+]

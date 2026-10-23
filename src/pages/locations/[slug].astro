@@ -57,7 +57,13 @@ const {
 			pillBrand={hero.pillBrand}
 			title={hero.title}
 			text={hero.text}
-			button={hero.button}
+			primaryButton={
+				hero.primaryButton ?? {
+					label: `Book a ${location.name} Strategy Call`,
+					href: '/contact',
+				}
+			}
+			secondaryButton={hero.secondaryButton}
 			image={hero.image}
 		/>
 		{industries ? <LocationIndustries industries={industries} /> : null}

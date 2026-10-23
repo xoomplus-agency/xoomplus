@@ -1,10 +1,16 @@
 ---
 interface Props {
 	title?: string;
+	/**
+	 * About page keeps the breadcrumb banner but moves the document H1
+	 * into the section below — use `p` so we do not get two H1s.
+	 */
+	titleTag?: 'h1' | 'p';
 }
 
-const { title = '' } = Astro.props;
+const { title = '', titleTag = 'h1' } = Astro.props;
 const titleId = 'page-hero-title';
+const TitleTag = titleTag;
 ---
 
 <section
@@ -13,7 +19,7 @@ const titleId = 'page-hero-title';
 	data-hero-enter
 	aria-labelledby={titleId}
 >
-	<h1 id={titleId} class="text-hero-h1 page-hero__title" data-hero-item>{title}</h1>
+	<TitleTag id={titleId} class="text-hero-h1 page-hero__title" data-hero-item>{title}</TitleTag>
 </section>
 
 <style>
@@ -63,7 +69,31 @@ const titleId = 'page-hero-title';
 
 	@media (min-width: 640px) and (max-width: 1023px) {
 		.page-hero {
-			height: 320px;
+			height: auto;
+			min-height: 320px;
+		}
+
+		.page-hero__title {
+			font-size: clamp(2.75rem, 2.4rem + 1.2vw, 3rem); /* ~44–48px */
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.page-hero {
+			height: auto;
+			min-height: 340px;
+		}
+
+		.page-hero__title {
+			font-size: clamp(2.75rem, 2.5rem + 0.8vw, 3rem); /* ~44–48px */
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1199px) and (max-height: 700px) {
+		.page-hero {
+			min-height: 0;
+			height: auto;
+			padding-block: 72px 48px;
 		}
 	}
 

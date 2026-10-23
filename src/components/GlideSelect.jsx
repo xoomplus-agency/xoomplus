@@ -269,6 +269,19 @@ export default function GlideSelect({
         onPointerDown={e => {
           if (e.button !== 0 || disabled) return;
           e.currentTarget.focus({ preventScroll: true });
+          // Mark so onClick (label / synthetic activation) does not toggle twice.
+          e.currentTarget.dataset.gsPointer = '1';
+          if (phase === 'open') close('pop');
+          else open(false);
+        }}
+        onClick={e => {
+          if (disabled) return;
+          if (e.currentTarget.dataset.gsPointer) {
+            delete e.currentTarget.dataset.gsPointer;
+            return;
+          }
+          // Label `for` / keyboard-synthetic click may not send pointerdown.
+          e.currentTarget.focus({ preventScroll: true });
           if (phase === 'open') close('pop');
           else open(false);
         }}

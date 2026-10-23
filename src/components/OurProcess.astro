@@ -37,7 +37,7 @@ const headingId = `${id}-heading`;
 			</p>
 		</div>
 
-		<div class="process-visual">
+		<div class:list={['process-visual', steps.length === 3 && 'process-visual--three-steps']}>
 			<img
 				class="process-bg"
 				data-reveal="fade"
@@ -113,6 +113,10 @@ const headingId = `${id}-heading`;
 		gap: 1.25rem 1rem;
 	}
 
+	.process-visual--three-steps .process-steps {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
 	.process-step {
 		display: flex;
 		flex-direction: column;
@@ -140,7 +144,7 @@ const headingId = `${id}-heading`;
 
 	.process-title {
 		margin-bottom: 0.65rem;
-		font-size: 1.25rem;
+		font-size: 16px;
 		font-weight: 700;
 		line-height: 1.25;
 		letter-spacing: -0.02em;
@@ -161,7 +165,7 @@ const headingId = `${id}-heading`;
 
 	.process-desc {
 		max-width: 260px;
-		font-size: var(--text-small);
+		font-size: 16px;
 		line-height: 1.5;
 	}
 
@@ -249,6 +253,18 @@ const headingId = `${id}-heading`;
 
 		.process-desc {
 			max-width: 320px;
+		}
+	}
+
+	/* Tablet: force 2×2 from 640–1199 (overrides 1-col at exact 640 and 4-col 1101–1199) */
+	@media (min-width: 640px) and (max-width: 1199px) {
+		.process-steps {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 2.5rem 1.5rem;
+		}
+
+		.process-bg {
+			display: none;
 		}
 	}
 

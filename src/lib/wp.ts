@@ -55,6 +55,7 @@ export const RESERVED_BLOG_CATEGORY_SLUGS = new Set([
 	'case-studies',
 	'our-services',
 	'projects',
+	'privacy-policy',
 ]);
 
 /** Prefer these size keys (in order) for the primary `src` (LCP-friendly ≤1536). */
@@ -584,4 +585,264 @@ export async function getBlogCategoryPrefixes(): Promise<string[]> {
 		console.error('[wp] getBlogCategoryPrefixes failed:', err);
 		return [];
 	}
+}
+
+// —— CMS pages (Privacy Policy, etc.) ——
+
+export type WpCmsPage = {
+	title: string;
+	/** Trusted CMS HTML (`content.rendered`), cleaned by the caller for display. */
+	content: string;
+	modified: string | null;
+	seoTitle: string | null;
+	seoDescription: string | null;
+};
+
+/** Bump when the disk cache shape changes (dev-only). */
+const WP_PAGE_CACHE_VERSION = 1;
+const PAGE_MEMO_TTL_MS = 60_000;
+const pageBySlugMemo = new Map<string, { at: number; page: WpCmsPage | null }>();
+
+type WpRawPage = {
+	id?: number;
+	slug?: string;
+	link?: string;
+	modified?: string;
+	title?: { rendered?: string };
+	content?: { rendered?: string };
+	yoast_head_json?: {
+		title?: string;
+		description?: string;
+	};
+};
+
+function isProdEnv(): boolean {
+	try {
+		if (import.meta.env?.PROD) return true;
+	} catch {
+		/* ignore */
+	}
+	return (
+		typeof process !== 'undefined' && process.env?.NODE_ENV === 'production'
+	);
+}
+
+function isWpCacheDisabled(): boolean {
+	const env = typeof process !== 'undefined' ? process.env : undefined;
+	const flag = env?.WP_CACHE?.trim().toLowerCase();
+	return flag === 'off' || flag === '0' || flag === 'false';
+}
+
+async function pageDiskCachePath(): Promise<string> {
+	const path = await import('node:path');
+	return path.join(
+		process.cwd(),
+		'node_modules',
+		'.cache',
+		`wp-pages-v${WP_PAGE_CACHE_VERSION}.json`,
+	);
+}
+
+type PageDiskCacheFile = {
+	version: number;
+	entries: Record<string, { at: number; page: WpCmsPage | null }>;
+};
+
+async function readPageDiskCache(
+	slug: string,
+): Promise<WpCmsPage | null | undefined> {
+	if (isProdEnv() || isWpCacheDisabled()) return undefined;
+	try {
+		const { readFile } = await import('node:fs/promises');
+		const raw = await readFile(await pageDiskCachePath(), 'utf8');
+		const parsed = JSON.parse(raw) as PageDiskCacheFile;
+		if (parsed.version !== WP_PAGE_CACHE_VERSION) return undefined;
+		const hit = parsed.entries?.[slug];
+		if (!hit) return undefined;
+		if (Date.now() - hit.at > PAGE_MEMO_TTL_MS) return undefined;
+		return hit.page;
+	} catch {
+		return undefined;
+	}
+}
+
+async function writePageDiskCache(slug: string, page: WpCmsPage | null): Promise<void> {
+	if (isProdEnv() || isWpCacheDisabled()) return;
+	try {
+		const { mkdir, readFile, writeFile } = await import('node:fs/promises');
+		const path = await import('node:path');
+		const file = await pageDiskCachePath();
+		await mkdir(path.dirname(file), { recursive: true });
+		let parsed: PageDiskCacheFile = { version: WP_PAGE_CACHE_VERSION, entries: {} };
+		try {
+			parsed = JSON.parse(await readFile(file, 'utf8')) as PageDiskCacheFile;
+			if (parsed.version !== WP_PAGE_CACHE_VERSION) {
+				parsed = { version: WP_PAGE_CACHE_VERSION, entries: {} };
+			}
+		} catch {
+			/* fresh file */
+		}
+		parsed.entries[slug] = { at: Date.now(), page };
+		await writeFile(file, JSON.stringify(parsed), 'utf8');
+	} catch (err) {
+		console.warn('[wp] page disk cache write failed:', err);
+	}
+}
+
+function mapWpCmsPage(raw: WpRawPage): WpCmsPage | null {
+	const title = plainFromHtml(raw.title?.rendered || '');
+	const content = typeof raw.content?.rendered === 'string' ? raw.content.rendered : '';
+	if (!title && !content) return null;
+	const seoTitle = plainFromHtml(raw.yoast_head_json?.title || '') || null;
+	const seoDescription =
+		plainFromHtml(raw.yoast_head_json?.description || '') || null;
+	const modified =
+		typeof raw.modified === 'string' && raw.modified.trim()
+			? raw.modified.trim()
+			: null;
+	return {
+		title: title || 'Untitled',
+		content,
+		modified,
+		seoTitle,
+		seoDescription,
+	};
+}
+
+/**
+ * Fetch a published WordPress page by slug.
+ * Returns `null` when WP returns an empty list (missing / draft / trash).
+ * Throws on network / HTTP / parse failures (production builds must fail clearly).
+ * Dev: in-memory memo + versioned disk cache (60s). Production: always live fetch.
+ */
+export async function getPage(slug: string): Promise<WpCmsPage | null> {
+	const key = slug.replace(/^\/+|\/+$/g, '').trim().toLowerCase();
+	if (!key) return null;
+
+	if (!isProdEnv() && !isWpCacheDisabled()) {
+		const memoHit = pageBySlugMemo.get(key);
+		if (memoHit && Date.now() - memoHit.at < PAGE_MEMO_TTL_MS) {
+			return memoHit.page;
+		}
+		const diskHit = await readPageDiskCache(key);
+		if (diskHit !== undefined) {
+			pageBySlugMemo.set(key, { at: Date.now(), page: diskHit });
+			return diskHit;
+		}
+	}
+
+	const base = getApiBase();
+	const query = new URLSearchParams({
+		slug: key,
+		status: 'publish',
+		_fields: 'id,slug,link,title,content,modified,yoast_head_json',
+	});
+	if (isProdEnv()) query.set('_', String(Date.now()));
+
+	const url = `${base}/pages?${query}`;
+	let res: Response;
+	try {
+		res = await fetch(url, {
+			cache: 'no-store',
+			signal: AbortSignal.timeout(20_000),
+		});
+	} catch (err) {
+		const reason = err instanceof Error ? err.name : 'Error';
+		throw new Error(`WordPress page fetch failed (${reason}) ${url}`);
+	}
+
+	const text = await res.text();
+	const clean = stripLeadingStyles(text);
+	if (!res.ok) {
+		throw new Error(
+			`WordPress page fetch failed (${res.status}) ${url} — ${clean.slice(0, 160)}`,
+		);
+	}
+
+	let data: unknown;
+	try {
+		data = JSON.parse(clean);
+	} catch (err) {
+		throw new Error(
+			`WordPress page JSON parse failed for ${url}: ${String(err)} (body starts: ${clean.slice(0, 120)})`,
+		);
+	}
+
+	if (!Array.isArray(data)) {
+		throw new Error(`WordPress page: expected an array from ${url}`);
+	}
+
+	const page =
+		data.length === 0 ? null : mapWpCmsPage(data[0] as WpRawPage);
+
+	pageBySlugMemo.set(key, { at: Date.now(), page });
+	await writePageDiskCache(key, page);
+	return page;
+}
+
+/** Drop in-memory (and optionally disk) CMS page memos. */
+export function clearWpPageCache(opts?: { disk?: boolean }): void {
+	pageBySlugMemo.clear();
+	if (!opts?.disk || isProdEnv()) return;
+	void (async () => {
+		try {
+			const { unlink } = await import('node:fs/promises');
+			await unlink(await pageDiskCachePath());
+		} catch {
+			/* ignore missing file */
+		}
+	})();
+}
+
+/**
+ * Normalize a `tel:` href: decode, trim, strip spaces/dashes/parentheses,
+ * keep a leading `+`, rebuild as `tel:+<digits>` (or `tel:<digits>`).
+ * Does not rewrite the number to the UK SITE_PHONE — CMS values stay CMS values.
+ */
+export function normalizeTelHref(href: string): string {
+	const raw = href.trim();
+	if (!/^tel:/i.test(raw)) return href;
+	let value = raw.slice(raw.indexOf(':') + 1);
+	try {
+		value = decodeURIComponent(value);
+	} catch {
+		/* keep undecoded */
+	}
+	value = value.trim();
+	const keepPlus = value.startsWith('+');
+	const digits = value.replace(/[^\d]/g, '');
+	if (!digits) return 'tel:';
+	return `tel:${keepPlus ? '+' : ''}${digits}`;
+}
+
+/** Normalize a `mailto:` href: decode + trim the address (and optional query). */
+export function normalizeMailtoHref(href: string): string {
+	const raw = href.trim();
+	if (!/^mailto:/i.test(raw)) return href;
+	let value = raw.slice(raw.indexOf(':') + 1);
+	try {
+		value = decodeURIComponent(value);
+	} catch {
+		/* keep undecoded */
+	}
+	return `mailto:${value.trim()}`;
+}
+
+/**
+ * Clean `tel:` / `mailto:` hrefs in CMS HTML and trim leading/trailing spaces
+ * inside those anchors. Idempotent. Used by `cleanWpPostHtml` / privacy pages.
+ */
+export function normalizeCmsContactLinks(html: string): string {
+	if (!html || !/(?:tel:|mailto:)/i.test(html)) return html;
+
+	return html.replace(
+		/<a(\s[^>]*?\bhref\s*=\s*)(["'])(tel:[^"']*|mailto:[^"']*)\2([^>]*)>([\s\S]*?)<\/a>/gi,
+		(_full, pre: string, quote: string, href: string, post: string, inner: string) => {
+			const next = /^tel:/i.test(href)
+				? normalizeTelHref(href)
+				: normalizeMailtoHref(href);
+			const trimmedInner = inner.replace(/^\s+/, '').replace(/\s+$/, '');
+			return `<a${pre}${quote}${next}${quote}${post}>${trimmedInner}</a>`;
+		},
+	);
 }

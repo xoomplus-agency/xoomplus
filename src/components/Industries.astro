@@ -1,37 +1,55 @@
 ---
-/** Card order matches screenshot L→R, top→bottom */
-const industries = [
+import Button from './Button.astro';
+import type { HomeIndustriesContent } from '../data/home-industries';
+
+/** Default cards for /industries (WP Industries page) — unchanged by home content. */
+const defaultIndustries = [
 	{
-		icon: '/icons/home-trade-services.svg',
-		title: 'Home & Trade Services',
-		description: 'Local visibility · Quote enquiries',
+		icon: '/icons/medical-reporting.svg',
+		title: 'Medical Reporting',
+		description: 'Better visibility and clear pathways.',
+	},
+	{
+		icon: '/icons/health-and-fitness.svg',
+		title: 'Health and Fitness',
+		description: 'Mobile-friendly platforms and engaging digital assets.',
 	},
 	{
 		icon: '/icons/accounting-and-finance.svg',
 		title: 'Accounting and Finance',
-		description: 'Project showcases · Lead generation',
-	},
-	{
-		icon: '/icons/health-and-fitness.svg',
-		title: 'Health and fitness',
-		description: 'Search discovery · Appointment bookings',
+		description: 'Professional websites and local business SEO.',
 	},
 	{
 		icon: '/icons/real-estate.svg',
 		title: 'Real Estate',
-		description: 'Product discovery · Online sales',
+		description: 'Geo-targeted campaigns - Local SEO.',
 	},
 	{
 		icon: '/icons/legal.svg',
-		title: 'Legal',
-		description: 'Authority building · Qualified enquiries',
+		title: 'Legal Services',
+		description: 'High-converting consultation funnels and dominant search rankings.',
 	},
 	{
-		icon: '/icons/medical-reporting.svg',
-		title: 'Medical Reporting',
-		description: 'Local discovery · Direct bookings',
+		icon: '/icons/transportation-industry.svg',
+		title: 'Transportation Industry',
+		description: 'Direct B2B marketing for logistics.',
 	},
 ];
+
+interface Props {
+	/** When set (homepage), overrides default /industries copy and shows CTA. */
+	content?: HomeIndustriesContent;
+}
+
+const { content } = Astro.props;
+
+const title = content?.title ?? 'Digital Solutions Built Around Your Industry';
+const intro =
+	content?.intro ??
+	'As a dedicated UK digital marketing agency, we combine bespoke website design, targeted SEO and performance marketing to generate real commercial value for your business.';
+const industries = content?.cards ?? defaultIndustries;
+const button = content?.button;
+const pill = content ? 'INDUSTRIES WE SERVE' : 'Sector-Specific Digital Growth';
 ---
 
 <section
@@ -42,16 +60,15 @@ const industries = [
 >
 	<div class="container">
 		<div class="mx-auto mb-12 max-w-[820px] text-center lg:mb-14" data-reveal="up">
-			<p class="pill-light mb-5">INDUSTRIES WE SERVE</p>
+			<p class="pill-light mb-5">{pill}</p>
 			<h2
 				id="industries-heading"
 				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				Digital Solutions Built Around Your Industry
+				{title}
 			</h2>
 			<p class="text-on-light mx-auto max-w-[640px]">
-				Different industries have different audiences, challenges, and digital opportunities. Our
-				services can be tailored around the needs of your business and the people you want to reach.
+				{intro}
 			</p>
 		</div>
 
@@ -80,6 +97,14 @@ const industries = [
 				))
 			}
 		</ul>
+
+		{
+			button ? (
+				<div class="mt-12 flex justify-center lg:mt-14">
+					<Button href={button.href}>{button.label}</Button>
+				</div>
+			) : null
+		}
 	</div>
 </section>
 
@@ -97,7 +122,8 @@ const industries = [
 		display: flex;
 		width: 100%;
 		max-width: 464px;
-		height: 238px;
+		min-height: 238px;
+		height: auto;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
@@ -138,10 +164,26 @@ const industries = [
 		.industry-grid {
 			grid-template-columns: minmax(0, 464px);
 		}
+	}
 
-		.industry-card {
-			height: auto;
-			min-height: 238px;
+	@media (min-width: 640px) and (max-width: 720px) {
+		.industry-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.industry-grid > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: min(464px, calc(50% - 0.625rem));
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.industry-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 

@@ -6,39 +6,38 @@ import type { WhyXoomplusContent } from './why-xoomplus';
  */
 export const pricingWhy: WhyXoomplusContent = {
 	id: 'pricing-why',
-	pill: 'Why Xoomplus',
-	title: 'A Digital Partner Focused on Your Business Goals',
-	text: 'Your digital presence should do more than look good. We bring strategy, creativity, technology, and performance together to create digital experiences that support your business objectives.',
+	pill: 'Tangible Value',
+	title: 'A Digital Marketing Agency Focused on Your Commercial Goals.',
 	cards: [
 		{
 			icon: '/icons/strategy-first.svg',
-			title: 'Strategy First',
-			text: 'We start with your goals, audience, and opportunities before moving into execution.',
+			title: 'Audit & Research',
+			text: 'We conduct thorough research to understand your audience, competitors, trends and opportunities before we do anything. A clear plan can only come from reliable data.',
 		},
 		{
 			icon: '/icons/experienced-team.svg',
-			title: 'Experienced Team',
-			text: 'Bring together the expertise needed across design, development, SEO, social media, and digital marketing.',
+			title: 'The A Team',
+			text: 'Each member of Xoomplus has a history of successful ventures and years of experience to give you a premium service and bring the results you are looking for.',
 		},
 		{
 			icon: '/icons/clear-reporting.svg',
-			title: 'Clear Reporting',
-			text: 'Understand what is being worked on, what is changing, and where opportunities are developing.',
+			title: 'Transparent Reporting',
+			text: 'Transparency is our non-negotiable practice. We build clear and transparent communication with every client so they know exactly what is going on.',
 		},
 		{
 			icon: '/icons/tailored-strategies.svg',
-			title: 'Tailored Strategies',
-			text: 'Your business is different, so your digital strategy should be built around your specific needs.',
+			title: 'Tailored Plans',
+			text: 'Every business is a unique idea and has distinct digital needs. We understand that and craft tailored plans that reflect your unique business needs.',
 		},
 		{
 			icon: '/icons/result-focused.svg',
-			title: 'Results Focused',
-			text: 'Keep the work connected to meaningful business objectives rather than activity alone.',
+			title: 'Focused Efforts',
+			text: 'Everything we do has a clear purpose and goal driving it. That is why our efforts don’t waver, and our results aren’t delayed. We follow the objective, not the clock.',
 		},
 		{
 			icon: '/icons/long-term-growth.svg',
-			title: 'Long-Term Growth',
-			text: 'Build digital foundations that can continue to improve as your business grows.',
+			title: 'Lasting Growth',
+			text: 'Our efforts are designed for the present and the future. That is how we bring short-term results while building a long-term foundation for digital growth.',
 		},
 	],
 	button: { label: 'Let’s Talk', href: '/contact' },

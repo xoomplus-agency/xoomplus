@@ -168,6 +168,11 @@
 	transition-duration: var(--dur-fast);
 }
 
+.btn-outline--dark:active:not(:disabled):not([aria-disabled='true'])::after {
+	opacity: 0;
+	transition-duration: var(--dur-fast);
+}
+
 /* ── Chips — press scale only (transform listed on chip rules in components) ── */
 
 .blog-listing__chip:active,

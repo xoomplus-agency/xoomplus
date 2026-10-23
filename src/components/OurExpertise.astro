@@ -14,13 +14,12 @@ const servicesHref = await getWpPagePath('services');
 	class="our-expertise"
 >
 	<div class="expertise-header" data-reveal="up">
-		<p class="pill-dark text-primary m-0">OUR EXPERTISE</p>
+		<p class="pill-dark text-primary m-0">The Interconnected Service Ecosystem</p>
 		<h2 id="our-expertise-heading" class="text-heading-dark dark-section-heading expertise-heading m-0">
-			Different disciplines. A joined-up view.
+			Distinct Disciplines. One Unified Execution Model
 		</h2>
 		<p class="expertise-intro m-0">
-			From the first impression to the next interaction, our capabilities are designed to work
-			together.
+			Four specialised pillars connected within a single commercial growth engine.
 		</p>
 	</div>
 
@@ -93,10 +92,10 @@ const servicesHref = await getWpPagePath('services');
 		color: var(--text-body-dark);
 	}
 
-	/* Cap at home card width (463px) so widths match Services */
+	/* Wide cards (match .service-card--wide) — 2×2 for four pillars */
 	.expertise-grid {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 463px));
+		grid-template-columns: repeat(2, minmax(0, 708px));
 		justify-content: center;
 		align-items: stretch;
 		gap: var(--card-gap);
@@ -104,9 +103,19 @@ const servicesHref = await getWpPagePath('services');
 	}
 
 	.expertise-grid :global(.service-card) {
-		max-width: 463px;
+		max-width: 708px;
+		width: 100%;
 		height: auto;
 		min-height: 100%;
+	}
+
+	/* Description + feature rows: 16px Inter regular (titles / CTA unchanged) */
+	.expertise-grid :global(.service-card > p),
+	.expertise-grid :global(.service-feature) {
+		font-family: var(--font-inter);
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.5;
 	}
 
 	.expertise-footer {
@@ -128,20 +137,14 @@ const servicesHref = await getWpPagePath('services');
 
 	@media (min-width: 640px) and (max-width: 1023px) {
 		.expertise-grid {
-			grid-template-columns: repeat(2, minmax(0, 463px));
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 20px;
-		}
-
-		.expertise-grid :global(.service-card:last-child) {
-			grid-column: 1 / -1;
-			justify-self: center;
-			width: 100%;
 		}
 	}
 
 	@media (max-width: 639px) {
 		.expertise-grid {
-			grid-template-columns: minmax(0, 463px);
+			grid-template-columns: minmax(0, 1fr);
 			gap: 20px;
 		}
 

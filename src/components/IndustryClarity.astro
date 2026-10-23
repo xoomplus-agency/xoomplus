@@ -79,12 +79,18 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 						{isLight && column.eyebrow ? (
 							<p class="industry-clarity__eyebrow m-0">{column.eyebrow}</p>
 						) : null}
-						<h3 class="industry-clarity__column-title m-0">{column.title}</h3>
+						{column.title ? (
+							<h3 class="industry-clarity__column-title m-0">{column.title}</h3>
+						) : null}
 						{!isLight && column.eyebrow ? (
 							<p class="industry-clarity__eyebrow m-0">{column.eyebrow}</p>
 						) : null}
-						<p class="industry-clarity__column-text m-0">{column.text}</p>
-						<div class="industry-clarity__divider" aria-hidden="true" />
+						{column.text ? (
+							<p class="industry-clarity__column-text m-0">{column.text}</p>
+						) : null}
+						{(column.title || column.eyebrow || column.text) ? (
+							<div class="industry-clarity__divider" aria-hidden="true" />
+						) : null}
 						<ul class="industry-clarity__items m-0 list-none p-0">
 							{column.items.map((item) => (
 								<li class="industry-clarity__item">
@@ -418,6 +424,27 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 
 		.industry-clarity--light .industry-clarity__note {
 			font-size: 13px;
+		}
+	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.industry-clarity__header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.industry-clarity__intro {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.industry-clarity__intro {
+			max-width: 360px;
 		}
 	}
 </style>

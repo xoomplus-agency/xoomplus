@@ -2,7 +2,7 @@
 import Section from './Section.astro';
 import { pricingSteps } from '../data/pricing-steps';
 
-const { id, title, steps, line } = pricingSteps;
+const { id, title, text, steps, line } = pricingSteps;
 const headingId = 'pricing-steps-heading';
 ---
 
@@ -14,6 +14,7 @@ const headingId = 'pricing-steps-heading';
 		>
 			{title}
 		</h2>
+		<p class="pricing-steps__intro text-on-light m-0">{text}</p>
 	</div>
 
 	<div class="pricing-steps__row">
@@ -47,6 +48,13 @@ const headingId = 'pricing-steps-heading';
 
 <style>
 	.pricing-steps__heading {
+		text-align: center;
+	}
+
+	.pricing-steps__intro {
+		display: block;
+		width: min(100%, 820px);
+		margin: 16px auto 0;
 		text-align: center;
 	}
 

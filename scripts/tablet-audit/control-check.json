@@ -1,0 +1,92 @@
+[
+  {
+    "w": 1440,
+    "pass": true,
+    "ok": {
+      "gutter": true,
+      "sectionPad": true,
+      "servicesCols": true,
+      "heroHeight": true,
+      "hScroll": true
+    },
+    "got": {
+      "gutter": "clamp(1rem, 0.6rem + 1.8vw, 2.5rem)",
+      "sectionPad": "clamp(3rem, 2rem + 4vw, 7rem)",
+      "servicesCols": 3,
+      "heroHeight": "780px",
+      "hScroll": false
+    }
+  },
+  {
+    "w": 1280,
+    "pass": true,
+    "ok": {
+      "gutter": true,
+      "sectionPad": true,
+      "servicesCols": true,
+      "heroHeight": true,
+      "hScroll": true
+    },
+    "got": {
+      "gutter": "clamp(1rem, 0.6rem + 1.8vw, 2.5rem)",
+      "sectionPad": "clamp(3rem, 2rem + 4vw, 7rem)",
+      "servicesCols": 2,
+      "heroHeight": "780px",
+      "hScroll": false
+    }
+  },
+  {
+    "w": 414,
+    "pass": true,
+    "ok": {
+      "gutter": true,
+      "sectionPad": true,
+      "servicesCols": true,
+      "heroHeight": true,
+      "hScroll": true
+    },
+    "got": {
+      "gutter": "clamp(1rem, 0.6rem + 1.8vw, 2.5rem)",
+      "sectionPad": "clamp(3rem, 2rem + 4vw, 7rem)",
+      "servicesCols": 1,
+      "heroHeight": "1025.05px",
+      "hScroll": false
+    }
+  },
+  {
+    "w": 375,
+    "pass": true,
+    "ok": {
+      "gutter": true,
+      "sectionPad": true,
+      "servicesCols": true,
+      "heroHeight": true,
+      "hScroll": true
+    },
+    "got": {
+      "gutter": "clamp(1rem, 0.6rem + 1.8vw, 2.5rem)",
+      "sectionPad": "clamp(3rem, 2rem + 4vw, 7rem)",
+      "servicesCols": 1,
+      "heroHeight": "1084.03px",
+      "hScroll": false
+    }
+  },
+  {
+    "w": 320,
+    "pass": true,
+    "ok": {
+      "gutter": true,
+      "sectionPad": true,
+      "servicesCols": true,
+      "heroHeight": true,
+      "hScroll": true
+    },
+    "got": {
+      "gutter": "clamp(1rem, 0.6rem + 1.8vw, 2.5rem)",
+      "sectionPad": "clamp(3rem, 2rem + 4vw, 7rem)",
+      "servicesCols": 1,
+      "heroHeight": "1142.81px",
+      "hScroll": false
+    }
+  }
+]

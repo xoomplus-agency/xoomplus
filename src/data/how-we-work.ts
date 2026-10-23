@@ -26,12 +26,12 @@ export type HowWeWorkContent = {
 };
 
 export const defaultHowWeWork: HowWeWorkContent = {
-	pill: 'How we work together',
-	titleLines: ["Good ideas don't happen in isolation."],
+	pill: 'Collaborative Culture & Industry Insights',
+	titleLines: ['High-Performance Strategy Demands Direct Collaboration'],
 	introLines: [
-		'Our approach to collaboration is simple: bring different perspectives',
-		'into the room, respect the craft and keep the business goal in view.',
-		'The work gets stronger when everyone can contribute.',
+		'Exceptional digital performance is not built through disjointed work.',
+		'It is built when every department works in synergy towards a single goal:',
+		'maximise commercial outcome for you.',
 	],
 	images: [
 		{
@@ -51,16 +51,16 @@ export const defaultHowWeWork: HowWeWorkContent = {
 	],
 	cards: [
 		{
-			title: 'Ideas are shared early.',
-			text: 'We make space for questions, constructive feedback and perspectives from every discipline.',
+			title: 'Cross-Disciplinary Strategy',
+			text: 'Our developers and SEO strategists work together to ensure technical performance and search readiness are baked into the site from day one.',
 		},
 		{
-			title: 'The handover is a conversation.',
-			text: 'Design, development and marketing stay connected rather than working in separate lanes.',
+			title: 'Direct & Open Feedback Loops',
+			text: 'We act as an active extension of your internal team, holding direct conversations that keep projects moving without administrative bottlenecks.',
 		},
 		{
-			title: 'Learning is part of the work.',
-			text: 'We review, reflect and stay open to a better way of solving the next challenge.',
+			title: 'Proactive Innovation',
+			text: 'We continually evaluate emerging search trends, Generative AI models (GEO/AEO) and tracking technologies to ensure your business stays ahead.',
 		},
 	],
 };

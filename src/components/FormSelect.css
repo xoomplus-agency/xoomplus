@@ -2,10 +2,17 @@
 
 .form-select {
 	display: block;
+	position: relative;
 	width: 100%;
 	min-height: 44px;
 	/* Pre-hydration / SSR reserve: same footprint as the trigger */
 	box-sizing: border-box;
+	overflow: visible;
+	z-index: 1;
+}
+
+.form-select:focus-within {
+	z-index: 40;
 }
 
 .form-select .glide-select {
@@ -81,7 +88,7 @@
 	border: 1px solid #e9e9e7;
 	border-radius: 12px;
 	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-	z-index: 30;
+	z-index: 50;
 }
 
 .form-select .glide-select__option {

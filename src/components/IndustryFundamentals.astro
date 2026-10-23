@@ -48,6 +48,7 @@ const headingId = `${section.id}-heading`;
 		<p class="industry-fundamentals__bar-text text-on-light m-0">{section.cta.text}</p>
 		<Button href={section.cta.href} class="industry-fundamentals__bar-btn shrink-0">
 			{section.cta.label}
+			<span aria-hidden="true"> →</span>
 		</Button>
 	</div>
 </Section>
@@ -104,12 +105,6 @@ const headingId = `${section.id}-heading`;
 		font-size: var(--text-body);
 	}
 
-	@media (min-width: 1280px) {
-		.industry-fundamentals__title {
-			white-space: nowrap;
-		}
-	}
-
 	@media (max-width: 1023px) {
 		.industry-fundamentals__header {
 			flex-direction: column;
@@ -147,6 +142,27 @@ const headingId = `${section.id}-heading`;
 		.industry-fundamentals__bar {
 			flex-direction: column;
 			align-items: flex-start;
+		}
+	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.industry-fundamentals__header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.industry-fundamentals__intro {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.industry-fundamentals__intro {
+			max-width: 360px;
 		}
 	}
 </style>

@@ -2,7 +2,8 @@
 
 export type MenuLink = {
 	label: string;
-	href: string;
+	/** Omit to show label-only text (not a link). */
+	href?: string;
 };
 
 export type ServiceGroup = {
@@ -63,7 +64,7 @@ function link(label: string, parentSlug?: string, childSlug?: string): MenuLink 
 	};
 }
 
-/** Text links in stacked columns — prefer child page when `childSlug` is set. */
+/** Text links in stacked columns — explicit childSlug (slugify would mangle &). */
 function textLink(label: string, parentSlug: string, childSlug: string): MenuLink {
 	return { label, href: `/services/${parentSlug}/${childSlug}` };
 }
@@ -81,8 +82,8 @@ export const servicesMenu: ServicesMenu = {
 				link('Technical SEO', 'seo'),
 				link('On-Page SEO', 'seo'),
 				link('Link Building (Off-Page)', 'seo'),
+				link('E-Commerce SEO', 'seo', 'e-commerce-seo'),
 				link('SEO Audit', 'seo'),
-				link('SEO Content Marketing', 'seo'),
 			],
 		},
 		{

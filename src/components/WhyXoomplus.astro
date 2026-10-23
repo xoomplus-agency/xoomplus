@@ -132,4 +132,31 @@ const headingId = content.id === 'why-xoomplus' ? 'why-heading' : `${content.id}
 			min-height: 238px;
 		}
 	}
+
+	@media (min-width: 640px) and (max-width: 720px) {
+		.why-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.why-card {
+			height: auto;
+			min-height: 238px;
+			max-width: none;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.why-grid > :last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: 100%;
+			max-width: min(464px, calc(50% - 0.625rem));
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.why-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
 </style>

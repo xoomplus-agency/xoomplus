@@ -3,19 +3,19 @@ import Section from './Section.astro';
 
 const cards = [
 	{
-		title: 'Find +',
-		subtitle: 'SEO + PPC & Google Ads',
-		text: 'Search content and paid messaging start with the same understanding of your audience.',
+		title: 'Find+',
+		subtitle: 'Search & High-Intent Discovery',
+		text: 'Intercept potential clients right when they search for your services on Google, Bing, and AI search engines.',
 	},
 	{
-		title: 'Engage +',
-		subtitle: 'Social Media Marketing + SEO',
-		text: 'Useful content and consistent creative carry your message across different moments.',
+		title: 'Engage+',
+		subtitle: 'Brand Authority & Market Connection',
+		text: 'We combine data-backed content with sharp visual assets to turn cold viewers into engaged followers and warm enquiries.',
 	},
 	{
-		title: 'Act +',
-		subtitle: 'Web Design & Development',
-		text: 'The website turns those moments into a clear experience, with an obvious next step.',
+		title: 'Act+',
+		subtitle: 'Conversion Engineering & Retention',
+		text: 'Turn inbound interest into valuable enquiries. We engineer fast, intuitive digital platforms where the next step is completely clear.',
 	},
 ];
 ---
@@ -28,13 +28,13 @@ const cards = [
 				id="better-together-heading"
 				class="bt-header__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				Your audience sees a journey.<br />
-				Not a list of services.
+				Digital Unified System.
 			</h2>
 		</div>
 		<p class="bt-header__aside text-on-light m-0">
-			A great website should support your marketing. Your marketing should reflect your brand. And
-			every decision should start with your business.
+			At Xoomplus, we align search visibility, web engineering and targeted advertising into a
+			single connected journey. We make sure your business is easy to find, clear to understand
+			and simple to buy from across Manchester and the UK.
 		</p>
 	</div>
 
@@ -131,7 +131,7 @@ const cards = [
 	.bt-card__text {
 		margin-top: 10px;
 		font-family: var(--font-inter);
-		font-size: var(--text-lead);
+		font-size: 18px;
 		font-weight: 500;
 		line-height: 1.5;
 		color: var(--color-text-on-light);
@@ -153,6 +153,34 @@ const cards = [
 		}
 	}
 
+	/* Tablet: header side-by-side from 900; orphan third card centered */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.bt-header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.bt-header__aside {
+			max-width: 360px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.bt-grid__item:last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			width: 100%;
+			max-width: calc(50% - 12px);
+			justify-self: center;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.bt-header__aside {
+			max-width: 360px;
+		}
+	}
+
 	@media (max-width: 639px) {
 		.bt-grid {
 			grid-template-columns: minmax(0, 1fr);
@@ -164,7 +192,7 @@ const cards = [
 
 		.bt-card__subtitle,
 		.bt-card__text {
-			font-size: clamp(1rem, 4vw, 1.125rem); /* ~16–18px */
+			font-size: 18px;
 		}
 	}
 </style>

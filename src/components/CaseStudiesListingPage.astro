@@ -115,4 +115,25 @@ import { projects } from '../data/projects';
 			grid-template-columns: minmax(0, 1fr);
 		}
 	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.cs-listing__header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.cs-listing__aside {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.cs-listing__aside {
+			max-width: 360px;
+		}
+	}
 </style>

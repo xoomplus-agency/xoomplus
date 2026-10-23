@@ -42,7 +42,7 @@ const trust = [
 
 <section
 	data-bg="dark"
-	class="page-section page-section--flush-top relative isolate flex h-[780px] flex-col justify-center overflow-hidden bg-[#0b0b0b] pb-section pt-[calc(5.5rem+var(--section-padding-y))] text-secondary-white max-[960px]:h-auto max-[960px]:min-h-0"
+	class="home-hero page-section page-section--flush-top relative isolate flex h-[780px] flex-col justify-center overflow-hidden bg-[#0b0b0b] pb-section pt-[calc(5.5rem+var(--section-padding-y))] text-secondary-white max-[960px]:h-auto max-[960px]:min-h-0"
 >
 	<div
 		class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
@@ -181,22 +181,20 @@ const trust = [
 		data-hero-enter
 	>
 		<p class="pill-dark mb-5 text-[#ff9a3c]" data-hero-item>
-			Your All-in-one digital growth partner
+			Integrated Digital Marketing Agency for Scalable ROI
 		</p>
 		<h1 class="text-hero-h1 mx-auto mb-[0.5em] max-w-[24ch]" data-hero-item>
-			Digital Marketing That Moves Your Business Forward
+			Digital Marketing Agency For Manchester & the UK
 		</h1>
 		<p class="text-on-dark mx-auto mb-7 max-w-[640px] tracking-[-0.01em]" data-hero-item>
-			We combine SEO, web design and development, social media marketing, and paid search to help
-			businesses build stronger digital experiences, reach the right audience, and create
-			opportunities for growth.
+			Most agencies sell disconnected services that make no sense. We don’t do that. We connect custom web development, organic search dominance (SEO & GEO) and high-intent paid marketing into a single deliverable. 
 		</p>
 		<div
 			class="flex flex-wrap items-center justify-center gap-x-7 gap-y-5 max-[560px]:flex-col max-[560px]:gap-4"
 			data-hero-item
 		>
-			<Button size="hero" class="btn-book-call" href="#contact">
-				Book a Call
+			<Button size="hero" class="btn-book-call" href="/contact">
+				Schedule a Strategy Call
 				<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
 					<path
 						d="M3 8h10M9 4l4 4-4 4"
@@ -209,9 +207,9 @@ const trust = [
 			</Button>
 			<a
 				class="text-[0.98rem] font-medium tracking-[-0.01em] text-secondary-white underline decoration-1 underline-offset-[0.28em] hover:opacity-90"
-				href="#case-studies"
+				href="/services"
 			>
-				View Case Studies
+			Explore Our Services
 			</a>
 		</div>
 	</div>
@@ -327,6 +325,23 @@ const trust = [
 
 		:global(.btn-book-call:hover svg) {
 			transform: none;
+		}
+	}
+
+	/* Tablet large / short landscape: fluid height so content isn’t clipped */
+	@media (min-width: 961px) and (max-width: 1199px) {
+		.home-hero {
+			height: auto;
+			min-height: clamp(560px, 70vh, 780px);
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1199px) and (max-height: 700px) {
+		.home-hero {
+			height: auto;
+			min-height: 0;
+			padding-top: calc(4.5rem + 2rem);
+			padding-bottom: 2rem;
 		}
 	}
 </style>

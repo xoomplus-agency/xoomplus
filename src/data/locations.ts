@@ -18,10 +18,23 @@ export interface LocationHeroButton {
 
 export interface LocationHero {
 	pill: string;
-	pillBrand: string;
+	/** Optional brand segment after “ · ” in the pill. Omit for a single-label pre-header. */
+	pillBrand?: string;
 	title: string;
-	text: string;
-	button: LocationHeroButton;
+	/** One string or multiple paragraphs. */
+	text: string | string[];
+	/**
+	 * Primary CTA. Defaults to `Book a {name} Strategy Call` → `/contact`
+	 * when omitted (also accepts legacy `button`).
+	 */
+	primaryButton?: LocationHeroButton;
+	/** @deprecated Prefer `primaryButton`. */
+	button?: LocationHeroButton;
+	/**
+	 * Secondary CTA. Defaults to `Explore Local Services` → `#local-intent`
+	 * when omitted.
+	 */
+	secondaryButton?: LocationHeroButton;
 	/** Preferred public path; resolved at build time via locationHeroImage(). */
 	image: string;
 }
@@ -207,7 +220,7 @@ const clarityLightContent: LocationClarity = {
 			text: 'Longer decisions need useful information. A clear service structure and considered content could help prospective clients understand fit before they enquire.',
 			items: [
 				{ title: 'Explain your offer', text: 'UI/UX Design + Website Redesign' },
-				{ title: 'Answer the questions people search', text: 'SEO Content Marketing + On-Page SEO' },
+				{ title: 'Answer the questions people search', text: 'On-Page SEO' },
 				{ title: 'Give every campaign a relevant destination', text: 'Landing Page Design + PPC & Google Ads' },
 			],
 		},
@@ -341,7 +354,8 @@ const locationsSource: Location[] = [
 			pillBrand: 'XoomPlus',
 			title: 'Blackburn UK',
 			text: 'Connect search, websites and campaigns around the way your business works and the people you need to reach.',
-			button: { label: 'Discuss your project', href: '/contact' },
+			primaryButton: { label: 'Book a Blackburn Strategy Call', href: '/contact' },
+			secondaryButton: { label: 'Explore Local Services', href: '#local-intent' },
 			image: '/images/blackburn-location-hero.webp',
 		},
 		industries: {
@@ -366,11 +380,14 @@ const locationsSource: Location[] = [
 		metaDescription:
 			'Digital marketing, web design, SEO and social media for businesses in Manchester, UK. Talk to Xoomplus about your project.',
 		hero: {
-			pill: 'Location',
-			pillBrand: 'XoomPlus',
-			title: 'Manchester UK',
-			text: 'Connect search, websites and campaigns around the way your business works and the people you need to reach.',
-			button: { label: 'Discuss your project', href: '/contact' },
+			pill: 'Manchester Digital Growth Hub',
+			title: 'Digital Marketing Agency in Manchester Engineered for Measurable Business Growth',
+			text: [
+				'Whether you are a growing SME in Spinningfields, a specialist practice in Salford Quays or an established company across Greater Manchester, generic marketing does not cut it.',
+				'Xoomplus builds connected digital engines that combine high-ranking Manchester SEO, custom web development and precision paid advertising to turn online search intent into predictable commercial revenue.',
+			],
+			primaryButton: { label: 'Book a Manchester Strategy Call', href: '/contact' },
+			secondaryButton: { label: 'Explore Local Services', href: '#local-intent' },
 			image: '/images/manchester-location-hero.webp',
 		},
 		industries: {
@@ -394,6 +411,15 @@ export const locations: Location[] = locationsSource.map((loc) => ({
 	hero: {
 		...loc.hero,
 		image: locationHeroImage(loc.hero.image),
+		primaryButton: loc.hero.primaryButton ??
+			loc.hero.button ?? {
+				label: `Book a ${loc.name} Strategy Call`,
+				href: '/contact',
+			},
+		secondaryButton: loc.hero.secondaryButton ?? {
+			label: 'Explore Local Services',
+			href: '#local-intent',
+		},
 	},
 	industries: loc.industries
 		? {

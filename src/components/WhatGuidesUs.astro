@@ -8,38 +8,38 @@ import Section from './Section.astro';
 const principles = [
 	{
 		icon: '/icons/simplicity-essential.svg',
-		title: 'Simplicity is essential.',
-		text: 'Simplify the complex. Use straightforward language to clarify choices and next steps.',
+		title: 'Synchronised Funnel',
+		text: 'We align your site architecture, organic search strategy and performance ads into a single strategy where one channel strengthens the next.',
 	},
 	{
 		icon: '/icons/remain-inquisitive.svg',
-		title: 'Remain inquisitive',
-		text: 'Pose thoughtful questions. Know your audience and challenge the obvious.',
+		title: 'Commercial Value',
+		text: 'We do not hide behind impressions or surface-level engagement. We focus on pipeline velocity, customer acquisition cost and sales revenue.',
 	},
 	{
 		icon: '/icons/focus-on-every-detail.svg',
-		title: 'Focus on every detail.',
-		text: 'Appreciate both aesthetics and functionality. Concentrate on the minor choices.',
+		title: 'Access to Senior Talent',
+		text: 'You communicate directly with the lead engineers, SEO directors and top media buyers who run your campaigns daily.',
 	},
 	{
 		icon: '/icons/evolve-through-teamwork.svg',
-		title: 'Evolve through teamwork.',
-		text: 'Exchange ideas, take ownership, and learn collectively for improved results.',
+		title: 'Operational Transparency',
+		text: 'Trust requires total visibility. You retain full ownership of your data, source code, ad platforms and conversion tracking, without any opaque retainers.',
 	},
 ];
 ---
 
 <Section aria-labelledby="guides-heading">
 	<div class="guides-header" data-reveal="up">
-		<p class="pill-light mb-5">What guides us</p>
+		<p class="pill-light mb-5">Operating Principles</p>
 		<h2
 			id="guides-heading"
 			class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 		>
-			Good work starts with good principles.
+			Uncompromising Standards. Zero Fluff.
 		</h2>
 		<p class="text-on-light mx-auto max-w-[640px]">
-			The way we think matters just as much as the work we make.
+			Four core principles shape how our senior team designs, builds and scales your brand.
 		</p>
 	</div>
 
@@ -70,6 +70,13 @@ const principles = [
 		max-width: 820px;
 		margin-inline: auto;
 		text-align: center;
+	}
+
+	.guides-header :global(.text-on-light) {
+		font-family: var(--font-inter);
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.5;
 	}
 
 	/* pb leaves room so why-card hover shadows are not clipped */
@@ -122,7 +129,7 @@ const principles = [
 	.guides-card__text {
 		margin-top: 10px;
 		font-family: var(--font-inter);
-		font-size: var(--text-lead);
+		font-size: 18px;
 		font-weight: 500;
 		line-height: 1.5;
 		color: #555555;
@@ -149,10 +156,6 @@ const principles = [
 
 		.guides-card__title {
 			font-size: clamp(1.25rem, 5vw, 1.25rem); /* 20px */
-		}
-
-		.guides-card__text {
-			font-size: clamp(1rem, 4vw, 1rem); /* 16px */
 		}
 	}
 </style>

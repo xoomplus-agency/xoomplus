@@ -4,9 +4,9 @@ import Button from './Button.astro';
 import ServiceCard from './ServiceCard.astro';
 import { pricingPlans } from '../data/pricing-plans';
 
-const { pill, pillBrand, title, text, tabs, packages, adhoc } = pricingPlans;
+const { pill, title, text, tabs, packages, adhoc } = pricingPlans;
 const headingId = 'pricing-plans-heading';
-const defaultTab = 'packages';
+const defaultTab = 'adhoc';
 ---
 
 <Section
@@ -17,8 +17,7 @@ const defaultTab = 'packages';
 >
 	<div class="pricing-plans__header" data-reveal="up">
 		<p class="pill-dark m-0">
-			<span class="pricing-plans__pill-label">{pill} · </span>
-			<span class="text-primary">{pillBrand}</span>
+			<span class="text-primary">{pill}</span>
 		</p>
 		<h2 id={headingId} class="pricing-plans__title text-heading-dark m-0">
 			{title}
@@ -55,17 +54,17 @@ const defaultTab = 'packages';
 		</div>
 	</div>
 
-	{/* Packages — visible by default (no flash before script) */}
+	{/* Ad Hoc — visible by default (no flash before script) */}
 	<div
 		role="tabpanel"
-		id="panel-packages"
+		id="panel-adhoc"
 		class="pricing-plans__panel"
-		aria-labelledby="tab-packages"
-		data-panel="packages"
+		aria-labelledby="tab-adhoc"
+		data-panel="adhoc"
 	>
 		<div class="pricing-plans__packages" data-reveal-group>
 			{
-				packages.cards.map((card, index) => (
+				adhoc.cards.map((card, index) => (
 					<div
 						class:list={['pricing-plans__pkg-slot', `pricing-plans__pkg-slot--${index + 1}`]}
 						data-reveal="up"
@@ -86,10 +85,9 @@ const defaultTab = 'packages';
 			}
 			<article class="service-card pricing-plans__help" data-reveal="up">
 				<div class="pricing-plans__help-body">
-					<h3 class="pricing-plans__help-title m-0">{packages.help.title}</h3>
-					<p class="pricing-plans__help-text m-0">{packages.help.text}</p>
-					<a class="service-card-btn" href={packages.help.href}>
-						{packages.help.buttonLabel}
+					<h3 class="pricing-plans__help-title m-0">{adhoc.help.title}</h3>
+					<a class="service-card-btn" href={adhoc.help.href}>
+						{adhoc.help.buttonLabel}
 						<span aria-hidden="true">→</span>
 					</a>
 				</div>
@@ -97,18 +95,18 @@ const defaultTab = 'packages';
 		</div>
 	</div>
 
-	{/* Ad Hoc — in HTML at build time; hidden until selected */}
+	{/* Packages — in HTML at build time; hidden until selected */}
 	<div
 		role="tabpanel"
-		id="panel-adhoc"
+		id="panel-packages"
 		class="pricing-plans__panel"
-		aria-labelledby="tab-adhoc"
-		data-panel="adhoc"
+		aria-labelledby="tab-packages"
+		data-panel="packages"
 		hidden
 	>
 		<div class="pricing-plans__adhoc">
 			{
-				adhoc.cards.map((card) => (
+				packages.cards.map((card) => (
 					<article
 						class:list={[
 							'service-card',
@@ -162,9 +160,9 @@ const defaultTab = 'packages';
 		</div>
 
 		<div class="pricing-plans__cta">
-			<p class="pricing-plans__cta-text m-0">{adhoc.cta.text}</p>
-			<Button href={adhoc.cta.href} class="pricing-plans__cta-btn">
-				{adhoc.cta.buttonLabel}
+			<p class="pricing-plans__cta-text m-0">{packages.cta.text}</p>
+			<Button href={packages.cta.href} class="pricing-plans__cta-btn">
+				{packages.cta.buttonLabel}
 			</Button>
 		</div>
 	</div>
@@ -559,6 +557,61 @@ const defaultTab = 'packages';
 			width: 100%;
 			max-width: calc(50% - 10px);
 			justify-self: center;
+		}
+	}
+
+	/* Ad Hoc: help card full width; Packages: 3-col from 900 / 1-col below */
+	@media (min-width: 640px) and (max-width: 1199px) {
+		.pricing-plans__tab {
+			min-height: 44px;
+		}
+
+		.pricing-plans__help {
+			grid-column: 1 / -1;
+			max-width: none;
+			width: 100%;
+			justify-self: stretch;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 899px) {
+		.pricing-plans__adhoc {
+			grid-template-columns: 1fr;
+			justify-items: center;
+		}
+
+		.pricing-plans__adhoc-card {
+			width: 100%;
+			max-width: 560px;
+		}
+
+		.pricing-plans__adhoc-card:last-child {
+			grid-column: auto;
+			max-width: 560px;
+			justify-self: center;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1199px) {
+		.pricing-plans__adhoc {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		.pricing-plans__adhoc-card:last-child {
+			grid-column: auto;
+			max-width: none;
+			justify-self: stretch;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.pricing-plans__packages {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.pricing-plans__pkg-slot,
+		.pricing-plans__pkg-slot--4 {
+			grid-column: auto;
 		}
 	}
 

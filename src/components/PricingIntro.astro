@@ -16,12 +16,12 @@ const headingId = 'pricing-intro-heading';
 			<div data-reveal="up">
 			<p class="pill-light m-0 normal-case">{pill}</p>
 
-			<h2
+			<h1
 				id={headingId}
 				class="pricing-intro__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
 				{titleDark}<span class="pricing-intro__accent">{titleAccent}</span>
-			</h2>
+			</h1>
 
 			<div class="pricing-intro__copy">
 				{
@@ -130,6 +130,24 @@ const headingId = 'pricing-intro-heading';
 		.pricing-intro__media {
 			max-width: 560px;
 			margin-inline: auto;
+		}
+	}
+
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.pricing-intro {
+			grid-template-columns: 1fr 1fr;
+			gap: 40px;
+		}
+
+		.pricing-intro__media {
+			max-width: none;
+			margin-inline: 0;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 899px) {
+		.pricing-intro__media {
+			max-width: 640px;
 		}
 	}
 </style>

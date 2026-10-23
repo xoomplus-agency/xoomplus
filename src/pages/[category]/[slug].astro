@@ -624,6 +624,24 @@ const faqJsonLd =
 		}
 	}
 
+	/* Large tablet: sticky sidebar at 280px */
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.blog-article__layout {
+			grid-template-columns: minmax(0, 1fr) 280px;
+			column-gap: 28px;
+		}
+
+		.blog-sidebar {
+			top: calc(var(--blog-nav-offset) + 16px);
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) and (max-height: 700px) {
+		.blog-sidebar {
+			position: static;
+		}
+	}
+
 	@media (max-width: 639px) {
 		.blog-detail-main {
 			--blog-nav-offset: 88px;

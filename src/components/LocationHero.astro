@@ -4,18 +4,21 @@
  * LCP uses a real <img> (not CSS background) so it is discoverable + prioritizable.
  */
 import Button from './Button.astro';
+import ButtonOutline from './ButtonOutline.astro';
 
 interface Props {
 	pill: string;
-	pillBrand: string;
+	pillBrand?: string;
 	title: string;
-	text: string;
-	button: { label: string; href: string };
+	text: string | string[];
+	primaryButton: { label: string; href: string };
+	secondaryButton?: { label: string; href: string };
 	image: string;
 }
 
-const { pill, pillBrand, title, text, button, image } = Astro.props;
+const { pill, pillBrand, title, text, primaryButton, secondaryButton, image } = Astro.props;
 const headingId = 'location-hero-heading';
+const paragraphs = Array.isArray(text) ? text : [text];
 ---
 
 <section
@@ -34,27 +37,42 @@ const headingId = 'location-hero-heading';
 		aria-hidden="true"
 	/>
 	{/* Decorative glow — aria-hidden via CSS pointer-events + empty ::before */}
-	<div class="location-hero__content container container--prose" data-hero-enter>
+	<div class="location-hero__content container" data-hero-enter>
 		<p class="pill-dark location-hero__pill m-0" aria-hidden="true" data-hero-item>
 			<span class="location-hero__pill-text">{pill}</span>
-			<span class="location-hero__pill-sep"> · </span>
-			<span class="location-hero__pill-brand">{pillBrand}</span>
+			{
+				pillBrand ? (
+					<>
+						<span class="location-hero__pill-sep"> · </span>
+						<span class="location-hero__pill-brand">{pillBrand}</span>
+					</>
+				) : null
+			}
 		</p>
 
 		<h1 id={headingId} class="text-hero-h1 location-hero__title" data-hero-item>{title}</h1>
 
-		<p class="location-hero__text" data-hero-item>{text}</p>
+		<div class="location-hero__copy" data-hero-item>
+			{paragraphs.map((paragraph) => <p class="location-hero__text m-0">{paragraph}</p>)}
+		</div>
 
 		<div class="location-hero__actions" data-hero-item>
-			<Button href={button.href}>{button.label}</Button>
+			<Button href={primaryButton.href}>{primaryButton.label}</Button>
+			{
+				secondaryButton ? (
+					<ButtonOutline class="location-hero__btn-secondary px-7" href={secondaryButton.href}>
+						<span>{secondaryButton.label}</span>
+					</ButtonOutline>
+				) : null
+			}
 		</div>
 	</div>
 </section>
 
 <style>
 	/*
-	 * Fixed height includes the area behind the fixed navbar (same as PageHero).
-	 * padding-top clears the nav so content centers in the space below it.
+	 * Min-height by breakpoint; height grows with content so nothing clips.
+	 * padding-top = navbar (~80px) + 56px breathing room under the nav.
 	 */
 	.location-hero {
 		position: relative;
@@ -63,9 +81,11 @@ const headingId = 'location-hero-heading';
 		justify-content: center;
 		box-sizing: border-box;
 		width: 100%;
-		height: 662px;
+		min-height: 780px;
+		height: auto;
 		overflow: hidden;
-		padding-top: 80px; /* ~navbar height */
+		padding-top: calc(80px + 56px);
+		padding-bottom: 72px;
 		text-align: center;
 		background-color: var(--color-primary-black);
 	}
@@ -81,7 +101,7 @@ const headingId = 'location-hero-heading';
 		pointer-events: none;
 	}
 
-	/* Amber glow from top right — above media, below copy */
+	/* Amber glow from top right — above media, below copy (unchanged) */
 	.location-hero::before {
 		content: '';
 		position: absolute;
@@ -103,7 +123,6 @@ const headingId = 'location-hero-heading';
 		align-items: center;
 		box-sizing: border-box;
 		width: 100%;
-		max-width: min(100%, 40rem);
 		margin-inline: auto;
 	}
 
@@ -115,37 +134,98 @@ const headingId = 'location-hero-heading';
 		color: #ffa800;
 	}
 
+	/*
+	 * Hero H1 style (~56px max). Wide so long location titles wrap to ~2 lines.
+	 * Slightly tighter letter-spacing helps two-line balance at 1440px.
+	 */
 	.location-hero__title {
-		margin: 1.25rem 0 0;
+		margin: 24px 0 0;
+		max-width: min(1000px, calc(100% - 48px));
+		font-size: clamp(2rem, 1.35rem + 2.2vw, 3.5rem); /* ~32px → 56px */
+		line-height: 1.12;
+		letter-spacing: -0.03em;
+		text-wrap: balance;
+	}
+
+	.location-hero__copy {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		margin: 24px 0 0;
+		max-width: min(860px, calc(100% - 48px));
 	}
 
 	.location-hero__text {
-		margin: 1rem 0 0;
-		max-width: 65ch;
 		font-family: var(--font-inter);
-		font-size: var(--text-lead);
-		font-weight: var(--text-lead--font-weight);
-		line-height: var(--text-lead--line-height);
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.6;
 		text-wrap: pretty;
 		color: var(--text-body-dark);
 	}
 
 	.location-hero__actions {
-		margin-top: 28px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 16px;
+		margin-top: 40px;
+	}
+
+	/* Layout only — same pairing as Pricing / child CTAs (shared .btn-outline) */
+	.location-hero__actions :global(.location-hero__btn-secondary) {
+		height: 52px;
+	}
+
+	@media (min-width: 1024px) and (max-width: 1279px) {
+		.location-hero {
+			min-height: 720px;
+		}
 	}
 
 	@media (min-width: 640px) and (max-width: 1023px) {
 		.location-hero {
-			height: 560px;
+			min-height: 680px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1199px) {
+		.location-hero__title {
+			font-size: clamp(2.75rem, 2.2rem + 1.5vw, 3.25rem); /* ~44–52px */
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.location-hero {
+			min-height: 700px;
+		}
+	}
+
+	@media (min-width: 640px) and (max-width: 1199px) and (max-height: 700px) {
+		.location-hero {
+			min-height: 0;
+			height: auto;
 		}
 	}
 
 	@media (max-width: 639px) {
 		.location-hero {
-			height: auto;
-			min-height: 560px;
-			padding-top: 72px;
+			min-height: 640px;
+			padding-top: calc(72px + 40px);
 			padding-bottom: 48px;
+		}
+
+		.location-hero__actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 12px;
+			width: 100%;
+		}
+
+		.location-hero__actions :global(.btn),
+		.location-hero__actions :global(.location-hero__btn-secondary) {
+			width: 100%;
 		}
 	}
 </style>

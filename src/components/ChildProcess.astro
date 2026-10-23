@@ -1,0 +1,122 @@
+---
+/**
+ * Child-page "Working together" — image left, copy + CTAs right.
+ * Static HTML only. Does not replace ServiceProcess on main service pages.
+ */
+import Section from './Section.astro';
+import ChildCtaButtons from './ChildCtaButtons.astro';
+
+interface Props {
+	id?: string;
+	pill: string;
+	heading: string;
+	text: string | string[];
+	image: { src: string; alt: string; width?: number; height?: number };
+	primaryButton: { label: string; href: string };
+	secondaryButton: { label: string; href: string };
+}
+
+const {
+	id = 'process',
+	pill,
+	heading,
+	text,
+	image,
+	primaryButton,
+	secondaryButton,
+} = Astro.props;
+
+const headingId = `${id}-heading`;
+/** ~4 / 3.2 aspect from design */
+const imgW = image.width ?? 800;
+const imgH = image.height ?? 640;
+---
+
+<Section id={id} aria-labelledby={headingId} background="white">
+	<div class="child-process">
+		<div class="child-process__media">
+			<img
+				class="child-process__img"
+				src={image.src}
+				alt={image.alt}
+				width={imgW}
+				height={imgH}
+				loading="lazy"
+				decoding="async"
+			/>
+		</div>
+
+		<div class="child-process__content">
+			<p class="pill-light m-0 self-start">{pill}</p>
+			<h2 id={headingId} class="child-heading child-heading--section m-0">
+				{heading}
+			</h2>
+			{
+				(Array.isArray(text) ? text : [text]).map((paragraph) => (
+					<p class="child-process__text m-0">{paragraph}</p>
+				))
+			}
+			{/* Wrapper keeps margin in this component's scoped CSS (ChildCtaButtons root is unscoped here) */}
+			<div class="child-process__cta">
+				<ChildCtaButtons
+					primaryLabel={primaryButton.label}
+					primaryHref={primaryButton.href}
+					secondaryLabel={secondaryButton.label}
+					secondaryHref={secondaryButton.href}
+				/>
+			</div>
+		</div>
+	</div>
+</Section>
+
+<style>
+	.child-process {
+		display: grid;
+		grid-template-columns: 1fr 1.1fr;
+		align-items: center;
+		gap: 48px;
+	}
+
+	.child-process__media {
+		min-width: 0;
+		width: 100%;
+	}
+
+	.child-process__img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 3.2;
+		object-fit: cover;
+		border-radius: 24px;
+	}
+
+	.child-process__content {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		text-align: left;
+	}
+
+	.child-process__text {
+		margin-top: 16px;
+		max-width: 620px;
+		font-family: var(--font-inter);
+		font-size: 17.6px;
+		font-weight: 400;
+		line-height: 29.04px;
+		color: rgb(85, 85, 85);
+	}
+
+	/* padding-top — margin can collapse with the paragraph above */
+	.child-process__cta {
+		padding-top: 48px;
+	}
+
+	@media (max-width: 1023px) {
+		.child-process {
+			grid-template-columns: 1fr;
+			gap: 32px;
+		}
+	}
+</style>

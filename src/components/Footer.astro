@@ -54,7 +54,6 @@ const linkColumns = [
 ];
 
 const locationLinks = [
-	{ label: 'Blackburn', href: '/locations/blackburn' },
 	{ label: 'Manchester', href: '/locations/manchester' },
 ];
 
@@ -65,11 +64,7 @@ const socialLinks = [
 	{ label: 'LinkedIn', href: 'https://pk.linkedin.com/company/xoomplus', icon: '/icons/footer-linkedin.svg' },
 ];
 
-const legalLinks = [
-	{ label: 'Legal', href: '/legal' },
-	{ label: 'Privacy Policy', href: '/privacy-policy' },
-	{ label: 'Terms & Conditions', href: '/terms' },
-];
+const legalLinks = [{ label: 'Privacy Policy', href: '/privacy-policy/' }];
 ---
 
 <footer class="site-footer">
@@ -406,6 +401,18 @@ const legalLinks = [
 		}
 
 		.site-footer__brand {
+			grid-column: 1 / -1;
+		}
+	}
+
+	/* Tablet: gutters from .container only; brand → 2×2 links → Locations/Social full width */
+	@media (min-width: 640px) and (max-width: 1023px) {
+		.site-footer {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.site-footer__col--locations {
 			grid-column: 1 / -1;
 		}
 	}

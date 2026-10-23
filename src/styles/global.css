@@ -361,26 +361,136 @@
 }
 
 @media (hover: hover) {
-	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]) {
+	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]):not(.btn-outline--dark) {
 		transform: translateY(-1px);
 		box-shadow: 0 4px 12px rgba(255, 168, 0, 0.25);
 	}
 
-	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]) .btn-outline__icon {
+	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]):not(.btn-outline--dark)
+		.btn-outline__icon {
 		transform: translateX(3px);
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.btn-outline,
-	.btn-outline__icon {
+	.btn-outline:not(.btn-outline--dark),
+	.btn-outline:not(.btn-outline--dark) .btn-outline__icon {
 		transition: none;
 	}
 
-	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]),
-	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]) .btn-outline__icon {
+	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]):not(.btn-outline--dark),
+	.btn-outline:hover:not(:disabled):not([aria-disabled="true"]):not(.btn-outline--dark)
+		.btn-outline__icon {
 		transform: none;
 		box-shadow: none;
+	}
+}
+
+/**
+ * Outline dark — transparent fill · amber text · same gradient border
+ * For dark sections (e.g. Demand Creation & Capture on /services).
+ * Border via masked ::before so the interior stays truly transparent on black
+ * (transparent padding-box + border-box can paint the full gradient in some engines).
+ */
+.btn-outline--dark {
+	position: relative;
+	overflow: visible;
+	/* allow ::after hover shadow to paint outside */
+	isolation: auto;
+	gap: 10px;
+	padding-inline: 1.75rem;
+	border-color: transparent;
+	background: transparent;
+	background-image: none;
+	color: #ffa800;
+	transition: transform 200ms ease;
+}
+
+.btn-outline--dark::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	padding: 1.5px;
+	background: linear-gradient(90deg, #ffd36c 0%, #ffa800 50%, #ff7548 100%);
+	-webkit-mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	pointer-events: none;
+}
+
+.btn-outline--dark > * {
+	position: relative;
+	z-index: 1;
+}
+
+.btn-outline--dark::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	box-shadow: 0 8px 20px rgba(255, 168, 0, 0.25);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 200ms ease;
+}
+
+.btn-outline--dark:focus-visible {
+	outline: 2px solid #ffa800;
+	outline-offset: 3px;
+	transform: translateY(-2px);
+}
+
+.btn-outline--dark:focus-visible::after {
+	opacity: 1;
+}
+
+.btn-outline--dark:focus-visible .btn-outline__icon {
+	transform: translateX(3px);
+}
+
+@media (hover: hover) {
+	.btn-outline--dark:hover:not(:disabled):not([aria-disabled="true"]) {
+		transform: translateY(-2px);
+		box-shadow: none;
+	}
+
+	.btn-outline--dark:hover:not(:disabled):not([aria-disabled="true"])::after {
+		opacity: 1;
+	}
+
+	.btn-outline--dark:hover:not(:disabled):not([aria-disabled="true"]) .btn-outline__icon {
+		transform: translateX(3px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.btn-outline--dark,
+	.btn-outline--dark::after,
+	.btn-outline--dark .btn-outline__icon {
+		transition: none;
+	}
+
+	.btn-outline--dark:hover:not(:disabled):not([aria-disabled="true"]),
+	.btn-outline--dark:focus-visible {
+		transform: none;
+	}
+
+	.btn-outline--dark:hover:not(:disabled):not([aria-disabled="true"])::after,
+	.btn-outline--dark:focus-visible::after {
+		opacity: 0;
+	}
+
+	.btn-outline--dark:hover:not(:disabled):not([aria-disabled="true"]) .btn-outline__icon,
+	.btn-outline--dark:focus-visible .btn-outline__icon {
+		transform: none;
 	}
 }
 
@@ -416,6 +526,28 @@
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
+}
+
+/*
+ * Shared child-service heading — same face/weight/tracking/line-height as ChildServiceHero h1.
+ * Size variants: --hero (40px) · --section (clamp 26–32px for ChildProcess h2).
+ */
+.child-heading {
+	font-family: var(--font-sans);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	line-height: var(--text-h1--line-height);
+	color: var(--color-primary-black);
+}
+
+.child-heading--hero {
+	margin-top: 16px;
+	font-size: 40px;
+}
+
+.child-heading--section {
+	margin-top: 12px;
+	font-size: clamp(26px, 3vw, 32px);
 }
 
 /*
@@ -647,6 +779,8 @@
 	border-radius: 24px;
 	padding: 24px 20px;
 	box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.076);
+	/* GlideSelect menus must not be clipped by the card */
+	overflow: visible;
 }
 
 .contact-card__title {

@@ -6,9 +6,20 @@
  * // overrides?: { hide?: (...); reorder?: (...) }
  */
 
+import type {
+	IndustryClarityColumn,
+	IndustryClarityItem,
+	IndustryClaritySection,
+} from '../industry-clarity';
+
 export type ServiceHeroLink = {
 	label: string;
 	href: string;
+};
+
+export type ServiceHeroMetric = {
+	label: string;
+	value: string;
 };
 
 export type ServiceHeroData = {
@@ -16,11 +27,13 @@ export type ServiceHeroData = {
 	/** Amber part after the middle dot; defaults to "XoomPlus" in ServiceHero. */
 	pillBrand?: string;
 	titleLines: [string, string];
-	text: string;
+	text?: string;
+	textParagraphs?: string[];
 	primaryButton: ServiceHeroLink;
 	secondaryLink: ServiceHeroLink;
 	footerLeft: string;
 	footerRight: string;
+	metricBadges?: [ServiceHeroMetric, ServiceHeroMetric];
 	panelLabel: string;
 	panelImage: { src: string; alt: string };
 	/** Amber plus behind the panel image; defaults in ServiceHero. */
@@ -60,19 +73,20 @@ export type ServiceBentoCard = {
 	icon: string;
 	title: string;
 	text: string;
-	tag: string;
+	tag?: string;
+	linkLabel?: string;
 	/** Child service page when this card maps to one. */
 	href?: string;
 };
 
-/** "Development & commerce" — main card + exactly 4 small cards. */
+/** Main card + supporting cards, or a card-only capabilities grid. */
 export type ServiceBentoData = {
 	pill: string;
 	title: string;
 	text: string;
-	mainCard: ServiceBentoMainCard;
-	cards: [ServiceBentoCard, ServiceBentoCard, ServiceBentoCard, ServiceBentoCard];
-	note: string;
+	mainCard?: ServiceBentoMainCard;
+	cards: ServiceBentoCard[];
+	note?: string;
 };
 
 export type ServiceShowcasePanel = {
@@ -82,13 +96,16 @@ export type ServiceShowcasePanel = {
 	caption: string;
 };
 
-/** "One connected experience" — exactly 3 list items. */
+/** "One connected experience" — list items rendered with the shared arrow icon. */
 export type ServiceShowcaseData = {
 	pill: string;
 	titleLines: [string, string];
 	text: string;
+	compactHeading?: boolean;
+	/** Skip dark panel chrome (black background / padding). */
+	plainPanel?: boolean;
 	panel: ServiceShowcasePanel;
-	items: [string, string, string];
+	items: string[];
 	icon: string;
 };
 
@@ -97,72 +114,92 @@ export type ServiceProcessItem = {
 	text: string;
 };
 
-/** "Working together" — exactly 3 partnership points. */
+/** "Working together" — service process steps. */
 export type ServiceProcessData = {
 	pill: string;
 	titleLines: [string, string];
+	text?: string;
 	image: { src: string; alt: string; width?: number; height?: number };
-	items: [ServiceProcessItem, ServiceProcessItem, ServiceProcessItem];
-	note: string;
+	items: ServiceProcessItem[];
+	itemTextSize?: '18px';
+	note?: string;
 };
 
 export type ChildServiceHeroData = {
 	pill: string;
 	titleLines: [string, string];
-	paragraphs: [string, string, string];
-	button: { label: string; href: string };
+	/** Lead copy under the H1 — typically 2 or 3 short paragraphs. */
+	paragraphs: [string, string] | [string, string, string];
+	/**
+	 * Optional primary CTA label override.
+	 * Default on the page: `Book a ${shortName} Consultation`.
+	 */
+	buttonLabel?: string;
 	image: { src: string; alt: string; width?: number; height?: number };
 };
 
-export type ChildClarityItem = {
-	title: string;
-	text: string;
-	tag: string;
-};
-
-export type ChildClarityColumn = {
-	title: string;
-	eyebrow: string;
-	text: string;
-	items: [ChildClarityItem, ChildClarityItem];
-};
-
-/** Child-page clarity block — exactly 2 columns × 2 items (IndustryClarity-compatible). */
-export type ChildClarityData = {
-	id: string;
-	pill: string;
-	title: string;
-	text: string;
-	columns: [ChildClarityColumn, ChildClarityColumn];
-	note: string;
-};
+export type ChildClarityItem = IndustryClarityItem;
+export type ChildClarityColumn = IndustryClarityColumn;
+/** Child-page clarity block — same shape as IndustryClarity. */
+export type ChildClarityData = IndustryClaritySection;
 
 export type ChildService = {
 	slug: string;
 	name: string;
+	/** Short name for hero primary CTA — falls back to `name`. */
+	shortName?: string;
+	/**
+	 * Secondary hero CTA label.
+	 * Default: "Explore Our Design Process" (Web Design & Development) or
+	 * "Explore Our Process" (other main services).
+	 */
+	secondaryLabel?: string;
 	metaTitle: string;
 	metaDescription: string;
 	hero: ChildServiceHeroData;
 	/** Optional override; falls back to `defaultChildFeatures` on the child page. */
 	features?: ServiceFeaturesData;
-	/** Optional override; falls back to `defaultChildProcess` on the child page. */
-	process?: ServiceProcessData;
+	/** ChildProcess heading — default: `What Better ${shortName} Can Do for Your Business`. */
+	processHeading?: string;
+	/** ChildProcess lead copy — placeholder unless overridden per child. */
+	processText?: string | string[];
+	processPill?: string;
+	processPrimaryLabel?: string;
+	processSecondaryLabel?: string;
+	/** ChildProcess image — else `/images/<slug>-working-together.webp` → collaborative-thinking. */
+	processImage?: { src: string; alt: string; width?: number; height?: number };
 	/** Optional override; falls back to `defaultChildClarity` on the child page. */
 	clarity?: ChildClarityData;
-	/**
-	 * Optional home-style "Our Process" override.
-	 * Named `ourProcess` because `process` is already Working together (ServiceProcess).
-	 * Falls back to `defaultProcess` from `src/data/process.ts`.
-	 */
-	ourProcess?: import('../process').OurProcessContent;
-	/** Optional image-text rows; falls back to `defaultChildRows`. */
-	rows?: import('../industry-features').IndustryFeatureRow[];
-	/** Optional How we work; falls back to `defaultChildHowWeWork`. */
-	howWeWork?: import('../how-we-work').HowWeWorkContent;
 	/** Optional Services behind; falls back to `defaultChildServicesBehind`. */
 	servicesBehind?: import('../services-behind').ServicesBehindSection;
 	/** Optional FAQ; falls back to `defaultChildFaq` (`faqs['child-service']`). */
 	faq?: import('../faqs').FaqSet;
+	/** Optional page-specific CTA content; otherwise the shared CTA is used. */
+	cta?: {
+		pill: string;
+		heading: string;
+		text: string;
+		buttonLabel: string;
+		buttonHref?: string;
+		/** Optional outline secondary button (e.g. Explore Our Approach). */
+		secondaryButtonLabel?: string;
+		secondaryButtonHref?: string;
+		/** Defaults to mailto:info@xoomplus.co.uk / info@xoomplus.co.uk in CTASection. */
+		secondaryLabel?: string;
+		secondaryHref?: string;
+	};
+	/**
+	 * Optional "Services" card grid below Working together.
+	 * Falls back to shared UI/UX seven-card default until per-child assets exist.
+	 * Omit `cards` / empty `cards` to hide the section.
+	 */
+	services?: import('../child-services').ChildServicesDraft;
+	/**
+	 * Optional scroll-stack section below Clarity.
+	 * Falls back to shared UI/UX five-card default until per-child assets exist.
+	 * Omit `cards` / empty `cards` to hide the section.
+	 */
+	serviceStack?: import('../child-services').ChildServicesDraft;
 };
 
 export type MainService = {

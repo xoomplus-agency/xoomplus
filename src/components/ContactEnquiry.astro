@@ -1,6 +1,7 @@
 ---
 import Section from './Section.astro';
 import ContactForm from './ContactForm.astro';
+import { SITE_EMAIL, SITE_PHONE } from '../data/site-contact';
 
 /*
  * Icons live at /public/icons/ (not /public/assets/icons/ — that folder does not exist).
@@ -13,20 +14,18 @@ const phoneIcon = '/icons/contact-phone.svg';
 <Section aria-labelledby="contact-enquiry-heading">
 	<div class="enquiry">
 		<div class="enquiry__info" data-reveal="up">
-			<p class="pill-light m-0">Let's start</p>
+			<p class="pill-light m-0">Start the Conversation</p>
 
-			<h2
+			<h1
 				id="contact-enquiry-heading"
 				class="enquiry__heading m-0 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				Your ambition.
-				<br />
-				Our next conversation.
-			</h2>
+				Let’s Talk About Growing Your Business
+			</h1>
 
 			<p class="enquiry__intro text-on-light m-0">
-				A new website, a stronger search presence or a more connected marketing plan. Share a little
-				about your business and where you want to go.
+				Whether you need a modern website, better Google ranking or a marketing plan that actually
+				brings in leads, we are here to help.
 			</p>
 
 			{/*
@@ -35,7 +34,7 @@ const phoneIcon = '/icons/contact-phone.svg';
 				too light on a white section and carries hover amber).
 			*/}
 			<div class="enquiry-glass">
-				<h3 class="enquiry-glass__title m-0">Prefer another way?</h3>
+				<h2 class="enquiry-glass__title m-0">Want to reach us directly?</h2>
 
 				<div class="enquiry-glass__block">
 					<div class="enquiry-glass__row">
@@ -50,9 +49,9 @@ const phoneIcon = '/icons/contact-phone.svg';
 						<p class="enquiry-glass__block-title m-0">Send us an email</p>
 					</div>
 					<p class="enquiry-glass__text m-0">
-						For a project, a partnership or a general question, start with a short introduction.
+						For projects, partnerships or general questions, drop us an email.
 					</p>
-					<a class="enquiry-glass__link" href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
+					<a class="enquiry-glass__link" href={SITE_EMAIL.href}>{SITE_EMAIL.display}</a>
 				</div>
 
 				<hr class="enquiry-glass__divider" />
@@ -67,24 +66,32 @@ const phoneIcon = '/icons/contact-phone.svg';
 							height="20"
 							decoding="async"
 						/>
-						<p class="enquiry-glass__block-title m-0">Talk it through</p>
+						<p class="enquiry-glass__block-title m-0">Speak with our team</p>
 					</div>
-					<p class="enquiry-glass__text m-0">
-						Prefer a conversation? Let us know what you'd like to discuss.
-					</p>
-					<a class="enquiry-glass__link" href="tel:+443300104786">+44 330 010 4786</a>
+					<p class="enquiry-glass__text m-0">Prefer a quick conversation? Give us a call.</p>
+					<a class="enquiry-glass__link" href={SITE_PHONE.href}>{SITE_PHONE.display}</a>
 				</div>
 			</div>
 
 			<div class="enquiry__address">
-				<h3 class="enquiry__address-title m-0">Find us in Blackburn</h3>
+				<h2 class="enquiry__address-title m-0">Our Office</h2>
 				<p class="enquiry__address-text m-0">
-					UK: 33 King St, Blackburn BB2 2DH, United Kingdom
+					33 King Street, Blackburn, BB2 2DH, United Kingdom
+				</p>
+				<p class="enquiry__address-text m-0">
+					Serving Manchester, Lancashire, and businesses across the UK.
 				</p>
 			</div>
 		</div>
 
-		<ContactForm idPrefix="enquiry" source="contact" headingLevel={3} align="left" />
+		<ContactForm
+			idPrefix="enquiry"
+			source="contact"
+			headingLevel={2}
+			align="left"
+			heading="Tell Us About Your Project"
+			text="A few quick details help us prepare for our first conversation. No complicated briefs required."
+		/>
 	</div>
 </Section>
 
@@ -94,6 +101,7 @@ const phoneIcon = '/icons/contact-phone.svg';
 		grid-template-columns: 1fr;
 		gap: 32px;
 		align-items: start;
+		overflow: visible;
 	}
 
 	.enquiry__info {

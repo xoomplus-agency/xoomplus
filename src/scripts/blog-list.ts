@@ -3,11 +3,15 @@
  * search each request the next slim page. Search never filters the grid.
  * Search-only roots (e.g. 404) opt in with `data-blog-search-only`.
  */
+import { setButtonLoading } from './btn-loading';
+
 const PAGE_SIZE = 9;
 const KEY = 'xoomplus-blog-list-visible';
 const INIT_ATTR = 'data-blog-list-ready';
 const MIN_Q = 2;
 const MAX_HITS = 6;
+const LOAD_MORE_MIN_MS = 400;
+const LOAD_MORE_IMAGE_CAP_MS = 1500;
 
 type Card = {
 	title: string;
@@ -51,6 +55,37 @@ function persist(n: number): void {
 
 function esc(s: string): string {
 	return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function imageReady(img: HTMLImageElement): Promise<void> {
+	if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+	return new Promise((resolve) => {
+		let settled = false;
+		const done = () => {
+			if (settled) return;
+			settled = true;
+			resolve();
+		};
+		img.addEventListener('load', done, { once: true });
+		img.addEventListener('error', done, { once: true });
+		if (typeof img.decode === 'function') {
+			img.decode().then(done).catch(done);
+		}
+	});
+}
+
+/** Wait for imgs to load/fail, capped (Promise.race). */
+async function waitForImages(root: ParentNode, capMs: number): Promise<void> {
+	const imgs = [...root.querySelectorAll('img')].filter(
+		(el): el is HTMLImageElement =>
+			el instanceof HTMLImageElement && Boolean(el.getAttribute('src')),
+	);
+	if (!imgs.length) return;
+	await Promise.race([Promise.all(imgs.map(imageReady)), sleep(capMs)]);
 }
 
 function fillCard(li: HTMLElement, post: Card): void {
@@ -141,7 +176,8 @@ function initBlogList(root: HTMLElement): void {
 		const label = `Showing ${shown} of ${total} articles`;
 		if (countEl) countEl.textContent = String(shown);
 		if (matchEl) matchEl.textContent = String(total);
-		if (statusEl && !loading && !opts?.keepStatus) statusEl.textContent = label;
+		// Status is only the "Showing X of Y" line (loading copy lives in the button).
+		if (statusEl && !opts?.keepStatus) statusEl.textContent = label;
 		const done = shown >= total || total === 0;
 		if (loadMore) loadMore.hidden = done;
 		if (loadMoreWrap instanceof HTMLElement) loadMoreWrap.hidden = total === 0;
@@ -163,17 +199,36 @@ function initBlogList(root: HTMLElement): void {
 		return li;
 	}
 
-	function appendPosts(posts: Card[], focusFirst: boolean): void {
-		if (!gridEl) return;
+	function buildPostFragment(posts: Card[]): {
+		fragment: DocumentFragment;
+		first: HTMLElement | null;
+	} {
+		const fragment = document.createDocumentFragment();
 		let first: HTMLElement | null = null;
 		for (const post of posts) {
 			const li = makeCard(post);
 			if (!li) continue;
-			gridEl.append(li);
+			fragment.append(li);
 			if (!first) first = li;
 		}
+		return { fragment, first };
+	}
+
+	function appendPosts(posts: Card[], focusFirst: boolean): void {
+		if (!gridEl) return;
+		const { fragment, first } = buildPostFragment(posts);
+		gridEl.append(fragment);
 		paintCounts();
 		if (focusFirst) first?.querySelector('a')?.focus({ preventScroll: true });
+	}
+
+	function setLoadMoreLoading(on: boolean): void {
+		if (!(loadMore instanceof HTMLButtonElement)) return;
+		setButtonLoading(loadMore, on, {
+			loadingLabel: on ? 'Loading articles...' : undefined,
+			ariaLabel: on ? 'Loading articles...' : undefined,
+			lockWidth: true,
+		});
 	}
 
 	function setFilterSkeleton(visible: boolean): void {
@@ -203,8 +258,10 @@ function initBlogList(root: HTMLElement): void {
 		if (loading && !replace) return;
 		const seq = ++loadSeq;
 		loading = true;
-		if (loadMore) loadMore.disabled = true;
-		if (statusEl) statusEl.textContent = 'Loading articles…';
+		const useButtonLoading = !replace && loadMore instanceof HTMLButtonElement;
+		const loadStarted = performance.now();
+		if (useButtonLoading) setLoadMoreLoading(true);
+		else if (loadMore) loadMore.disabled = true;
 		if (replace) setFilterSkeleton(true);
 		try {
 			const params = new URLSearchParams();
@@ -233,8 +290,20 @@ function initBlogList(root: HTMLElement): void {
 			} else {
 				gridEl.hidden = false;
 			}
-			loading = false;
-			appendPosts(posts, Boolean(opts.focusFirst));
+
+			if (useButtonLoading) {
+				const { fragment, first } = buildPostFragment(posts);
+				await waitForImages(fragment, LOAD_MORE_IMAGE_CAP_MS);
+				const remaining = LOAD_MORE_MIN_MS - (performance.now() - loadStarted);
+				if (remaining > 0) await sleep(remaining);
+				if (seq !== loadSeq) return;
+				gridEl.append(fragment);
+				paintCounts();
+				if (opts.focusFirst) first?.querySelector('a')?.focus({ preventScroll: true });
+			} else {
+				appendPosts(posts, Boolean(opts.focusFirst));
+			}
+
 			const last = ordered[ordered.length - 1];
 			if (last) nextPage = last.page + 1;
 		} catch (err) {
@@ -245,12 +314,13 @@ function initBlogList(root: HTMLElement): void {
 				gridEl.hidden = shownCount() === 0;
 			}
 			if (statusEl) statusEl.textContent = "Couldn't load more articles.";
-			loading = false;
 			paintCounts({ keepStatus: true });
 		} finally {
+			// Always clear our own button loading (even if superseded by a category replace).
+			if (useButtonLoading) setLoadMoreLoading(false);
 			if (seq !== loadSeq) return;
 			loading = false;
-			if (loadMore) loadMore.disabled = false;
+			if (!useButtonLoading && loadMore) loadMore.disabled = false;
 		}
 	}
 

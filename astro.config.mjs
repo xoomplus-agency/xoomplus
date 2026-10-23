@@ -64,6 +64,10 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      // Dev tunnels (Cloudflare / Microsoft) hit Vite with a public Host header.
+      allowedHosts: ['.trycloudflare.com', '.devtunnels.ms'],
+    },
     optimizeDeps: {
       include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },

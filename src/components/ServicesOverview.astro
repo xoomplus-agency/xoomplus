@@ -20,22 +20,18 @@ const overviewToMainSlug: Record<string, string> = {
 >
 	<div class="so-header" data-reveal="up">
 		<div class="so-header__intro">
-			<p class="pill-dark text-primary m-0">Our services</p>
+			<p class="pill-dark text-primary m-0">Integrated Capabilities</p>
 			<h2
 				id="services-overview-heading"
 				class="so-header__heading text-heading-dark dark-section-heading m-0"
 			>
-				Everything You Need to Build a<br />
-				Stronger Digital Presence
+				Everything You Need to Build a Dominant Digital Presence
 			</h2>
 		</div>
 		<div class="so-header__aside">
 			<p class="so-header__p1 m-0">
-				Explore the full picture below. Start with one service or shape a connected programme around
-				your business.
-			</p>
-			<p class="so-header__p2 m-0">
-				Scope and deliverables are shaped together around your priorities.
+				Explore our four core service pillars. Start with a dedicated service or build an integrated
+				digital programme tailored around your commercial goals.
 			</p>
 		</div>
 	</div>
@@ -93,8 +89,7 @@ const overviewToMainSlug: Record<string, string> = {
 		text-align: left;
 	}
 
-	.so-header__p1,
-	.so-header__p2 {
+	.so-header__p1 {
 		font-family: var(--font-inter);
 		font-weight: 400;
 		line-height: 1.5;
@@ -102,11 +97,6 @@ const overviewToMainSlug: Record<string, string> = {
 
 	.so-header__p1 {
 		font-size: 14.5px;
-		color: var(--text-body-dark);
-	}
-
-	.so-header__p2 {
-		font-size: 13.5px;
 		color: var(--text-body-dark);
 	}
 
@@ -126,6 +116,10 @@ const overviewToMainSlug: Record<string, string> = {
 
 	.so-grid__item :global(.service-card) {
 		width: 100%;
+	}
+
+	:global(.services-overview .service-card > p:not(.service-card__price)) {
+		font-size: 16px;
 	}
 
 	.so-footer {
@@ -153,6 +147,27 @@ const overviewToMainSlug: Record<string, string> = {
 	@media (max-width: 639px) {
 		.so-grid {
 			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+
+	/* Tablet: section header side-by-side from 900px */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.so-header {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 40px;
+		}
+
+		.so-header__aside {
+			max-width: 360px;
+			width: auto;
+		}
+	}
+
+	@media (min-width: 1024px) and (max-width: 1199px) {
+		.so-header__aside {
+			max-width: 360px;
 		}
 	}
 </style>

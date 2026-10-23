@@ -2,9 +2,8 @@
 import ButtonOutline from './ButtonOutline.astro';
 
 /**
- * Home “Our Locations” cards.
- * Card 1 title/image = Manchester → /locations/manchester
- * Card 2 title = Blackburn (image still manchester-2.webp placeholder) → /locations/blackburn
+ * Home “Our Locations” card.
+ * Manchester → /locations/manchester
  */
 const locations = [
 	{
@@ -17,18 +16,6 @@ const locations = [
 			'Web Design Manchester',
 			'PPC Manchester',
 			'Social Media Manchester',
-		],
-	},
-	{
-		slug: 'blackburn',
-		title: 'Blackburn',
-		image: '/images/manchester-2.webp',
-		alt: 'Green hills and countryside near Blackburn',
-		items: [
-			'SEO Blackburn',
-			'Web Design Blackburn',
-			'PPC Blackburn',
-			'Social Media Blackburn',
 		],
 	},
 ];
@@ -47,11 +34,11 @@ const locations = [
 				id="locations-heading"
 				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				Based in Blackburn Working across Manchester.
+				Driving Commercial Growth Across Manchester and Nationwide
 			</h2>
 			<p class="text-on-light mx-auto max-w-[640px]">
-				Different industries have different audiences, challenges, and digital opportunities. Our
-				services can be tailored around the needs of your business and the people you want to reach.
+				Headquartered in Blackburn, Xoomplus delivers agile, data-led services for high-impact SEO,
+				custom web development and targeted digital performance in Manchester and across the UK.
 			</p>
 		</div>
 
@@ -134,7 +121,8 @@ const locations = [
 <style>
 	.locations-grid {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: minmax(0, 1fr);
+		justify-items: center;
 		gap: 1.75rem;
 	}
 
@@ -142,6 +130,8 @@ const locations = [
 		position: relative;
 		display: grid;
 		grid-template-columns: 40% 60%;
+		width: 100%;
+		max-width: 720px;
 		height: 311px;
 		overflow: hidden;
 		border: 1px solid #eeeeee;
@@ -213,12 +203,6 @@ const locations = [
 		flex-shrink: 0;
 		width: 18px;
 		height: 18px;
-	}
-
-	@media (max-width: 1023px) {
-		.locations-grid {
-			grid-template-columns: minmax(0, 1fr);
-		}
 	}
 
 	@media (max-width: 639px) {

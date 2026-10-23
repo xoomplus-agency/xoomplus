@@ -1,9 +1,10 @@
 export type PricingPlanTab = {
-	id: 'packages' | 'adhoc';
+	id: 'adhoc' | 'packages';
 	label: string;
 };
 
-export type PricingPackageCard = {
+/** Ad Hoc tab — individual service cards (SEO, Social, Web, PPC). */
+export type PricingAdhocCard = {
 	icon: string;
 	title: string;
 	price: string;
@@ -16,12 +17,12 @@ export type PricingPackageCard = {
 
 export type PricingHelpCard = {
 	title: string;
-	text: string;
 	buttonLabel: string;
 	href: string;
 };
 
-export type PricingAdhocCard = {
+/** Packages tab — Silver / Gold / Platinum tiers. */
+export type PricingPackageCard = {
 	name: string;
 	price: string;
 	period: string;
@@ -37,16 +38,15 @@ export type PricingAdhocCard = {
 export type PricingPlansSection = {
 	id: string;
 	pill: string;
-	pillBrand: string;
 	title: string;
 	text: string;
 	tabs: PricingPlanTab[];
-	packages: {
-		cards: PricingPackageCard[];
-		help: PricingHelpCard;
-	};
 	adhoc: {
 		cards: PricingAdhocCard[];
+		help: PricingHelpCard;
+	};
+	packages: {
+		cards: PricingPackageCard[];
 		cta: {
 			text: string;
 			buttonLabel: string;
@@ -66,7 +66,6 @@ const seoPlaceholderItems = [
 	'On-Page SEO',
 	'Link Building (Off-Page)',
 	'SEO Audit',
-	'SEO Content Marketing',
 ];
 
 const webDesignItems = [
@@ -85,20 +84,19 @@ const webDesignText =
 /** Icons match home page Our Services cards (src/data/services.ts). */
 export const pricingPlans: PricingPlansSection = {
 	id: 'web-design-development',
-	pill: 'Web Design & Development',
-	pillBrand: 'XoomPlus',
-	title: 'Choose the Right Service for Your Business',
-	text: "Every business has different goals, challenges, and priorities. That's why our digital marketing services are designed to be flexible, with solutions tailored around what your business actually needs.",
+	pill: 'Affordable Scalable Investment',
+	title: 'Choose the Right Growth Package for Your Business',
+	text: 'Our packages are designed to deliver real value for your money. Our tailored solution gives you access to dedicated experts without any vague retainers.',
 	tabs: [
-		{ id: 'packages', label: 'Packages' },
 		{ id: 'adhoc', label: 'Ad Hoc' },
+		{ id: 'packages', label: 'Packages' },
 	],
-	packages: {
+	adhoc: {
 		cards: [
 			{
 				icon: '/icons/service-circles.svg',
 				title: 'SEO',
-				price: '£299',
+				price: '£699',
 				period: '/month',
 				text: seoPlaceholderText,
 				items: seoPlaceholderItems,
@@ -108,7 +106,7 @@ export const pricingPlans: PricingPlansSection = {
 			{
 				icon: '/icons/service-circles.svg',
 				title: 'Social Media Marketing',
-				price: '£299',
+				price: '£699',
 				period: '/month',
 				// PLACEHOLDER: replace with real content (design repeats SEO copy/list)
 				text: seoPlaceholderText,
@@ -119,7 +117,7 @@ export const pricingPlans: PricingPlansSection = {
 			{
 				icon: '/icons/service-layers.svg',
 				title: 'Web Design & Development',
-				price: '£299',
+				price: '£1399',
 				period: '/month',
 				text: webDesignText,
 				items: webDesignItems,
@@ -129,7 +127,7 @@ export const pricingPlans: PricingPlansSection = {
 			{
 				icon: '/icons/service-circles.svg',
 				title: 'PPC & Google Ads',
-				price: '£299',
+				price: '£699',
 				period: '/month',
 				// PLACEHOLDER: replace with real content (design repeats SEO copy/list)
 				text: seoPlaceholderText,
@@ -139,44 +137,72 @@ export const pricingPlans: PricingPlansSection = {
 			},
 		],
 		help: {
-			title: 'Not Sure Which Service Is Right for Your Business?',
-			text: 'Tell us what you are trying to achieve and we can help you identify the right digital service for your needs.',
-			buttonLabel: 'Get in touch',
+			title: 'Need a bespoke scope tailored to complex multi-site or regulated industry requirements?',
+			buttonLabel: 'Request a Custom Commercial Proposal',
 			href: '/contact',
 		},
 	},
-	adhoc: {
+	packages: {
 		cards: [
 			{
-				name: 'Silver',
-				price: '£299',
+				name: 'Growth Essentials (Silver)',
+				price: '£1099',
 				period: '/month',
-				text: webDesignText,
+				text: 'Best for startups and small businesses establishing a solid digital presence and reliable local leads.',
 				includedLabel: "What's Included",
-				items: webDesignItems,
-				buttonLabel: 'Get Website Pricing',
+				items: [
+					'7-Page Custom Responsive Website',
+					'Cloud Hosting, SSL & Daily Backups',
+					'4 x Monthly Blog Posts (800–1,000 words)',
+					'10 Hours/Mo SEO (On-page & Google Business Profile)',
+					'10 Hours/Mo Graphic Design (Socials & Banners)',
+					'1 Paid Ad Platform (Google or Meta, up to £1k spend)',
+					'Monthly Performance Dashboard',
+				],
+				buttonLabel: 'Get Silver Package',
 				href: '/contact',
 			},
 			{
-				name: 'Gold',
-				badge: 'Best Value',
+				name: 'Performance & Scale (Gold)',
+				badge: 'Most Popular',
 				featured: true,
-				price: '£599',
+				price: '£1699',
 				period: '/month',
-				text: webDesignText,
+				text: 'Best for growing companies looking to widen reach, drive steady leads and outrank competitors.',
 				includedLabel: "What's Included",
-				items: webDesignItems,
-				buttonLabel: 'Get Website Pricing',
+				items: [
+					'10-Page Custom Website with Conversion Focus',
+					'Dedicated Cloud Hosting & Continuous Monitoring',
+					'6 x In-Depth Monthly Articles (1,000–1,500 words)',
+					'15 Hours/Mo SEO (Technical, Links & Competitor Gap)',
+					'15 Hours/Mo Graphic Design (Ad Creatives & Carousels)',
+					'2 Paid Ad Platforms (Google & Meta, up to £3.5k)',
+					'Social Media Management (2 Channels)',
+					'Monthly Email Newsletter Setup & Dispatch',
+					'Bi-Weekly Reports + Monthly Strategy Review Call',
+				],
+				buttonLabel: 'Get Gold Package',
 				href: '/contact',
 			},
 			{
-				name: 'Platinum',
-				price: '£899',
+				name: 'Enterprise & Authority (Platinum)',
+				price: '£2299',
 				period: '/month',
-				text: webDesignText,
+				text: 'Best for established brands seeking aggressive market expansion and full-scale digital management.',
 				includedLabel: "What's Included",
-				items: webDesignItems,
-				buttonLabel: 'Get Website Pricing',
+				items: [
+					'Bespoke Web App, Custom Build or E-Commerce Store',
+					'Enterprise Hosting, CDN & 24/7 Priority Support',
+					'8 x Thought-Leadership Articles (1,500+ words)',
+					'20 Hours/Mo SEO (Audits, Schema & Global/Local)',
+					'20 Hours/Mo Design (Landing Pages, Motion Graphics)',
+					'Multi-Platform Paid Ads (Google, Meta, LinkedIn)',
+					'Social Media Management (3–4 Channels)',
+					'Email Automation & Lead-Nurturing Workflows',
+					'Monthly Conversion Rate Optimisation (A/B Testing)',
+					'Real-Time Dashboard & Dedicated Account Manager',
+				],
+				buttonLabel: 'Get Platinum Package',
 				href: '/contact',
 			},
 		],

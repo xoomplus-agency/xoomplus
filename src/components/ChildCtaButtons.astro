@@ -1,0 +1,67 @@
+---
+/**
+ * Shared primary + outline CTA row for child service pages (hero + Working together).
+ * Layout only — reuses `.btn` / `.btn-outline` (no new button styles).
+ */
+import Button from './Button.astro';
+import ButtonOutline from './ButtonOutline.astro';
+
+interface Props {
+	primaryLabel: string;
+	primaryHref?: string;
+	secondaryLabel: string;
+	/** Defaults to `#process` (hero). ChildProcess passes `#clarity`. */
+	secondaryHref?: string;
+	class?: string;
+}
+
+const {
+	primaryLabel,
+	primaryHref = '/contact',
+	secondaryLabel,
+	secondaryHref = '#process',
+	class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['child-cta', className]}>
+	<Button href={primaryHref} class="child-cta__primary">{primaryLabel}</Button>
+	<ButtonOutline class="child-cta__secondary px-7" href={secondaryHref}>
+		<span>{secondaryLabel}</span>
+	</ButtonOutline>
+</div>
+
+<style>
+	.child-cta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 16px;
+	}
+
+	/* Layout only — reuse shared .btn / .btn-outline styles */
+	.child-cta :global(.child-cta__primary) {
+		width: auto;
+		white-space: nowrap;
+	}
+
+	/* Same height as Pricing "Talk to Our Team" pairing (primary default ≈ 52px) */
+	.child-cta :global(.child-cta__secondary) {
+		height: 52px;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 639px) {
+		.child-cta {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 12px;
+		}
+
+		.child-cta :global(.child-cta__primary),
+		.child-cta :global(.child-cta__secondary) {
+			width: 100%;
+			white-space: normal;
+		}
+	}
+</style>

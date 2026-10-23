@@ -1,24 +1,40 @@
 ---
 import Button from './Button.astro';
+import ButtonOutline from './ButtonOutline.astro';
+import { SITE_EMAIL } from '../data/site-contact';
 
 interface Props {
+	/** Pre-header pill. Default keeps existing site CTA copy. */
+	pill?: string;
 	heading?: string;
 	text?: string;
 	buttonHref?: string;
 	buttonLabel?: string;
+	/** Optional outline secondary button (between primary and email). */
+	secondaryButtonHref?: string;
+	secondaryButtonLabel?: string;
+	/** Optional secondary link (defaults to email). Homepage can pass View Services. */
+	secondaryHref?: string;
+	secondaryLabel?: string;
 	/** Compact card for in-article placement (no page-section / container). */
 	embedded?: boolean;
 	id?: string;
 }
 
 const {
+	pill = 'Your next chapter',
 	heading: headingProp,
 	text = "Tell us what you're working towards. We'll explore the challenge, the possibilities and the right place to start.",
 	buttonHref = '#contact',
 	buttonLabel = 'Discuss your project',
+	secondaryButtonHref,
+	secondaryButtonLabel,
+	secondaryHref = SITE_EMAIL.href,
+	secondaryLabel = SITE_EMAIL.display,
 	embedded = false,
 	id = embedded ? 'blog-cta' : 'cta',
 } = Astro.props;
+const hasSecondaryButton = Boolean(secondaryButtonLabel && secondaryButtonHref);
 
 /** Site CTA keeps the design default heading; blog/embedded only shows a WP-provided heading. */
 const heading = embedded
@@ -49,7 +65,18 @@ const headingId = `${id}-heading`;
 				</div>
 				<div class="cta-card__right">
 					<Button href={buttonHref}>{buttonLabel}</Button>
-					<a class="cta-card__email" href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
+					{
+						hasSecondaryButton ? (
+							<ButtonOutline
+								variant="outline-dark"
+								href={secondaryButtonHref}
+								class="cta-card__secondary"
+							>
+								<span>{secondaryButtonLabel}</span>
+							</ButtonOutline>
+						) : null
+					}
+					<a class="cta-card__email" href={secondaryHref}>{secondaryLabel}</a>
 				</div>
 			</div>
 		</div>
@@ -67,15 +94,28 @@ const headingId = `${id}-heading`;
 				>
 					<div class="cta-card__inner">
 						<div class="cta-card__left" data-reveal="up">
-							<p class="pill-dark text-primary m-0">Your next chapter</p>
+							<p class="pill-dark text-primary m-0">{pill}</p>
 							<h2 id={headingId} class="cta-card__heading text-hero-h1 m-0 mt-4">
 								{heading}
 							</h2>
 							<p class="cta-card__copy m-0">{text}</p>
 						</div>
 						<div class="cta-card__right">
-							<Button href={buttonHref}>{buttonLabel}</Button>
-							<a class="cta-card__email" href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
+							<Button href={buttonHref}>
+								{buttonLabel}
+							</Button>
+							{
+								hasSecondaryButton ? (
+									<ButtonOutline
+										variant="outline-dark"
+										href={secondaryButtonHref}
+										class="cta-card__secondary"
+									>
+										<span>{secondaryButtonLabel}</span>
+									</ButtonOutline>
+								) : null
+							}
+							<a class="cta-card__email" href={secondaryHref}>{secondaryLabel}</a>
 						</div>
 					</div>
 				</div>
@@ -164,6 +204,14 @@ const headingId = `${id}-heading`;
 		gap: 16px;
 	}
 
+	/* Match primary CTA height (layout only — reuses outline-dark styles) */
+	.cta-card__right :global(.cta-card__secondary) {
+		height: 52px;
+		min-width: 220px;
+		padding-inline: 28px;
+		white-space: nowrap;
+	}
+
 	.cta-card__email {
 		font-family: var(--font-inter);
 		font-size: var(--text-small);
@@ -202,7 +250,8 @@ const headingId = `${id}-heading`;
 			width: 100%;
 		}
 
-		.cta-card__right :global(.btn) {
+		.cta-card__right :global(.btn),
+		.cta-card__right :global(.cta-card__secondary) {
 			width: 100%;
 		}
 	}
