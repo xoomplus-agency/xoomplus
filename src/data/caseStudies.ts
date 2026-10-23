@@ -690,6 +690,12 @@ export const caseStudies: CaseStudy[] = [
 			'Explore the GoPsych website and see how professional design, intuitive navigation and clear service pages come together to create a cohesive digital experience. From the homepage to specialist service information, each element helps visitors understand GoPsych’s offering and navigate the website with ease.',
 		showcaseButtonLabel: 'Explore the Live Website',
 		showcaseDesktopImage: '/images/gopsych-project-hero.webp',
+		showcaseMobileImage: '/images/gopsych-mobile-home-page.webp',
+		showcaseFrameImages: [
+			'/images/Gopsych-Home-Page-1.webp',
+			'/images/Gopsych-Service-Page.webp',
+		],
+		showcaseFrameTitles: ['Service section', 'Contact / enquiry section'],
 	}),
 	caseStudyFromTemplate({
 		slug: 'immolibre',
