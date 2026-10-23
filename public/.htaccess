@@ -34,12 +34,13 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 <IfModule mod_headers.c>
-  Header always set Strict-Transport-Security "max-age=300; includeSubDomains"
-  Header always set X-Content-Type-Options "nosniff"
-  Header always set X-Frame-Options "SAMEORIGIN"
-  Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://xoomplus.co.uk https://cms.xoomplus.co.uk https://*.googleapis.com https://*.gstatic.com https://*.google.com; font-src 'self' data:; frame-src https://www.google.com https://maps.google.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+	Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	Header always set X-Content-Type-Options "nosniff"
+	Header always set X-Frame-Options "SAMEORIGIN"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+	Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+	# CF7 + WP media/API: allow xoomplus.co.uk and cms.xoomplus.co.uk in connect-src / form-action / img-src
+	Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://xoomplus.co.uk https://cms.xoomplus.co.uk https://*.googleapis.com https://*.gstatic.com https://*.google.com; font-src 'self' data:; frame-src https://www.google.com https://maps.google.com; connect-src 'self' https://xoomplus.co.uk https://cms.xoomplus.co.uk; object-src 'none'; base-uri 'self'; form-action 'self' https://xoomplus.co.uk https://cms.xoomplus.co.uk; frame-ancestors 'self'; upgrade-insecure-requests"
 </IfModule>
 
 <IfModule mod_expires.c>
