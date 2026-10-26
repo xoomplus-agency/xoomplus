@@ -29,6 +29,8 @@ jobs:
           PUBLIC_WP_API: ${{ secrets.PUBLIC_WP_API }}
           # Ensure Node adapter (middleware), not Vercel
           VERCEL: ''
+          # Don't fail the deploy if CMS page IDs are temporarily unreachable
+          SKIP_WP_ROUTE_CHECK: '1'
         run: |
           npm ci
           npm run build
