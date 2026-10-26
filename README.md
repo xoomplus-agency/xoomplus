@@ -86,20 +86,20 @@ Search engines should use **`https://xoomplus.co.uk/sitemap_index.xml`** (Yoast)
 ### CMS hostname split
 
 ```bash
-WP_BASE_URL=https://cms.xoomplus.co.uk
-PUBLIC_WP_API=https://cms.xoomplus.co.uk/wp-json/wp/v2
+WP_BASE_URL=https://xoomplusagency.com
+PUBLIC_WP_API=https://xoomplusagency.com/wp-json/wp/v2
 SITE_URL=https://xoomplus.co.uk
-# WP_SITEMAP_ORIGIN=https://cms.xoomplus.co.uk   # only if different from WP_BASE_URL
+# WP_SITEMAP_ORIGIN=https://xoomplusagency.com   # only if different from WP_BASE_URL
 ```
 
 WordPress `wp-config.php` (recommended):
 
 ```php
 define('WP_HOME', 'https://xoomplus.co.uk');
-define('WP_SITEURL', 'https://cms.xoomplus.co.uk');
+define('WP_SITEURL', 'https://xoomplusagency.com');
 define('XP_PUBLIC_HOME_URL', 'https://xoomplus.co.uk');
 ```
 
-Copy `wordpress/mu-plugins/xoomplus-yoast-public-sitemap.php` into `wp-content/mu-plugins/` so Yoast emits public `<loc>` URLs even when the CMS host differs. Astro still proxies on the apex so crawlers never need `cms.*`.
+Copy `wordpress/mu-plugins/xoomplus-yoast-public-sitemap.php` into `wp-content/mu-plugins/` so Yoast emits public `<loc>` URLs even when the CMS host differs. Astro still proxies on the apex so crawlers never need the CMS host.
 
-**Important:** Once Astro serves the apex, `WP_BASE_URL` / `WP_SITEMAP_ORIGIN` must point at WordPress (cms / internal), not back at the Astro host — otherwise the proxy loops.
+**Important:** Once Astro serves the apex, `WP_BASE_URL` / `WP_SITEMAP_ORIGIN` must point at WordPress (`xoomplusagency.com`), not back at the Astro host — otherwise the proxy loops.

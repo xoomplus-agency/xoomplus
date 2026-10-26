@@ -27,6 +27,7 @@ const trust = [
 		title: 'Google Reviews',
 		subtitle: '100+ REVIEWS',
 		stars: 5,
+		href: 'https://share.google/9HGas7uC2s4lqsO2v',
 	},
 	{
 		id: 'trustpilot',
@@ -36,6 +37,7 @@ const trust = [
 		title: 'Trustpilot',
 		subtitleBefore: 'Based on ',
 		subtitleLink: '56 reviews',
+		href: 'https://www.trustpilot.com/review/xoomplus.co.uk',
 	},
 ];
 ---
@@ -220,68 +222,107 @@ const trust = [
 		aria-label="Trust signals"
 	>
 		{
-			trust.map((item, index) => (
-				<div
-					class:list={[
-						'flex min-w-0 items-center gap-3 px-[0.85rem] py-[0.35rem]',
-						index > 0 && 'border-l border-white/14 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-white/10 max-[560px]:pt-[0.85rem]',
-						index % 2 === 0 && 'max-[960px]:border-l-0',
-						index % 2 === 1 && 'max-[960px]:border-l max-[960px]:border-white/14',
-						index >= 2 && 'max-[960px]:border-t max-[960px]:border-white/10 max-[960px]:pt-[0.85rem]',
-					]}
-					role="listitem"
-				>
-					<img
-						src={item.icon}
-						alt=""
-						width={item.iconW}
-						height={item.iconH}
-						class="size-[47px] shrink-0 object-contain"
-						decoding="async"
-						loading="lazy"
-					/>
-					<div class="min-w-0 text-left">
-						{item.id === 'rating' ? (
-							<p class="m-0 flex items-baseline gap-1 whitespace-nowrap leading-tight max-[560px]:whitespace-normal">
-								<span class="text-[21px] font-semibold tracking-[-0.015em] text-[#F5F5F5]">
-									{item.ratingValue}
-								</span>
-								<span class="text-[12px] font-medium text-[#A7A7A7]">{item.ratingSuffix}</span>
-							</p>
-						) : (
-							<p class="m-0 text-[21px] font-semibold leading-tight tracking-[-0.015em] text-[#F5F5F5] whitespace-nowrap max-[560px]:whitespace-normal">
-								{item.title}
-							</p>
-						)}
+			trust.map((item, index) => {
+				const itemClass = [
+					'flex min-w-0 items-center gap-3 px-[0.85rem] py-[0.35rem]',
+					index > 0 && 'border-l border-white/14 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-white/10 max-[560px]:pt-[0.85rem]',
+					index % 2 === 0 && 'max-[960px]:border-l-0',
+					index % 2 === 1 && 'max-[960px]:border-l max-[960px]:border-white/14',
+					index >= 2 && 'max-[960px]:border-t max-[960px]:border-white/10 max-[960px]:pt-[0.85rem]',
+					item.id === 'trustpilot' && item.href && 'text-inherit no-underline hover:opacity-90',
+				];
 
-						{item.id === 'reviews' ? (
-							<p class="mt-[0.2rem] flex flex-wrap items-center gap-[0.35rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
-								<span class="inline-flex gap-0.5" aria-hidden="true">
-									{Array.from({ length: item.stars }).map(() => (
-										<img
-											src="/icons/star.svg"
-											alt=""
-											width="12"
-											height="12"
-											class="size-3"
-										/>
-									))}
-								</span>
-								{item.subtitle}
-							</p>
-						) : item.id === 'trustpilot' ? (
-							<p class="mt-[0.2rem] text-[14px] font-medium leading-snug text-[#FFFFFF] whitespace-nowrap max-[560px]:whitespace-normal">
-								{item.subtitleBefore}
-								<span class="underline underline-offset-[0.18em]">{item.subtitleLink}</span>
-							</p>
-						) : (
-							<p class="mt-[0.2rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
-								{item.subtitle}
-							</p>
-						)}
+				const content = (
+					<>
+						<img
+							src={item.icon}
+							alt=""
+							width={item.iconW}
+							height={item.iconH}
+							class="size-[47px] shrink-0 object-contain"
+							decoding="async"
+							loading="lazy"
+						/>
+						<div class="min-w-0 text-left">
+							{item.id === 'rating' ? (
+								<p class="m-0 flex items-baseline gap-1 whitespace-nowrap leading-tight max-[560px]:whitespace-normal">
+									<span class="text-[21px] font-semibold tracking-[-0.015em] text-[#F5F5F5]">
+										{item.ratingValue}
+									</span>
+									<span class="text-[12px] font-medium text-[#A7A7A7]">{item.ratingSuffix}</span>
+								</p>
+							) : item.id === 'reviews' && item.href ? (
+								<a
+									class="m-0 block text-[21px] font-semibold leading-tight tracking-[-0.015em] text-[#F5F5F5] whitespace-nowrap no-underline hover:opacity-90 max-[560px]:whitespace-normal"
+									href={item.href}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{item.title}
+								</a>
+							) : (
+								<p class="m-0 text-[21px] font-semibold leading-tight tracking-[-0.015em] text-[#F5F5F5] whitespace-nowrap max-[560px]:whitespace-normal">
+									{item.title}
+								</p>
+							)}
+
+							{item.id === 'reviews' ? (
+								<p class="mt-[0.2rem] flex flex-wrap items-center gap-[0.35rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
+									<span class="inline-flex gap-0.5" aria-hidden="true">
+										{Array.from({ length: item.stars }).map(() => (
+											<img
+												src="/icons/star.svg"
+												alt=""
+												width="12"
+												height="12"
+												class="size-3"
+											/>
+										))}
+									</span>
+									{item.href ? (
+										<a
+											class="text-inherit no-underline hover:opacity-90"
+											href={item.href}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{item.subtitle}
+										</a>
+									) : (
+										item.subtitle
+									)}
+								</p>
+							) : item.id === 'trustpilot' ? (
+								<p class="mt-[0.2rem] text-[14px] font-medium leading-snug text-[#FFFFFF] whitespace-nowrap max-[560px]:whitespace-normal">
+									{item.subtitleBefore}
+									<span class="underline underline-offset-[0.18em]">{item.subtitleLink}</span>
+								</p>
+							) : (
+								<p class="mt-[0.2rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
+									{item.subtitle}
+								</p>
+							)}
+						</div>
+					</>
+				);
+
+				return item.id === 'trustpilot' && item.href ? (
+					<a
+						class:list={itemClass}
+						role="listitem"
+						href={item.href}
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="Trustpilot reviews"
+					>
+						{content}
+					</a>
+				) : (
+					<div class:list={itemClass} role="listitem">
+						{content}
 					</div>
-				</div>
-			))
+				);
+			})
 		}
 	</div>
 </section>

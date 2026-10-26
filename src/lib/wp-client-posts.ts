@@ -22,7 +22,7 @@ export type ClientListResponse = { pages: ClientListPage[] };
 function apiBase(): string {
 	const raw =
 		(import.meta.env.PUBLIC_WP_API as string | undefined)?.trim() ||
-		'https://xoomplus.co.uk/wp-json/wp/v2';
+		'https://xoomplusagency.com/wp-json/wp/v2';
 	return raw.replace(/\/+$/, '');
 }
 

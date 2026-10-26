@@ -5,9 +5,9 @@ No Node on the server. WordPress stays the CMS; Astro HTML is built on your PC (
 ## 1. Configure `.env` (local build machine)
 
 ```env
-SITE_URL=https://yourdomain.com
-WP_BASE_URL=https://your-wordpress-site.com
-PUBLIC_WP_API=https://your-wordpress-site.com/wp-json/wp/v2
+SITE_URL=https://xoomplus.co.uk
+WP_BASE_URL=https://xoomplusagency.com
+PUBLIC_WP_API=https://xoomplusagency.com/wp-json/wp/v2
 PUBLIC_CF7_FORM_ID=123
 ```
 

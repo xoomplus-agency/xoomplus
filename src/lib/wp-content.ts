@@ -325,7 +325,13 @@ export function cleanWpPostHtml(html: string): string {
 	return normalizeCmsContactLinks(renderSync(ast).trim());
 }
 
-const CMS_HOSTS = new Set(['xoomplus.co.uk', 'www.xoomplus.co.uk']);
+const CMS_HOSTS = new Set([
+	'xoomplusagency.com',
+	'www.xoomplusagency.com',
+	// Legacy CMS host while permalinks / media still reference the old apex.
+	'xoomplus.co.uk',
+	'www.xoomplus.co.uk',
+]);
 
 /** Astro app paths that may appear as absolute CMS links. */
 const ASTRO_SITE_PATH_PREFIXES = [
@@ -399,7 +405,7 @@ function rewriteCmsPageLinks(nodes: Node[]): void {
 
 		let absolute: URL | null = null;
 		try {
-			absolute = new URL(href, 'https://xoomplus.co.uk');
+			absolute = new URL(href, 'https://xoomplusagency.com');
 		} catch {
 			continue;
 		}

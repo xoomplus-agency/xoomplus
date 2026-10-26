@@ -57,7 +57,7 @@ try {
 const siteHost = new URL(SITE_URL).host.toLowerCase();
 /** Only treat WP host as forbidden when it differs from the public site. */
 const forbiddenCmsHost =
-	cmsHost && cmsHost !== siteHost ? cmsHost : 'cms.xoomplus.co.uk';
+	cmsHost && cmsHost !== siteHost ? cmsHost : 'xoomplusagency.com';
 
 function locs(xml: string): string[] {
 	return [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1].trim());

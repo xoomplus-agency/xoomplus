@@ -9,7 +9,7 @@
 
 import type { WpPost } from './wp';
 
-const DEFAULT_API = 'https://xoomplus.co.uk/wp-json/wp/v2';
+const DEFAULT_API = 'https://xoomplusagency.com/wp-json/wp/v2';
 
 const LISTING_FIELDS =
 	'id,slug,link,date,status,title,excerpt,featured_media,categories,_links,_embedded';

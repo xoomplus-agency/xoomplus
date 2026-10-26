@@ -4,7 +4,7 @@ function strip(t) {
 }
 
 const site = process.argv[2] || 'http://127.0.0.1:4321';
-const api = (process.env.PUBLIC_WP_API || 'https://xoomplus.co.uk/wp-json/wp/v2').replace(
+const api = (process.env.PUBLIC_WP_API || 'https://xoomplusagency.com/wp-json/wp/v2').replace(
 	/\/+$/,
 	'',
 );

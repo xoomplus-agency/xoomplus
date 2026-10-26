@@ -10,7 +10,7 @@
 const PUBLIC = (process.env.SITE_URL || 'https://xoomplus.co.uk').replace(/\/+$/, '');
 /** Future CMS host used for rewrite-unit tests (not necessarily current WP_BASE_URL). */
 const CMS = (
-	process.env.WP_SITEMAP_CMS_TEST_ORIGIN || 'https://cms.xoomplus.co.uk'
+	process.env.WP_SITEMAP_CMS_TEST_ORIGIN || 'https://xoomplusagency.com'
 ).replace(/\/+$/, '');
 const site = (process.argv[2] || PUBLIC).replace(/\/+$/, '');
 const CMS_HOST = new URL(CMS).host.toLowerCase();

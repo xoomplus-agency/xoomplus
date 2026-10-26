@@ -1,7 +1,7 @@
 /**
  * WordPress posts (blog) — mapping helpers, categories, and compatibility wrappers.
  * All `/posts` HTTP goes through `./wp-posts` (unauthenticated, cache: no-store).
- * Base: PUBLIC_WP_API (default https://xoomplus.co.uk/wp-json/wp/v2)
+ * Base: PUBLIC_WP_API (default https://xoomplusagency.com/wp-json/wp/v2)
  */
 
 export type WpPostImage = {
@@ -33,7 +33,7 @@ export type WpPost = {
 	content: string;
 };
 
-const DEFAULT_API = 'https://xoomplus.co.uk/wp-json/wp/v2';
+const DEFAULT_API = 'https://xoomplusagency.com/wp-json/wp/v2';
 
 export {
 	BLOG_LIST_CACHE_CONTROL,

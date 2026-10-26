@@ -10,7 +10,7 @@ import {
 	getCf7FormConfig,
 } from './cf7-forms';
 
-const DEFAULT_WP_ORIGIN = 'https://xoomplus.co.uk';
+const DEFAULT_WP_ORIGIN = 'https://xoomplusagency.com';
 const CF7_VERSION = '6.2.2';
 
 function readPublic(name: string): string | undefined {
