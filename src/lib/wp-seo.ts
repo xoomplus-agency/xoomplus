@@ -24,29 +24,28 @@ export const WP_SEO_PAGES: Record<WpPageKey, { id: number }> = {
 	services: { id: 1062 },
 };
 
-/** Stable fallback paths when the CMS is unreachable (Vercel cold start / missing env). */
+/**
+ * Canonical public Astro paths (source of truth for routes / sitemap / redirects).
+ * Used even when the WordPress page slug still differs (e.g. WP `projects` → `/case-studies`).
+ */
 export const WP_PAGE_FALLBACK_ROUTES: Record<WpPageKey, string> = {
 	home: '/',
 	about: '/about',
 	industries: '/industries',
-	caseStudies: '/projects',
+	caseStudies: '/case-studies',
 	contact: '/contact',
-	blogs: '/blogs',
+	blogs: '/blog',
 	services: '/services',
 };
 
 export const CASE_STUDIES_WP_ID = WP_SEO_PAGES.caseStudies.id;
 
 /**
- * Former public paths that should 301 to the live CMS route when the slug moved.
- * Exact path match only (never prefixes — so `/services/seo` is untouched).
- */
-/**
  * Historical listing paths for mapped pages. Exact match only.
- * Whichever path is NOT the live CMS route 301s to the live route.
+ * Whichever path is NOT the live public route 301s to the live route.
+ * Do not list retired slug-change paths here — those should 404, not redirect.
  */
 export const WP_SEO_PATH_ALIASES: Partial<Record<WpPageKey, readonly string[]>> = {
-	caseStudies: ['/projects', '/case-studies'],
 	services: ['/our-services'],
 };
 
@@ -54,7 +53,7 @@ export const WP_SEO_PATH_ALIASES: Partial<Record<WpPageKey, readonly string[]>> 
 export const PAGE_SEO_ROUTES: Record<string, { id: number; slug?: string; syncSlug?: boolean }> =
 	Object.fromEntries(
 		(Object.entries(WP_SEO_PAGES) as [WpPageKey, { id: number }][]).map(([key, v]) => [
-			key === 'home' ? '/' : key === 'caseStudies' ? '/projects' : `/${key}`,
+			WP_PAGE_FALLBACK_ROUTES[key],
 			{ id: v.id, syncSlug: true },
 		]),
 	);
@@ -258,9 +257,9 @@ let allRoutesCache: {
 } | null = null;
 let allRoutesInflight: Promise<WpResolvedRoute[]> | null = null;
 
-function routeFromWpSlug(key: WpPageKey, slug: string): string {
-	if (key === 'home') return '/';
-	return normalizeSeoPath(`/${slug}`);
+function routeFromWpSlug(key: WpPageKey, _slug: string): string {
+	// Public paths are fixed in Astro; WP slug may lag (aliases 301 the old path).
+	return WP_PAGE_FALLBACK_ROUTES[key];
 }
 
 /** Cached live slug only — does not hit WordPress (used to detect slug changes). */

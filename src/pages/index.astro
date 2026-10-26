@@ -1,5 +1,4 @@
 ---
-/** On-demand so Yoast SEO refreshes without a full redeploy (memory cache + /api/revalidate). */
 export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
@@ -21,6 +20,12 @@ import CTASection from '../components/CTASection.astro';
 import { getPosts } from '../lib/wp-posts';
 import type { WpPost } from '../lib/wp';
 
+const HOME_SEO = {
+	title: 'Data-Driven Digital Marketing Agency Manchester | Xoomplus',
+	description:
+		'Turn data into growth with Xoomplus, a data-driven digital marketing agency in Manchester. SEO, PPC and web solutions built to generate leads.',
+} as const;
+
 // Start the 3-card fetch before layout SEO/nav work so it does not run after them.
 const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 	.then((r) => r.posts)
@@ -31,6 +36,9 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 ---
 
 <Layout
+	title={HOME_SEO.title}
+	description={HOME_SEO.description}
+	skipWpSeo
 	lcpImagePreload={{
 		href: '/videos/bg-hero-poster-640.avif',
 		imagesrcset:
@@ -48,7 +56,7 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 		<CaseStudies />
 		<Industries content={homeIndustries} />
 		<OurLocations />
-		<Testimonials />
+		<!-- <Testimonials /> -->
 		<Blogs posts={blogPosts} />
 		<!-- <FAQ page="home" /> -->
 		<ContactSection

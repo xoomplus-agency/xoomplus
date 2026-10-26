@@ -21,7 +21,7 @@ import {
 
 function isBlogsListingPath(pathname: string): boolean {
 	const p = pathname.replace(/\/+$/, '') || '/';
-	return p === '/blogs';
+	return p === '/blog' || p === '/blogs';
 }
 
 function isLegacyBlogSlugPath(pathname: string): boolean {

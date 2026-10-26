@@ -79,7 +79,7 @@ export function isHtmlCacheablePath(pathname: string): boolean {
 	}
 	if (p.endsWith('.xml') || p.endsWith('.xsl')) return false;
 	// /blogs uses server:defer — caching the shell leaves the grid on skeleton forever.
-	if (p === '/blogs' || p.startsWith('/blogs/')) return false;
+	if (p === '/blog' || p === '/blogs' || p.startsWith('/blogs/')) return false;
 	return true;
 }
 

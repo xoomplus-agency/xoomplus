@@ -45,6 +45,7 @@ export {
 /** Path prefixes owned by the Astro app — not WordPress blog categories. */
 export const RESERVED_BLOG_CATEGORY_SLUGS = new Set([
 	'api',
+	'blog',
 	'blogs',
 	'locations',
 	'pricing',

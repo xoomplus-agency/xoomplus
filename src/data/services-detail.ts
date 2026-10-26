@@ -188,7 +188,7 @@ export const servicesDetail: ServiceDetailEntry[] = [
 				scope:
 					'Intuitive layout structures, clear typography and clean navigation tailored to how your customers browse, ensuring every page leads to a logical next step.',
 				linkLabel: 'Explore UI/UX Design',
-				href: '/services/web-design-development/uiux-design',
+				href: '/services/web-design-development/ui-ux-design',
 			},
 			{
 				capability: 'Custom WordPress & Shopify Engineering',

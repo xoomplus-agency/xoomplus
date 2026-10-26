@@ -1,35 +1,15 @@
 ---
 /**
- * Privacy Policy — content from WordPress page slug `privacy-policy`.
- * Build fails if the CMS page is missing (footer links here).
+ * Static Privacy Policy — no WordPress fetch.
  */
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Section from '../components/Section.astro';
-import { getPage } from '../lib/wp';
-import { prepareCmsPageHtml } from '../lib/wp-content';
 import '../styles/prose-blog.css';
 
-const cmsPage = await getPage('privacy-policy');
-if (!cmsPage) {
-	throw new Error(
-		'[privacy-policy] WordPress page slug "privacy-policy" not found or not published. The footer links to /privacy-policy/.',
-	);
-}
-
-const title = cmsPage.seoTitle?.trim() || `${cmsPage.title} | Xoomplus`;
+const title = 'Privacy Policy | Xoomplus';
 const description =
-	cmsPage.seoDescription?.trim() ||
-	'Read the Xoomplus privacy policy to understand how we collect, use and protect your personal information.';
-const bodyHtml = prepareCmsPageHtml(cmsPage.content, cmsPage.title);
-
-const lastUpdated = cmsPage.modified
-	? new Date(cmsPage.modified).toLocaleDateString('en-GB', {
-			day: 'numeric',
-			month: 'long',
-			year: 'numeric',
-		})
-	: null;
+	'How XoomPlus collects, processes and protects your personal data when you visit xoomplus.co.uk or engage our digital services.';
 ---
 
 <Layout
@@ -40,23 +20,157 @@ const lastUpdated = cmsPage.modified
 	skipWpSeo={true}
 >
 	<main id="main-content" class="page-privacy-policy flex-1">
-		<PageHero title={cmsPage.title || 'Privacy Policy'} />
+		<PageHero title="Privacy Policy" />
 		<Section background="white" aria-label="Privacy Policy">
-			<div class="privacy-policy__column">
-				{
-					bodyHtml ? (
-						<div class="prose-blog" set:html={bodyHtml} />
-					) : (
-						<p class="privacy-policy__empty m-0">
-							This privacy policy is being updated. Please check back soon.
-						</p>
-					)
-				}
-				{
-					lastUpdated ? (
-						<p class="privacy-policy__updated m-0">Last updated: {lastUpdated}</p>
-					) : null
-				}
+			<div class="privacy-policy__column prose-blog">
+				<p class="privacy-policy__meta m-0">
+					<strong>Effective Date:</strong> April 15, 2024<br />
+					<strong>Last Updated:</strong> October 23, 2026
+				</p>
+
+				<p>
+					At XoomPlus, we respect your privacy and are committed to protecting your personal
+					data. This Privacy Policy details how we collect, process, and safeguard your
+					information when you visit xoomplus.co.uk or engage our digital services.
+				</p>
+
+				<h2>1. Who We Are</h2>
+				<p>
+					XoomPlus is a digital agency providing Search Engine Optimization (SEO), digital
+					marketing, web development, and graphic design solutions.
+				</p>
+				<p>
+					<strong>Office Address:</strong> 33 King St, Blackburn BB2 2DH, United Kingdom<br />
+					<strong>Website:</strong>
+					<a href="https://xoomplus.co.uk">xoomplus.co.uk</a><br />
+					<strong>Contact Email:</strong>
+					<a href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a>
+				</p>
+
+				<h2>2. Information We Collect</h2>
+				<p>We collect and process the following categories of data:</p>
+				<ul>
+					<li>
+						<strong>Identity &amp; Contact Data:</strong> Name, email address, telephone number,
+						and company details.
+					</li>
+					<li>
+						<strong>Technical &amp; Usage Data:</strong> IP address, browser type, operating
+						system, pages visited, and browsing patterns.
+					</li>
+					<li>
+						<strong>Communication Preferences:</strong> Preferences regarding marketing
+						communications and record of consents.
+					</li>
+				</ul>
+
+				<h2>3. How We Use Your Information</h2>
+				<p>We use your data strictly for legitimate operational purposes:</p>
+				<ul>
+					<li>Executing and delivering contracted services</li>
+					<li>Responding to support queries and project inquiries</li>
+					<li>Enhancing website functionality and service performance</li>
+					<li>Sending marketing communications (strictly with your opt-in consent)</li>
+					<li>Fulfilling statutory, regulatory, and legal obligations</li>
+				</ul>
+
+				<h2>4. Legal Basis for Processing (UK GDPR)</h2>
+				<p>
+					We process personal data under one or more of the following lawful bases:
+				</p>
+				<ul>
+					<li>
+						<strong>Contractual Necessity:</strong> To perform services requested by you.
+					</li>
+					<li>
+						<strong>Consent:</strong> For direct marketing communications, revocable at any time.
+					</li>
+					<li>
+						<strong>Legitimate Interests:</strong> To improve services, protect against fraud, and
+						maintain network security.
+					</li>
+					<li>
+						<strong>Legal Obligation:</strong> To satisfy applicable regulatory and compliance
+						requirements.
+					</li>
+				</ul>
+
+				<h2>5. Data Sharing &amp; Third Parties</h2>
+				<p>
+					We do not sell, rent, or trade your personal data. Disclosures are limited to:
+				</p>
+				<ul>
+					<li>
+						Trusted service providers handling hosting, analytics, and CRM infrastructure.
+					</li>
+					<li>
+						Legal and regulatory authorities when mandated by applicable law.
+					</li>
+				</ul>
+				<p>
+					All third parties are contractually bound to maintain strict confidentiality and data
+					protection standards.
+				</p>
+
+				<h2>6. International Data Transfers</h2>
+				<p>
+					When data must be processed outside the United Kingdom or EEA, we ensure appropriate
+					safeguards—such as Standard Contractual Clauses (SCCs) or adequacy regulations—are in
+					place to ensure equivalent protection.
+				</p>
+
+				<h2>7. Security &amp; Retention</h2>
+				<ul>
+					<li>
+						<strong>Security:</strong> We apply strict technical and organizational controls to
+						protect personal data against unauthorized access, loss, or misuse.
+					</li>
+					<li>
+						<strong>Retention:</strong> Data is kept only as long as necessary to deliver services
+						and fulfill statutory accounting, tax, or legal retention obligations, after which it
+						is securely deleted.
+					</li>
+				</ul>
+
+				<h2>8. Your Data Protection Rights</h2>
+				<p>Under UK data protection law, you have the right to:</p>
+				<ul>
+					<li>Access, update, or rectify your personal data</li>
+					<li>Request erasure (&quot;right to be forgotten&quot;)</li>
+					<li>Restrict or object to data processing</li>
+					<li>Request data portability</li>
+					<li>Withdraw marketing consent at any time</li>
+				</ul>
+
+				<h2>9. Cookies &amp; Third-Party Links</h2>
+				<ul>
+					<li>
+						<strong>Cookies:</strong> We utilize functional and analytical cookies to ensure site
+						functionality and evaluate user engagement. You can manage or disable cookie settings
+						via your browser.
+					</li>
+					<li>
+						<strong>External Links:</strong> Our site may link to third-party platforms. We are not
+						responsible for the privacy practices or policies of external sites.
+					</li>
+				</ul>
+
+				<h2>10. Updates to This Policy</h2>
+				<p>
+					We review and update this policy periodically. Revisions take effect immediately upon
+					posting to this page with the updated revision date.
+				</p>
+
+				<h2>11. Contact Us</h2>
+				<p>
+					For questions regarding this policy or to exercise your statutory privacy rights,
+					contact:
+				</p>
+				<p>
+					<strong>Email:</strong>
+					<a href="mailto:info@xoomplus.co.uk">info@xoomplus.co.uk</a><br />
+					<strong>Postal Address:</strong> XoomPlus, 33 King St, Blackburn BB2 2DH, United Kingdom
+				</p>
 			</div>
 		</Section>
 	</main>
@@ -68,18 +182,11 @@ const lastUpdated = cmsPage.modified
 		margin-inline: auto;
 	}
 
-	.privacy-policy__updated {
-		margin-top: 2rem;
+	.privacy-policy__meta {
+		margin-bottom: 1.5rem;
 		font-family: var(--font-inter);
-		font-size: 13px;
-		line-height: 1.5;
-		color: #888888;
-	}
-
-	.privacy-policy__empty {
-		font-family: var(--font-inter);
-		font-size: 1rem;
+		font-size: 0.95rem;
 		line-height: 1.6;
-		color: var(--color-primary-black);
+		color: #555555;
 	}
 </style>

@@ -6,9 +6,9 @@ export const ppcGoogleAds: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Focused campaigns. A clearer path from click to conversion.',
-	metaTitle: 'PPC & Google Ads | Xoomplus',
+	metaTitle: 'Google Ads Agency | PPC Management | Xoomplus',
 	metaDescription:
-		'Focused paid search and Google Ads campaigns with clear priorities, aligned landing experiences, and measurable conversion paths.',
+		'Get more leads from every pound spent. Xoomplus manages PPC and Google Ads in Manchester, with tracked campaigns and clear reporting.',
 	children: [
 		// Name kept for mega menu; page not generated (disabled).
 		{

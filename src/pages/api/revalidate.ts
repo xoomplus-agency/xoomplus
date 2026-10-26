@@ -105,7 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
 		clearWpCache();
 		invalidateWpSeoCache(typeof body.id === 'number' ? body.id : undefined);
 
-		const paths = new Set<string>(['/blogs', '/']);
+		const paths = new Set<string>(['/blog', '/blogs', '/']);
 		if (typeof body.path === 'string' && body.path.length > 0) {
 			paths.add(normalizePurgePath(body.path));
 		} else if (

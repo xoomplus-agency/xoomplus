@@ -73,10 +73,21 @@ export const CHILD_SERVICE_HERO_HEIGHT = 458;
 
 const CHILD_HERO_EXTS = ['webp', 'jpg', 'jpeg', 'png', 'avif'] as const;
 
+/** Legacy asset prefixes kept after URL slug renames. */
+const CHILD_HERO_SLUG_ALIASES: Record<string, string[]> = {
+	'ai-seo': ['ai-seo-geo-and-aeo'],
+	'link-building': ['link-building-off-page'],
+	'ui-ux-design': ['uiux-design'],
+	'uiux-design': ['ui-ux-design'],
+};
+
 function childHeroSlugCandidates(childSlug: string): string[] {
 	const variants = new Set<string>([childSlug]);
 	if (childSlug.includes('uiux')) variants.add(childSlug.replaceAll('uiux', 'ui-ux'));
 	if (childSlug.includes('ui-ux')) variants.add(childSlug.replaceAll('ui-ux', 'uiux'));
+	for (const alias of CHILD_HERO_SLUG_ALIASES[childSlug] ?? []) {
+		variants.add(alias);
+	}
 	return [...variants];
 }
 

@@ -84,11 +84,11 @@ export const servicesMenu: ServicesMenu = {
 			href: '/services/seo',
 			description: 'Build visibility. Reach the right audience.',
 			links: [
-				link('AI SEO (GEO & AEO)', 'seo'),
+				link('AI SEO (GEO & AEO)', 'seo', 'ai-seo'),
 				link('Local SEO', 'seo'),
 				link('Technical SEO', 'seo'),
 				link('On-Page SEO', 'seo'),
-				link('Link Building (Off-Page)', 'seo'),
+				link('Link Building (Off-Page)', 'seo', 'link-building'),
 				link('E-Commerce SEO', 'seo', 'e-commerce-seo'),
 				link('SEO Audit', 'seo'),
 			],
@@ -103,7 +103,7 @@ export const servicesMenu: ServicesMenu = {
 					label: 'Experience and design',
 					links: [
 						// Explicit slug: slash in "UI/UX" must not become a hyphen
-						link('UI/UX Design', 'web-design-development', 'uiux-design'),
+						link('UI/UX Design', 'web-design-development', 'ui-ux-design'),
 						link('Landing Page Design', 'web-design-development'),
 						link('Website Redesign', 'web-design-development'),
 					],

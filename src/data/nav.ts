@@ -33,14 +33,14 @@ export const navItems: NavItem[] = [
 	{ label: 'Industries', href: '/industries' },
 	{
 		label: 'Case Studies',
-		href: '/projects',
-		matchPrefixes: ['/projects', '/case-studies'],
+		href: '/case-studies',
+		matchPrefixes: ['/case-studies', '/projects'],
 	},
 	{ label: 'Contact', href: '/contact' },
 	{
 		label: 'Blog',
-		href: '/blogs',
-		matchPrefixes: ['/blogs'],
+		href: '/blog',
+		matchPrefixes: ['/blog', '/blogs'],
 		matchBlogPosts: true,
 	},
 ];
@@ -88,9 +88,9 @@ export async function getNavItemsResolved(): Promise<NavItem[]> {
 		if (def.hasDropdown) {
 			matchPrefixes = [href, servicesHref, '/services'];
 		} else if (def.key === 'blogs') {
-			matchPrefixes = [href, '/blogs'];
+			matchPrefixes = [href, '/blog', '/blogs'];
 		} else if (def.key === 'caseStudies') {
-			matchPrefixes = [href, '/projects', '/case-studies'];
+			matchPrefixes = [href, '/case-studies', '/projects'];
 		}
 		items.push({
 			label: def.label,
@@ -115,7 +115,8 @@ function isBlogPostPath(pathname: string): boolean {
 		!p.startsWith('/services/') &&
 		!p.startsWith('/api/') &&
 		!p.startsWith('/locations/') &&
-		!p.startsWith('/case-studies/')
+		!p.startsWith('/case-studies/') &&
+		!p.startsWith('/blog/')
 	);
 }
 

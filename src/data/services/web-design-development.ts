@@ -4,8 +4,8 @@ import { serviceHeroImage } from './images';
 const SLUG = 'web-design-development';
 const NAME = 'Web Design & Development';
 
-// Menu URL source of truth: uiux-design (not ui-ux-design)
-const uiuxChild = makeChildService(NAME, 'uiux-design', 'UI/UX Design', {
+// Menu URL source of truth: ui-ux-design
+const uiuxChild = makeChildService(NAME, 'ui-ux-design', 'UI/UX Design', {
 	placeholder: false,
 	shortName: 'UI/UX',
 	secondaryLabel: 'Explore Our Design Process ↓',
@@ -61,15 +61,15 @@ export const webDesignDevelopment: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Purposeful experiences. Stronger websites.',
-	metaTitle: 'Web Design & Development | Xoomplus',
+	metaTitle: 'Web Design and Development Agency | Xoomplus',
 	metaDescription:
-		'Purposeful web design and development — responsive sites, clear user journeys, and experiences aligned with your business goals.',
+		'Custom web design and development agency in Manchester built around your business. Fast, mobile-friendly websites that turn visitors into customers.',
 	children: [
 		{
 			...uiuxChild,
-			metaTitle: 'UI/UX Design Agency in Manchester | Xoomplus',
+			metaTitle: 'UI and UX Design Agency | User-Focused Design',
 			metaDescription:
-				'UI/UX design that makes websites simple to use, quick to navigate and easy to act on — turning clicks into enquiries and sales across Manchester and the UK.',
+				'Xoomplus is a UI and UX design agency in Manchester creating intuitive, user-focused interfaces that keep visitors engaged and convert.',
 			// Hero image: /images/ui-ux-design.webp (falls back to .jpg until webp is added).
 			hero: {
 				...uiuxChild.hero,
@@ -335,6 +335,9 @@ export const webDesignDevelopment: MainService = {
 		},
 		{
 			...landingChild,
+			metaTitle: 'Landing Page Design Services | Boost Conversions',
+			metaDescription:
+				'Paying for traffic that doesn’t convert? Xoomplus designs landing pages in Manchester built to capture leads and lift your ad and campaign results.',
 			hero: {
 				...landingChild.hero,
 				pill: 'Landing Page Design Agency in Manchester',
@@ -607,6 +610,9 @@ export const webDesignDevelopment: MainService = {
 		// PLACEHOLDER: replace with real content
 		{
 			...redesignChild,
+			metaTitle: 'Website Redesign Services | SEO-Safe Redesigns',
+			metaDescription:
+				'Website redesign services that refresh your design, speed and UX without losing rankings. SEO-safe migrations from Xoomplus in Manchester. Get a quote.',
 			hero: {
 				...redesignChild.hero,
 				pill: 'Website Redesign',
@@ -854,6 +860,9 @@ export const webDesignDevelopment: MainService = {
 		// PLACEHOLDER: replace with real content
 		{
 			...wordpressChild,
+			metaTitle: 'WordPress Development Manchester | Custom Sites',
+			metaDescription:
+				'Need an easy-to-manage website? Xoomplus is a WordPress development agency in Manchester building custom themes, plugins and secure sites. Get a quote.',
 			hero: {
 				...wordpressChild.hero,
 				pill: 'WordPress Development',
@@ -1104,6 +1113,9 @@ export const webDesignDevelopment: MainService = {
 		// PLACEHOLDER: replace with real content
 		{
 			...shopifyChild,
+			metaTitle: 'Shopify Development Company Manchester | Xoomplus',
+			metaDescription:
+				'Launch or upgrade your online store with Shopify development in Manchester. Custom themes, app integrations and smooth checkouts that sell. Book a call.',
 			hero: {
 				...shopifyChild.hero,
 				pill: 'Shopify Development',
@@ -1363,6 +1375,9 @@ export const webDesignDevelopment: MainService = {
 		},
 		{
 			...ecommerceChild,
+			metaTitle: 'Ecommerce Website Development Agency | Xoomplus',
+			metaDescription:
+				'Build an online store made to convert. Ecommerce development in Manchester covering secure payments, product management and mobile-first design. Enquire now.',
 			hero: {
 				...ecommerceChild.hero,
 				pill: 'Ecommerce Development',
@@ -1625,6 +1640,9 @@ export const webDesignDevelopment: MainService = {
 		},
 		{
 			...customWebsiteChild,
+			metaTitle: 'Custom Website Development Services | Xoomplus',
+			metaDescription:
+				'No templates, no limits. Xoomplus delivers custom website development in Manchester, built around your goals, your brand and your customers.',
 			hero: {
 				...customWebsiteChild.hero,
 				pill: 'Custom Website Development',
@@ -1940,7 +1958,7 @@ export const webDesignDevelopment: MainService = {
 				icon: 'ui-ux-design',
 				title: 'UI/UX Design',
 				text: 'Create an intuitive user experience with clear layouts and easy navigation, helping visitors find information and complete key actions effortlessly.',
-				href: `/services/${SLUG}/uiux-design`,
+				href: `/services/${SLUG}/ui-ux-design`,
 			},
 			{
 				icon: 'landing-page-design',

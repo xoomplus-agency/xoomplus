@@ -341,6 +341,7 @@ const ASTRO_SITE_PATH_PREFIXES = [
 	'/industries',
 	'/projects',
 	'/blogs',
+	'/blog',
 	'/pricing',
 	'/privacy-policy',
 	'/locations',
@@ -351,6 +352,7 @@ const ASTRO_SITE_PATH_PREFIXES = [
 /** Mirrors RESERVED_BLOG_CATEGORY_SLUGS without importing wp.ts (cycle risk). */
 const RESERVED_LIKE = new Set([
 	'api',
+	'blog',
 	'blogs',
 	'locations',
 	'pricing',

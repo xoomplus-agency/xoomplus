@@ -389,11 +389,11 @@ function buildLocationRows(slug: string): LocationRow[] {
 
 const locationsSource: Location[] = [
 	{
-		slug: 'blackburn',
+		slug: 'Blackburn',
 		name: 'Blackburn',
-		metaTitle: 'Blackburn UK | Xoomplus',
+		metaTitle: 'Digital Marketing Agency Blackburn | Xoomplus',
 		metaDescription:
-			'Digital marketing, web design, SEO and social media for businesses in Blackburn, UK. Talk to Xoomplus about your project.',
+			'Digital marketing agency in Blackburn helping local businesses grow with SEO, web design, PPC and social media. Work with senior specialists. Get a quote.',
 		hero: {
 			pill: 'Location:',
 			pillBrand: 'Blackburn',
@@ -452,7 +452,7 @@ const locationsSource: Location[] = [
 				],
 			},
 		},
-		rows: buildLocationRows('blackburn'),
+		rows: buildLocationRows('blackburn'), // image asset prefix (lowercase)
 		clarity: {
 			id: 'clarity',
 			variant: 'centered',
@@ -630,9 +630,9 @@ const locationsSource: Location[] = [
 	{
 		slug: 'manchester',
 		name: 'Manchester',
-		metaTitle: 'Manchester UK | Xoomplus',
+		metaTitle: 'Digital Marketing Agency Manchester | Xoomplus',
 		metaDescription:
-			'Digital marketing, web design, SEO and social media for businesses in Manchester, UK. Talk to Xoomplus about your project.',
+			'Digital marketing agency in Manchester helping Greater Manchester businesses get more leads with SEO, web design, PPC and social media. Book a call.',
 		hero: {
 			pill: 'Location:',
 			pillBrand: 'Manchester',

@@ -6,9 +6,9 @@ export const socialMediaMarketing: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Connect your message with the right people.',
-	metaTitle: 'Social Media Marketing | Xoomplus',
+	metaTitle: 'Social Media Marketing Agency Manchester | Xoomplus',
 	metaDescription:
-		'Connect your message with the right people through thoughtful social content, creative direction, and consistent channel presence.',
+		'Grow your brand with Xoomplus, a social media marketing agency in Manchester. Content, campaigns and reporting that drive engagement and sales.',
 	children: [
 		// Name kept for mega menu; page not generated (disabled).
 		{

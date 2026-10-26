@@ -4,7 +4,7 @@ import { childServiceHeroImage } from './images';
 
 const SLUG = 'seo';
 const NAME = 'SEO';
-const aiSeoChild = makeChildService(NAME, 'ai-seo-geo-and-aeo', 'AI SEO (GEO & AEO)', {
+const aiSeoChild = makeChildService(NAME, 'ai-seo', 'AI SEO (GEO & AEO)', {
 	placeholder: false,
 	shortName: 'AI SEO',
 	secondaryLabel: 'Learn How AI Search Works ↓',
@@ -28,7 +28,7 @@ const onPageSeoChild = makeChildService(NAME, 'on-page-seo', 'On-Page SEO', {
 	secondaryLabel: 'How On-Page Optimisation Works ↓',
 });
 
-const linkBuildingChild = makeChildService(NAME, 'link-building-off-page', 'Link Building (Off-Page)', {
+const linkBuildingChild = makeChildService(NAME, 'link-building', 'Link Building (Off-Page)', {
 	placeholder: false,
 	shortName: 'Link Building',
 	secondaryLabel: 'How Editorial Link Building Works ↓',
@@ -50,15 +50,15 @@ export const seo: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Build visibility. Reach the right audience.',
-	metaTitle: 'SEO Services | Xoomplus',
+	metaTitle: 'SEO Agency Manchester - Rank Higher With Xoomplus',
 	metaDescription:
-		'Improve search visibility and reach the right audience with SEO strategy, technical foundations, and content that supports long-term organic growth.',
+		'Struggling to get found on Google? Our Manchester SEO agency builds search strategies that bring qualified leads and growth. Get a quote.',
 	children: [
 		{
 			...aiSeoChild,
-			metaTitle: 'AI SEO in Manchester | Xoomplus',
+			metaTitle: 'AI SEO Services - GEO & AEO Agency Manchester',
 			metaDescription:
-				'Prepare your website for AI search with GEO and AEO strategies that help your business get cited by leading AI platforms.',
+				'Get found in ChatGPT, Google AI Overviews and Perplexity. Xoomplus helps Manchester brands win AI search with GEO and AEO strategies.',
 			hero: {
 				...aiSeoChild.hero,
 				pill: 'GEO & AEO',
@@ -299,9 +299,9 @@ export const seo: MainService = {
 		},
 		{
 			...localSeoChild,
-			metaTitle: 'Local SEO Agency in Manchester | Xoomplus',
+			metaTitle: 'Local SEO Services Manchester - Rank in Google Maps',
 			metaDescription:
-				'Turn high-intent regional searches into commercial inquiries with Local SEO across Manchester, Salford, Trafford and surrounding regions.',
+				'Show up when Manchester customers search. Xoomplus delivers local SEO services in Manchester, from Google Business Profile to citations and reviews.',
 			hero: {
 				...localSeoChild.hero,
 				pill: 'Local Search & Google Map Pack Visibility',
@@ -545,9 +545,9 @@ export const seo: MainService = {
 		},
 		{
 			...technicalSeoChild,
-			metaTitle: 'Technical SEO Agency in Manchester | Xoomplus',
+			metaTitle: 'Technical SEO Agency Manchester - Fix Crawl & Speed Issues',
 			metaDescription:
-				'Build fast, error-free website foundations with Technical SEO — Core Web Vitals, crawlability and indexation that Google rewards across Manchester and the UK.',
+				'Slow speeds and crawl errors hold rankings back. Xoomplus technical SEO services in Manchester fix site structure, Core Web Vitals and indexing.',
 			hero: {
 				...technicalSeoChild.hero,
 				pill: 'Technical Website Architecture & Search Engine Crawlability',
@@ -800,9 +800,9 @@ export const seo: MainService = {
 		},
 		{
 			...onPageSeoChild,
-			metaTitle: 'On-Page SEO Agency in Manchester | Xoomplus',
+			metaTitle: 'On Page SEO Services - Optimise Every Page',
 			metaDescription:
-				'Align every page with commercial search intent through On-Page SEO — title tags, semantic headings, internal linking and conversion pathways across Manchester and the UK.',
+				'Turn your pages into ranking pages. Xoomplus optimises titles, content, internal links and UX with on-page SEO in Manchester. Get a quote.',
 			hero: {
 				...onPageSeoChild.hero,
 				pill: 'On-Page Search Optimisation',
@@ -1048,9 +1048,9 @@ export const seo: MainService = {
 		},
 		{
 			...linkBuildingChild,
-			metaTitle: 'Off-Page SEO Agency in Manchester | Xoomplus',
+			metaTitle: 'Link Building Services | White-Hat Backlinks',
 			metaDescription:
-				'Drive sustainable search rankings with editorial link building and off-page SEO — genuine UK placements that build durable domain authority across Manchester and the North West.',
+				'Earn authoritative backlinks that move rankings. Xoomplus builds white-hat, relevant links for UK businesses through outreach and digital PR. Get a quote.',
 			hero: {
 				...linkBuildingChild.hero,
 				pill: 'Off-Page Search Engine Optimisation & Domain Authority',
@@ -1302,9 +1302,9 @@ export const seo: MainService = {
 		},
 		{
 			...ecommerceSeoChild,
-			metaTitle: 'Ecommerce SEO Agency in Manchester | Xoomplus',
+			metaTitle: 'E-Commerce SEO Agency - Grow Your Online Sales',
 			metaDescription:
-				'Turn product search into predictable revenue with Ecommerce SEO — category architecture, product schema and high-intent shopping queries across Shopify, WooCommerce and Magento.',
+				'Sell more without paying for every click. Our e-commerce SEO agency in Manchester optimises product and category pages to boost sales. Get a quote.',
 			hero: {
 				...ecommerceSeoChild.hero,
 				pill: 'Ecommerce Search Optimisation & Category Architecture',
@@ -1557,9 +1557,9 @@ export const seo: MainService = {
 		},
 		{
 			...seoAuditChild,
-			metaTitle: 'SEO Audit Agency in Manchester | Xoomplus',
+			metaTitle: 'SEO Audit Services - Full Website Audit',
 			metaDescription:
-				'Uncover the bottlenecks stopping your organic revenue with a comprehensive SEO audit — developer-ready technical roadmaps across Manchester and the UK.',
+				'Find out why your site isn’t ranking. Xoomplus SEO audits in Manchester cover technical, on-page, content and backlinks, with an action plan. Book today.',
 			hero: {
 				...seoAuditChild.hero,
 				pill: 'Comprehensive Technical & Strategic Diagnostics',
@@ -1885,7 +1885,7 @@ export const seo: MainService = {
 				title: 'AI SEO (GEO & AEO)',
 				text: 'Position your brand as the primary source cited by conversational AI engines like Google Gemini, Perplexity and ChatGPT Search.',
 				linkLabel: 'Explore AI SEO →',
-				href: '/services/seo/ai-seo-geo-and-aeo',
+				href: '/services/seo/ai-seo',
 			},
 			{
 				icon: 'sopify-development',
@@ -1913,7 +1913,7 @@ export const seo: MainService = {
 				title: 'High-Authority Link Building',
 				text: 'Build domain authority and trust through verified, high-quality editorial links from recognised UK publications.',
 				linkLabel: 'Explore Link Building →',
-				href: '/services/seo/link-building-off-page',
+				href: '/services/seo/link-building',
 			},
 			{
 				icon: 'ecommerce-development',
