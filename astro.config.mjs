@@ -29,6 +29,7 @@ export default defineConfig({
 
   // Static by default; SEO pages + revalidate API opt into on-demand via `prerender = false`.
   // Homepage SSR calls WordPress several times — give the serverless function enough time.
+  // Vercel → Vercel adapter. cPanel / VPS → Node middleware (Express + server.js, no Docker).
   adapter: useVercel
     ? vercel({
         maxDuration: 60,
@@ -47,7 +48,7 @@ export default defineConfig({
           ],
         },
       })
-    : node({ mode: 'standalone' }),
+    : node({ mode: 'middleware' }),
 
   integrations: [react()],
 
