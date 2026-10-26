@@ -7,6 +7,8 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 
 import tailwindcss from '@tailwindcss/vite';
+import { REMOVED_CHILD_PAGES } from './src/config.ts';
+import { getDisabledChildRedirects } from './src/data/services/index.ts';
 
 // Load all env keys (not only VITE_/PUBLIC_) for `site` configuration.
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
@@ -14,10 +16,16 @@ const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
 // Vercel sets VERCEL=1 during build/runtime. Keep Node standalone for VPS builds.
 const useVercel = process.env.VERCEL === '1';
 
+/** Built from `disabled: true` children when REMOVED_CHILD_PAGES === "redirect-parent". */
+const removedChildRedirects =
+  REMOVED_CHILD_PAGES === 'redirect-parent' ? getDisabledChildRedirects() : {};
+
 // https://astro.build/config
 export default defineConfig({
   // Only set when SITE_URL is provided — prevents accidental production canonicals in staging.
   site: env.SITE_URL || undefined,
+
+  redirects: removedChildRedirects,
 
   // Static by default; SEO pages + revalidate API opt into on-demand via `prerender = false`.
   // Homepage SSR calls WordPress several times — give the serverless function enough time.
@@ -60,7 +68,7 @@ export default defineConfig({
   },
 
   // /services is served by src/pages/services/index.astro (WP page ID 1062).
-  // No redirects — clean URLs only.
+  // Disabled-child redirects (optional) come from REMOVED_CHILD_PAGES + disabled flags.
 
   vite: {
     plugins: [tailwindcss()],

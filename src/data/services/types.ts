@@ -143,11 +143,21 @@ export type ChildClarityColumn = IndustryClarityColumn;
 /** Child-page clarity block — same shape as IndustryClarity. */
 export type ChildClarityData = IndustryClaritySection;
 
-export type ChildService = {
+/** Name-only stub — kept for mega menu; no page generated when `disabled: true`. */
+export type ChildServiceDisabled = {
+	slug: string;
+	name: string;
+	shortName?: string;
+	disabled: true;
+};
+
+/** Full child page — generated at /services/<main>/<child>. */
+export type ChildServiceLive = {
 	slug: string;
 	name: string;
 	/** Short name for hero primary CTA — falls back to `name`. */
 	shortName?: string;
+	disabled?: false;
 	/**
 	 * Secondary hero CTA label.
 	 * Default: "Explore Our Design Process" (Web Design & Development) or
@@ -201,6 +211,12 @@ export type ChildService = {
 	 */
 	serviceStack?: import('../child-services').ChildServicesDraft;
 };
+
+export type ChildService = ChildServiceLive | ChildServiceDisabled;
+
+export function isChildServiceLive(child: ChildService): child is ChildServiceLive {
+	return child.disabled !== true;
+}
 
 export type MainService = {
 	slug: string;

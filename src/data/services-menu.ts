@@ -4,6 +4,8 @@ export type MenuLink = {
 	label: string;
 	/** Omit to show label-only text (not a link). */
 	href?: string;
+	/** Name stays visible in desktop mega menu but is not a link (and hidden on mobile). */
+	disabled?: boolean;
 };
 
 export type ServiceGroup = {
@@ -69,6 +71,11 @@ function textLink(label: string, parentSlug: string, childSlug: string): MenuLin
 	return { label, href: `/services/${parentSlug}/${childSlug}` };
 }
 
+/** Desktop-only label (no href) — page removed / disabled. */
+function textLabel(label: string): MenuLink {
+	return { label, disabled: true };
+}
+
 export const servicesMenu: ServicesMenu = {
 	columns: [
 		{
@@ -120,17 +127,9 @@ export const servicesMenu: ServicesMenu = {
 					href: '/services/social-media-marketing',
 					description: 'Connect your message with the right people.',
 					textLinks: [
-						textLink(
-							'Content & creative direction',
-							'social-media-marketing',
-							'content-creative-direction',
-						),
-						textLink('Campaign planning', 'social-media-marketing', 'campaign-planning'),
-						textLink(
-							'Reporting & refinement',
-							'social-media-marketing',
-							'reporting-refinement',
-						),
+						textLabel('Content & creative direction'),
+						textLabel('Campaign planning'),
+						textLabel('Reporting & refinement'),
 					],
 				},
 				{
@@ -138,13 +137,9 @@ export const servicesMenu: ServicesMenu = {
 					href: '/services/ppc-google-ads',
 					description: 'Focused campaigns. A clearer path from click to conversion.',
 					textLinks: [
-						textLink(
-							'Audience & keyword research',
-							'ppc-google-ads',
-							'audience-keyword-research',
-						),
-						textLink('Landing page alignment', 'ppc-google-ads', 'landing-page-alignment'),
-						textLink('Reporting & refinement', 'ppc-google-ads', 'reporting-refinement'),
+						textLabel('Audience & keyword research'),
+						textLabel('Landing page alignment'),
+						textLabel('Reporting & refinement'),
 					],
 				},
 			],
@@ -159,7 +154,10 @@ export const servicesMenu: ServicesMenu = {
 	},
 };
 
-/** Flatten menu columns for the mobile accordion (title + child links). */
+/**
+ * Flatten menu columns for the mobile accordion (title + child links).
+ * Disabled labels stay visible as plain text (no href) — same names as desktop mega menu.
+ */
 export function getServicesMenuSections() {
 	const sections: { title: string; href: string; links: MenuLink[] }[] = [];
 

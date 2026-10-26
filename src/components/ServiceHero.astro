@@ -704,7 +704,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		}
 	}
 
-	/* Mobile: old text-hero-h1 ≈ clamp(2rem, 1.4rem + 2.8vw, 4.5rem) → ~33px @375 */
+	/* Mobile only — fixed 50px h1 (tablet ≥640 and desktop unchanged) */
 	@media (max-width: 639px) {
 		.service-hero {
 			min-height: 0;
@@ -715,10 +715,20 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		}
 
 		.service-hero__title {
-			font-size: 60px;
-			line-height: 1.15;
+			box-sizing: border-box;
+			width: 100%;
+			max-width: 100%;
+			font-size: 50px;
+			line-height: 1.1;
 			letter-spacing: -0.02em;
+			overflow-wrap: break-word;
+			hyphens: none;
 			text-wrap: balance;
+			white-space: normal;
+		}
+
+		.service-hero__title-line {
+			max-width: 100%;
 			overflow-wrap: break-word;
 			hyphens: none;
 			white-space: normal;

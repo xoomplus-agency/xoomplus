@@ -12,6 +12,7 @@ import {
 	type WpPageKey,
 } from './wp-seo';
 import { withTrailingSlash } from './wp';
+import { isDisabledChildPath } from '../data/services/index';
 
 /** In-memory WP list cache TTL (matches HTML/ISR 300s). */
 export const WP_SITEMAP_CACHE_TTL_MS = 300_000;
@@ -476,6 +477,14 @@ function renderImagesXml(images: string[]): string {
 
 export function renderUrlSet(entries: SitemapUrlEntry[]): string {
 	const urls = entries
+		.filter((e) => {
+			try {
+				const path = new URL(e.loc).pathname;
+				return !isDisabledChildPath(path);
+			} catch {
+				return true;
+			}
+		})
 		.map((e) => {
 			const imagesXml = renderImagesXml(e.images);
 			return `	<url>

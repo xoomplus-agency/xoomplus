@@ -206,20 +206,11 @@ function mainAriaCurrent(href: string): 'page' | 'true' | undefined {
 									<p class="services-mega__desc">{item.description}</p>
 									<div class="services-mega__rule" aria-hidden="true" />
 									<ul class="services-mega__text-links">
-										{item.textLinks.map((tl) => {
-											const linkCurrent = isExactCurrent(tl.href);
-											return (
-												<li>
-													<span
-														class="services-mega__text-link"
-														data-current={linkCurrent ? '' : undefined}
-														aria-current={linkCurrent ? 'page' : undefined}
-													>
-														{tl.label}
-													</span>
-												</li>
-											);
-										})}
+										{item.textLinks.map((tl) => (
+											<li>
+												<span class="services-mega__text-link">{tl.label}</span>
+											</li>
+										))}
 									</ul>
 								</a>
 							);
@@ -477,6 +468,7 @@ function mainAriaCurrent(href: string): 'page' | 'true' | undefined {
 		text-decoration: none;
 		color: inherit;
 		border-radius: 8px;
+		cursor: pointer;
 	}
 
 	a.services-mega__stack-block:focus-visible {
@@ -488,6 +480,12 @@ function mainAriaCurrent(href: string): 'page' | 'true' | undefined {
 		a.services-mega__stack-block:hover .services-mega__title {
 			color: var(--mega-amber);
 		}
+	}
+
+	/* Child labels inside the stack card — plain text (card itself is the link) */
+	a.services-mega__stack-block .services-mega__text-link {
+		cursor: inherit;
+		pointer-events: none;
 	}
 
 	.services-mega__stack-block--divided {

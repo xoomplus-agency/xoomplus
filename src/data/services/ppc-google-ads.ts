@@ -1,5 +1,4 @@
 import type { MainService } from './types';
-import { makeChildService } from './children';
 const SLUG = 'ppc-google-ads';
 const NAME = 'PPC & Google Ads';
 
@@ -11,20 +10,25 @@ export const ppcGoogleAds: MainService = {
 	metaDescription:
 		'Focused paid search and Google Ads campaigns with clear priorities, aligned landing experiences, and measurable conversion paths.',
 	children: [
-		// PLACEHOLDER: replace with real content
-		// Slug mismatch vs menu slugify: slugify would be audience-and-keyword-research
-		makeChildService(NAME, 'audience-keyword-research', 'Audience & keyword research', {
+		// Name kept for mega menu; page not generated (disabled).
+		{
+			slug: 'audience-keyword-research',
+			name: 'Audience & keyword research',
 			shortName: 'Audience & Keywords',
-		}),
-		// PLACEHOLDER: replace with real content
-		makeChildService(NAME, 'landing-page-alignment', 'Landing page alignment', {
+			disabled: true,
+		},
+		{
+			slug: 'landing-page-alignment',
+			name: 'Landing page alignment',
 			shortName: 'Landing Page Alignment',
-		}),
-		// PLACEHOLDER: replace with real content
-		// Slug mismatch vs menu slugify: slugify would be reporting-and-refinement
-		makeChildService(NAME, 'reporting-refinement', 'Reporting & refinement', {
+			disabled: true,
+		},
+		{
+			slug: 'reporting-refinement',
+			name: 'Reporting & refinement',
 			shortName: 'Reporting & Refinement',
-		}),
+			disabled: true,
+		},
 	],
 	hero: {
 		pill: 'PPC Marketing & Google Ads Services',

@@ -379,12 +379,12 @@ function isActive(item: NavItem) {
 								</li>
 								{section.links.map((link) => (
 									<li>
-										{link.href ? (
+										{link.href && !link.disabled ? (
 											<a href={link.href} data-mobile-services-link>
 												{link.label}
 											</a>
 										) : (
-											<span>{link.label}</span>
+											<span class="mobile-services-acc__label">{link.label}</span>
 										)}
 									</li>
 								))}
@@ -1283,6 +1283,12 @@ function isActive(item: NavItem) {
 	.mobile-services-acc__parent {
 		font-weight: 600;
 		opacity: 1 !important;
+	}
+
+	/* Disabled child names — visible like desktop mega, not tappable */
+	.mobile-services-acc__label {
+		cursor: default;
+		pointer-events: none;
 	}
 
 	.mobile-services-sheet__footer {

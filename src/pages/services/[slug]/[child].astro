@@ -26,9 +26,10 @@ import {
 	CHILD_PROCESS_IMAGE_HEIGHT,
 	CHILD_PROCESS_IMAGE_WIDTH,
 	getChildService,
+	getLiveChildServices,
 	mainServices,
 	resolveChildProcessImage,
-	type ChildService,
+	type ChildServiceLive,
 	type MainService,
 } from '../../../data/main-services';
 import {
@@ -42,7 +43,7 @@ import CTASection from '@/components/CTASection.astro';
 
 export function getStaticPaths() {
 	return mainServices.flatMap((service) =>
-		(service.children ?? []).map((child) => ({
+		getLiveChildServices(service).map((child) => ({
 			params: { slug: service.slug, child: child.slug },
 			props: { service, child },
 		})),
@@ -51,7 +52,7 @@ export function getStaticPaths() {
 
 interface Props {
 	service: MainService;
-	child: ChildService;
+	child: ChildServiceLive;
 }
 
 const { slug, child: childParam } = Astro.params;
@@ -63,7 +64,7 @@ const resolved =
 			? getChildService(slug, childParam)
 			: undefined;
 
-if (!resolved) {
+if (!resolved || resolved.child.disabled === true) {
 	return Astro.rewrite('/404');
 }
 

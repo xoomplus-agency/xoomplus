@@ -1,5 +1,4 @@
 import type { MainService } from './types';
-import { makeChildService } from './children';
 const SLUG = 'social-media-marketing';
 const NAME = 'Social Media Marketing';
 
@@ -11,20 +10,25 @@ export const socialMediaMarketing: MainService = {
 	metaDescription:
 		'Connect your message with the right people through thoughtful social content, creative direction, and consistent channel presence.',
 	children: [
-		// PLACEHOLDER: replace with real content
-		// Slug mismatch vs menu slugify: slugify would be content-and-creative-direction
-		makeChildService(NAME, 'content-creative-direction', 'Content & creative direction', {
+		// Name kept for mega menu; page not generated (disabled).
+		{
+			slug: 'content-creative-direction',
+			name: 'Content & creative direction',
 			shortName: 'Content & Creative',
-		}),
-		// PLACEHOLDER: replace with real content
-		makeChildService(NAME, 'campaign-planning', 'Campaign planning', {
+			disabled: true,
+		},
+		{
+			slug: 'campaign-planning',
+			name: 'Campaign planning',
 			shortName: 'Campaign Planning',
-		}),
-		// PLACEHOLDER: replace with real content
-		// Slug mismatch vs menu slugify: slugify would be reporting-and-refinement
-		makeChildService(NAME, 'reporting-refinement', 'Reporting & refinement', {
+			disabled: true,
+		},
+		{
+			slug: 'reporting-refinement',
+			name: 'Reporting & refinement',
 			shortName: 'Reporting & Refinement',
-		}),
+			disabled: true,
+		},
 	],
 	hero: {
 		pill: 'Social Media Marketing & Management',
