@@ -1,0 +1,39 @@
+name: Deploy Astro SSR to cPanel
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Node & Build Astro SSR
+        run: |
+          npm install
+          npm run build # Generates the 'dist' folder containing server/entry.mjs
+
+      - name: FTP Deploy Build Files to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/ 
+          server-dir: /public_html/dist/ # Uploads directly into public_html/dist
+
+      - name: FTP Deploy Package Files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/
+          only-include: |
+            package.json
+            package-lock.json
+            server.js
