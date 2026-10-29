@@ -10,8 +10,13 @@ const KEY = 'xoomplus-blog-list-visible';
 const INIT_ATTR = 'data-blog-list-ready';
 const MIN_Q = 2;
 const MAX_HITS = 6;
-const LOAD_MORE_MIN_MS = 400;
-const LOAD_MORE_IMAGE_CAP_MS = 1500;
+/** Soft UX delay on the Load more button — do not wait on image decode (OOM risk). */
+const LOAD_MORE_MIN_MS = 280;
+/** Cap session restore so refresh never re-fetches dozens of pages at once. */
+const MAX_RESTORE_PAGES = 2;
+const MAX_PERSIST_CARDS = PAGE_SIZE * 4;
+/** Match BlogCard.astro default — without sizes, srcset can pick the largest WP variant. */
+const CARD_SIZES = '(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw';
 
 type Card = {
 	title: string;
@@ -61,46 +66,29 @@ function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function imageReady(img: HTMLImageElement): Promise<void> {
-	if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-	return new Promise((resolve) => {
-		let settled = false;
-		const done = () => {
-			if (settled) return;
-			settled = true;
-			resolve();
-		};
-		img.addEventListener('load', done, { once: true });
-		img.addEventListener('error', done, { once: true });
-		if (typeof img.decode === 'function') {
-			img.decode().then(done).catch(done);
-		}
-	});
-}
-
-/** Wait for imgs to load/fail, capped (Promise.race). */
-async function waitForImages(root: ParentNode, capMs: number): Promise<void> {
-	const imgs = [...root.querySelectorAll('img')].filter(
-		(el): el is HTMLImageElement =>
-			el instanceof HTMLImageElement && Boolean(el.getAttribute('src')),
-	);
-	if (!imgs.length) return;
-	await Promise.race([Promise.all(imgs.map(imageReady)), sleep(capMs)]);
-}
-
 function fillCard(li: HTMLElement, post: Card): void {
 	li.hidden = false;
+	li.classList.add('blog-listing__item--cv');
 	li.setAttribute('data-category', post.categoryKey);
 	const link = li.querySelector('a.blog-card');
 	if (link instanceof HTMLAnchorElement) link.href = post.href;
 	const img = li.querySelector('img');
 	if (img instanceof HTMLImageElement) {
-		if (post.image) img.src = post.image;
-		if (post.srcset) img.setAttribute('srcset', post.srcset);
-		else img.removeAttribute('srcset');
+		img.loading = 'lazy';
+		img.decoding = 'async';
+		img.removeAttribute('fetchpriority');
 		img.alt = post.alt || '';
 		img.width = post.width || 400;
 		img.height = post.height || 240;
+		if (post.srcset) {
+			img.setAttribute('srcset', post.srcset);
+			img.setAttribute('sizes', CARD_SIZES);
+		} else {
+			img.removeAttribute('srcset');
+			img.removeAttribute('sizes');
+		}
+		// Set src last so sizes/srcset apply before the browser picks a candidate.
+		if (post.image) img.src = post.image;
 	}
 	const title = li.querySelector('.blog-card__title');
 	if (title) title.textContent = post.title;
@@ -184,7 +172,7 @@ function initBlogList(root: HTMLElement): void {
 		if (emptyEl instanceof HTMLElement) {
 			emptyEl.hidden = shown !== 0;
 		}
-		persist(Math.max(shown, PAGE_SIZE));
+		persist(Math.min(Math.max(shown, PAGE_SIZE), MAX_PERSIST_CARDS));
 	}
 
 	function makeCard(post: Card): HTMLElement | null {
@@ -250,10 +238,11 @@ function initBlogList(root: HTMLElement): void {
 
 	async function loadPages(
 		pages: number[],
-		opts: { replace?: boolean; focusFirst?: boolean } = {},
+		opts: { replace?: boolean; focusFirst?: boolean; silent?: boolean } = {},
 	): Promise<void> {
 		if (!gridEl || !pages.length) return;
 		const replace = Boolean(opts.replace);
+		const silent = Boolean(opts.silent);
 		// Load more stays serialized; category replace may supersede an in-flight fetch.
 		if (loading && !replace) return;
 		const seq = ++loadSeq;
@@ -262,13 +251,15 @@ function initBlogList(root: HTMLElement): void {
 		const loadStarted = performance.now();
 		if (useButtonLoading) setLoadMoreLoading(true);
 		else if (loadMore) loadMore.disabled = true;
-		if (replace) setFilterSkeleton(true);
+		// Silent boot sync keeps SSR cards visible while refreshing from the live API
+		// (CDN often serves stale HTML with broken featured-image URLs).
+		if (replace && !silent) setFilterSkeleton(true);
 		try {
 			const params = new URLSearchParams();
 			if (pages.length === 1) params.set('page', String(pages[0]));
 			else params.set('pages', pages.join(','));
 			if (categoryId) params.set('category', categoryId);
-			const res = await fetch(`${api}?${params}`);
+			const res = await fetch(`${api}?${params}`, { cache: 'no-store' });
 			if (!res.ok) throw new Error(`blog list ${res.status}`);
 			const body = (await res.json()) as ListResponse;
 			if (seq !== loadSeq) return;
@@ -280,7 +271,7 @@ function initBlogList(root: HTMLElement): void {
 			const posts = ordered.flatMap((page) => page.posts);
 			if (replace) {
 				gridEl.replaceChildren();
-				setFilterSkeleton(false);
+				if (!silent) setFilterSkeleton(false);
 			}
 			if (posts.length === 0) {
 				gridEl.hidden = true;
@@ -291,18 +282,14 @@ function initBlogList(root: HTMLElement): void {
 				gridEl.hidden = false;
 			}
 
+			// Append immediately — never decode a batch of WP images before insert
+			// (that path was crashing Chrome under memory pressure).
 			if (useButtonLoading) {
-				const { fragment, first } = buildPostFragment(posts);
-				await waitForImages(fragment, LOAD_MORE_IMAGE_CAP_MS);
 				const remaining = LOAD_MORE_MIN_MS - (performance.now() - loadStarted);
 				if (remaining > 0) await sleep(remaining);
 				if (seq !== loadSeq) return;
-				gridEl.append(fragment);
-				paintCounts();
-				if (opts.focusFirst) first?.querySelector('a')?.focus({ preventScroll: true });
-			} else {
-				appendPosts(posts, Boolean(opts.focusFirst));
 			}
+			appendPosts(posts, Boolean(opts.focusFirst));
 
 			const last = ordered[ordered.length - 1];
 			if (last) nextPage = last.page + 1;
@@ -310,17 +297,18 @@ function initBlogList(root: HTMLElement): void {
 			if (seq !== loadSeq) return;
 			console.error('[blog-list] load failed:', err);
 			if (replace) {
-				setFilterSkeleton(false);
+				if (!silent) setFilterSkeleton(false);
 				gridEl.hidden = shownCount() === 0;
 			}
-			if (statusEl) statusEl.textContent = "Couldn't load more articles.";
+			if (statusEl && !silent) statusEl.textContent = "Couldn't load more articles.";
 			paintCounts({ keepStatus: true });
 		} finally {
 			// Always clear our own button loading (even if superseded by a category replace).
 			if (useButtonLoading) setLoadMoreLoading(false);
-			if (seq !== loadSeq) return;
-			loading = false;
-			if (!useButtonLoading && loadMore) loadMore.disabled = false;
+			if (seq === loadSeq) {
+				loading = false;
+				if (!useButtonLoading && loadMore) loadMore.disabled = false;
+			}
 		}
 	}
 
@@ -490,16 +478,23 @@ function initBlogList(root: HTMLElement): void {
 
 	if (!hasGrid) return;
 
-	const wanted = restore();
-	const already = shownCount();
-	const pagesNeeded = Math.ceil(wanted / PAGE_SIZE);
-	if (!categoryId && pagesNeeded > 1 && already < wanted && total > already) {
-		const pages: number[] = [];
-		for (let page = 2; page <= pagesNeeded; page++) pages.push(page);
-		void loadPages(pages);
-	} else {
-		paintCounts();
-	}
+	// Re-sync page 1 from /api/blog-posts on every load. Filter chips already do this
+	// (which is why images look fine after clicking a filter). Refresh alone served
+	// CDN-stale SSR HTML with 404 image URLs and removed posts like "test".
+	void (async () => {
+		await loadPages([1], { replace: true, silent: true });
+		const wanted = Math.min(restore(), PAGE_SIZE * MAX_RESTORE_PAGES);
+		const already = shownCount();
+		const pagesNeeded = Math.ceil(wanted / PAGE_SIZE);
+		if (!categoryId && pagesNeeded > 1 && already < wanted && total > already) {
+			for (let page = 2; page <= pagesNeeded; page++) {
+				await loadPages([page]);
+				if (shownCount() >= wanted) break;
+			}
+		} else {
+			paintCounts();
+		}
+	})();
 }
 
 let gridObserver: MutationObserver | null = null;

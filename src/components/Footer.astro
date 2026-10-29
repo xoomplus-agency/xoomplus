@@ -1,19 +1,15 @@
 ---
-import { getAllWpPageRoutes, WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
+import { WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 
 const year = new Date().getFullYear();
 
-const routes = await getAllWpPageRoutes();
-const byKey = new Map(routes.map((r) => [r.key, r.route]));
-const aboutHref = byKey.get('about') ?? WP_PAGE_FALLBACK_ROUTES.about;
-const servicesHref = byKey.get('services') ?? WP_PAGE_FALLBACK_ROUTES.services;
-const industriesHref = byKey.get('industries') ?? WP_PAGE_FALLBACK_ROUTES.industries;
-const caseStudiesHref = byKey.get('caseStudies') ?? WP_PAGE_FALLBACK_ROUTES.caseStudies;
-const contactHref = byKey.get('contact') ?? WP_PAGE_FALLBACK_ROUTES.contact;
-const blogsHref = byKey.get('blogs') ?? WP_PAGE_FALLBACK_ROUTES.blogs;
-if (routes.length === 0) {
-	console.error('[footer] live CMS paths unavailable — using fallback routes');
-}
+/** Fixed Astro routes — marketing pages are static; only blogs come from WordPress. */
+const aboutHref = WP_PAGE_FALLBACK_ROUTES.about;
+const servicesHref = WP_PAGE_FALLBACK_ROUTES.services;
+const industriesHref = WP_PAGE_FALLBACK_ROUTES.industries;
+const caseStudiesHref = WP_PAGE_FALLBACK_ROUTES.caseStudies;
+const contactHref = WP_PAGE_FALLBACK_ROUTES.contact;
+const blogsHref = WP_PAGE_FALLBACK_ROUTES.blogs;
 
 const linkColumns = [
 	{
@@ -42,7 +38,7 @@ const linkColumns = [
 ];
 
 const locationLinks = [
-	{ label: 'Blackburn', href: '/locations/Blackburn' },
+	{ label: 'Blackburn', href: '/locations/blackburn' },
 	{ label: 'Manchester', href: '/locations/manchester' },
 ];
 

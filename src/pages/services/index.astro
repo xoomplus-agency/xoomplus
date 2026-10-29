@@ -1,0 +1,17 @@
+---
+/**
+ * Static Services listing — no WordPress.
+ * Nested main/child services stay under pages/services/[slug].astro.
+ */
+import Layout from '../../layouts/Layout.astro';
+import ServicesPage from '../../components/wp-pages/ServicesPage.astro';
+---
+
+<Layout
+	seoPath="/services"
+	title="Digital Marketing & Web Services in Manchester | Xoomplus"
+	description="Explore Xoomplus services in Manchester: SEO, PPC, social media, web design and development. One data-driven agency for all your growth needs. Get a quote."
+	skipWpSeo
+>
+	<ServicesPage />
+</Layout>

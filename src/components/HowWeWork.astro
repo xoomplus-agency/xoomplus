@@ -87,45 +87,51 @@ const headingId = `${id}-heading`;
 		padding-bottom: calc(var(--section-padding-y) + 24px);
 	}
 
+	/* Grid tracks + minmax(0) so heading never paints over the intro */
 	.hww-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		gap: 48px;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		align-items: start;
+		gap: 20px;
 	}
 
 	.hww-header__left {
-		flex: 1 1 400px;
 		min-width: 0;
+		max-width: 100%;
 		text-align: left;
 	}
 
 	.hww-heading {
 		margin-top: 16px;
 		line-height: 1.15;
+		overflow-wrap: break-word;
+		word-break: normal;
+		hyphens: manual;
+		white-space: normal;
 	}
 
 	.hww-heading__line {
 		display: block;
 	}
 
-	/* One line when the row is wide enough for heading + 3-line intro */
-	@media (min-width: 1600px) {
-		.hww-heading {
-			white-space: nowrap;
-		}
-	}
-
 	.hww-intro {
-		flex: 0 0 590px;
-		width: 590px;
-		max-width: 590px;
+		min-width: 0;
+		max-width: 100%;
 		font-family: var(--font-inter);
 		font-size: var(--text-lead);
 		font-weight: 500;
 		line-height: 1.5;
 		color: #555555;
 		text-align: left;
+	}
+
+	/* Side-by-side when there is room; heading always wraps inside its track */
+	@media (min-width: 1200px) {
+		.hww-header {
+			grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+			column-gap: clamp(32px, 4vw, 56px);
+			row-gap: 20px;
+		}
 	}
 
 	/* Forced 3-line breaks on desktop; natural wrap on smaller screens */
@@ -213,22 +219,6 @@ const headingId = `${id}-heading`;
 
 	/* Tablet 640–1023px */
 	@media (min-width: 640px) and (max-width: 1023px) {
-		.hww-header {
-			flex-direction: column;
-			gap: 20px;
-		}
-
-		.hww-header__left,
-		.hww-intro {
-			flex: none;
-			width: 100%;
-			max-width: 100%;
-		}
-
-		.hww-intro {
-			width: 100%;
-		}
-
 		.hww-images {
 			height: 200px;
 		}
@@ -237,30 +227,7 @@ const headingId = `${id}-heading`;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 16px;
 		}
-	}
 
-	/* Tablet: header side-by-side from 900; orphan third column card when 2-col */
-	@media (min-width: 900px) and (max-width: 1023px) {
-		.hww-header {
-			flex-direction: row;
-			align-items: flex-end;
-			gap: 40px;
-		}
-
-		.hww-header__left {
-			flex: 1 1 auto;
-			width: auto;
-			max-width: none;
-		}
-
-		.hww-intro {
-			flex: 0 0 auto;
-			width: auto;
-			max-width: 360px;
-		}
-	}
-
-	@media (min-width: 640px) and (max-width: 1023px) {
 		.hww-columns > :last-child:nth-child(odd) {
 			grid-column: 1 / -1;
 			max-width: calc(50% - 8px);
@@ -271,22 +238,6 @@ const headingId = `${id}-heading`;
 
 	/* Mobile <640px */
 	@media (max-width: 639px) {
-		.hww-header {
-			flex-direction: column;
-			gap: 20px;
-		}
-
-		.hww-header__left,
-		.hww-intro {
-			flex: none;
-			width: 100%;
-			max-width: 100%;
-		}
-
-		.hww-intro {
-			width: 100%;
-		}
-
 		.hww-heading {
 			font-size: clamp(1.75rem, 8vw, 2rem); /* ~28–32px */
 		}

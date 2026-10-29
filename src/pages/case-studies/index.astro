@@ -1,0 +1,17 @@
+---
+/**
+ * Static Case Studies listing — no WordPress.
+ * Individual studies: pages/case-studies/[slug].astro
+ */
+import Layout from '../../layouts/Layout.astro';
+import CaseStudiesListingPage from '../../components/CaseStudiesListingPage.astro';
+---
+
+<Layout
+	seoPath="/case-studies"
+	title="Digital Marketing Case Studies | Real Results"
+	description="See how Xoomplus helps businesses grow with SEO, PPC, web design and social media. Explore our case studies and the measurable results behind them."
+	skipWpSeo
+>
+	<CaseStudiesListingPage />
+</Layout>

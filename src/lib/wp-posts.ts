@@ -24,11 +24,12 @@ export const BLOG_NO_STORE = 'private, no-store, no-cache, must-revalidate, max-
  * Blog listing + single-post HTML — CDN TTL aligned with Vercel ISR (300s).
  * `/api/revalidate` purges ISR via bypass token; `?refresh=1` forces no-store.
  */
+/** max-age=0 — browsers revalidate; CDN still uses s-maxage. */
 export const BLOG_LIST_CACHE_CONTROL =
-	'public, s-maxage=300, stale-while-revalidate=86400';
+	'public, max-age=0, s-maxage=300, stale-while-revalidate=86400';
 
 export const BLOG_POST_CACHE_CONTROL =
-	'public, s-maxage=300, stale-while-revalidate=86400';
+	'public, max-age=0, s-maxage=300, stale-while-revalidate=86400';
 
 export const BLOG_LIST_PAGE_SIZE = 9;
 
@@ -80,13 +81,19 @@ function stripLeadingStyles(text: string): string {
 
 type MapFn = (raw: unknown) => WpPost | null;
 
+/** Drop placeholder / QA titles that sometimes get published by mistake. */
+function isJunkListingTitle(title: string): boolean {
+	const t = title.trim();
+	return t.length < 2 || /^test$/i.test(t) || /^asdf$/i.test(t);
+}
+
 async function mapRawPosts(rawPosts: unknown[]): Promise<WpPost[]> {
 	const { mapWpPost } = await import('./wp');
 	const map = mapWpPost as MapFn;
 	const mapped: WpPost[] = [];
 	for (const raw of rawPosts) {
 		const post = map(raw);
-		if (post) mapped.push(post);
+		if (post && !isJunkListingTitle(post.title)) mapped.push(post);
 	}
 	mapped.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 	return mapped;

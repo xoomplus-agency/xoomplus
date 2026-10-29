@@ -63,7 +63,6 @@ export function buildCf7FormData(
 	const multi = new Set(config.multi ?? []);
 	const skip = new Set(config.skip ?? ['hp_website']);
 	const omitEmpty = new Set(config.omitEmpty ?? []);
-	const multiValues: Record<string, string[]> = {};
 
 	out.append('_wpcf7', formId);
 	out.append('_wpcf7_version', CF7_VERSION);
@@ -74,6 +73,7 @@ export function buildCf7FormData(
 
 	for (const [key, value] of src.entries()) {
 		if (skip.has(key) || key.startsWith('_wpcf7')) continue;
+		if (multi.has(key)) continue; // handled via DOM below
 
 		const dest = config.fields[key];
 		if (!dest) continue;
@@ -82,17 +82,30 @@ export function buildCf7FormData(
 		if (omitEmpty.has(key) && !raw.trim()) continue;
 
 		const transformed = config.transform?.[key]?.(raw) ?? raw;
-
-		if (multi.has(key)) {
-			(multiValues[dest] ??= []).push(transformed);
-			continue;
-		}
-
 		out.append(dest, transformed);
 	}
 
-	for (const [dest, values] of Object.entries(multiValues)) {
-		for (const v of values) out.append(dest, v);
+	/**
+	 * Multi checkboxes: read checked inputs from the DOM (reliable), then send ONE
+	 * comma-separated string. The WP mu-plugin splits it back to an array so CF7
+	 * checkbox validation + mail both see every selection. Repeated `field[]`
+	 * parts were being collapsed to a single value on the Node → PHP path.
+	 */
+	for (const astroName of multi) {
+		const dest = config.fields[astroName];
+		if (!dest) continue;
+		const selected = [
+			...form.querySelectorAll<HTMLInputElement>(
+				`input[type="checkbox"][name="${CSS.escape(astroName)}"]:checked`,
+			),
+		]
+			.map((el) => el.value.trim())
+			.filter(Boolean);
+		if (!selected.length) continue;
+		const joined = selected
+			.map((v) => config.transform?.[astroName]?.(v) ?? v)
+			.join(', ');
+		out.append(dest, joined);
 	}
 
 	if (config.includePageContext && typeof document !== 'undefined') {

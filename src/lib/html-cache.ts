@@ -78,7 +78,7 @@ export function isHtmlCacheablePath(pathname: string): boolean {
 		return false;
 	}
 	if (p.endsWith('.xml') || p.endsWith('.xsl')) return false;
-	// /blogs uses server:defer — caching the shell leaves the grid on skeleton forever.
+	// /blog listing stays fresh from WordPress — do not HTML-cache the shell.
 	if (p === '/blog' || p === '/blogs' || p.startsWith('/blogs/')) return false;
 	return true;
 }

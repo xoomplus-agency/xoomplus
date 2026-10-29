@@ -18,6 +18,8 @@ import {
 	setHtmlCache,
 	normalizeHtmlCachePath,
 } from './lib/html-cache';
+import { applySecurityHeaders } from './lib/security-headers';
+import { resolveLegacyServiceRedirect } from './data/legacy-service-redirects';
 
 function isBlogsListingPath(pathname: string): boolean {
 	const p = pathname.replace(/\/+$/, '') || '/';
@@ -84,6 +86,26 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const method = context.request.method.toUpperCase();
 	const pathname = normalizeHtmlCachePath(context.url.pathname);
 
+	/** 301s must not inherit CF “Browser Cache TTL = 1 year” as opaque HTML. */
+	function redirect301(to: string): Response {
+		const res = context.redirect(to, 301);
+		res.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+		res.headers.set('CDN-Cache-Control', 'max-age=300');
+		res.headers.set('Cloudflare-CDN-Cache-Control', 'max-age=300');
+		return res;
+	}
+
+	// Legacy capitalized slug (Linux is case-sensitive; keep old links working).
+	if (/^\/locations\/Blackburn\/?$/i.test(context.url.pathname) && context.url.pathname.includes('B')) {
+		return redirect301('/locations/blackburn/');
+	}
+
+	// Retired WP service pages → current /services/... (exact paths only).
+	const legacyServiceTarget = resolveLegacyServiceRedirect(context.url.pathname);
+	if (legacyServiceTarget) {
+		return redirect301(legacyServiceTarget);
+	}
+
 	if (refresh) {
 		const { clearWpPostsCache } = await import('./lib/wp-posts');
 		const { clearWpPageCache } = await import('./lib/wp');
@@ -96,7 +118,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const aliasTarget = await resolveAliasRedirect(context.url.pathname);
 	if (aliasTarget) {
-		return context.redirect(aliasTarget, 301);
+		return redirect301(aliasTarget);
 	}
 
 	const useHtmlCache =
@@ -107,11 +129,38 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	if (useHtmlCache) {
 		const hit = await getHtmlCache(pathname);
-		if (hit) return responseFromHtmlCache(hit);
+		if (hit) {
+			const cached = responseFromHtmlCache(hit);
+			applySecurityHeaders(cached.headers);
+			return cached;
+		}
 	}
 
 	const response = await next();
+	applySecurityHeaders(response.headers);
 	applyCacheHeaders(response, pathname, refresh);
+
+	const isNonPageAsset =
+		pathname.startsWith('/_astro/') ||
+		pathname.startsWith('/api/') ||
+		pathname.startsWith('/images/') ||
+		pathname.startsWith('/videos/') ||
+		pathname.startsWith('/fonts/') ||
+		pathname.startsWith('/icons/') ||
+		/\.(?:js|mjs|css|map|json|woff2?|ttf|eot|webp|avif|png|jpe?g|gif|svg|ico|mp4|webm|mp3)$/i.test(
+			pathname,
+		);
+	if (isNonPageAsset) {
+		response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+	}
+
+	// Stop CF “Browser Cache TTL = 1 year” from pinning stale HTML at the edge.
+	if (
+		!response.headers.has('Cloudflare-CDN-Cache-Control') &&
+		(response.headers.get('Content-Type') || '').includes('text/html')
+	) {
+		response.headers.set('Cloudflare-CDN-Cache-Control', 'max-age=60');
+	}
 
 	const isXmlOrSitemap =
 		pathname.endsWith('.xml') ||
@@ -120,13 +169,45 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		pathname === '/post-sitemap' ||
 		pathname === '/sitemap';
 
-	if (!isXmlOrSitemap && (await isMappedSeoPath(context.url.pathname))) {
-		const sMaxAge = pathname === '/' ? 300 : WP_SEO_REVALIDATE;
-		const htmlCache = `public, s-maxage=${sMaxAge}, stale-while-revalidate=86400`;
+	// Dynamic sitemaps must never be edge-cached (CF was pinning empty/old XML).
+	if (isXmlOrSitemap) {
+		response.headers.set(
+			'Cache-Control',
+			'private, no-store, no-cache, must-revalidate, max-age=0',
+		);
+		response.headers.set('CDN-Cache-Control', 'no-store');
+		response.headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
+		response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+	}
+
+	/**
+	 * Blog list/post HTML already got Cache-Control from applyCacheHeaders.
+	 * Do not overwrite with WP_SEO_REVALIDATE (3600) — that left /blog CDN-HIT
+	 * on stale featured-image URLs after WP media re-uploads.
+	 * Also honour ?refresh=1 (no-store) for every path.
+	 */
+	const blogCacheOwned =
+		isBlogsListingPath(pathname) ||
+		isLegacyBlogSlugPath(pathname) ||
+		isBlogPostPath(pathname);
+
+	if (refresh) {
+		response.headers.set('Cache-Control', BLOG_NO_STORE);
+		response.headers.set('CDN-Cache-Control', BLOG_NO_STORE);
+		response.headers.set('Vercel-CDN-Cache-Control', BLOG_NO_STORE);
+	} else if (
+		!isXmlOrSitemap &&
+		!blogCacheOwned &&
+		(await isMappedSeoPath(context.url.pathname))
+	) {
+		// Homepage forms are in HTML `action` — keep edge TTL short so CF7 ID
+		// changes (15940 → 15862) are not stuck behind year-long CDN HITs.
+		const sMaxAge = pathname === '/' ? 60 : WP_SEO_REVALIDATE;
+		const htmlCache = `public, max-age=0, must-revalidate, s-maxage=${sMaxAge}, stale-while-revalidate=600`;
 		response.headers.set('Cache-Control', htmlCache);
 		response.headers.set('CDN-Cache-Control', htmlCache);
 		response.headers.set('Vercel-CDN-Cache-Control', htmlCache);
-	} else if (!isXmlOrSitemap && response.status === 200) {
+	} else if (!isXmlOrSitemap && !blogCacheOwned && response.status === 200) {
 		const isAsset =
 			pathname.startsWith('/_astro/') ||
 			pathname.startsWith('/images/') ||
@@ -137,7 +218,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		if (!isAsset) {
 			const existing = response.headers.get('Cache-Control') || '';
 			if (!existing.includes('s-maxage') && !existing.includes('no-store')) {
-				const htmlCache = 'public, s-maxage=300, stale-while-revalidate=86400';
+				const htmlCache =
+					'public, max-age=0, s-maxage=300, stale-while-revalidate=86400';
 				response.headers.set('Cache-Control', htmlCache);
 				response.headers.set('CDN-Cache-Control', htmlCache);
 				response.headers.set('Vercel-CDN-Cache-Control', htmlCache);

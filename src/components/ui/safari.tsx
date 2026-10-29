@@ -97,7 +97,6 @@ export function Safari({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 z-10 size-full"
-        style={{ transform: "translateZ(0)" }}
         aria-hidden="true"
       >
         <defs>

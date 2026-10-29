@@ -1,16 +1,22 @@
 /**
- * Post sitemap: published posts at public /%category%/%postname%/ URLs.
+ * Legacy path — same combined pages+posts urlset as /sitemap_index.xml.
  */
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import {
-	buildPostSitemapEntries,
+	buildCombinedSitemapEntries,
 	renderUrlSet,
+	sitemapUnavailableResponse,
 	sitemapXmlResponse,
 } from '../lib/wp-sitemap';
 
 export const GET: APIRoute = async () => {
-	const entries = await buildPostSitemapEntries();
-	return sitemapXmlResponse(renderUrlSet(entries));
+	try {
+		const entries = await buildCombinedSitemapEntries();
+		return sitemapXmlResponse(renderUrlSet(entries));
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		return sitemapUnavailableResponse(msg);
+	}
 };

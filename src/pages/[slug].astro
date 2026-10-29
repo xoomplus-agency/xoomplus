@@ -1,80 +1,10 @@
 ---
 /**
- * CMS-driven WP pages (except home) — resolved by page ID → live CMS slug at request time.
- * prerender=false so a slug change does not require regenerating static paths to avoid 404s.
- * Nested static trees (e.g. /services/seo) stay under pages/services/[slug].astro.
+ * Catch-all for unknown top-level slugs.
+ * Marketing pages (about, services, industries, case-studies, contact) are static
+ * under their own folders. Blog listing is /blog. Only blogs use WordPress.
  */
 export const prerender = false;
 
-import Layout from '../layouts/Layout.astro';
-import AboutPage from '../components/wp-pages/AboutPage.astro';
-import ContactPage from '../components/wp-pages/ContactPage.astro';
-import IndustriesPage from '../components/wp-pages/IndustriesPage.astro';
-import BlogsPage from '../components/wp-pages/BlogsPage.astro';
-import ServicesPage from '../components/wp-pages/ServicesPage.astro';
-import CaseStudiesListingPage from '../components/CaseStudiesListingPage.astro';
-import {
-	getAllWpPageRoutes,
-	normalizeSeoPath,
-} from '../lib/wp-seo';
-
-const param = Astro.params.slug;
-const routes = await getAllWpPageRoutes();
-const hit = routes.find(
-	(r) => r.key !== 'home' && param != null && normalizeSeoPath(`/${param}`) === r.route,
-);
-
-if (!hit) {
-	return Astro.rewrite('/404');
-}
-
-const pageKey = hit.key;
-const seoPath = hit.route;
-
-/** Static SEO for selected marketing pages (blogs stay on WordPress/Yoast). */
-const STATIC_PAGE_SEO: Partial<
-	Record<typeof pageKey, { title: string; description: string }>
-> = {
-	services: {
-		title: 'Digital Marketing & Web Services in Manchester | Xoomplus',
-		description:
-			'Explore Xoomplus services in Manchester: SEO, PPC, social media, web design and development. One data-driven agency for all your growth needs. Get a quote.',
-	},
-	caseStudies: {
-		title: 'Digital Marketing Case Studies | Real Results',
-		description:
-			'See how Xoomplus helps businesses grow with SEO, PPC, web design and social media. Explore our case studies and the measurable results behind them.',
-	},
-	industries: {
-		title: 'Industry-Specific Digital Marketing Solutions By Xoomplus',
-		description:
-			'See how Xoomplus delivers SEO, PPC and web solutions for Manchester businesses across different industries. Explore your sector and get in touch.',
-	},
-	contact: {
-		title: 'Contact Xoomplus | Manchester Digital Marketing & Web Agency',
-		description:
-			'Ready to grow your business online? Contact Xoomplus about SEO, PPC or web design and let’s talk about your goals. Get in touch today.',
-	},
-	about: {
-		title: 'About Xoomplus | Digital Marketing & Web Solutions Agency',
-		description:
-			'We’re a team that believes in honest advice, creative thinking and results you can see. Get to know Xoomplus and what drives us.',
-	},
-};
-
-const staticSeo = STATIC_PAGE_SEO[pageKey];
+return Astro.rewrite('/404');
 ---
-
-<Layout
-	seoPath={seoPath}
-	title={staticSeo?.title}
-	description={staticSeo?.description}
-	skipWpSeo={Boolean(staticSeo)}
->
-	{pageKey === 'about' && <AboutPage />}
-	{pageKey === 'contact' && <ContactPage />}
-	{pageKey === 'industries' && <IndustriesPage />}
-	{pageKey === 'blogs' && <BlogsPage />}
-	{pageKey === 'services' && <ServicesPage />}
-	{pageKey === 'caseStudies' && <CaseStudiesListingPage />}
-</Layout>

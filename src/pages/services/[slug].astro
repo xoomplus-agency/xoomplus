@@ -51,7 +51,12 @@ if (!service) {
 const canonicalPath = `/services/${service.slug}`;
 ---
 
-<Layout title={service.metaTitle} description={service.metaDescription} canonicalPath={canonicalPath}>
+<Layout
+	title={service.metaTitle}
+	description={service.metaDescription}
+	canonicalPath={canonicalPath}
+	skipWpSeo
+>
 	<main id="main-content" class="flex-1">
 		<ServiceHero hero={service.hero} />
 		<ServiceFeatures {...service.features} id="details" />

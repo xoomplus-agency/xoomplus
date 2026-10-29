@@ -1,5 +1,4 @@
 ---
-import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
 import type { PageSEO } from '../lib/wp-seo';
 
 interface Props {
@@ -93,19 +92,22 @@ function robotsContent(seo: PageSEO): string | undefined {
 	return parts.length > 0 ? parts.join(', ') : undefined;
 }
 
-const yoastRobots = fromWp ? robotsContent(pageSeo) : undefined;
+/**
+ * Never copy CMS “Discourage search engines” / site-wide Yoast noindex onto the
+ * public Astro host. Intentional noindex uses the `noindex` prop (e.g. 404).
+ */
+const yoastRobotsRaw = fromWp ? robotsContent(pageSeo) : undefined;
+const yoastRobots =
+	yoastRobotsRaw && /\bnoindex\b/i.test(yoastRobotsRaw) ? undefined : yoastRobotsRaw;
 const schemaJson = fromWp && pageSeo.schema ? JSON.stringify(pageSeo.schema) : undefined;
 ---
 
 {seoTitle && <title>{seoTitle}</title>}
 {seoDescription && <meta name="description" content={seoDescription} />}
 
-{isStaging() && <meta name="robots" content={STAGING_ROBOTS} />}
-{!isStaging() && noindex && <meta name="robots" content="noindex, nofollow" />}
-{!isStaging() && !noindex && robotsProp && <meta name="robots" content={robotsProp} />}
-{!isStaging() && !noindex && !robotsProp && yoastRobots && (
-	<meta name="robots" content={yoastRobots} />
-)}
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+{!noindex && robotsProp && <meta name="robots" content={robotsProp} />}
+{!noindex && !robotsProp && yoastRobots && <meta name="robots" content={yoastRobots} />}
 
 {canonical && <link rel="canonical" href={canonical} />}
 

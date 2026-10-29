@@ -1,4 +1,8 @@
 ---
+/**
+ * Static location pages — prerendered into dist/client/locations/<slug>/.
+ * Only /blog (+ post routes) are WordPress/SSR.
+ */
 import Layout from '../../layouts/Layout.astro';
 import LocationHero from '../../components/LocationHero.astro';
 import LocationIndustries from '../../components/LocationIndustries.astro';
@@ -51,6 +55,7 @@ const {
 	canonicalPath={canonicalPath}
 	image={hero.image}
 	lcpImagePreload={{ href: hero.image }}
+	skipWpSeo
 >
 	<main id="main-content" class="page-locations flex-1">
 		<LocationHero

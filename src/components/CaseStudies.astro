@@ -2,9 +2,9 @@
 import Button from './Button.astro';
 import ProjectCard from './ProjectCard.astro';
 import { homeProjects } from '../data/projects';
-import { getWpPagePath } from '../lib/wp-seo';
+import { WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 
-const caseStudiesHref = await getWpPagePath('caseStudies');
+const caseStudiesHref = WP_PAGE_FALLBACK_ROUTES.caseStudies;
 
 const intro =
 	'We don’t just say we deliver; we deliver. Here are a few stories of how we brought strategy, creativity and performance to achieve digital success for our clients.';

@@ -301,19 +301,43 @@ function resolvePostPath(
 	};
 }
 
+/**
+ * WP size URLs must share the attachment basename (e.g. `…-new.webp` → `…-new-768x384.webp`).
+ * After re-uploads, stale `medium_large` paths (without `-new`) 404 while `source_url` works.
+ */
+function sizeMatchesAttachment(fullUrl: string, sizeUrl: string): boolean {
+	try {
+		const fullName = decodeURIComponent(new URL(fullUrl).pathname.split('/').pop() || '');
+		const sizeName = decodeURIComponent(new URL(sizeUrl).pathname.split('/').pop() || '');
+		const fullStem = fullName.replace(/\.[^.]+$/, '');
+		if (!fullStem) return true;
+		return (
+			sizeName === fullName ||
+			sizeName.startsWith(`${fullStem}-`) ||
+			sizeName.startsWith(`${fullStem}.`)
+		);
+	} catch {
+		return true;
+	}
+}
+
 function mapImage(media: WpFeaturedMedia | undefined, title: string): WpPostImage | null {
 	if (!media) return null;
 	const sizes = media.media_details?.sizes ?? {};
+	const fullSrc = media.source_url || '';
+
 	let chosen: WpMediaSize | undefined;
 	for (const key of PREFERRED_SIZES) {
-		if (sizes[key]?.source_url) {
-			chosen = sizes[key];
-			break;
-		}
+		const candidate = sizes[key];
+		if (!candidate?.source_url) continue;
+		if (fullSrc && !sizeMatchesAttachment(fullSrc, candidate.source_url)) continue;
+		chosen = candidate;
+		break;
 	}
+
 	const src =
 		chosen?.source_url ||
-		media.source_url ||
+		fullSrc ||
 		Object.values(sizes).find((s) => s.source_url)?.source_url;
 	if (!src) return null;
 
@@ -325,9 +349,13 @@ function mapImage(media: WpFeaturedMedia | undefined, title: string): WpPostImag
 	for (const key of FEATURE_SRCSET_KEYS) {
 		const size = sizes[key];
 		if (!size?.source_url || !size.width) continue;
+		if (fullSrc && !sizeMatchesAttachment(fullSrc, size.source_url)) continue;
 		if (seenWidths.has(size.width)) continue;
 		seenWidths.add(size.width);
 		srcsetParts.push(`${size.source_url} ${size.width}w`);
+	}
+	if (fullSrc && media.media_details?.width && !seenWidths.has(media.media_details.width)) {
+		srcsetParts.push(`${fullSrc} ${media.media_details.width}w`);
 	}
 	// Sort ascending so browsers pick cleanly
 	srcsetParts.sort(

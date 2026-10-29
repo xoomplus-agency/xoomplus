@@ -13,7 +13,7 @@ import { BLOG_LIST_PAGE_SIZE } from '../lib/wp-posts';
 
 const PAGE_SIZE = BLOG_LIST_PAGE_SIZE;
 
-/** Categories only — posts load in BlogPostsGrid (server:defer). */
+/** Categories in shell; posts render inline in BlogPostsGrid (SSR, no server island). */
 let categoryFilters: { id: number; key: string; label: string }[] = [];
 try {
 	const categories = await getPublishedCategories();
@@ -113,17 +113,14 @@ try {
 	</noscript>
 
 	{/*
-	  Posts are a server island: shell (title, filters, search) streams first;
-	  BlogGridSkeleton shows until getPosts resolves. Freshness unchanged
-	  (getPosts still uses cache: no-store).
+	  Render BlogPostsGrid inline (SSR). server:defer islands break on cPanel/Passenger
+	  when island chunks are missing or deploy hashes drift — /blog then 500s.
 	  Filter skeleton is client-toggled only while category chips refetch.
 	*/}
 	<div data-blog-filter-skeleton hidden>
 		<BlogGridSkeleton />
 	</div>
-	<BlogPostsGrid server:defer>
-		<BlogGridSkeleton slot="fallback" />
-	</BlogPostsGrid>
+	<BlogPostsGrid />
 	</div>
 </Section>
 

@@ -2,112 +2,95 @@
  * Run: npx --yes tsx src/lib/extract-faqs.test.ts
  */
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { extractFaqs } from './extract-faqs.ts';
-
-const here = path.dirname(fileURLToPath(import.meta.url));
-const fixturePath = path.join(here, '__fixtures__', 'faq-navigation-icons.content.html');
 
 function assertNoFaqLeak(html: string, label: string) {
 	const lower = html.toLowerCase();
-	assert.ok(!/(^|>)\s*faqs?\s*(<|$)/i.test(html), `${label} still has FAQ marker`);
-	assert.ok(!lower.includes('schema-faq-section'), `${label} still has Yoast FAQ`);
+	assert.ok(!lower.includes('faq-items'), `${label} still has faq-items`);
 	assert.ok(!lower.includes('<details'), `${label} still has details FAQ`);
-	assert.ok(
-		!html.includes('Should navigation icons have text labels'),
-		`${label} still has FAQ question text`,
-	);
+	assert.ok(!lower.includes('data-bs-toggle'), `${label} still has bootstrap FAQ chrome`);
 }
 
-// --- Real cleaned Elementor FAQ post ---
 {
-	const html = fs.readFileSync(fixturePath, 'utf8');
+	const html = [
+		'<p>Intro.</p>',
+		'<h2>FAQs</h2>',
+		'<details><summary>Orphan?</summary>Should stay in body.</details>',
+	].join('');
 	const result = extractFaqs(html);
-	assert.equal(result.faqs.length, 5, 'expected 5 FAQ pairs from fixture');
-	assert.match(result.faqs[0].question, /Should navigation icons have text labels/i);
-	assert.match(result.faqs[0].answerHtml, /Text labels remove guesswork/i);
-	assert.match(result.faqs[4].question, /best icon size/i);
-	assert.match(result.faqs[4].answerHtml, /44/i);
+	assert.deepEqual(result.faqs, []);
+	assert.equal(result.before, html);
+	console.log('✓ without faq-items class → no extraction');
+}
+
+{
+	const html = [
+		'<p>Before article.</p>',
+		'<div class="faq-items">',
+		'<h2>FAQs</h2>',
+		'<h3><button type="button" data-bs-toggle="collapse" data-bs-target="#faq20" aria-expanded="false" aria-controls="faq20">',
+		'Why is handcrafted design making a comeback in 2025? </button></h3>',
+		'As AI-generated visuals become more common, designers are embracing hand-drawn techniques.',
+		'<h3><button type="button" data-bs-toggle="collapse" data-bs-target="#faq21">',
+		'Why do graphic design trends matter? </button></h3>',
+		'Graphic design trends enable you to build projects that communicate.',
+		'<h3><button type="button" data-bs-toggle="collapse" data-bs-target="#faq22">',
+		'How are AI tools changing the way designers work in 2025? </button></h3>',
+		'AI tools help designers work faster.',
+		'<h3><button type="button" data-bs-toggle="collapse" data-bs-target="#faq23">',
+		'How will companies use AI for graphic design in 2025? </button></h3>',
+		'In 2025, companies will use AI for rapid prototyping.',
+		'<h3><button type="button" data-bs-toggle="collapse" data-bs-target="#faq24">',
+		'What is zero-waste design, and why does it matter in 2025? </button></h3>',
+		'Zero-waste design focuses on decreasing environmental impact.',
+		'</div>',
+		'<p>After article.</p>',
+	].join('');
+	const result = extractFaqs(html);
+	assert.equal(result.faqs.length, 5);
+	assert.match(result.faqs[0].question, /handcrafted design/i);
+	assert.ok(!/button/i.test(result.faqs[0].question));
+	assert.match(result.faqs[0].answerHtml, /AI-generated visuals/i);
+	assert.match(result.faqs[4].question, /zero-waste design/i);
+	assert.match(result.faqs[4].answerHtml, /environmental impact/i);
+	assert.match(result.before, /Before article/);
+	assert.match(result.after, /After article/);
 	assertNoFaqLeak(result.before, 'before');
 	assertNoFaqLeak(result.after, 'after');
-	assert.ok(result.before.length > 100, 'before should retain article body');
-	console.log('✓ fixture navigation-icons: 5 Q&As extracted');
+	console.log('✓ bootstrap h3+button faq-items');
 }
 
-// --- No FAQ section ---
-{
-	const html =
-		'<p>Intro paragraph about marketing.</p><h2>Another section</h2><p>More copy.</p>';
-	const result = extractFaqs(html);
-	assert.deepEqual(result.faqs, []);
-	assert.equal(result.before, html);
-	assert.equal(result.after, '');
-	console.log('✓ no FAQ section returns html unchanged');
-}
-
-// --- Heading + strong/b pattern ---
 {
 	const html = [
-		'<p>Before text.</p>',
+		'<p>Before.</p>',
+		'<div class="faq-items">',
 		'<h2>FAQs</h2>',
-		'<p><strong>Is this a question?</strong></p>',
-		'<p>Yes, with a <a href="/x">link</a>.</p>',
-		'<p><strong>Second question?</strong></p>',
-		'<p>Second answer.</p>',
-		'<h2>Next chapter</h2>',
-		'<p>After FAQ.</p>',
+		'<details id="e-n-accordion-item-6600">',
+		'<summary>How can I generate more leads?<button type="button">x</button></summary>',
+		'Focus on SEO and CTAs.',
+		'</details>',
+		'<details>',
+		'<summary>Why is SEO important?</summary>',
+		'SEO brings qualified traffic.',
+		'</details>',
+		'</div>',
+		'<p>After.</p>',
 	].join('');
 	const result = extractFaqs(html);
 	assert.equal(result.faqs.length, 2);
-	assert.equal(result.faqs[0].question, 'Is this a question?');
-	assert.match(result.faqs[0].answerHtml, /link/);
-	assert.equal(result.faqs[1].question, 'Second question?');
-	assert.match(result.before, /Before text/);
-	assert.ok(!/FAQs/i.test(result.before));
-	assert.ok(!/Is this a question/i.test(result.before));
-	assert.match(result.after, /Next chapter/);
-	assert.match(result.after, /After FAQ/);
-	assert.ok(!/Second question/i.test(result.after));
-	console.log('✓ heading + strong pattern');
+	assert.equal(result.faqs[0].question, 'How can I generate more leads?');
+	assert.match(result.faqs[0].answerHtml, /Focus on SEO/i);
+	assertNoFaqLeak(result.before, 'before');
+	assertNoFaqLeak(result.after, 'after');
+	console.log('✓ details/summary faq-items');
 }
 
-// --- Yoast FAQ block ---
 {
-	const html = [
-		'<p>Lead-in.</p>',
-		'<div class="schema-faq wp-block-yoast-faq-block">',
-		'<div class="schema-faq-section">',
-		'<strong class="schema-faq-question">Yoast question one?</strong>',
-		'<p class="schema-faq-answer">Yoast answer one with <em>emphasis</em>.</p>',
-		'</div>',
-		'<div class="schema-faq-section">',
-		'<strong class="schema-faq-question">Yoast question two?</strong>',
-		'<p class="schema-faq-answer">Yoast answer two.</p>',
-		'</div>',
-		'</div>',
-		'<p>Trailing.</p>',
-	].join('');
-	const result = extractFaqs(html);
-	assert.equal(result.faqs.length, 2);
-	assert.equal(result.faqs[0].question, 'Yoast question one?');
-	assert.match(result.faqs[0].answerHtml, /emphasis/);
-	assert.equal(result.faqs[1].question, 'Yoast question two?');
-	assert.match(result.before, /Lead-in/);
-	assert.match(result.after, /Trailing/);
-	assert.ok(!result.before.includes('schema-faq'));
-	assert.ok(!result.after.includes('schema-faq'));
-	console.log('✓ Yoast FAQ block');
-}
-
-// --- Incomplete pair ignored ---
-{
-	const html = '<h2>FAQs</h2><p><strong>Only a question?</strong></p>';
+	const html = '<div class="faq-items"><h2>FAQs</h2><p>No pairs.</p></div>';
 	const result = extractFaqs(html);
 	assert.deepEqual(result.faqs, []);
 	assert.equal(result.before, html);
-	console.log('✓ incomplete pair leaves content untouched');
+	console.log('✓ empty faq-items leaves content untouched');
 }
 
 console.log('\nAll extractFaqs tests passed.');

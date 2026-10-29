@@ -207,9 +207,39 @@ for (const child of childLocs) {
 	}
 
 	const urls = locs(childRes.text);
+	if (urls.length < 1) {
+		note(fetchUrl, `sitemap has ${urls.length} <loc> entries (expected ≥ 1)`);
+		continue;
+	}
+
+	const kind = /post-sitemap/i.test(fetchUrl)
+		? 'posts'
+		: /page-sitemap/i.test(fetchUrl)
+			? 'pages'
+			: 'other';
+	if (kind === 'pages') {
+		console.log(
+			`[check:sitemap] page-sitemap urls=${urls.length} (expect ~33–36 static Astro routes)`,
+		);
+		if (urls.length < 1) note(fetchUrl, 'page-sitemap empty');
+	}
+	if (kind === 'posts') {
+		console.log(
+			`[check:sitemap] post-sitemap urls=${urls.length} (expect ~130 published WP posts)`,
+		);
+		if (urls.length < 1) note(fetchUrl, 'post-sitemap empty');
+	}
+
 	console.log(`OK    ${fetchUrl}  (${urls.length} urls)`);
 	pageUrls.push(...urls);
 }
+
+if (pageUrls.length < 1) {
+	note(indexUrl, 'combined child sitemaps have 0 URLs');
+}
+
+/** Staging sites force noindex — do not fail the sitemap inventory check for that. */
+const strictNoindex = process.env.CHECK_SITEMAP_STRICT_NOINDEX === '1';
 
 console.log(`[check:sitemap] checking ${pageUrls.length} page URL(s)…`);
 
@@ -259,7 +289,11 @@ for (let i = 0; i < pageUrls.length; i += CONCURRENCY) {
 			}
 
 			if (htmlIsNoindex(res.text, res.xRobotsTag)) {
-				note(loc, 'page is noindex');
+				if (strictNoindex) {
+					note(loc, 'page is noindex');
+					return;
+				}
+				console.warn(`WARN  ${loc}  — page is noindex (ignored; set CHECK_SITEMAP_STRICT_NOINDEX=1 to fail)`);
 				return;
 			}
 

@@ -117,35 +117,6 @@ const lcpImagePreload =
 			}
 		: undefined;
 
-/** Fallback when the post body has no extractable FAQ section. */
-const placeholderFaqs = [
-	{
-		question: 'Are these examples of industries you have worked in?',
-		answer:
-			"This page describes possible uses of XoomPlus's services across the listed sectors. It is not a portfolio of sector projects or a claim of specialist experience. We would discuss suitability and any relevant experience in your first conversation.",
-	},
-	{
-		question: 'What if my industry is not listed?',
-		answer:
-			'We work with businesses across many sectors. If yours is not listed, get in touch — we will tell you honestly whether we are a good fit and how we can help.',
-	},
-	{
-		question: 'Do I need a whole new website?',
-		answer:
-			'Not always. Some clients need a full rebuild; others only need targeted improvements to pages, SEO, or lead generation. We recommend what matches your goals and budget.',
-	},
-	{
-		question: 'Can I start with just one service?',
-		answer:
-			'Yes. Many clients begin with a single service such as SEO, Google Ads, or a website refresh, then expand once they see results.',
-	},
-	{
-		question: 'How do you handle specialist or regulated content?',
-		answer:
-			'We follow your compliance requirements and work with your team or advisors on sensitive copy. Accuracy and approval processes come first in regulated industries.',
-	},
-];
-
 const formattedDate = new Intl.DateTimeFormat('en-US', {
 	month: 'long',
 	day: '2-digit',
@@ -201,17 +172,11 @@ const breadcrumbJsonLd = {
 	],
 };
 
-const faqSource = hasContentFaqs
-	? extracted.faqs.map((item) => ({
-			question: item.question,
-			answer: item.answerHtml,
-		}))
-	: placeholderFaqs;
-
-const faqItems = faqSource.map((item, index) => ({
+/** Only FAQs from `.faq-items` in the post — never inject placeholder Q&As. */
+const faqItems = extracted.faqs.map((item, index) => ({
 	id: `blog-faq-item-${index}`,
 	question: item.question,
-	answer: item.answer,
+	answer: item.answerHtml,
 }));
 
 /** Plain text for schema.org — strip HTML from trusted answers. */
@@ -412,14 +377,11 @@ const faqJsonLd =
 						</div>
 
 						<BlogRelatedPosts
-							server:defer
 							postId={post.id}
 							categorySlug={post.categorySlug}
 							postSlug={post.postSlug || post.slug}
 							category={post.category}
-						>
-							<div slot="fallback" class="blog-sidebar__related" aria-hidden="true"></div>
-						</BlogRelatedPosts>
+						/>
 					</aside>
 				</div>
 			</article>
@@ -567,9 +529,8 @@ const faqJsonLd =
 		display: block;
 		width: 100%;
 		height: auto;
-		aspect-ratio: 1196 / 539;
 		border-radius: 20px;
-		object-fit: cover;
+		background: #f3f3f1;
 	}
 
 	.blog-article__body {

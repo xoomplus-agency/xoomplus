@@ -1,5 +1,9 @@
 /**
- * Extract FAQ Q&A pairs from WordPress `content.rendered` (after Elementor clean).
+ * Extract FAQ Q&A pairs from WordPress `content.rendered`.
+ * Only blocks with class `faq-items` are used — wrap CMS FAQs in that class.
+ * Supports:
+ *   - Bootstrap: <h3><button>Question</button></h3> + answer siblings
+ *   - Elementor: <details><summary>Question</summary>Answer</details>
  * Server-side only. Uses ultrahtml — never regex-parse nested HTML. Never throws.
  */
 import { ELEMENT_NODE, TEXT_NODE, parse, renderSync } from 'ultrahtml';
@@ -30,13 +34,6 @@ type ElementNode = Node & {
 	children: Node[];
 };
 
-const FAQ_MARKERS = new Set([
-	'faqs',
-	'faq',
-	"faq's",
-	'frequently asked questions',
-]);
-
 const ANSWER_ALLOW_TAGS = new Set([
 	'p',
 	'a',
@@ -52,7 +49,6 @@ const ANSWER_ALLOW_TAGS = new Set([
 	'blockquote',
 	'code',
 	'pre',
-	'h3',
 	'h4',
 	'h5',
 	'h6',
@@ -62,6 +58,16 @@ const ANSWER_ALLOW_ATTR: Record<string, Set<string>> = {
 	a: new Set(['href', 'title', 'rel', 'target']),
 	span: new Set([]),
 };
+
+const STRIP_TAGS = new Set([
+	'button',
+	'script',
+	'style',
+	'iframe',
+	'object',
+	'svg',
+	'noscript',
+]);
 
 function untouched(html: string): ExtractFaqsResult {
 	return { before: html, faqs: [], after: '' };
@@ -99,60 +105,11 @@ function isEmptyText(node: Node): boolean {
 	return node.type === TEXT_NODE && !normalizeSpace(node.value ?? '');
 }
 
-function isFaqMarkerText(text: string): boolean {
-	return FAQ_MARKERS.has(normalizeSpace(text).toLowerCase());
-}
-
-/** Entire content is one or more <strong>/<b> wrapping only text (and nested strong/b). */
-function isStrongOnlyBlock(node: ElementNode): boolean {
-	const children = (node.children || []).filter((c) => !isEmptyText(c));
-	if (children.length === 0) return false;
-	return children.every((child) => {
-		if (!isElement(child)) return false;
-		const t = tagName(child);
-		if (t !== 'strong' && t !== 'b') return false;
-		return onlyTextAndStrong(child);
-	});
-}
-
-function onlyTextAndStrong(node: ElementNode): boolean {
-	for (const child of node.children || []) {
-		if (child.type === TEXT_NODE) continue;
-		if (!isElement(child)) return false;
-		const t = tagName(child);
-		if (t !== 'strong' && t !== 'b') return false;
-		if (!onlyTextAndStrong(child)) return false;
-	}
-	return true;
-}
-
-function isFaqMarker(node: Node): boolean {
-	if (!isElement(node)) return false;
+function isFaqTitleHeading(node: ElementNode): boolean {
 	const name = tagName(node);
-	const text = normalizeSpace(textContent(node));
-	if (!isFaqMarkerText(text)) return false;
-	if (name === 'h2' || name === 'h3' || name === 'h4') return true;
-	if (name === 'p' && isStrongOnlyBlock(node)) return true;
-	return false;
-}
-
-function isHeadingQuestion(node: ElementNode): boolean {
-	const name = tagName(node);
-	return name === 'h3' || name === 'h4' || name === 'h5';
-}
-
-function isQuestionBlock(node: Node): boolean {
-	if (!isElement(node)) return false;
-	const name = tagName(node);
-	if (name === 'details') return true;
-	if (isHeadingQuestion(node)) return true;
-	if ((name === 'p' || name === 'div') && isStrongOnlyBlock(node)) return true;
-	return false;
-}
-
-function isSectionEnd(node: Node): boolean {
-	if (!isElement(node)) return false;
-	return tagName(node) === 'h2' && !isFaqMarker(node);
+	if (name !== 'h2' && name !== 'h3' && name !== 'h4') return false;
+	const t = normalizeSpace(textContent(node)).toLowerCase();
+	return t === 'faqs' || t === 'faq' || t === "faq's" || t === 'frequently asked questions';
 }
 
 function sanitizeAnswerHtml(html: string): string {
@@ -176,9 +133,7 @@ function sanitizeNodes(nodes: Node[]): Node[] {
 		}
 		if (!isElement(node)) continue;
 		const name = tagName(node);
-		if (name === 'script' || name === 'style' || name === 'iframe' || name === 'object') {
-			continue;
-		}
+		if (STRIP_TAGS.has(name)) continue;
 		node.children = sanitizeNodes(node.children || []);
 		if (!ANSWER_ALLOW_TAGS.has(name)) {
 			out.push(...(node.children || []));
@@ -196,8 +151,6 @@ function sanitizeNodes(nodes: Node[]): Node[] {
 				const href = nextAttrs.href.trim();
 				if (/^\s*javascript:/i.test(href)) delete nextAttrs.href;
 			}
-		} else {
-			node.attributes = {};
 		}
 		node.attributes = nextAttrs;
 		out.push(node);
@@ -216,14 +169,26 @@ function renderNodes(nodes: Node[]): string {
 		.trim();
 }
 
-function questionFromBlock(node: ElementNode): string {
-	if (tagName(node) === 'details') {
-		const summary = (node.children || []).find(
-			(c) => isElement(c) && tagName(c) === 'summary',
-		) as ElementNode | undefined;
-		return normalizeSpace(summary ? textContent(summary) : textContent(node));
-	}
-	return normalizeSpace(textContent(node));
+function ensureAnswerHtml(html: string): string {
+	const trimmed = html.trim();
+	if (!trimmed) return '';
+	if (/<[a-z][\s\S]*>/i.test(trimmed)) return trimmed;
+	return `<p>${trimmed}</p>`;
+}
+
+function textWithoutStripTags(node: Node): string {
+	if (node.type === TEXT_NODE) return node.value ?? '';
+	if (!isElement(node)) return '';
+	if (STRIP_TAGS.has(tagName(node))) return '';
+	return (node.children || []).map(textWithoutStripTags).join('');
+}
+
+function questionFromDetails(node: ElementNode): string {
+	const summary = (node.children || []).find(
+		(c) => isElement(c) && tagName(c) === 'summary',
+	) as ElementNode | undefined;
+	if (!summary) return normalizeSpace(textWithoutStripTags(node));
+	return normalizeSpace(textWithoutStripTags(summary));
 }
 
 function answerFromDetails(node: ElementNode): string {
@@ -233,79 +198,126 @@ function answerFromDetails(node: ElementNode): string {
 	return sanitizeAnswerHtml(renderNodes(parts));
 }
 
-function findYoastSections(root: Node): ElementNode[] {
+/**
+ * Bootstrap / collapse FAQ question:
+ * <h3><button …>Why …?</button></h3>
+ * or <h3>Why …?</h3> (no button)
+ */
+function isQuestionHeading(node: Node): node is ElementNode {
+	if (!isElement(node)) return false;
+	const name = tagName(node);
+	if (name !== 'h3' && name !== 'h4' && name !== 'h5') return false;
+	if (isFaqTitleHeading(node)) return false;
+	const q = normalizeSpace(textContent(node));
+	return q.length > 0;
+}
+
+function questionFromHeading(node: ElementNode): string {
+	return normalizeSpace(textContent(node));
+}
+
+function findFaqItemsContainers(root: Node): ElementNode[] {
 	const found: ElementNode[] = [];
 	const walk = (node: Node) => {
-		if (isElement(node)) {
-			if (hasClass(node, 'schema-faq-section')) found.push(node);
-			for (const child of node.children || []) walk(child);
+		if (!isElement(node)) return;
+		if (hasClass(node, 'faq-items')) {
+			found.push(node);
+			return;
 		}
+		for (const child of node.children || []) walk(child);
 	};
 	walk(root);
 	return found;
 }
 
-function extractYoastPair(section: ElementNode): FaqPair | null {
-	let question = '';
-	const answerParts: Node[] = [];
-	for (const child of section.children || []) {
-		if (!isElement(child)) {
-			if (!isEmptyText(child)) answerParts.push(child);
-			continue;
-		}
-		if (hasClass(child, 'schema-faq-question') || classList(child).some((c) => c.includes('schema-faq-question'))) {
-			question = normalizeSpace(textContent(child));
-			continue;
-		}
-		if (hasClass(child, 'schema-faq-answer') || classList(child).some((c) => c.includes('schema-faq-answer'))) {
-			answerParts.push(...(child.children?.length ? child.children : [child]));
-			continue;
-		}
-	}
-	// Fallback: strong question + following siblings inside section
-	if (!question) {
-		const kids = (section.children || []).filter((c) => !isEmptyText(c));
-		const qEl = kids.find((c) => isElement(c) && (tagName(c) === 'strong' || hasClass(c as ElementNode, 'schema-faq-question')));
-		if (qEl && isElement(qEl)) {
-			question = normalizeSpace(textContent(qEl));
-			const qi = kids.indexOf(qEl);
-			answerParts.push(...kids.slice(qi + 1));
-		}
-	}
-	const answerHtml = sanitizeAnswerHtml(renderNodes(answerParts));
-	if (!question || !answerHtml) return null;
-	return { question, answerHtml };
-}
-
-function containsYoastSection(node: Node): boolean {
-	if (isElement(node) && hasClass(node, 'schema-faq-section')) return true;
+function containsFaqItems(node: Node): boolean {
+	if (isElement(node) && hasClass(node, 'faq-items')) return true;
 	if (!isElement(node)) return false;
-	return (node.children || []).some(containsYoastSection);
+	return (node.children || []).some(containsFaqItems);
 }
 
-function extractFromYoast(rootChildren: Node[]): ExtractFaqsResult | null {
+/**
+ * Flatten one `.faq-items` container into Q&A pairs (direct children walk).
+ * Nested wrappers: recurse into non-question elements that aren't details.
+ */
+function extractPairsFromFaqItems(container: ElementNode): FaqPair[] {
+	const faqs: FaqPair[] = [];
+	const kids = (container.children || []).filter((c) => !isEmptyText(c));
+	let i = 0;
+
+	while (i < kids.length) {
+		const node = kids[i];
+
+		if (!isElement(node)) {
+			i += 1;
+			continue;
+		}
+
+		if (isFaqTitleHeading(node)) {
+			i += 1;
+			continue;
+		}
+
+		if (tagName(node) === 'details') {
+			const question = questionFromDetails(node);
+			const answerHtml = ensureAnswerHtml(answerFromDetails(node));
+			if (question && answerHtml) faqs.push({ question, answerHtml });
+			i += 1;
+			continue;
+		}
+
+		if (isQuestionHeading(node)) {
+			const question = questionFromHeading(node);
+			i += 1;
+			const answerNodes: Node[] = [];
+			while (i < kids.length) {
+				const next = kids[i];
+				if (isEmptyText(next)) {
+					i += 1;
+					continue;
+				}
+				if (isElement(next) && (tagName(next) === 'details' || isQuestionHeading(next) || isFaqTitleHeading(next))) {
+					break;
+				}
+				answerNodes.push(next);
+				i += 1;
+			}
+			const answerHtml = ensureAnswerHtml(sanitizeAnswerHtml(renderNodes(answerNodes)));
+			if (question && answerHtml) faqs.push({ question, answerHtml });
+			continue;
+		}
+
+		/* Nested wrapper (div/section) — pull pairs from inside, don't treat as answer text. */
+		if (node.children?.length) {
+			faqs.push(...extractPairsFromFaqItems(node));
+		}
+		i += 1;
+	}
+
+	return faqs;
+}
+
+function extractFromFaqItems(rootChildren: Node[]): ExtractFaqsResult | null {
 	const root = {
 		type: ELEMENT_NODE,
 		name: 'root',
 		attributes: {},
 		children: rootChildren,
 	} as ElementNode;
-	const sections = findYoastSections(root);
-	if (!sections.length) return null;
+	const containers = findFaqItemsContainers(root);
+	if (!containers.length) return null;
 
 	const faqs: FaqPair[] = [];
-	for (const section of sections) {
-		const pair = extractYoastPair(section);
-		if (pair) faqs.push(pair);
+	for (const container of containers) {
+		faqs.push(...extractPairsFromFaqItems(container));
 	}
 	if (!faqs.length) return null;
 
-	const faqIndex = rootChildren.findIndex(containsYoastSection);
+	const faqIndex = rootChildren.findIndex(containsFaqItems);
 	if (faqIndex === -1) return null;
 
-	// Consume consecutive top-level FAQ wrappers
 	let end = faqIndex + 1;
-	while (end < rootChildren.length && containsYoastSection(rootChildren[end])) {
+	while (end < rootChildren.length && containsFaqItems(rootChildren[end])) {
 		end += 1;
 	}
 
@@ -316,73 +328,9 @@ function extractFromYoast(rootChildren: Node[]): ExtractFaqsResult | null {
 	};
 }
 
-function extractFromHeadingPattern(rootChildren: Node[]): ExtractFaqsResult | null {
-	const markerIndex = rootChildren.findIndex(isFaqMarker);
-	if (markerIndex === -1) return null;
-
-	const faqs: FaqPair[] = [];
-	let i = markerIndex + 1;
-	let consumedUntil = markerIndex + 1;
-
-	while (i < rootChildren.length) {
-		const node = rootChildren[i];
-		if (isEmptyText(node)) {
-			i += 1;
-			continue;
-		}
-		if (isSectionEnd(node)) break;
-
-		if (isElement(node) && tagName(node) === 'details') {
-			const question = questionFromBlock(node);
-			const answerHtml = answerFromDetails(node);
-			if (question && answerHtml) {
-				faqs.push({ question, answerHtml });
-				i += 1;
-				consumedUntil = i;
-				continue;
-			}
-			break;
-		}
-
-		if (isQuestionBlock(node) && isElement(node)) {
-			const question = questionFromBlock(node);
-			i += 1;
-			const answerNodes: Node[] = [];
-			while (i < rootChildren.length) {
-				const next = rootChildren[i];
-				if (isEmptyText(next)) {
-					i += 1;
-					continue;
-				}
-				if (isSectionEnd(next) || isQuestionBlock(next) || isFaqMarker(next)) break;
-				answerNodes.push(next);
-				i += 1;
-			}
-			const answerHtml = sanitizeAnswerHtml(renderNodes(answerNodes));
-			if (question && answerHtml) {
-				faqs.push({ question, answerHtml });
-				consumedUntil = i;
-				continue;
-			}
-			break;
-		}
-
-		// Non-question content after the marker — end of FAQ section
-		break;
-	}
-
-	if (!faqs.length) return null;
-
-	return {
-		before: renderNodes(rootChildren.slice(0, markerIndex)),
-		faqs,
-		after: renderNodes(rootChildren.slice(consumedUntil)),
-	};
-}
-
 /**
- * Split HTML into content before the FAQ section, extracted Q&A pairs, and content after.
- * Returns the original HTML as `before` (faqs empty) when nothing usable is found.
+ * Split HTML into content before `.faq-items`, extracted Q&A pairs, and content after.
+ * Without `class="faq-items"`, returns the original HTML as `before` (faqs empty).
  */
 export function extractFaqs(html: string): ExtractFaqsResult {
 	try {
@@ -390,12 +338,8 @@ export function extractFaqs(html: string): ExtractFaqsResult {
 
 		const ast = parse(html);
 		const rootChildren = ast.children || [];
-
-		const yoast = extractFromYoast(rootChildren);
-		if (yoast && yoast.faqs.length > 0) return yoast;
-
-		const heading = extractFromHeadingPattern(rootChildren);
-		if (heading && heading.faqs.length > 0) return heading;
+		const fromClass = extractFromFaqItems(rootChildren);
+		if (fromClass && fromClass.faqs.length > 0) return fromClass;
 
 		return untouched(html);
 	} catch {

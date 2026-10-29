@@ -4,7 +4,6 @@
  */
 import {
 	buildCf7FormData,
-	getCf7FeedbackUrl,
 	isCf7Success,
 	resolveCf7FormConfig,
 	type Cf7Feedback,
@@ -291,8 +290,10 @@ function bindConfiguredForm(form: HTMLFormElement, config: Cf7FormConfig) {
 				return;
 			}
 
-			const endpoint =
-				form.getAttribute('action')?.trim() || getCf7FeedbackUrl(config.id);
+			// Same-origin proxy — avoids CORS to WordPress and ignores stale HTML `action`
+			// (cached pages still pointed at deleted CF7 15940).
+			const formKey = form.dataset.cf7Form || 'contact-services';
+			const endpoint = `/api/cf7-feedback?form=${encodeURIComponent(formKey)}`;
 			const body = buildCf7FormData(form, config);
 			const response = await fetch(endpoint, {
 				method: 'POST',

@@ -32,7 +32,7 @@ const {
 const HeadingTag = headingLevel === 2 ? 'h2' : 'h3';
 const formAction = getCf7FeedbackUrl(CF7_CONTACT_SERVICES.id);
 
-/** Values must match CF7 form 15941 enum accept lists. */
+/** Values must match CF7 form 15863 enum accept lists. */
 const serviceOptions = [
 	{ label: 'SEO', value: 'SEO' },
 	{ label: 'Web Design & Development', value: 'Web Design & Development' },
@@ -259,7 +259,7 @@ const ids = {
 		</div>
 
 		<label class="enquiry-consent">
-			<input type="checkbox" name="consent" value="yes" required id={`${idPrefix}-consent`} />
+			<input type="checkbox" name="consent" value="Checked/Ticked" required id={`${idPrefix}-consent`} />
 			<span class="enquiry-consent__text">
 				I agree to XoomPlus using my details to respond to this enquiry.
 				<a class="enquiry-consent__link" href="/privacy-policy/">Privacy Policy</a>

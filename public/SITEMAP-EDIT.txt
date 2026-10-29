@@ -1,0 +1,13 @@
+STATIC COMBINED SITEMAP
+=======================
+
+File: public/sitemap_index.xml  (copied to dist/client/ on build)
+URL:  https://xoomplus.co.uk/sitemap_index.xml
+
+Contains ALL blog posts + marketing pages in one <urlset>.
+
+Refresh from WordPress + Astro routes:
+
+  npm run sitemap:static
+
+Then rebuild / redeploy. Purge Cloudflare for /sitemap_index.xml after deploy.

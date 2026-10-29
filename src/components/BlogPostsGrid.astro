@@ -1,7 +1,6 @@
 ---
 /**
- * Deferred posts grid for /blogs. Fetched via server:defer so the listing
- * shell (header, title, filters) streams first with BlogGridSkeleton.
+ * Posts grid for /blog. Rendered inline during SSR (no server:defer island).
  */
 import BlogCard from './BlogCard.astro';
 import Button from './Button.astro';

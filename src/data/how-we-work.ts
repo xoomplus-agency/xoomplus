@@ -27,7 +27,7 @@ export type HowWeWorkContent = {
 
 export const defaultHowWeWork: HowWeWorkContent = {
 	pill: 'Collaborative Culture & Industry Insights',
-	titleLines: ['High-Performance Strategy Demands Direct Collaboration'],
+	titleLines: ['High-Performance Strategy Demands', 'Direct Collaboration'],
 	introLines: [
 		'Exceptional digital performance is not built through disjointed work.',
 		'It is built when every department works in synergy towards a single goal:',

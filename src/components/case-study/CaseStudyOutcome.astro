@@ -119,8 +119,7 @@ const headingId = 'case-study-outcome-heading';
 		background-image: var(--growth-card-bg);
 		background-clip: padding-box;
 		padding: 28px;
-		-webkit-backdrop-filter: blur(40px);
-		backdrop-filter: blur(40px);
+		/* No backdrop-filter — opaque card; blur was crashing Chrome on case-study pages. */
 	}
 
 	/* Warm top-left glow (Our Growth accent) */

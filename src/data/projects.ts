@@ -76,12 +76,18 @@ export const projects: Project[] = [
 		title: 'Concise Medico | Medico-Legal',
 		excerpt: placeholderExcerpt,
 		href: '/case-studies/concise-medico',
+		homeCategory: 'Medico-Legal',
+		homeTags: ['Web Design', 'SEO'],
+		homeExcerpt:
+			'The client needed a clearer digital presence for a specialised medico-legal practice. We delivered a conversion-focused website and search strategy built around high-intent professional queries.',
 		client: 'Concise Medico',
 		...detailPlaceholder,
 		metrics: [
-			{ value: '—', label: 'Metric placeholder' },
-			{ value: '—', label: 'Metric placeholder' },
+			{ value: '82%', label: 'Inquiry Growth' },
+			{ value: '89%', label: 'Referral Efficiency' },
 		],
+		showOnHome: true,
+		homeOrder: 3,
 		metaTitle: 'Concise Medico Case Study | Xoomplus',
 		metaDescription:
 			'Case study: Concise Medico — overview, challenge, solution and results.',

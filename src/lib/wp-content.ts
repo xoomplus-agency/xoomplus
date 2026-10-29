@@ -151,12 +151,18 @@ function isCtaSection(node: ElementNode): boolean {
 	return classList(node).some((c) => c === 'cta-section');
 }
 
+/** Blog FAQ wrapper from CMS — extracted into FAQAccordion; must survive sanitizer. */
+function isFaqItems(node: ElementNode): boolean {
+	return classList(node).some((c) => c === 'faq-items');
+}
+
 function shouldUnwrap(node: ElementNode): boolean {
 	const name = node.name.toLowerCase();
 	if (!UNWRAP_TAGS.has(name)) return false;
-	// Never unwrap CMS callout/takeaways/CTA wrappers (class must survive sanitizer).
+	// Never unwrap CMS callout/takeaways/CTA/FAQ wrappers (class must survive sanitizer).
 	if (isEditorialCallout(node)) return false;
 	if (isCtaSection(node)) return false;
+	if (isFaqItems(node)) return false;
 	if (isElementorChrome(node)) return true;
 	if (hasClass(node, /^e-con-inner$/i)) return true;
 	if (hasClass(node, /^elementor-widget-container$/i)) return true;
@@ -307,6 +313,96 @@ function collapseAnonymousWrappers(nodes: Node[]): Node[] {
 	return out;
 }
 
+const HEADING_TAGS = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+
+/** Leading list markers / numbers / hyphens editors paste into heading text. */
+const HEADING_PREFIX =
+	/^(?:[\d]+(?:\.[0-9]+)?[.)]\s+|[-–—•·*]+\s+)/;
+
+function isEmptyTextNode(node: Node): boolean {
+	return (
+		node.type === TEXT_NODE &&
+		!((node as { value?: string }).value ?? '').replace(/\u00a0/g, ' ').trim()
+	);
+}
+
+function isHeadingElement(node: Node): node is ElementNode {
+	return node.type === ELEMENT_NODE && HEADING_TAGS.has((node as ElementNode).name.toLowerCase());
+}
+
+/** Strip "1. ", "- ", "– " etc. from the first text in a heading. */
+function stripHeadingPrefix(heading: ElementNode): void {
+	const walk = (nodes: Node[]): boolean => {
+		for (const child of nodes) {
+			if (child.type === TEXT_NODE) {
+				const raw = (child as { value?: string }).value ?? '';
+				const next = raw.replace(HEADING_PREFIX, '');
+				if (next !== raw) {
+					(child as { value: string }).value = next;
+					return true;
+				}
+				if (raw.replace(/\u00a0/g, ' ').trim()) return true;
+				continue;
+			}
+			if (child.type === ELEMENT_NODE) {
+				if (walk((child as ElementNode).children || [])) return true;
+			}
+		}
+		return false;
+	};
+	walk(heading.children || []);
+}
+
+/** `<li>` whose only meaningful content is a single heading. */
+function headingOnlyFromLi(li: ElementNode): ElementNode | null {
+	const kids = (li.children || []).filter((c) => !isEmptyTextNode(c));
+	if (kids.length !== 1 || !isHeadingElement(kids[0])) return null;
+	return kids[0];
+}
+
+/**
+ * CMS often wraps each heading in `<ul><li><h4>…</h4></li></ul>`.
+ * Promote those to bare headings and strip list-style prefixes from all headings.
+ */
+function normalizeBlogHeadings(nodes: Node[]): Node[] {
+	const out: Node[] = [];
+	for (const node of nodes) {
+		if (node.type !== ELEMENT_NODE) {
+			out.push(node);
+			continue;
+		}
+		const el = node as ElementNode;
+		el.children = normalizeBlogHeadings(el.children || []);
+		const name = el.name.toLowerCase();
+
+		if (name === 'ul' || name === 'ol') {
+			const items = (el.children || []).filter((c) => !isEmptyTextNode(c));
+			const allHeadingLis =
+				items.length > 0 &&
+				items.every(
+					(c) =>
+						c.type === ELEMENT_NODE &&
+						(c as ElementNode).name.toLowerCase() === 'li' &&
+						headingOnlyFromLi(c as ElementNode),
+				);
+			if (allHeadingLis) {
+				for (const item of items) {
+					const heading = headingOnlyFromLi(item as ElementNode)!;
+					stripHeadingPrefix(heading);
+					out.push(heading);
+				}
+				continue;
+			}
+		}
+
+		if (HEADING_TAGS.has(name)) {
+			stripHeadingPrefix(el);
+		}
+		out.push(el);
+	}
+	return out;
+}
+
 /**
  * Return article HTML safe for Astro `.prose-blog` rendering.
  * Idempotent for already-clean semantic HTML.
@@ -321,7 +417,9 @@ export function cleanWpPostHtml(html: string): string {
 		) || /<(?:script|style|link)\b/i.test(html);
 
 	const ast = parse(html);
-	ast.children = collapseAnonymousWrappers(cleanNodes(ast.children || []));
+	ast.children = normalizeBlogHeadings(
+		collapseAnonymousWrappers(cleanNodes(ast.children || [])),
+	);
 	return normalizeCmsContactLinks(renderSync(ast).trim());
 }
 

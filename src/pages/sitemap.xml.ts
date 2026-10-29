@@ -1,12 +1,13 @@
 /**
- * Legacy alias for the sitemap index (same XML as /sitemap_index.xml).
+ * Legacy alias — same combined urlset as /sitemap_index.xml.
  */
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import {
-	buildSitemapIndexChildren,
-	renderSitemapIndex,
+	buildCombinedSitemapEntries,
+	renderUrlSet,
+	sitemapUnavailableResponse,
 	sitemapXmlResponse,
 } from '../lib/wp-sitemap';
 import { getSiteUrl } from '../lib/wp-seo';
@@ -14,15 +15,14 @@ import { getSiteUrl } from '../lib/wp-seo';
 export const GET: APIRoute = async () => {
 	const siteUrl = getSiteUrl();
 	if (!siteUrl) {
-		return sitemapXmlResponse(
-			`<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-</sitemapindex>
-`,
-			503,
-		);
+		return sitemapUnavailableResponse('SITE_URL missing');
 	}
 
-	const children = await buildSitemapIndexChildren();
-	return sitemapXmlResponse(renderSitemapIndex(siteUrl, children));
+	try {
+		const entries = await buildCombinedSitemapEntries();
+		return sitemapXmlResponse(renderUrlSet(entries));
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		return sitemapUnavailableResponse(msg);
+	}
 };

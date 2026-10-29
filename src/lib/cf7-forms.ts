@@ -16,7 +16,7 @@ export type Cf7FormConfig = {
 	skip?: readonly string[];
 	/** Astro names omitted when empty (optional CF7 fields) */
 	omitEmpty?: readonly string[];
-	/** Transform Astro values before append (e.g. consent → "1") */
+	/** Transform Astro values before append (e.g. consent → "Checked/Ticked") */
 	transform?: Partial<Record<string, (value: string) => string>>;
 	/**
 	 * Append `page-title` (document.title) and `page-url` (location.href).
@@ -26,13 +26,13 @@ export type Cf7FormConfig = {
 };
 
 /**
- * Contact Form 7 — "Contact Form Homepage"
- * Shortcode hash `c68c494` → numeric post ID 15940 (verified via feedback/schema).
+ * Contact Form 7 — "Homepage Form"
+ * Shortcode hash `7fc49ca` → numeric post ID 15862.
  * Used by homepage / About (`ContactSection.astro`).
  */
 export const CF7_CONTACT_HOMEPAGE: Cf7FormConfig = {
-	id: 15940,
-	title: 'Contact Form Homepage',
+	id: 15862,
+	title: 'Homepage Form',
 	fields: {
 		name: 'your-name',
 		company: 'your-company',
@@ -47,13 +47,13 @@ export const CF7_CONTACT_HOMEPAGE: Cf7FormConfig = {
 };
 
 /**
- * Contact Form 7 — "Contact and Services Form"
- * Shortcode hash `2c18b21` → numeric post ID 15941 (verified via feedback/schema).
+ * Contact Form 7 — "Contact Form"
+ * Shortcode hash `08de270` → numeric post ID 15863.
  * Used by `/contact` and `/pricing` (ContactForm.astro).
  */
 export const CF7_CONTACT_SERVICES: Cf7FormConfig = {
-	id: 15941,
-	title: 'Contact and Services Form',
+	id: 15863,
+	title: 'Contact Form',
 	fields: {
 		name: 'your-name',
 		email: 'your-email',
@@ -69,7 +69,8 @@ export const CF7_CONTACT_SERVICES: Cf7FormConfig = {
 	skip: ['source', 'hp_website'],
 	omitEmpty: ['company', 'website', 'budget', 'timeline'],
 	transform: {
-		consent: () => '1',
+		/** Prefer readable label; acceptance fields still need the WP mu-plugin to avoid "1". */
+		consent: () => 'Checked/Ticked',
 	},
 	includePageContext: true,
 };

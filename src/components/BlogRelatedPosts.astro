@@ -1,7 +1,6 @@
 ---
 /**
- * Related posts sidebar — server:defer so the featured LCP image is not
- * blocked by the secondary getPosts({ perPage: 12 }) fetch.
+ * Related posts sidebar — rendered inline during SSR (no server:defer island).
  */
 import BlogCard from './BlogCard.astro';
 import { BLOG_IMAGE_PLACEHOLDER, getRelatedPosts, type WpPost } from '../lib/wp';

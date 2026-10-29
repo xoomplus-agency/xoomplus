@@ -94,7 +94,6 @@ export function Iphone({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 size-full"
-        style={{ transform: "translateZ(0)" }}
         aria-hidden="true"
       >
         <g mask={hasMedia ? `url(#${punchId})` : undefined}>

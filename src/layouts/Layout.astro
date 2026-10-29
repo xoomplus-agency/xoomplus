@@ -3,8 +3,8 @@ import Seo from '../components/Seo.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ScrollToTop from '../components/ScrollToTop.astro';
-import { isStaging, STAGING_ROBOTS } from '../lib/site-env';
 import { getPageSEO, isMappedSeoPath, type PageSEO } from '../lib/wp-seo';
+import { SITE_NOINDEX } from '../config';
 import type { NavItem } from '../data/nav';
 import '../styles/global.css';
 import '../styles/tablet.css';
@@ -81,21 +81,21 @@ const {
 } = Astro.props;
 
 const theme = themeProp ?? headerTheme;
+/** Site-wide flag forces noindex on every page (blogs + static) until flipped off. */
+const effectiveNoindex = noindex || SITE_NOINDEX;
 
 const path = seoPath ?? Astro.url.pathname;
 
 const mappedPromise =
-	noindex || skipWpSeo ? Promise.resolve(false) : isMappedSeoPath(path);
+	effectiveNoindex || skipWpSeo ? Promise.resolve(false) : isMappedSeoPath(path);
 const pageSeoPromise =
-	noindex || skipWpSeo ? Promise.resolve(null) : getPageSEO(path);
+	effectiveNoindex || skipWpSeo ? Promise.resolve(null) : getPageSEO(path);
 const [mapped, pageSeoResult] = await Promise.all([mappedPromise, pageSeoPromise]);
 
 /** Yoast SEO for mapped routes — fetched once in the shared layout. */
 const pageSeo: PageSEO | null = mapped ? pageSeoResult : null;
 
-if (isStaging()) {
-	Astro.response.headers.set('X-Robots-Tag', STAGING_ROBOTS);
-} else if (noindex) {
+if (effectiveNoindex) {
 	Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
 } else if (robotsProp) {
 	Astro.response.headers.set('X-Robots-Tag', robotsProp);
@@ -148,7 +148,6 @@ if (isStaging()) {
 				</>
 			))
 		}
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<script is:inline>
@@ -161,8 +160,8 @@ if (isStaging()) {
 			type={type}
 			canonicalPath={canonicalPath}
 			pageSeo={pageSeo}
-			noindex={noindex}
-			robots={robotsProp}
+			noindex={effectiveNoindex}
+			robots={effectiveNoindex ? undefined : robotsProp}
 		>
 			<slot name="json-ld" slot="json-ld" />
 		</Seo>

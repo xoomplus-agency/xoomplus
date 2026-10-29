@@ -9,6 +9,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { REMOVED_CHILD_PAGES } from './src/config.ts';
 import { getDisabledChildRedirects } from './src/data/services/index.ts';
+import { getLegacyServiceRedirects } from './src/data/legacy-service-redirects.ts';
 
 // Load all env keys (not only VITE_/PUBLIC_) for `site` configuration.
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
@@ -20,12 +21,17 @@ const useVercel = process.env.VERCEL === '1';
 const removedChildRedirects =
   REMOVED_CHILD_PAGES === 'redirect-parent' ? getDisabledChildRedirects() : {};
 
+const legacyServiceRedirects = getLegacyServiceRedirects();
+
 // https://astro.build/config
 export default defineConfig({
   // Only set when SITE_URL is provided — prevents accidental production canonicals in staging.
   site: env.SITE_URL || undefined,
 
-  redirects: removedChildRedirects,
+  redirects: {
+    ...removedChildRedirects,
+    ...legacyServiceRedirects,
+  },
 
   // Static by default; SEO pages + revalidate API opt into on-demand via `prerender = false`.
   // Homepage SSR calls WordPress several times — give the serverless function enough time.
@@ -68,8 +74,9 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
 
-  // /services is served by src/pages/services/index.astro (WP page ID 1062).
+  // Marketing pages are static Astro routes; WordPress powers blogs only.
   // Disabled-child redirects (optional) come from REMOVED_CHILD_PAGES + disabled flags.
+  // Retired WP service URLs → /services/... via legacy-service-redirects.ts.
 
   vite: {
     plugins: [tailwindcss()],

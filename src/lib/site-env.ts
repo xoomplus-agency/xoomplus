@@ -1,11 +1,9 @@
-/** Staging is the default until SITE_ENV=production. */
-export const STAGING_ROBOTS =
-	'noindex, nofollow, noarchive, nosnippet, noimageindex';
+/** Live site is always production. No SITE_ENV required. */
 
 export function isProduction(): boolean {
-	return import.meta.env.SITE_ENV === 'production';
+	return true;
 }
 
 export function isStaging(): boolean {
-	return !isProduction();
+	return false;
 }

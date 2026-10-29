@@ -255,7 +255,6 @@ let allRoutesCache: {
 	staleUntil: number;
 	routes: WpResolvedRoute[];
 } | null = null;
-let allRoutesInflight: Promise<WpResolvedRoute[]> | null = null;
 
 function routeFromWpSlug(key: WpPageKey, _slug: string): string {
 	// Public paths are fixed in Astro; WP slug may lag (aliases 301 the old path).
@@ -301,43 +300,28 @@ export async function getLiveWpSlugForId(id: number): Promise<string | null> {
 	return slug;
 }
 
-async function loadAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
-	const entries = Object.entries(WP_SEO_PAGES) as [WpPageKey, { id: number }][];
-	const resolved = await Promise.all(
-		entries.map(async ([key, { id }]) => {
-			const slug = await getLiveWpSlugForId(id);
-			if (!slug) {
-				console.error(`[wp-seo] could not resolve slug for key "${key}" (id ${id})`);
-				return null;
-			}
+/**
+ * Fixed Astro marketing routes (+ blog listing path).
+ * WordPress page IDs remain for optional SEO/revalidate tooling; routes do not depend on CMS slugs.
+ */
+function staticWpPageRoutes(): WpResolvedRoute[] {
+	return (Object.entries(WP_SEO_PAGES) as [WpPageKey, { id: number }][]).map(
+		([key, { id }]) => {
+			const route = WP_PAGE_FALLBACK_ROUTES[key];
+			const slug = route === '/' ? 'home' : route.replace(/^\/+|\/+$/g, '');
 			return {
 				key,
 				id,
 				slug,
 				route: routeFromWpSlug(key, slug),
 			} satisfies WpResolvedRoute;
-		}),
+		},
 	);
-	const routes = resolved.filter((r): r is WpResolvedRoute => r != null);
-	const missing = routes.length !== entries.length;
-
-	// Only cache a complete map — never freeze a partial/stale route table.
-	// A failed refresh keeps the previous complete map.
-	if (!missing) {
-		const now = Date.now();
-		allRoutesCache = {
-			expires: now + routeCacheTtlMs(),
-			staleUntil: now + routeStaleTtlMs(),
-			routes,
-		};
-	}
-	return routes;
 }
 
 /**
- * Resolve every mapped WP page to its current CMS slug + frontend route.
- * Used by on-demand [slug] routing, nav, and check:wp-routes.
- * Concurrent callers share one in-flight request.
+ * Resolve mapped page keys to frontend routes.
+ * Marketing paths are fixed in Astro; only blogs content comes from WordPress.
  */
 export async function getAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
 	const now = Date.now();
@@ -345,39 +329,21 @@ export async function getAllWpPageRoutes(): Promise<WpResolvedRoute[]> {
 		return allRoutesCache.routes;
 	}
 
-	if (allRoutesCache && allRoutesCache.staleUntil > now) {
-		if (!allRoutesInflight) {
-			const previous = allRoutesCache.routes;
-			allRoutesInflight = loadAllWpPageRoutes()
-				.catch((err) => {
-					console.error('[wp-seo] background route refresh failed:', err);
-					return previous;
-				})
-				.finally(() => {
-					allRoutesInflight = null;
-				});
-		}
-		return allRoutesCache.routes;
-	}
-
-	if (!allRoutesInflight) {
-		allRoutesInflight = loadAllWpPageRoutes().finally(() => {
-			allRoutesInflight = null;
-		});
-	}
-	return allRoutesInflight;
+	const routes = staticWpPageRoutes();
+	allRoutesCache = {
+		expires: now + routeCacheTtlMs(),
+		staleUntil: now + routeStaleTtlMs(),
+		routes,
+	};
+	return routes;
 }
 
-/** Frontend path for a stable page key (e.g. `services` → `/services` from live CMS slug). */
+/**
+ * Frontend path for a stable page key.
+ * Marketing routes are fixed in Astro (`WP_PAGE_FALLBACK_ROUTES`); WordPress is blogs-only.
+ */
 export async function getWpPagePath(key: WpPageKey): Promise<string> {
-	const routes = await getAllWpPageRoutes();
-	const hit = routes.find((r) => r.key === key);
-	if (hit) return hit.route;
-	const fallback = WP_PAGE_FALLBACK_ROUTES[key];
-	console.error(
-		`[wp-seo] getWpPagePath("${key}"): live CMS slug unavailable — using fallback ${fallback}. Check WP_BASE_URL / page publish status.`,
-	);
-	return fallback;
+	return WP_PAGE_FALLBACK_ROUTES[key];
 }
 
 /**

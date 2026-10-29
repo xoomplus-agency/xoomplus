@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "check:wp-routes": "npx --yes tsx scripts/check-wp-routes.ts",
-    "check:sitemap": "npx --yes tsx scripts/check-sitemap.ts",
+		"check:sitemap": "npx --yes tsx scripts/check-sitemap.ts",
+		"sitemap:static": "npx --yes tsx scripts/generate-combined-sitemap.mjs",
     "check:no-gsap": "node scripts/check-no-static-gsap.mjs",
     "prebuild": "node scripts/prebuild.mjs",
     "build": "astro build",

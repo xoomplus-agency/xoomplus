@@ -34,17 +34,20 @@ function AccordionTrigger({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   return (
-    <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
-        className={cn(
-          "group relative flex flex-1 items-center justify-between text-left outline-none transition-none hover:no-underline",
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </AccordionPrimitive.Trigger>
+    /* div — not h3 — so FAQ questions are not heading levels under the section h2 */
+    <AccordionPrimitive.Header asChild>
+      <div className="flex">
+        <AccordionPrimitive.Trigger
+          data-slot="accordion-trigger"
+          className={cn(
+            "group relative flex flex-1 items-center justify-between text-left outline-none transition-none hover:no-underline",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </AccordionPrimitive.Trigger>
+      </div>
     </AccordionPrimitive.Header>
   )
 }

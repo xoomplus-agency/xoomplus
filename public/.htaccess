@@ -31,6 +31,13 @@ ErrorDocument 404 /404.html
 	<If "%{REQUEST_URI} =~ m#^/(fonts|images|videos|icons)/#">
 		Header set Cache-Control "public, max-age=31536000, immutable"
 	</If>
+	# Only /sitemap_index.xml — never year-long CDN cache
+	<If "%{REQUEST_URI} =~ m#sitemap_index#">
+		Header always unset Cache-Control
+		Header always set Cache-Control "public, max-age=0, must-revalidate"
+		Header always set CDN-Cache-Control "no-store"
+		Header always set Cloudflare-CDN-Cache-Control "no-store"
+	</If>
 </IfModule>
 
 <IfModule mod_headers.c>

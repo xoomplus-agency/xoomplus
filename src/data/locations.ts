@@ -389,7 +389,7 @@ function buildLocationRows(slug: string): LocationRow[] {
 
 const locationsSource: Location[] = [
 	{
-		slug: 'Blackburn',
+		slug: 'blackburn',
 		name: 'Blackburn',
 		metaTitle: 'Digital Marketing Agency Blackburn | Xoomplus',
 		metaDescription:
@@ -905,5 +905,6 @@ export const locationsUsingIndustriesFallback: string[] = locationsSource
 	.map((loc) => loc.slug);
 
 export function getLocationBySlug(slug: string): Location | undefined {
-	return locations.find((loc) => loc.slug === slug);
+	const needle = slug.trim().toLowerCase();
+	return locations.find((loc) => loc.slug.toLowerCase() === needle);
 }

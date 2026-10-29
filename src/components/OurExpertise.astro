@@ -3,9 +3,9 @@ import Section from './Section.astro';
 import ServiceCard from './ServiceCard.astro';
 import Button from './Button.astro';
 import { expertiseServices } from '../data/services';
-import { getWpPagePath } from '../lib/wp-seo';
+import { WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
 
-const servicesHref = await getWpPagePath('services');
+const servicesHref = WP_PAGE_FALLBACK_ROUTES.services;
 ---
 
 <Section
