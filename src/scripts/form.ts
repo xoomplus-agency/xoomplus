@@ -290,15 +290,22 @@ function bindConfiguredForm(form: HTMLFormElement, config: Cf7FormConfig) {
 				return;
 			}
 
-			// Same-origin proxy — avoids CORS to WordPress and ignores stale HTML `action`
-			// (cached pages still pointed at deleted CF7 15940).
+			// Same-origin JSON proxy — avoids CORS to WordPress, ignores stale HTML `action`,
+			// and avoids Astro CSRF 403 (multipart + https Origin vs http Node URL behind CF).
 			const formKey = form.dataset.cf7Form || 'contact-services';
 			const endpoint = `/api/cf7-feedback?form=${encodeURIComponent(formKey)}`;
 			const body = buildCf7FormData(form, config);
+			const payload: Record<string, string> = {};
+			for (const [key, value] of body.entries()) {
+				payload[key] = String(value);
+			}
 			const response = await fetch(endpoint, {
 				method: 'POST',
-				body,
-				headers: { Accept: 'application/json' },
+				body: JSON.stringify(payload),
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
 			});
 
 			let data: Cf7Feedback = {};

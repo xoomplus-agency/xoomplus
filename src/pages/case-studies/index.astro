@@ -5,12 +5,14 @@
  */
 import Layout from '../../layouts/Layout.astro';
 import CaseStudiesListingPage from '../../components/CaseStudiesListingPage.astro';
+import { SITE_OG_PAGE_HERO } from '../../data/site-og';
 ---
 
 <Layout
 	seoPath="/case-studies"
 	title="Digital Marketing Case Studies | Real Results"
 	description="See how Xoomplus helps businesses grow with SEO, PPC, web design and social media. Explore our case studies and the measurable results behind them."
+	image={SITE_OG_PAGE_HERO}
 	skipWpSeo
 >
 	<CaseStudiesListingPage />

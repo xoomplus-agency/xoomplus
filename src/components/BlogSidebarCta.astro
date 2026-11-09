@@ -1,5 +1,6 @@
 ---
 import Button from './Button.astro';
+import { SITE_PHONE } from '../data/site-contact';
 
 interface Props {
 	heading?: string;
@@ -10,7 +11,7 @@ interface Props {
 const {
 	heading = 'Tell us about your project',
 	text = 'Get in touch with our team for a free consultation and quote today.',
-	button = { label: "Let's Talk", href: '/contact' },
+	button = { label: "Let's Talk", href: SITE_PHONE.href },
 } = Astro.props;
 ---
 

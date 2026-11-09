@@ -6,6 +6,7 @@
 import Button from './Button.astro';
 import HeroGlassPanel from './HeroGlassPanel';
 import type { ServiceHeroData } from '../data/main-services';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 interface Props {
 	hero: ServiceHeroData;
@@ -19,6 +20,7 @@ const panelPlus = hero.panelPlus ?? '/images/plus-icon-main-service.svg';
 const headingId = 'service-hero-heading';
 const [titleLine1, titleLine2] = hero.titleLines;
 const [caption1, caption2, caption3] = hero.panelCaptions;
+const secondaryLink = normalizeLinkHref(hero.secondaryLink.href, Astro.url);
 ---
 
 <section
@@ -61,7 +63,11 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 
 				<div class="service-hero__actions" data-hero-item>
 					<Button href={hero.primaryButton.href}>{hero.primaryButton.label}</Button>
-					<a class="service-hero__secondary" href={hero.secondaryLink.href}>
+					<a
+						class="service-hero__secondary"
+						href={secondaryLink.href}
+						data-scroll-target={secondaryLink.scrollTarget}
+					>
 						{hero.secondaryLink.label}
 						<svg
 							class="service-hero__secondary-icon"
@@ -704,7 +710,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 		}
 	}
 
-	/* Mobile only — fixed 50px h1 (tablet ≥640 and desktop unchanged) */
+	/* Mobile only — fixed 35px h1 (tablet ≥640 and desktop unchanged) */
 	@media (max-width: 639px) {
 		.service-hero {
 			min-height: 0;
@@ -718,7 +724,7 @@ const [caption1, caption2, caption3] = hero.panelCaptions;
 			box-sizing: border-box;
 			width: 100%;
 			max-width: 100%;
-			font-size: 50px;
+			font-size: 35px;
 			line-height: 1.1;
 			letter-spacing: -0.02em;
 			overflow-wrap: break-word;

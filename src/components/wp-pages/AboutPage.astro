@@ -53,11 +53,10 @@ import { aboutProcess } from '../../data/process';
 		max-width: min(100%, 820px);
 	}
 
+	/* Cap intro width without forcing a fixed track (fixed 660px caused L/R scroll when zoomed). */
 	@media (min-width: 1024px) {
 		.page-about .hww-intro {
-			flex: 0 0 660px;
-			width: 660px;
-			max-width: 660px;
+			max-width: min(100%, 660px);
 		}
 	}
 

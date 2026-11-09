@@ -13,7 +13,10 @@ import ServiceFeatures from '../../../components/ServiceFeatures.astro';
 import ChildProcess from '../../../components/ChildProcess.astro';
 import ChildServices from '../../../components/ChildServices.astro';
 import IndustryClarity from '../../../components/IndustryClarity.astro';
+import AiPlatformCards from '../../../components/AiPlatformCards.astro';
 import ChildServiceStack from '../../../components/ChildServiceStack.astro';
+import WhyXoomplus from '../../../components/WhyXoomplus.astro';
+import ComparisonTable from '../../../components/ComparisonTable.astro';
 import ServicesBehind from '../../../components/ServicesBehind.astro';
 import FAQ from '../../../components/FAQ.astro';
 import {
@@ -199,19 +202,28 @@ const breadcrumbJsonLd = {
 			primaryLabel={primaryLabel}
 			primaryHref="/contact"
 			secondaryLabel={secondaryLabel}
-			secondaryHref="#process"
+			secondaryHref={
+				child.heroSecondaryHref ?? (child.hideProcess ? '#features' : '#process')
+			}
 		/>
 		<ServiceFeatures {...(child.features ?? defaultChildFeatures)} id="features" />
 		{/* Working together — hero secondary CTA target (#process) */}
-		<ChildProcess
-			id="process"
-			pill={childProcessPill}
-			heading={childProcessHeading}
-			text={childProcessText}
-			image={childProcessImageData}
-			primaryButton={{ label: childProcessPrimaryLabel, href: '/contact' }}
-			secondaryButton={{ label: childProcessSecondaryLabel, href: '#clarity' }}
-		/>
+		{
+			!child.hideProcess ? (
+				<ChildProcess
+					id="process"
+					pill={childProcessPill}
+					heading={childProcessHeading}
+					text={childProcessText}
+					image={childProcessImageData}
+					primaryButton={{ label: childProcessPrimaryLabel, href: '/contact' }}
+					secondaryButton={{
+						label: childProcessSecondaryLabel,
+						href: child.processSecondaryHref ?? '#clarity',
+					}}
+				/>
+			) : null
+		}
 		{childServicesContent ? (
 			<ChildServices
 				id="services"
@@ -221,16 +233,51 @@ const breadcrumbJsonLd = {
 				cards={childServicesContent.cards}
 			/>
 		) : null}
-		<IndustryClarity content={child.clarity ?? defaultChildClarity} />
-		{childServiceStackContent ? (
-			<ChildServiceStack
-				id="service-stack"
-				pill={childServiceStackContent.pill ?? 'Services'}
-				heading={childServiceStackContent.heading ?? `Our ${shortName} Services`}
-				text={childServiceStackContent.text ?? ''}
-				cards={childServiceStackContent.cards}
-			/>
-		) : null}
+		{child.afterServices ? <AiPlatformCards content={child.afterServices} /> : null}
+		{
+			child.slug === 'ai-seo' ||
+			child.slug === 'local-seo' ||
+			child.slug === 'technical-seo' ||
+			child.slug === 'on-page-seo' ||
+			child.slug === 'link-building' ||
+			child.slug === 'e-commerce-seo' ||
+			child.slug === 'seo-audit' ? (
+				<>
+					{childServiceStackContent ? (
+						<ChildServiceStack
+							id="service-stack"
+							pill={childServiceStackContent.pill ?? 'Services'}
+							heading={childServiceStackContent.heading ?? `Our ${shortName} Services`}
+							text={childServiceStackContent.text ?? ''}
+							cards={childServiceStackContent.cards}
+						/>
+					) : null}
+					<IndustryClarity content={child.clarity ?? defaultChildClarity} />
+				</>
+			) : (
+				<>
+					<IndustryClarity content={child.clarity ?? defaultChildClarity} />
+					{childServiceStackContent ? (
+						<ChildServiceStack
+							id="service-stack"
+							pill={childServiceStackContent.pill ?? 'Services'}
+							heading={childServiceStackContent.heading ?? `Our ${shortName} Services`}
+							text={childServiceStackContent.text ?? ''}
+							cards={childServiceStackContent.cards}
+						/>
+					) : null}
+				</>
+			)
+		}
+		{
+			child.why ? (
+				<WhyXoomplus
+					content={child.why}
+					columns={child.slug === 'ai-seo' ? 2 : 3}
+				/>
+			) : null
+		}
+		{child.comparisonTable ? <ComparisonTable content={child.comparisonTable} /> : null}
 		{/* DEFAULT: replace per child service when real content is ready */}
 		<ServicesBehind content={child.servicesBehind ?? defaultChildServicesBehind} />
 		{/* DEFAULT: replace per child via `child.faq` or `faqs['child-service']` */}
@@ -266,7 +313,10 @@ const breadcrumbJsonLd = {
 	.child-service-main :global(#process),
 	.child-service-main :global(#clarity),
 	.child-service-main :global(#services),
-	.child-service-main :global(#service-stack) {
+	.child-service-main :global(#ai-platforms),
+	.child-service-main :global(#service-stack),
+	.child-service-main :global(#why-xoomplus),
+	.child-service-main :global(#seo-geo-aeo-comparison) {
 		scroll-margin-top: var(--child-nav-offset);
 	}
 

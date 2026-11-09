@@ -12,7 +12,7 @@ export const services: ServiceItem[] = [
 		title: 'Search Engine Optimisation (SEO)',
 		icon: '/icons/service-circles.svg',
 		description:
-			'Our SEO specialists build high-ranking organic systems to scale your business.',
+			'Our expert SEO team builds high-ranking organic systems to scale your business.',
 		features: [
 			'AI SEO (GEO & AEO)',
 			'Local SEO',
@@ -46,7 +46,7 @@ export const services: ServiceItem[] = [
 		title: 'Social Media Marketing & AI Creative Strategy',
 		icon: '/icons/service-circles.svg',
 		description:
-			'We combine clear content strategies with bespoke creative design and active community management to turn visitors into brand advocates.',
+			'We combine clear content strategies with creative design and active community management to turn visitors into paid customers.',
 		features: [
 			'Social Media Management',
 			'Commercial Content Strategy',

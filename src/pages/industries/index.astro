@@ -4,12 +4,14 @@
  */
 import Layout from '../../layouts/Layout.astro';
 import IndustriesPage from '../../components/wp-pages/IndustriesPage.astro';
+import { SITE_OG_PAGE_HERO } from '../../data/site-og';
 ---
 
 <Layout
 	seoPath="/industries"
 	title="Industry-Specific Digital Marketing Solutions By Xoomplus"
 	description="See how Xoomplus delivers SEO, PPC and web solutions for Manchester businesses across different industries. Explore your sector and get in touch."
+	image={SITE_OG_PAGE_HERO}
 	skipWpSeo
 >
 	<IndustriesPage />

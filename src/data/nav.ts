@@ -1,4 +1,5 @@
 import { type WpPageKey, WP_PAGE_FALLBACK_ROUTES } from '../lib/wp-seo';
+import { SITE_PHONE } from './site-contact';
 
 /** Primary site navigation — shared by desktop Header and mobile nav. */
 export type NavItem = {
@@ -11,11 +12,9 @@ export type NavItem = {
 	matchBlogPosts?: boolean;
 };
 
-/**
- * Navbar "Let's Talk" CTA — always the home contact form (`ContactSection` id).
- * Absolute path + hash so it works from every page.
- */
-export const NAV_LETS_TALK_HREF = '/#contact';
+/** Navbar "Let's Talk" CTA — dials the site phone number. */
+export const NAV_LETS_TALK_HREF = SITE_PHONE.href;
+export const NAV_LETS_TALK_LABEL = "Let's Talk";
 
 /**
  * Build-time / static nav — no per-request WordPress calls.

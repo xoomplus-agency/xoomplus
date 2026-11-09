@@ -13,7 +13,7 @@ export type HomeIndustriesContent = {
 
 /** Homepage “Industries We Serve” only — does not affect /industries. */
 export const homeIndustries: HomeIndustriesContent = {
-	title: 'Tailored Digital Strategies for High-Growth Sectors',
+	title: 'Customised Digital Marketing Services for High-Growth Sectors',
 	intro:
 		'Our industry-specific approach ensures our strategies are built to target the right audience in the right manner, whether it is B2B, B2C or D2C.',
 	cards: [

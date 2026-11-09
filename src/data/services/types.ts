@@ -169,6 +169,8 @@ export type ChildServiceLive = {
 	hero: ChildServiceHeroData;
 	/** Optional override; falls back to `defaultChildFeatures` on the child page. */
 	features?: ServiceFeaturesData;
+	/** Hide ChildProcess (“Practical Commercial Value” / Working together). */
+	hideProcess?: boolean;
 	/** ChildProcess heading — default: `What Better ${shortName} Can Do for Your Business`. */
 	processHeading?: string;
 	/** ChildProcess lead copy — placeholder unless overridden per child. */
@@ -176,10 +178,18 @@ export type ChildServiceLive = {
 	processPill?: string;
 	processPrimaryLabel?: string;
 	processSecondaryLabel?: string;
+	/** ChildProcess secondary CTA href — default `#clarity`. */
+	processSecondaryHref?: string;
 	/** ChildProcess image — else `/images/<slug>-working-together.webp` → collaborative-thinking. */
 	processImage?: { src: string; alt: string; width?: number; height?: number };
+	/** Hero secondary CTA href — default `#process`, or `#features` when process is hidden. */
+	heroSecondaryHref?: string;
 	/** Optional override; falls back to `defaultChildClarity` on the child page. */
 	clarity?: ChildClarityData;
+	/** Optional Why Xoomplus section; omit to hide. */
+	why?: import('../why-xoomplus').WhyXoomplusContent;
+	/** Optional comparison matrix (ServiceDetail-style table, no links). */
+	comparisonTable?: import('../comparison-table').ComparisonTableContent;
 	/** Optional Services behind; falls back to `defaultChildServicesBehind`. */
 	servicesBehind?: import('../services-behind').ServicesBehindSection;
 	/** Optional FAQ; falls back to `defaultChildFaq` (`faqs['child-service']`). */
@@ -204,6 +214,8 @@ export type ChildServiceLive = {
 	 * Omit `cards` / empty `cards` to hide the section.
 	 */
 	services?: import('../child-services').ChildServicesDraft;
+	/** Optional card section rendered after the services grid (e.g. AI platforms). */
+	afterServices?: import('../ai-platforms').AiPlatformCardsContent;
 	/**
 	 * Optional scroll-stack section below Clarity.
 	 * Falls back to shared UI/UX five-card default until per-child assets exist.

@@ -22,6 +22,11 @@ interface Props {
 	 * Wins over pageSeo robots when set; ignored when `noindex` is true or staging.
 	 */
 	robots?: string;
+	/**
+	 * Static pages only: og/twitter title + description match meta title/description,
+	 * and `image` (hero or logo) wins over Yoast og:image. Never enable for blog posts.
+	 */
+	syncOgWithMeta?: boolean;
 }
 
 const {
@@ -33,13 +38,16 @@ const {
 	pageSeo,
 	noindex = false,
 	robots: robotsProp,
+	syncOgWithMeta = false,
 } = Astro.props;
 
 const site = Astro.site;
 const fromWp = pageSeo != null;
 
 const seoTitle = fromWp ? (pageSeo.seoTitle ?? title) : title;
-const seoDescription = fromWp ? pageSeo.metaDescription : description || undefined;
+const seoDescription = fromWp
+	? (pageSeo.metaDescription ?? (description || undefined))
+	: description || undefined;
 
 const canonical = noindex
 	? undefined
@@ -52,35 +60,62 @@ const canonical = noindex
 const og = fromWp ? pageSeo.social.og : null;
 const x = fromWp ? pageSeo.social.x : null;
 
-const ogTitle = fromWp ? (og?.title ?? seoTitle) : seoTitle;
-const ogDescription = fromWp ? (og?.description ?? undefined) : seoDescription;
+function absoluteImage(src: string | undefined | null): string | undefined {
+	if (!src) return undefined;
+	if (src.startsWith('http')) return src;
+	return site ? new URL(src, site).href : undefined;
+}
+
+const propImage = absoluteImage(image);
+
+const ogTitle = syncOgWithMeta
+	? seoTitle
+	: fromWp
+		? (og?.title ?? seoTitle)
+		: seoTitle;
+const ogDescription = syncOgWithMeta
+	? seoDescription
+	: fromWp
+		? (og?.description ?? undefined)
+		: seoDescription;
 const ogType = fromWp ? (og?.type ?? type) : type;
 const ogUrl = noindex ? undefined : fromWp ? (og?.url ?? canonical) : canonical;
 const ogSiteName = fromWp ? (og?.siteName ?? undefined) : undefined;
 const ogLocale = fromWp ? (og?.locale ?? undefined) : undefined;
 
-const ogImage = fromWp
-	? (og?.image ?? undefined)
-	: image
-		? image.startsWith('http')
-			? image
-			: site
-				? new URL(image, site).href
-				: undefined
-		: undefined;
+const ogImage = syncOgWithMeta
+	? (propImage ?? absoluteImage(og?.image ?? undefined))
+	: fromWp
+		? (og?.image ?? undefined)
+		: propImage;
 
-const ogImageWidth = fromWp ? (og?.imageWidth ?? undefined) : undefined;
-const ogImageHeight = fromWp ? (og?.imageHeight ?? undefined) : undefined;
-const ogImageType = fromWp ? (og?.imageType ?? undefined) : undefined;
+const ogImageWidth =
+	syncOgWithMeta && propImage ? undefined : fromWp ? (og?.imageWidth ?? undefined) : undefined;
+const ogImageHeight =
+	syncOgWithMeta && propImage ? undefined : fromWp ? (og?.imageHeight ?? undefined) : undefined;
+const ogImageType =
+	syncOgWithMeta && propImage ? undefined : fromWp ? (og?.imageType ?? undefined) : undefined;
 
-const twitterCard = fromWp
+const twitterCard = fromWp && !syncOgWithMeta
 	? (x?.card ?? (ogImage ? 'summary_large_image' : 'summary'))
 	: ogImage
 		? 'summary_large_image'
 		: 'summary';
-const twitterTitle = fromWp ? (x?.title ?? seoTitle) : seoTitle;
-const twitterDescription = fromWp ? (x?.description ?? undefined) : seoDescription;
-const twitterImage = fromWp ? (x?.image ?? ogImage) : ogImage;
+const twitterTitle = syncOgWithMeta
+	? seoTitle
+	: fromWp
+		? (x?.title ?? seoTitle)
+		: seoTitle;
+const twitterDescription = syncOgWithMeta
+	? seoDescription
+	: fromWp
+		? (x?.description ?? undefined)
+		: seoDescription;
+const twitterImage = syncOgWithMeta
+	? ogImage
+	: fromWp
+		? (x?.image ?? ogImage)
+		: ogImage;
 
 function robotsContent(seo: PageSEO): string | undefined {
 	const parts: string[] = [];

@@ -4,6 +4,7 @@
  * Uses `ultrahtml` (already present via Astro) — do not regex-parse nested HTML.
  */
 import { ELEMENT_NODE, TEXT_NODE, parse, renderSync, walkSync } from 'ultrahtml';
+import { decodeHtmlEntities } from './decode-html-entities';
 import { normalizeCmsContactLinks } from './wp';
 
 type Node = {
@@ -61,6 +62,7 @@ const KEEP_ATTR = new Set([
 	'open',
 	'role',
 	'tabindex',
+	'data-scroll-target',
 ]);
 
 const ELEMENTOR_CLASS =
@@ -153,7 +155,7 @@ function isCtaSection(node: ElementNode): boolean {
 
 /** Blog FAQ wrapper from CMS — extracted into FAQAccordion; must survive sanitizer. */
 function isFaqItems(node: ElementNode): boolean {
-	return classList(node).some((c) => c === 'faq-items');
+	return classList(node).some((c) => c === 'faq-items' || c === 'faq-item');
 }
 
 function shouldUnwrap(node: ElementNode): boolean {
@@ -229,8 +231,14 @@ function cleanNodes(nodes: Node[]): Node[] {
 
 function cleanNode(node: Node): Node[] {
 	if (node.type === TEXT_NODE) {
-		const text = ((node as { value?: string }).value ?? '').replace(/\u00a0/g, ' ');
-		(node as { value: string }).value = text;
+		/* Decode WP entities, then re-escape &<> so renderSync stays valid HTML. */
+		const decoded = decodeHtmlEntities(
+			((node as { value?: string }).value ?? '').replace(/\u00a0/g, ' '),
+		);
+		(node as { value: string }).value = decoded
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
 		return [node];
 	}
 	if (node.type !== ELEMENT_NODE) return [];
@@ -404,6 +412,34 @@ function normalizeBlogHeadings(nodes: Node[]): Node[] {
 }
 
 /**
+ * WordPress often emits unclosed `<p>` before `</li>` / headings / lists.
+ * ultrahtml is not an HTML5 parser — an open `<p>` nests the rest of the post
+ * (including later sections and `.faq-items`) inside the list, which then gets
+ * dropped when FAQs are extracted.
+ */
+export function repairWpHtml(html: string): string {
+	if (!html || !html.includes('<p')) return html;
+
+	let out = html;
+	/* <p>…</li> without </p> (classic classic-editor / TinyMCE list markup) */
+	out = out.replace(
+		/<p(\s[^>]*)?>((?:(?!<\/p>|<p\b)[\s\S])*?)<\/li>/gi,
+		'<p$1>$2</p></li>',
+	);
+	/* <p>…</ul> or </ol> */
+	out = out.replace(
+		/<p(\s[^>]*)?>((?:(?!<\/p>|<p\b)[\s\S])*?)<\/(ul|ol)>/gi,
+		'<p$1>$2</p></$3>',
+	);
+	/* <p>… before a block sibling (heading, list, sectioning, table, hr) */
+	out = out.replace(
+		/<p(\s[^>]*)?>((?:(?!<\/p>|<p\b)[\s\S])*?)(?=<(?:h[1-6]|ul|ol|div|table|blockquote|section|article|hr)\b)/gi,
+		'<p$1>$2</p>',
+	);
+	return out;
+}
+
+/**
  * Return article HTML safe for Astro `.prose-blog` rendering.
  * Idempotent for already-clean semantic HTML.
  * Table wrapping / classification is handled by `enhanceTables`.
@@ -416,10 +452,12 @@ export function cleanWpPostHtml(html: string): string {
 			html,
 		) || /<(?:script|style|link)\b/i.test(html);
 
-	const ast = parse(html);
+	const repaired = repairWpHtml(html);
+	const ast = parse(repaired);
 	ast.children = normalizeBlogHeadings(
 		collapseAnonymousWrappers(cleanNodes(ast.children || [])),
 	);
+	stripAnchorFragments(ast.children);
 	return normalizeCmsContactLinks(renderSync(ast).trim());
 }
 
@@ -466,6 +504,42 @@ const RESERVED_LIKE = new Set([
 
 function stripGutenbergComments(html: string): string {
 	return html.replace(/<!--\s*\/?wp:[\s\S]*?-->/g, '');
+}
+
+function stripAnchorFragments(nodes: Node[]): void {
+	for (const node of nodes) {
+		if (node.type !== ELEMENT_NODE) continue;
+		const el = node as ElementNode;
+		if (el.children?.length) stripAnchorFragments(el.children);
+		if (el.name.toLowerCase() !== 'a') continue;
+
+		const href = attr(el, 'href');
+		const fragmentIndex = href.indexOf('#');
+		if (fragmentIndex < 0) continue;
+
+		const fragment = href.slice(fragmentIndex + 1);
+		const baseHref = href.slice(0, fragmentIndex);
+		if (!fragment) {
+			el.attributes.href = baseHref;
+			continue;
+		}
+
+		let destination: URL;
+		try {
+			destination = new URL(href, 'https://xoomplus.co.uk');
+		} catch {
+			el.attributes.href = baseHref;
+			continue;
+		}
+
+		const isInternal = CMS_HOSTS.has(destination.hostname.toLowerCase());
+		el.attributes.href = isInternal
+			? baseHref
+				? `${destination.pathname}${destination.search}`
+				: ''
+			: baseHref;
+		if (isInternal) el.attributes['data-scroll-target'] = fragment;
+	}
 }
 
 function withTrailingSlashPath(pathname: string): string {

@@ -1,5 +1,6 @@
 ---
 import type { CaseStudy } from '../../data/caseStudies';
+import { normalizeLinkHref } from '../../lib/normalize-link';
 
 interface Props {
 	title: CaseStudy['title'];
@@ -28,6 +29,7 @@ const {
 } = Astro.props;
 
 const headingId = 'case-study-hero-heading';
+const serviceLink = normalizeLinkHref('#case-study-content', Astro.url);
 
 const meta = [
 	{ label: 'Client', value: client },
@@ -80,7 +82,8 @@ const meta = [
 				</a>
 				<a
 					class="case-study-hero__link text-[0.98rem] font-medium tracking-[-0.01em] text-secondary-white no-underline hover:opacity-90"
-					href="#case-study-content"
+					href={serviceLink.href}
+					data-scroll-target={serviceLink.scrollTarget}
 				>
 					Explore Our Services ↓
 				</a>

@@ -8,9 +8,11 @@ interface Props {
 	id?: string;
 	/** Optional fixed button width (e.g. `"212px"`). Home omits this (uses `size="nav"`). */
 	buttonWidth?: string;
+	/** Desktop columns. Default `3` (home / pricing). Use `2` for four-card layouts. */
+	columns?: 2 | 3;
 }
 
-const { content = defaultWhyXoomplus, id, buttonWidth } = Astro.props;
+const { content = defaultWhyXoomplus, id, buttonWidth, columns = 3 } = Astro.props;
 
 const sectionId = id ?? content.id;
 /** Preserve home heading id `why-heading`; other usages derive from content.id */
@@ -37,7 +39,11 @@ const headingId = content.id === 'why-xoomplus' ? 'why-heading' : `${content.id}
 			</p>
 		</div>
 
-		<ul class="why-grid m-0 list-none p-0" role="list" data-reveal-group>
+		<ul
+			class:list={['why-grid', 'm-0', 'list-none', 'p-0', columns === 2 && 'why-grid--cols-2']}
+			role="list"
+			data-reveal-group
+		>
 			{
 				content.cards.map((item) => (
 					<li class="why-card" data-reveal="up">
@@ -90,6 +96,10 @@ const headingId = content.id === 'why-xoomplus' ? 'why-heading' : `${content.id}
 		gap: 1.25rem;
 	}
 
+	.why-grid--cols-2 {
+		grid-template-columns: repeat(2, minmax(0, 464px));
+	}
+
 	/* Size / centering only — chrome lives in global.css (.why-card) */
 	.why-card {
 		max-width: 464px;
@@ -117,7 +127,7 @@ const headingId = content.id === 'why-xoomplus' ? 'why-heading' : `${content.id}
 	}
 
 	@media (max-width: 1280px) {
-		.why-grid {
+		.why-grid:not(.why-grid--cols-2) {
 			grid-template-columns: repeat(2, minmax(0, 464px));
 		}
 	}

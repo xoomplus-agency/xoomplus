@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import ScrollToTop from '../components/ScrollToTop.astro';
 import { getPageSEO, isMappedSeoPath, type PageSEO } from '../lib/wp-seo';
 import { SITE_NOINDEX } from '../config';
+import { isBlogSeoPath, SITE_OG_LOGO } from '../data/site-og';
 import type { NavItem } from '../data/nav';
 import '../styles/global.css';
 import '../styles/tablet.css';
@@ -85,6 +86,11 @@ const theme = themeProp ?? headerTheme;
 const effectiveNoindex = noindex || SITE_NOINDEX;
 
 const path = seoPath ?? Astro.url.pathname;
+/** Blog listing + posts — leave their SEO alone; static pages get hero/logo OG sync. */
+const isBlogPage = isBlogSeoPath(path);
+const syncOgWithMeta = !isBlogPage;
+/** Static: explicit hero `image` prop, else site logo. Blogs: unchanged prop only. */
+const resolvedOgImage = isBlogPage ? image : image || SITE_OG_LOGO;
 
 const mappedPromise =
 	effectiveNoindex || skipWpSeo ? Promise.resolve(false) : isMappedSeoPath(path);
@@ -150,18 +156,31 @@ if (effectiveNoindex) {
 		}
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
+		<script
+			is:inline
+			async
+			src="https://www.googletagmanager.com/gtm.js?id=GTM-WL85D46Q"
+		></script>
+		<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				window.dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+		</script>
 		<script is:inline>
 			document.documentElement.classList.add('js');
 		</script>
 		<Seo
 			title={mapped ? undefined : title}
 			description={mapped ? undefined : description}
-			image={image}
+			image={resolvedOgImage}
 			type={type}
 			canonicalPath={canonicalPath}
 			pageSeo={pageSeo}
 			noindex={effectiveNoindex}
 			robots={effectiveNoindex ? undefined : robotsProp}
+			syncOgWithMeta={syncOgWithMeta}
 		>
 			<slot name="json-ld" slot="json-ld" />
 		</Seo>
@@ -181,6 +200,84 @@ if (effectiveNoindex) {
 		<Footer />
 		<ScrollToTop />
 		<script src="../scripts/reveal.ts"></script>
+		<script is:inline>
+			const scrollToId = (id) => {
+				const target = document.getElementById(id);
+				if (!target) return false;
+				target.scrollIntoView({
+					behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+						? 'auto'
+						: 'smooth',
+				});
+				return true;
+			};
+
+			document.addEventListener('click', (event) => {
+				const source = event.target;
+				const link =
+					source instanceof Element ? source.closest('a[data-scroll-target]') : null;
+				if (
+					!link ||
+					event.defaultPrevented ||
+					event.button !== 0 ||
+					event.metaKey ||
+					event.ctrlKey ||
+					event.shiftKey ||
+					event.altKey
+				) {
+					return;
+				}
+
+				const destination = new URL(link.href, window.location.href);
+				const targetId = link.dataset.scrollTarget;
+				const samePage =
+					destination.origin === window.location.origin &&
+					destination.pathname === window.location.pathname &&
+					destination.search === window.location.search;
+
+				if (samePage) {
+					if (!targetId || !document.getElementById(targetId)) return;
+					event.preventDefault();
+					scrollToId(targetId);
+					return;
+				}
+
+				if (!targetId) return;
+				try {
+					window.sessionStorage.setItem(
+						'xoomplus-pending-scroll',
+						JSON.stringify({ path: destination.pathname, targetId }),
+					);
+				} catch (error) {
+					console.error('[scroll-link] Could not store pending scroll target:', error);
+				}
+			});
+
+			try {
+				const pending = window.sessionStorage.getItem('xoomplus-pending-scroll');
+				if (pending) {
+					window.sessionStorage.removeItem('xoomplus-pending-scroll');
+					const { path, targetId } = JSON.parse(pending);
+					if (path === window.location.pathname && targetId) {
+						requestAnimationFrame(() => scrollToId(targetId));
+					}
+				}
+			} catch (error) {
+				console.error('[scroll-link] Could not restore pending scroll target:', error);
+			}
+
+			if (window.location.hash) {
+				const targetId = window.location.hash.slice(1);
+				if (document.getElementById(targetId)) {
+					requestAnimationFrame(() => scrollToId(targetId));
+				}
+				window.history.replaceState(
+					window.history.state,
+					'',
+					window.location.pathname + window.location.search,
+				);
+			}
+		</script>
 	</body>
 </html>
 

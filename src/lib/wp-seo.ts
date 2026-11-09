@@ -4,6 +4,8 @@
  * Server-side only. Domains from WP_BASE_URL / SITE_URL (never hardcoded).
  */
 
+import { decodeHtmlEntities } from './decode-html-entities';
+
 /** Stable page keys → WordPress page IDs (never change when slugs change). */
 export type WpPageKey =
 	| 'home'
@@ -626,7 +628,8 @@ export function emptyPageSEO(): PageSEO {
 }
 
 function asString(value: unknown): string | null {
-	return typeof value === 'string' && value.length > 0 ? value : null;
+	if (typeof value !== 'string' || value.length === 0) return null;
+	return decodeHtmlEntities(value);
 }
 
 function asNumber(value: unknown): number | null {

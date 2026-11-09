@@ -240,7 +240,7 @@ export const faqs: Record<string, FaqSet> = {
 	seo: {
 		pill: 'Clear Answers',
 		heading: 'Frequently Asked Questions About SEO Services',
-		text: 'Straightforward answers on how our Manchester SEO agency helps businesses rank, convert and scale.',
+		text: 'Straightforward answers on how our SEO agency Manchester helps businesses rank, convert and scale.',
 		items: [
 			{
 				question: 'How long does it take to see measurable results from SEO?',

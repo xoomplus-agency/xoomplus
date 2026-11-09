@@ -22,9 +22,9 @@ export type OurProcessContent = {
 
 export const defaultProcess: OurProcessContent = {
 	pill: 'OUR PROCESS',
-	title: 'A 4-Step Proven Process for Sustainable Growth',
+	title: 'A Simple and Straightforward Process for Digital Growth',
 	intro:
-		'Our process has been refined over the years to deliver valuable outcomes for your business.',
+		'Our digital marketing process has been refined over the years to deliver valuable outcomes for your business.',
 	steps: [
 		{
 			icon: '/icons/discovery-call.svg',
@@ -63,10 +63,10 @@ export const defaultProcess: OurProcessContent = {
 };
 
 export const seoProcess: OurProcessContent = {
-	pill: 'Our 4-Stage SEO Process',
-	title: 'A Clear SEO Process from First Conversation to Ongoing Scale',
+	pill: 'Our SEO Process',
+	title: 'A Simple and Clear SEO Process from Start to Growth',
 	intro:
-		'No guesswork or opaque retainers, just an accountable, step-by-step roadmap to organic search growth.',
+		'We follow a step-by-step SEO process, keeping you informed at every stage.',
 	steps: [
 		{
 			icon: '/icons/discovery-call.svg',
@@ -74,7 +74,7 @@ export const seoProcess: OurProcessContent = {
 			height: 190,
 			title: 'Discovery Call',
 			description:
-				'We evaluate your business model, customer margins, competitive positioning and existing digital architecture to determine your primary growth levers.',
+				'We learn about your business, target audience, services and competitors.',
 		},
 		{
 			icon: '/icons/audit-and-opportunity-review.svg',
@@ -82,15 +82,15 @@ export const seoProcess: OurProcessContent = {
 			height: 190,
 			title: 'Audit & Opportunity Review',
 			description:
-				'We audit organic search footprints, on-site conversion leaks and technical performance to eliminate bottlenecks in your digital growth.',
+				'We review your website, search rankings, content and technical performance.',
 		},
 		{
 			icon: '/icons/strategy-and-implementation.svg',
 			width: 212,
 			height: 184,
-			title: 'Execution & Deployment',
+			title: 'SEO Strategy & Implementation',
 			description:
-				'We deploy coordinated campaigns across all selected channels, combining fast web architecture with organic search execution.',
+				'We put the agreed SEO plan into action. This includes improving website content, fixing technical issues and building quality links.',
 		},
 		{
 			icon: '/icons/reporting-and-refinement.svg',
@@ -98,7 +98,7 @@ export const seoProcess: OurProcessContent = {
 			height: 171,
 			title: 'Optimisation & Reporting',
 			description:
-				'Through ongoing review, we assess conversion data to refine campaign efficiency and deliver monthly reviews focused on scale and goals.',
+				"We track your website's performance, review results and make improvements where needed.",
 		},
 	],
 	bgImage: '/icons/our-process-svgs-bg-image.svg',

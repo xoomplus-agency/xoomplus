@@ -25,9 +25,7 @@ const trust = [
 		iconW: 47,
 		iconH: 47,
 		title: 'Google Reviews',
-		subtitle: '100+ REVIEWS',
 		stars: 5,
-		href: 'https://share.google/9HGas7uC2s4lqsO2v',
 	},
 	{
 		id: 'trustpilot',
@@ -35,9 +33,6 @@ const trust = [
 		iconW: 47,
 		iconH: 47,
 		title: 'Trustpilot',
-		subtitleBefore: 'Based on ',
-		subtitleLink: '56 reviews',
-		href: 'https://www.trustpilot.com/review/xoomplus.co.uk',
 	},
 ];
 ---
@@ -183,13 +178,13 @@ const trust = [
 		data-hero-enter
 	>
 		<p class="pill-dark mb-5 text-[#ff9a3c]" data-hero-item>
-			Integrated Digital Marketing Agency for Scalable ROI
+			Integrated Digital Marketing Agency in Manchester
 		</p>
 		<h1 class="text-hero-h1 mx-auto mb-[0.5em] max-w-[24ch]" data-hero-item>
-			Digital Marketing Agency For Manchester & the UK
+			Digital Marketing Agency Manchester & Across the UK
 		</h1>
 		<p class="text-on-dark mx-auto mb-7 max-w-[640px] tracking-[-0.01em]" data-hero-item>
-			Most agencies sell disconnected services that make no sense. We don’t do that. We connect custom web development, organic search dominance (SEO & GEO) and high-intent paid marketing into a single deliverable. 
+			As a digital marketing agency in Manchester, we don't believe in selling disconnected services that make no sense. We connect custom web development, organic search dominance (SEO and GEO), and high-intent paid marketing services into one integrated strategy.
 		</p>
 		<div
 			class="flex flex-wrap items-center justify-center gap-x-7 gap-y-5 max-[560px]:flex-col max-[560px]:gap-4"
@@ -225,15 +220,16 @@ const trust = [
 			trust.map((item, index) => {
 				const itemClass = [
 					'flex min-w-0 items-center gap-3 px-[0.85rem] py-[0.35rem]',
-					index > 0 && 'border-l border-white/14 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-white/10 max-[560px]:pt-[0.85rem]',
+					index > 0 &&
+						'border-l border-white/14 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-white/10 max-[560px]:pt-[0.85rem]',
 					index % 2 === 0 && 'max-[960px]:border-l-0',
 					index % 2 === 1 && 'max-[960px]:border-l max-[960px]:border-white/14',
-					index >= 2 && 'max-[960px]:border-t max-[960px]:border-white/10 max-[960px]:pt-[0.85rem]',
-					item.id === 'trustpilot' && item.href && 'text-inherit no-underline hover:opacity-90',
+					index >= 2 &&
+						'max-[960px]:border-t max-[960px]:border-white/10 max-[960px]:pt-[0.85rem]',
 				];
 
-				const content = (
-					<>
+				return (
+					<div class:list={itemClass} role="listitem">
 						<img
 							src={item.icon}
 							alt=""
@@ -251,23 +247,14 @@ const trust = [
 									</span>
 									<span class="text-[12px] font-medium text-[#A7A7A7]">{item.ratingSuffix}</span>
 								</p>
-							) : item.id === 'reviews' && item.href ? (
-								<a
-									class="m-0 block text-[21px] font-semibold leading-tight tracking-[-0.015em] text-[#F5F5F5] whitespace-nowrap no-underline hover:opacity-90 max-[560px]:whitespace-normal"
-									href={item.href}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{item.title}
-								</a>
 							) : (
 								<p class="m-0 text-[21px] font-semibold leading-tight tracking-[-0.015em] text-[#F5F5F5] whitespace-nowrap max-[560px]:whitespace-normal">
 									{item.title}
 								</p>
 							)}
 
-							{item.id === 'reviews' ? (
-								<p class="mt-[0.2rem] flex flex-wrap items-center gap-[0.35rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
+							{item.id === 'reviews' && item.stars ? (
+								<p class="mt-[0.2rem] flex flex-wrap items-center gap-[0.35rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7]">
 									<span class="inline-flex gap-0.5" aria-hidden="true">
 										{Array.from({ length: item.stars }).map(() => (
 											<img
@@ -279,47 +266,13 @@ const trust = [
 											/>
 										))}
 									</span>
-									{item.href ? (
-										<a
-											class="text-inherit no-underline hover:opacity-90"
-											href={item.href}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{item.subtitle}
-										</a>
-									) : (
-										item.subtitle
-									)}
 								</p>
-							) : item.id === 'trustpilot' ? (
-								<p class="mt-[0.2rem] text-[14px] font-medium leading-snug text-[#FFFFFF] whitespace-nowrap max-[560px]:whitespace-normal">
-									{item.subtitleBefore}
-									<span class="underline underline-offset-[0.18em]">{item.subtitleLink}</span>
-								</p>
-							) : (
+							) : item.subtitle ? (
 								<p class="mt-[0.2rem] text-[12px] font-medium leading-snug tracking-[0.04em] text-[#A7A7A7] whitespace-nowrap max-[560px]:whitespace-normal">
 									{item.subtitle}
 								</p>
-							)}
+							) : null}
 						</div>
-					</>
-				);
-
-				return item.id === 'trustpilot' && item.href ? (
-					<a
-						class:list={itemClass}
-						role="listitem"
-						href={item.href}
-						target="_blank"
-						rel="noopener noreferrer"
-						aria-label="Trustpilot reviews"
-					>
-						{content}
-					</a>
-				) : (
-					<div class:list={itemClass} role="listitem">
-						{content}
 					</div>
 				);
 			})

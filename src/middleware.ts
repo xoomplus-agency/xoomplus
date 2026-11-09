@@ -100,6 +100,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return redirect301('/locations/blackburn/');
 	}
 
+	// Retired booking page → contact.
+	if (/^\/appointment-booking\/?$/i.test(context.url.pathname)) {
+		return redirect301('/contact/');
+	}
+
 	// Retired WP service pages → current /services/... (exact paths only).
 	const legacyServiceTarget = resolveLegacyServiceRedirect(context.url.pathname);
 	if (legacyServiceTarget) {

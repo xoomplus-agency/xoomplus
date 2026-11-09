@@ -67,7 +67,8 @@ import { cleanWpPostHtml } from './wp-content.ts';
 	assert.ok(result.cta);
 	assert.equal(result.cta.heading, 'Heading from CMS');
 	assert.equal(result.cta.text, 'Supporting line from CMS');
-	assert.equal(result.cta.href, '/contact#form');
+	assert.equal(result.cta.href, '/contact');
+	assert.equal(result.cta.scrollTarget, 'form');
 	assert.equal(result.cta.buttonLabel, 'Talk to us');
 	console.log('✓ cleaner preserves cta-section for extract');
 }
@@ -121,6 +122,105 @@ import { cleanWpPostHtml } from './wp-content.ts';
 	assert.equal(result.cta.href, '/contact');
 	assert.equal(result.cta.buttonLabel, 'Discuss your project');
 	console.log('✓ H2 CTA marker + heading + text lines');
+}
+
+// --- Phone + service link → both buttons; number only; no “Book a Service Call” in copy ---
+{
+	const html = `
+		<div class="cta-section">
+			<p>Ready to grow?</p>
+			<p>We can help. +44 330 010 4786 Book a Service Call</p>
+			<a href="tel:+443300104786">+44 330 010 4786 Book a Service Call</a>
+			<a href="https://xoomplus.co.uk/services/seo/">Explore SEO</a>
+		</div>
+	`;
+	const result = extractCta(html);
+	assert.ok(result.cta);
+	assert.equal(result.cta.heading, 'Ready to grow?');
+	assert.equal(result.cta.text, 'We can help.');
+	assert.ok(!/Book a Service Call/i.test(result.cta.text));
+	assert.ok(!/\+44/.test(result.cta.text));
+	assert.equal(result.cta.href, 'https://xoomplus.co.uk/services/seo/');
+	assert.equal(result.cta.buttonLabel, 'Explore SEO');
+	assert.equal(result.cta.phoneHref, 'tel:+443300104786');
+	assert.equal(result.cta.phoneLabel, '+44 330 010 4786');
+	console.log('✓ phone + service link → both buttons, clean copy');
+}
+
+// --- Phone only → primary button is the number ---
+{
+	const html = `
+		<div class="cta-section">
+			<p>Want a quick chat?</p>
+			<p>Call us when you are ready.</p>
+			<a href="tel:+44-330-010-4786">+44 330 010 4786 Book a Service Call</a>
+		</div>
+	`;
+	const result = extractCta(html);
+	assert.ok(result.cta);
+	assert.equal(result.cta.href, 'tel:+443300104786');
+	assert.equal(result.cta.buttonLabel, '+44 330 010 4786');
+	assert.equal(result.cta.phoneHref, undefined);
+	assert.ok(!/Book a Service Call/i.test(result.cta.buttonLabel));
+	console.log('✓ phone only → number on primary button');
+}
+
+// --- FAQ nested inside cta-section must not leak into CTA copy; keep faq-items for extractFaqs ---
+{
+	const html = `
+		<p>Before.</p>
+		<div class="cta-section">
+			Is your WordPress website loading slower than it should?
+			Our experts can help you optimise WordPress website speed.
+			<a href="tel:+443300104786">+44 330 010 4786</a>
+			<a href="https://xoomplus.co.uk/contact/">Book a Service</a>
+			<div class="faq-items">
+				<h2>FAQs</h2>
+				<details>
+					<summary>How do I increase WordPress website speed without changing my hosting provider?</summary>
+					Compress images and enable caching.
+				</details>
+			</div>
+		</div>
+		<p>After.</p>
+	`;
+	const result = extractCta(html);
+	assert.ok(result.cta);
+	assert.match(result.cta.heading, /WordPress website loading slower/i);
+	assert.match(result.cta.text, /optimise WordPress website speed/i);
+	assert.ok(!/FAQs/i.test(result.cta.text));
+	assert.ok(!/How do I increase WordPress/i.test(result.cta.text));
+	assert.ok(!/Book a Service/i.test(result.cta.text));
+	assert.equal(result.cta.buttonLabel, 'Book a Service');
+	assert.equal(result.cta.phoneLabel, '+44 330 010 4786');
+	assert.match(result.html, /faq-items/);
+	assert.match(result.html, /How do I increase WordPress/);
+	assert.match(result.html, /Before\./);
+	assert.match(result.html, /After\./);
+	assert.ok(!/cta-section/i.test(result.html));
+	console.log('✓ nested faq-items hoisted out of cta-section');
+}
+
+// --- Sibling CTA + FAQ (details) stay separate ---
+{
+	const html = `
+		<div class="cta-section">
+			<p>Is your WordPress website loading slower than it should?</p>
+			<p>Our experts can help you optimise WordPress website speed with practical performance improvements.</p>
+			<a href="tel:+443300104786">+44 330 010 4786</a>
+			<a href="https://xoomplus.co.uk/contact/">Book a Service</a>
+		</div>
+		<div class="faq-items">
+			<h2>FAQs</h2>
+			<details><summary>Do plugins affect WordPress website speed?</summary>Yes.</details>
+		</div>
+	`;
+	const result = extractCta(html);
+	assert.ok(result.cta);
+	assert.ok(!/FAQs|plugins affect/i.test(result.cta.heading + ' ' + result.cta.text));
+	assert.match(result.html, /faq-items/);
+	assert.match(result.html, /Do plugins affect/);
+	console.log('✓ sibling cta-section + faq-items');
 }
 
 console.log('\nAll extract-cta tests passed.');

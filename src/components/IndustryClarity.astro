@@ -8,6 +8,7 @@ import {
 	industryClarity,
 	type IndustryClaritySection,
 } from '../data/industry-clarity';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 interface Props {
 	/** Preferred prop name (child service pages). Defaults to industries catalog. */
@@ -106,7 +107,11 @@ const hasTitleLines = Boolean(section.titleLines?.[0]);
 						</ul>
 						{column.button ? (
 							<p class="industry-clarity__column-cta m-0">
-								<a class="industry-clarity__column-link" href={column.button.href}>
+								<a
+									class="industry-clarity__column-link"
+									href={normalizeLinkHref(column.button.href, Astro.url).href}
+									data-scroll-target={normalizeLinkHref(column.button.href, Astro.url).scrollTarget}
+								>
 									{column.button.label}
 									<span aria-hidden="true"> →</span>
 								</a>

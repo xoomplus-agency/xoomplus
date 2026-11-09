@@ -9,11 +9,13 @@ import PricingForm from '../../components/PricingForm.astro';
 import FAQ from '../../components/FAQ.astro';
 import { pricingWhy } from '../../data/pricing-why';
 import CTASection from '@/components/CTASection.astro';
+import { SITE_OG_PAGE_HERO } from '../../data/site-og';
 ---
 
 <Layout
 	title="Digital Marketing Packages | From £699/month"
 	description="Clear digital marketing packages from £699/month. Compare SEO, PPC, social media and web design pricing, then book a strategy call with Xoomplus."
+	image={SITE_OG_PAGE_HERO}
 	skipWpSeo
 >
 	<main id="main-content" class="page-pricing flex-1">

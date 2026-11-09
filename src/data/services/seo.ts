@@ -25,7 +25,7 @@ const technicalSeoChild = makeChildService(NAME, 'technical-seo', 'Technical SEO
 const onPageSeoChild = makeChildService(NAME, 'on-page-seo', 'On-Page SEO', {
 	placeholder: false,
 	shortName: 'On-Page SEO',
-	secondaryLabel: 'How On-Page Optimisation Works ↓',
+	secondaryLabel: 'How On Page Optimisation Works ↓',
 });
 
 const linkBuildingChild = makeChildService(NAME, 'link-building', 'Link Building (Off-Page)', {
@@ -43,30 +43,29 @@ const ecommerceSeoChild = makeChildService(NAME, 'e-commerce-seo', 'E-Commerce S
 const seoAuditChild = makeChildService(NAME, 'seo-audit', 'SEO Audit', {
 	placeholder: false,
 	shortName: 'SEO Audit',
-	secondaryLabel: 'How Our Forensic Audit Works ↓',
+	secondaryLabel: 'How Our SEO Audit Services Work ↓',
 });
 
 export const seo: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Build visibility. Reach the right audience.',
-	metaTitle: 'SEO Agency Manchester - Rank Higher With Xoomplus',
+	metaTitle: 'SEO Agency Manchester | Grow Your Business with XoomPlus',
 	metaDescription:
-		'Struggling to get found on Google? Our Manchester SEO agency builds search strategies that bring qualified leads and growth. Get a quote.',
+		'Grow your business with XoomPlus, an SEO Agency in Manchester helping brands improve search visibility, attract customers and increase sales.',
 	children: [
 		{
 			...aiSeoChild,
-			metaTitle: 'AI SEO Services - GEO & AEO Agency Manchester',
+			metaTitle: 'AI SEO Agency Manchester | GEO & AEO Services | XoomPlus',
 			metaDescription:
-				'Get found in ChatGPT, Google AI Overviews and Perplexity. Xoomplus helps Manchester brands win AI search with GEO and AEO strategies.',
+				'Grow your brand with XoomPlus, an AI SEO Agency in Manchester offering AI search optimisation, GEO strategies and expert AEO services.',
 			hero: {
 				...aiSeoChild.hero,
 				pill: 'GEO & AEO',
-				titleLines: ['AI SEO in Manchester:', 'Optimising for the Future of Search'],
+				titleLines: ['AI SEO Agency Manchester &', 'Across the UK'],
 				paragraphs: [
-					'Search is changing fast. People no longer just browse a list of web links; they ask complete questions and read direct answers written by artificial intelligence.',
-					'Platforms like Google AI Overviews, ChatGPT Search, Perplexity and Gemini read across the internet to summarise recommendations directly for the user. If your website is not organised for these tools, your business gets left out of the conversation.',
-					'At Xoomplus, we set up your site with clear data, verified facts and direct answers so AI engines recognise your company to cite across Manchester and the North West.',
+					'As an AI SEO agency in Manchester, Xoom Plus helps your business stay visible across platforms like Google AI Overviews, ChatGPT Search, Perplexity and Gemini through clear content, structured data and strategic optimisation.',
+					'Our AI SEO services in Manchester combine traditional SEO with Generative Engine Optimisation (GEO) to strengthen your online visibility, build brand authority and attract customers with genuine buying intent.',
 				],
 				buttonLabel: 'Request an AI Visibility Review',
 				image: {
@@ -74,44 +73,34 @@ export const seo: MainService = {
 					src: childServiceHeroImage('ai-seo-geo-and-aeo'),
 				},
 			},
-			processPill: 'Practical Commercial Value',
-			processHeading: 'What Better AI SEO Can Do for Your Business',
-			processText: [
-				'When potential clients across Manchester and the UK use Google AI Overviews, ChatGPT Search or Gemini to find solutions, these AI engines do not present a directory; they recommend one or two trusted providers directly.',
-				'Without structured AI SEO, your business becomes invisible in zero-click searches and to high-intent inquiries. Optimising for generative engines protects your existing market share, positions your brand as a regional authority and ensures your services are recommended.',
-			],
-			processImage: {
-				src: '/images/ai-seo-geo-and-aeo-practical-commercial-value.webp',
-				alt: 'AI SEO practical commercial value',
-			},
-			processPrimaryLabel: 'Book UI/UX Consultation',
-			processSecondaryLabel: 'Explore Our Design Process ↓',
+			hideProcess: true,
+			heroSecondaryHref: '#features',
 			features: {
 				pill: 'The Mechanics of AI Search',
-				titleLines: ['Beyond Keywords.', 'How Generative AI Understands Your Business.'],
-				text: 'Search engines no longer just match keywords typed into a search bar; they read your website like a human to understand what you actually deliver. Large Language Models (LLMs) analyse entities, brand relationships and factual consensus across the web to answer user questions.',
+				titleLines: ['What Is AI SEO and Why Does', 'Your Business Need It?'],
+				text: 'AI SEO is the process of optimising your website and content so AI-powered platforms like ChatGPT, Google AI Overviews, Gemini and Perplexity can understand, recommend and reference your business. AI search optimisation services help businesses reach potential customers wherever they search.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'Generative Engine Optimisation (GEO)',
-						text: 'GEO structures your website’s facts, service details and authority signals so Large Language Models (LLMs) quote your brand when building comprehensive answers for users.',
+						title: 'Stay Visible in AI-Powered Search',
+						text: 'AI SEO helps your brand appear in relevant AI-generated answers, so potential customers can discover you when making decisions.',
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Answer Engine Optimisation (AEO)',
-						text: 'AEO focuses on direct responses. We format your primary service knowledge into clear, bite-sized answers that search bots can lift and display directly at the top of search queries.',
+						title: 'Build Trust and Brand Authority',
+						text: 'AI platforms rely on relevant, clear and credible information to generate answers. Optimising your website helps establish your business as a reliable source, increasing the chances of your brand being mentioned and recommended.',
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Why Both Matter for Your Business',
-						text: 'Ranking in traditional search links brings traffic, but being named the trusted choice in an AI summary wins the client before they even click a competitor’s link.',
+						title: 'Attract High-Intent Customers',
+						text: 'AI SEO helps your business reach people who are actively researching solutions, comparing providers and looking for specific services. This improves your chances of attracting qualified visitors who are more likely to become leads and paying customers.',
 					},
 				],
 			},
 			services: {
 				pill: 'Specialised Technical Delivery',
-				heading: 'Our AI SEO & Answer Engine Services',
-				text: 'We deploy targeted optimisations to make sure AI platforms read, trust and quote your website accurately.',
+				heading: 'Our AI Visibility Services in Manchester',
+				text: 'We deploy targeted AI search optimisations to make sure AI platforms read, trust and quote your website accurately.',
 				cards: [
 					{
 						title: 'Structured Entity & Schema Markup',
@@ -130,7 +119,7 @@ export const seo: MainService = {
 					},
 					{
 						title: 'Conversational Search Intent Mapping',
-						text: 'People speak to AI engines using long, natural questions rather than short keywords. We map out how customers talk about your services in real life and tailor your content to match those exact phrasing patterns.',
+						text: 'People speak to AI engines using long, natural questions rather than short keywords. We map out how customers talk about your services in real life and customise your content to match those exact phrasing patterns.',
 						imageSrc: '/images/crm-and-custom-business-software-design.png',
 					},
 					{
@@ -140,10 +129,38 @@ export const seo: MainService = {
 					},
 				],
 			},
+			afterServices: {
+				id: 'ai-platforms',
+				pill: 'AI Search Platform',
+				title: 'Which AI Search Platforms Can Your Business Appear On?',
+				titleLines: [
+					'Which AI Search Platforms Can',
+					'Your Business Appear On?',
+				],
+				text: 'Our AI search optimisation strategies help your business improve its visibility across leading AI platforms including:',
+				cards: [
+					{
+						title: 'ChatGPT Search Optimisation',
+						text: 'Our AI SEO helps ChatGPT understand your business. Our approach focuses on clear answers, relevant information and credible sources to improve your chances of appearing in ChatGPT Search results.',
+					},
+					{
+						title: 'Google AI Overviews and AI Mode Optimisation',
+						text: "Google AI Overviews and AI Mode provide AI-generated responses to user queries. We structure your content around search intent, useful answers and relevant entities to improve your chances of being referenced in Google's AI-powered search experiences.",
+					},
+					{
+						title: 'Google Gemini Optimisation',
+						text: "We strengthen your website's content, topical relevance and brand information so Gemini can better understand what your business offers and when it may be relevant to users.",
+					},
+					{
+						title: 'Perplexity AI Optimisation',
+						text: 'We create informative, well-structured content backed by reliable information to increase your chances of being cited in relevant Perplexity answers.',
+					},
+				],
+			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance AI SEO Built on Transparent Delivery',
-				text: 'Our proven strategies and senior technical team structure your website to become the trusted choice for AI systems.',
+				pill: 'Our Process',
+				heading: 'A Step-by-Step Process',
+				text: 'Our simple AI SEO services help your website to become the trusted choice for AI platforms.',
 				cards: [
 					{
 						title: 'Scoped Around Verifiable Facts & Clean Data',
@@ -159,29 +176,113 @@ export const seo: MainService = {
 					},
 					{
 						title: 'Plain-English Strategy Before Implementation',
-						text: 'We explain every change in straightforward language before touching your site. You receive a clear roadmap outlining where AI models currently overlook your brand and how we will fix it.',
+						text: 'We explain every change in a simple language before touching your site. You receive a clear roadmap outlining where AI models currently overlook your brand and how we will fix it.',
 						imageSrc:
 							'/images/ai-seo-geo-and-aeo-Plain-english-strategy-before-implementation.webp',
 					},
 					{
 						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'We supply developer-ready schema code and content layouts that your internal team or agency developers can drop into place without causing delays.',
+						text: 'We provide developer-ready schema code and content layouts that your internal team can drop into place without causing delays.',
 						imageSrc:
 							'/images/ai-seo-geo-and-aeo-seamless-collaboration-with-your-existing-web-team.webp',
 					},
 					{
 						title: 'Continuous Monitoring Across Evolving AI Platforms',
-						text: "AI search engines update their retrieval methods frequently. We monitor how ChatGPT, Gemini and Google adjust their citations and update your website's data so you stay recommended.",
+						text: "AI search engines update their retrieval methods frequently. We monitor how ChatGPT, Gemini and Google adjust their citations and update your website's data so you stay cited.",
 						imageSrc:
 							'/images/ai-seo-geo-and-aeo-continuous-monitoring-across-evolving-ai-platforms.webp',
 					},
 				],
 			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Choose Xoom Plus',
+				title: 'Why Choose Xoom Plus as Your AI SEO Agency in Manchester?',
+				text: 'At Xoom Plus, we combine traditional SEO, GEO and AEO to improve your visibility across search engines and AI platforms.',
+				cards: [
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Commercially Focused Strategies',
+						text: 'We build AI SEO strategies around your business goals, target audience and commercial priorities to attract customers who are ready to take action.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'SEO and AI Search Expertise',
+						text: 'Our team combines traditional SEO with modern AI search optimisation to help your business remain visible across Google, ChatGPT, Gemini and Perplexity.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Industry-Specific Optimisation',
+						text: 'As an AI SEO company in Manchester, we understand that every industry has different search needs. We develop strategies that reflect your services, audience and competitive market.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting and Measurable Growth',
+						text: 'We track organic performance, AI visibility, brand mentions and qualified leads to show how our AI SEO solutions contribute to your business growth.',
+					},
+				],
+			},
+			comparisonTable: {
+				id: 'seo-geo-aeo-comparison',
+				pill: 'SEO vs GEO vs AEO',
+				title: ['AI SEO vs GEO vs AEO:', 'Understanding the Differences'],
+				columns: ['Comparison', 'AI SEO', 'GEO', 'AEO'],
+				rows: [
+					{
+						label: 'Main Focus',
+						values: [
+							'Improving visibility across traditional and AI-powered search.',
+							'Getting your brand mentioned and cited in AI-generated responses.',
+							'Helping your content appear as a direct answer to user questions.',
+						],
+					},
+					{
+						label: 'Primary Goal',
+						values: [
+							'Increase search visibility, relevant traffic and conversions.',
+							'Build brand recognition and authority across generative AI platforms.',
+							'Make your content easy to understand, extract and present as an answer.',
+						],
+					},
+					{
+						label: 'Where It Works',
+						values: [
+							'Google, Bing, ChatGPT, Gemini and other AI search platforms.',
+							'ChatGPT, Perplexity, Google AI Overviews and Gemini.',
+							'Google Featured Snippets, voice search and AI-generated answers.',
+						],
+					},
+					{
+						label: 'Content Strategy',
+						values: [
+							'Combines keyword research, helpful content, technical SEO and structured data.',
+							'Focuses on credible information, brand mentions, citations and topical authority.',
+							'Uses question-based headings, concise answers, FAQs and structured content.',
+						],
+					},
+					{
+						label: 'Success Metrics',
+						values: [
+							'Organic traffic, rankings, leads and conversions.',
+							'AI citations, brand mentions and AI-generated recommendations.',
+							'Featured snippets, answer visibility and relevant search impressions.',
+						],
+					},
+					{
+						label: 'Business Benefit',
+						values: [
+							'Attracts relevant visitors and supports long-term organic growth.',
+							'Helps customers discover and trust your brand through AI recommendations.',
+							'Makes your business easier to find when customers search for specific answers.',
+						],
+					},
+				],
+			},
 			servicesBehind: {
 				id: 'services-behind',
-				pill: 'Full-Funnel Growth',
-				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'AI SEO is most powerful when paired with our core disciplines. It maximises real outcomes for your business.',
+				pill: 'Full-Funnel digital solution',
+				title: 'Different Needs. Connected Digital Solutions.',
+				text: 'AI SEO is most powerful when paired with our core services. It maximises real outcomes for your business.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
@@ -189,7 +290,7 @@ export const seo: MainService = {
 						description:
 							'Pairs foundational technical site health and traditional Google rankings with advanced generative search visibility.',
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
@@ -198,7 +299,7 @@ export const seo: MainService = {
 						description:
 							'Fast-loading, semantic HTML architecture that ensures both human users and AI bots parse your site effortlessly.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
@@ -207,7 +308,7 @@ export const seo: MainService = {
 						description:
 							'Generates active multi-channel engagement and brand signals that strengthen your overall digital footprint across the web.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
@@ -215,46 +316,50 @@ export const seo: MainService = {
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Impact',
-				title: 'How Generative Search Affects Different Commercial Sectors',
-				titleLines: [
-					'How Generative Search Affects Different Commercial',
-					'Sectors',
-				],
-				text: 'AI platforms look for verified facts before making recommendations, especially in industries where customers make high-stakes decisions.',
+				title: 'AI SEO Services for Different Industries',
+				text: 'Our AI SEO services help businesses improve their visibility across AI-powered search platforms by creating relevant content.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'Medical Reporting, Clinics & Healthcare Services',
-								text: 'We implement clinical schema markup and publish practitioner credentials so AI engines quote your Manchester clinic for private health consultations.',
+								title: 'Property & Construction',
+								text: 'Improve AI visibility for property developments and construction projects through structured content and location-based optimisation.',
 							},
 							{
-								title: 'Legal Practices & Professional Advisory',
-								text: 'We build plain-English question-and-answer resource hubs that position your partners as the direct source referenced by conversational AI platforms.',
+								title: 'Healthcare & Wellness',
+								text: 'Build trust through practitioner credentials and clear answers that help AI platforms understand your healthcare services.',
 							},
 							{
-								title: 'Commercial Trades & Field Services',
-								text: 'We link your location pages and trade certifications with regional schema markup so AI assistants list your company for urgent local contracts.',
+								title: 'Professional & B2B Services',
+								text: 'Strengthen industry authority with expert-led content and detailed service pages that support AI-driven business recommendations.',
 							},
 						],
 					},
 					{
 						items: [
 							{
-								title: 'E-commerce & Specialist Retail',
-								text: 'We embed structured product schema that feeds live pricing, stock availability and verified customer reviews directly to generative shopping bots.',
+								title: 'Home & Trade Services',
+								text: 'Help AI search platforms recognise your services, service areas and expertise so potential customers can discover your business.',
 							},
 							{
-								title: 'B2B Technology & Business Operations',
-								text: 'We rewrite feature pages into clear input-and-outcome summaries, supported by case study data that AI engines cite when businesses evaluate new suppliers.',
+								title: 'Hospitality & Leisure',
+								text: 'Improve your visibility in AI-generated results for hotels, restaurants and leisure facilities.',
+							},
+							{
+								title: 'Retail & E-commerce',
+								text: 'Optimise product information, category pages and structured data to help AI platforms understand your products.',
 							},
 						],
+						button: {
+							label: 'Explore All Industry Solutions',
+							href: '/industries',
+						},
 					},
 				],
 			},
 			faq: {
 				pill: 'Clear Information',
-				heading: 'Frequently Asked Questions About AI SEO, GEO & AEO',
+				heading: 'Frequently Asked Questions About AI SEO Services in Manchester',
 				text: 'Clear answers on how modern search engines and AI models evaluate your business.',
 				items: [
 					{
@@ -270,7 +375,7 @@ export const seo: MainService = {
 					{
 						question: 'How do AI search engines decide which businesses to recommend?',
 						answer:
-							'AI models evaluate semantic clarity, factual consistency, third-party verification and structured data. They look for sites that provide direct, authoritative answers to specific questions, verified by clear schemas, professional accreditations and consistent brand information across reputable web directories and industry publications.',
+							'They look for sites that provide direct, authoritative answers to specific questions, verified by clear schemas, professional accreditations and consistent brand information across reputable web directories and industry publications.',
 					},
 					{
 						question: 'What is structured schema markup and why is it essential for AI SEO?',
@@ -299,20 +404,19 @@ export const seo: MainService = {
 		},
 		{
 			...localSeoChild,
-			metaTitle: 'Local SEO Services Manchester - Rank in Google Maps',
+			metaTitle: 'Local SEO Services Manchester | Improve Google Maps Visibility',
 			metaDescription:
-				'Show up when Manchester customers search. Xoomplus delivers local SEO services in Manchester, from Google Business Profile to citations and reviews.',
+				'Improve your local search presence with XoomPlus. Get expert Local SEO Services in Manchester to attract nearby customers and grow your business.',
 			hero: {
 				...localSeoChild.hero,
 				pill: 'Local Search & Google Map Pack Visibility',
 				titleLines: [
-					'Local SEO Agency in Manchester:',
-					'Turn High-Intent Regional Searches into Real Commercial Inquiries',
+					'Local SEO Agency Manchester |',
+					'Grow Your Business Locally',
 				],
 				paragraphs: [
-					'When potential clients search for your services nearby, they rarely scroll past the top Google Map Pack results or local organic listings. A generic national search approach leaves local commercial demand on the table.',
-					'At Xoomplus, our Local SEO specialists optimise your complete local search footprint by combining optimised Google Business Profiles, precise localised landing pages, geo-specific schema markup and authoritative citations.',
-					'We ensure your business is the prominent, trusted choice across Manchester, Salford, Trafford and surrounding regions.',
+					'At Xoom Plus, we help businesses improve their local visibility with effective local SEO services in Manchester. We optimise your Google Business Profile, create location-focused pages, improve local listings and build your online reputation.',
+					'Whether you serve Manchester, Salford, Trafford or nearby areas, our local SEO strategies help more people find your business, contact you and become your customers.',
 				],
 				buttonLabel: 'Claim Your Local SEO Audit',
 				image: {
@@ -321,35 +425,32 @@ export const seo: MainService = {
 				},
 			},
 			features: {
-				pill: 'The Mechanics of Local Search',
-				titleLines: [
-					'Proximity, Prominence & Relevance.',
-					'The Core of Local Search.',
-				],
-				text: 'Google’s local search algorithms do not just count keyword mentions. Google Local 3-Pack calculates physical proximity, business relevance and verifiable local authority across the area to recommend a business.',
+				pill: 'Understanding Local Search',
+				titleLines: ['What Is', 'Local SEO?'],
+				text: 'Local SEO is the process of improving your business visibility in location-based Google searches. It helps nearby customers find your services through Google Search, Google Maps and local business listings.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'Google Business Profile (GBP) & Map Pack Dominance',
-						text: 'We audit, optimise and structure your GBP profile by refining primary categories, geo-tagged photography, listed services and localised tags so you rank at the top of local map searches.',
+						title: 'Google Business Profile Optimisation',
+						text: 'Your Google Business Profile helps customers find your business, contact details, services, opening hours and location.',
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Geo-Targeted Page Architecture & Local Schema',
-						text: 'We build clear, dedicated service-area landing pages supported by LocalBusiness JSON-LD schema so search engines understand your exact operational territory.',
+						title: 'Location-Based Website Optimisation',
+						text: 'We optimise your website pages with relevant local keywords, location details and structured data to reach customers in your target areas.',
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Regional Citations & NAP Consistency',
-						text: 'We build and align consistent Name, Address and Phone number (NAP) data across respected industry registers and regional North West business portals.',
+						title: 'Local Citations & Business Reputation',
+						text: 'Accurate business listings and genuine customer reviews help build trust and strengthen your local online presence.',
 					},
 				],
 			},
 			processPill: 'Practical Commercial Value',
-			processHeading: 'What Strong Local SEO Can Do for Your Business',
+			processHeading: 'What Local SEO Services Can Do for Your Business',
 			processText: [
-				'When prospective buyers across Manchester and the North West search for immediate services, they want reputable providers within their immediate reach. The vast majority of localised clicks and calls go straight to the top three businesses featured in Google’s Map Pack.',
-				'Without targeted Local SEO, your business remains invisible to high-intent regional searches, handing qualified local leads to competitors on your doorstep. Optimising your local digital footprint secures your market share, captures ready-to-buy inquiries and establishes your company as the leading regional authority.',
+				'When people search for products or services in nearby areas, they often prefer businesses they can easily find and contact. Appearing in local search results helps your business reach these potential customers.',
+				'Without a proper local SEO strategy, your competitors may get the attention and enquiries that could have gone to your business. Optimising your local digital footprint secures your market share, captures ready-to-buy enquiries and establishes your company as the leading regional authority.',
 			],
 			processImage: {
 				src: '/images/local-seo-practical-commercial-value.webp',
@@ -357,61 +458,62 @@ export const seo: MainService = {
 			},
 			processPrimaryLabel: 'Claim Your Local SEO Audit',
 			processSecondaryLabel: 'Explore Our Local SEO Process ↓',
+			processSecondaryHref: '#service-stack',
 			services: {
-				pill: 'Specialised Technical Delivery',
-				heading: 'Our Local SEO & Map Pack Services',
-				text: 'We deploy targeted, local optimisations to ensure search engines and nearby customers choose your business first.',
+				pill: 'Complete Local Search Solutions',
+				heading: 'Our Professional Local SEO Services',
+				text: 'From Google Business Profile optimisation to local link building, we cover the key areas that support your local visibility.',
 				cards: [
 					{
 						title: 'Google Business Profile Setup & Management',
-						text: 'We handle end-to-end optimisation of your Google Business Profile, from category selection and geo-tagged visual assets to product catalogues and weekly regional updates that keep your listing active.',
+						text: 'We set up and optimise your Google Business Profile to help customers find your business. This includes selecting the right categories, adding services, updating business information, uploading photos and sharing regular updates.',
 						imageSrc: '/images/local-seo-google-business-profile-setup-management.webp',
 					},
 					{
-						title: 'Geo-Targeted Landing Pages & Borough Silos',
-						text: 'We build high-converting location pages tailored to distinct commercial hubs such as Manchester City Centre, Salford, Didsbury, Stockport and Trafford, matching local customer intent without creating duplicate content.',
+						title: 'Location Pages & Local Landing Pages',
+						text: 'We create dedicated pages for the areas your business serves, such as Manchester City Centre, Salford, Didsbury, Stockport and Trafford. Each page includes relevant local information and services to match what nearby customers are searching for.',
 						imageSrc: '/images/local-seo-geo-targeted-landing-pages-borough-silos.webp',
 					},
 					{
-						title: 'LocalBusiness JSON-LD Schema Structuring',
-						text: 'We write and embed precise machine-readable code detailing your exact coordinates, opening hours, service areas and company contact points so search engines accurately plot your geographic reach.',
+						title: 'Local Business Schema Markup',
+						text: 'We add local business schema to your website to help search engines understand your business details. This can include your address, contact information, opening hours, services and service areas.',
 						imageSrc: '/images/local-seo-local-business-json-ld-schema-structuring.webp',
 					},
 					{
-						title: 'Regional Citation Clean-Up & Directory Building',
-						text: 'We audit existing third-party listings to eliminate conflicting phone numbers or outdated addresses, building verified regional citations on high-authority UK business directories.',
+						title: 'Local Citation Building & Clean-Up',
+						text: 'We create new listings on relevant UK directories to improve your online presence and maintain consistent business details.',
 						imageSrc: '/images/local-seo-regional-citation-cleanup-directory-building.webp',
 					},
 					{
-						title: 'Review Generation & Reputation Systems',
-						text: 'We set up structured review acquisition workflows that prompt satisfied clients to leave positive feedback, directly lifting your prominence and click-through rates in Google Maps.',
+						title: 'Customer Reviews & Reputation Management',
+						text: 'We help you create a simple process for requesting genuine customer feedback, responding to reviews and building a stronger online reputation.',
 						imageSrc: '/images/local-seo-review-generation-reputation-systems.webp',
 					},
 				],
 			},
 			clarity: {
 				id: 'clarity',
-				pill: 'Industry Impact',
-				title: 'How Local Search Drives Client Inquiries Across Sectors',
+				pill: 'Local SEO Across Different Industries',
+				title: 'Our Local SEO Services for Different Industries',
 				titleLines: [
-					'How Local Search Drives Client Inquiries Across',
-					'Sectors',
+					'Our Local SEO Services for Different',
+					'Industries',
 				],
-				text: 'When buyers search locally, immediate proximity, clear operational hours and professional credibility make all the difference.',
+				text: 'Every industry has different customers. Our local SEO services help your business reach the right audience in your target locations at the right time.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'Legal Practices & Specialist Law Firms',
-								text: 'We optimise fee-earner location landing pages with targeted regional schema, practice histories and client review frameworks, positioning your firm in front of corporate and private clients seeking legal counsel in Manchester.',
+								title: 'Legal Practices & Law Firms',
+								text: 'We optimise law firm websites and location pages to help solicitors reach people searching for legal services in Manchester.',
 							},
 							{
 								title: 'Private Healthcare & Diagnostic Clinics',
-								text: 'We structure clinic pages with clear directions, parking details, clinical registration schema and frictionless booking links that turn urgent local healthcare searches into confirmed patient appointments.',
+								text: 'We help healthcare providers improve their local search presence through optimised clinic pages, accurate contact details, directions, opening hours and appointment links.',
 							},
 							{
 								title: 'Commercial Trades & Field Services',
-								text: 'We link service-area pages and trade accreditations with regional map markers, ensuring your engineers and contractors rank for emergency inquiries across your entire operational radius.',
+								text: 'We help plumbers, electricians, builders and other service providers reach customers in their target areas. Our strategy includes service-area pages, Google Business Profile optimisation and local citations.',
 							},
 						],
 					},
@@ -419,79 +521,117 @@ export const seo: MainService = {
 						items: [
 							{
 								title: 'B2B Services & Professional Consultancies',
-								text: 'We establish regional authority across commercial districts like Spinningfields and Salford Quays, driving localised inquiries from business owners seeking accountants, IT providers and corporate advisors.',
+								text: 'We help accountants, IT companies, consultants and other professional service providers improve their visibility in key business areas such as Spinningfields and Salford Quays. This helps them reach businesses looking for professional services nearby.',
 							},
 							{
-								title: 'Retail Showrooms & Hospitality Venues',
-								text: 'We optimise map pins, local attributes, image galleries and opening hours so local customers can easily find driving directions, contact details and current promotions.',
+								title: 'Retail Shops & Hospitality Businesses',
+								text: 'We optimise business listings, opening hours, photos, customer reviews and location pages to help shops, restaurants and hospitality businesses attract more local visitors.',
 							},
 						],
 					},
 				],
 			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance Local SEO Built on Transparent Delivery',
-				text: 'Our proven methodologies and senior technical team build your regional search presence to secure reliable map and local organic rankings.',
+				pill: 'The Xoom Plus Approach',
+				heading: 'Our Local SEO Process for Better Search Visibility',
+				text: 'As a trusted Manchester local SEO company, we follow a clear process to improve your local search performance.',
 				cards: [
 					{
-						title: 'Scoped Around Commercial Service Areas',
-						text: 'We analyse your physical operational reach and high-margin postcodes across Greater Manchester to prioritise profitable search queries that drive valuable in-person visits or regional contracts.',
+						title: 'Understanding Your Business & Target Areas',
+						text: 'We start by learning about your business, services and target customers. We also review the areas you serve across Manchester and Greater Manchester to identify valuable local search opportunities.',
 						imageSrc: '/images/clear-communication-and-collaboration.webp',
 					},
 					{
-						title: 'Direct Access to Senior Local SEO Directors',
-						text: 'No junior account managers acting as messengers. You communicate directly with the local search specialists and technical developers who audit, configure and manage your location architecture.',
+						title: 'Working Directly with Local SEO Experts',
+						text: 'You work directly with our SEO specialists and technical team. We keep communication simple and make sure you understand what we are doing, why it matters and how it supports your business goals.',
 						imageSrc: '/images/a-shared-vision-before-development.webp',
 					},
 					{
-						title: 'Plain-English Strategy Before Implementation',
-						text: 'We walk you through our audit findings and present a clear, step-by-step roadmap showing citation inconsistencies, map ranking gaps and target local search terms before making adjustments.',
+						title: 'Creating a Clear Local SEO Strategy',
+						text: 'Based on our findings, we create a clear plan that highlights problems, opportunities and the work needed to improve your local visibility.',
 						imageSrc: '/images/your-brand-reflected-in-the-interface.webp',
 					},
 					{
-						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'We supply clean location templates, schema code and map embeds that your internal team or agency developers can drop into place without causing delays.',
+						title: 'Working with Your Website Team',
+						text: 'Our team can work alongside your existing web team. We provide the required page recommendations, technical guidance and schema markup to make implementation easier.',
 						imageSrc: '/images/strategy-before-decoration.webp',
 					},
 					{
-						title: 'Continuous Monitoring & Rank Grid Tracking',
-						text: 'Google frequently shifts map proximity and algorithmic weights. We track local rank grids across specific Manchester postcodes and optimise your listings to preserve your positions.',
+						title: 'Tracking Results & Improving Performance',
+						text: 'We monitor your local rankings, Google Business Profile performance, website traffic and enquiries. We use this information to find new opportunities and improve your local SEO strategy over time.',
 						imageSrc: '/images/clear-communication-and-collaboration.webp',
+					},
+				],
+			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Local SEO Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Local SEO Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium SEO services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
-				pill: 'Full-Funnel Growth',
+				pill: 'Complete Digital Growth Solutions',
 				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'Local SEO works best alongside our core service pillars.',
+				text: 'Local SEO works best when combining it with other digital services, which can help your business reach more people and turn website visitors into customers.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Builds national organic authority, broad informational rankings and AI search readiness alongside your local map presence.',
+							"Our SEO services improve your website's visibility in organic search results. We focus on technical SEO, quality content, keyword targeting and website authority to support long-term growth.",
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Mobile-optimised, high-speed website engineering that allows local mobile visitors to call, email or book appointments in seconds.',
+							'We build fast, user-friendly and mobile-friendly websites that make it easier for visitors to explore your services.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
 						icon: '/icons/service-circles.svg',
-						title: 'Social & Paid Campaigns',
+						title: 'Social Media & Paid Advertising',
 						description:
-							'Geo-targeted Google Ads and paid social media that capture immediate paid search visibility while organic local rankings compound.',
+							'We use targeted Google Ads and social media campaigns to help you reach potential customers. These services can support your local SEO strategy by increasing your visibility across different online channels.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
@@ -504,18 +644,18 @@ export const seo: MainService = {
 					{
 						question: 'What is the difference between standard SEO and Local SEO?',
 						answer:
-							'Standard SEO focuses on improving your website\'s organic visibility for broad keywords. Local SEO specifically targets search queries with regional intent (such as ‘accountant in Manchester’ or ‘solicitor near me’) and optimises for the Google Map 3-Pack, local business directories and localised mobile searches.',
+							"Standard SEO focuses on improving your website's organic visibility for broad keywords. Local SEO specifically targets search queries with regional intent (such as ‘accountant in Manchester’ or ‘solicitor near me’) and optimises for the Google Map 3-Pack, local business directories and localised mobile searches.",
 					},
 					{
 						question:
 							'Can I rank in the Manchester Map Pack if my office is based outside the city centre?',
 						answer:
-							'Yes. While Google\'s primary ranking factor for map searches includes physical proximity, a properly structured website with dedicated location pages, geo-targeted schema markup, regional authority links and local directory citations can rank prominently across multiple boroughs and surrounding districts.',
+							"Yes. While Google's primary ranking factor for map searches includes physical proximity, a properly structured website with dedicated location pages, geo-targeted schema markup, regional authority links and local directory citations can rank prominently across multiple boroughs and surrounding districts.",
 					},
 					{
 						question: 'Why is NAP (Name, Address, Phone) consistency so important?',
 						answer:
-							'Search engines cross-reference your business information across dozens of directories and web platforms to verify legitimacy. If your business name, address, or phone number varies across the web, it creates data conflicts that reduce search engines\' confidence in your business, directly pulling down your local search rankings.',
+							"Search engines cross-reference your business information across dozens of directories and web platforms to verify legitimacy. If your business name, address, or phone number varies across the web, it creates data conflicts that reduce search engines' confidence in your business, directly pulling down your local search rankings.",
 					},
 					{
 						question: 'How do customer reviews affect local rankings on Google?',
@@ -536,29 +676,28 @@ export const seo: MainService = {
 				],
 			},
 			cta: {
-				pill: 'Dominate Your Region',
-				heading: 'Let’s Grow Your Local Business',
-				text: 'Ready to show up where your nearby customers are actually looking? Speak directly with our senior local search team today.',
+				pill: 'Grow Your Local Presence',
+				heading: 'Ready to Grow Your Business with Local SEO?',
+				text: 'Get in touch with Xoom Plus today and discover how our local SEO strategies can support your business growth in Manchester.',
 				buttonLabel: 'Claim Your Free Local SEO Audit →',
 				buttonHref: '/contact',
 			},
 		},
 		{
 			...technicalSeoChild,
-			metaTitle: 'Technical SEO Agency Manchester - Fix Crawl & Speed Issues',
+			metaTitle: 'Technical SEO Agency Manchester | Boost Website Health',
 			metaDescription:
-				'Slow speeds and crawl errors hold rankings back. Xoomplus technical SEO services in Manchester fix site structure, Core Web Vitals and indexing.',
+				'Need better website performance? XoomPlus, a Technical SEO Agency in Manchester, helps resolve technical issues and improve search visibility.',
 			hero: {
 				...technicalSeoChild.hero,
 				pill: 'Technical Website Architecture & Search Engine Crawlability',
 				titleLines: [
-					'Technical SEO Agency in Manchester:',
-					'Build the Fast, Error-Free Foundations Google Rewards',
+					'Technical SEO Agency Manchester |',
+					'Improve Your Website Health',
 				],
 				paragraphs: [
-					'Even the highest quality content cannot rank if search engine crawlers cannot index or understand your site.',
-					'Slow page speeds, broken internal links, indexing bloat, and poor mobile code act as invisible barriers to organic traffic.',
-					'At Xoomplus, our senior web engineers and technical SEO specialists resolve deep architectural bottlenecks so your site passes Google\'s Core Web Vitals, crawls effortlessly and converts technical health into dependable search rankings across Manchester and the UK.',
+					'Technical issues can prevent your website from ranking, even when your content is valuable. Slow loading pages, broken links, crawling errors and indexing problems can stop search engines from finding and understanding your website.',
+					'As a technical SEO agency in Manchester, our aim is to resolve the issues that stop your website from appearing in search results. Our specialists improve your site speed, fix crawl and indexing errors and optimise Core Web Vitals to build a technically strong website that performs better across Google and other search engines.',
 				],
 				buttonLabel: 'Request a Technical SEO Audit',
 				image: {
@@ -567,36 +706,33 @@ export const seo: MainService = {
 				},
 			},
 			features: {
-				pill: 'The Mechanics of Technical SEO',
-				titleLines: [
-					'Crawlability, Speed & Structure.',
-					'The Anatomy of Technical Health.',
-				],
-				text: 'Technical SEO optimises your website’s underlying code and server infrastructure, so search engines and AI models can crawl, render, index and understand every page without friction.',
+				pill: 'Understanding Technical SEO',
+				titleLines: ['What Is', 'Technical SEO?'],
+				text: "Technical SEO is the process of improving your website's structure and performance so search engines can find, crawl and index your pages.",
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'Crawl Budget & Indexation Control',
-						text: 'Search engines allocate limited crawling resources to your domain. We eliminate crawl waste, redirect loops and duplicate URLs using clean robots.txt directives, canonical tags, and structured XML sitemaps to prioritise your most profitable pages.',
+						title: 'Website Crawling & Indexing',
+						text: 'Search engines need to find and understand your website pages before they can appear in search results. We fix crawl errors, broken links, duplicate pages and indexing issues to make important pages easier to access.',
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Core Web Vitals & Rendering Speed',
-						text: 'Page speed directly influences search rankings and user bounce rates. We optimise Largest Contentful Paint (LCP), Interaction to Next Paint (INP) and Cumulative Layout Shift (CLS) through lightweight asset delivery, server-side caching and clean, streamlined code.',
+						title: 'Website Speed & Core Web Vitals',
+						text: 'A slow website can affect user experience and make visitors leave. We improve page loading speed, mobile performance and website stability to help visitors browse your website smoothly.',
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Schema Markup & Semantic Data Architecture',
-						text: 'We implement comprehensive JSON-LD structured data that translates your web content into clear machine data. This enables rich snippets in Google search results and ensures search engines and AI models accurately interpret your business.',
+						title: 'Website Structure & Schema Markup',
+						text: 'A clear website structure helps search engines understand how your pages are connected. We improve internal links, organise website content and add schema markup to explain your business and services more clearly.',
 					},
 				],
 			},
 			processPill: 'Practical Commercial Value',
-			processHeading: 'What Better Technical SEO Can Do for Your Business',
+			processHeading: 'What Technical SEO Can Do for Your Business',
 			processText: [
-				'When people in Manchester and across the UK search for your services, search engines must be able to load, parse and verify your website in milliseconds.',
-				'A technically broken website acts like a locked shop door; if Google\'s bots or mobile users hit slow load times, rendering errors or broken redirect loops, they leave immediately. Without solid technical foundations, all your investments in content marketing and digital advertising are undermined by invisible code errors.',
-				'Fixing your site\'s technical architecture eliminates indexation bottlenecks, ensures every commercial page gets discovered and turns backend health into steady organic visibility and increased client conversions.',
+				'When people in Manchester and across the UK search for your services, search engines need to access, understand and index your website quickly.',
+				'A website with technical issues can prevent both search engines and visitors from accessing important pages. Slow loading speeds, broken links, redirect errors and rendering problems can affect user experience and stop your pages from appearing in search results.',
+				'Fixing these problems creates a strong technical foundation for your website. We improve site speed, resolve crawling and indexing issues and make sure search engines can find your important pages easily. This helps improve your search visibility, attract more relevant visitors and turn website traffic into potential customers.',
 			],
 			processImage: {
 				src: '/images/technical-seo-practical-commercial-value.webp',
@@ -604,34 +740,35 @@ export const seo: MainService = {
 			},
 			processPrimaryLabel: 'Request a Technical SEO Audit',
 			processSecondaryLabel: 'Explore Our Technical Process ↓',
+			processSecondaryHref: '#service-stack',
 			services: {
-				pill: 'Specialised Technical Delivery',
-				heading: 'Our Technical SEO & Architecture Services',
-				text: 'We deploy code-level fixes and structural optimisations to ensure search engines crawl, render and index your website with zero friction.',
+				pill: 'Complete Technical SEO Solutions',
+				heading: 'Our Technical SEO Services',
+				text: 'We provide complete website technical SEO services to improve website health. From technical audits to website speed optimisation, we fix issues that affect your website.',
 				cards: [
 					{
-						title: 'Deep Crawl Auditing & Log File Analysis',
-						text: 'We inspect how Googlebot and other web spiders navigate your domain using server access logs, catching crawl traps, orphan pages and wasted server requests before they impact revenue.',
+						title: 'Technical Website Audits & Crawl Analysis',
+						text: 'We review your website to find broken links, crawl errors, missing pages, duplicate URLs and other technical problems. Our audit helps identify what needs fixing and which issues should be addressed first.',
 						imageSrc: '/images/technical-seo-deep-crawl-auditing-log-file-analysis.webp',
 					},
 					{
-						title: 'Core Web Vitals & Frontend Speed Engineering',
-						text: 'We optimise rendering paths by stripping away unused CSS and JavaScript, configuring browser caching, compressing media payloads and tuning servers for rapid initial response times.',
+						title: 'Core Web Vitals & Website Speed Optimisation',
+						text: 'We improve your website loading speed by compressing images, enabling browser caching and improving server response times. Our website speed optimisation services also focus on creating a smoother mobile experience.',
 						imageSrc: '/images/technical-seo-core-web-vitals-frontend-speed-engineering.webp',
 					},
 					{
-						title: 'Structured Data & Advanced JSON-LD Schema',
-						text: 'We embed custom nested schema for organisations, local business entities, products and services, making your web content crystal clear for Google rich search results and generative AI models.',
+						title: 'Schema Markup & Structured Data',
+						text: 'We add relevant schema markup to help search engines understand your website information. This may include organisation, local business, product and service schema, depending on your website and business needs.',
 						imageSrc: '/images/technical-seo-structured-data-advanced-json-ld-schema.webp',
 					},
 					{
-						title: 'Indexation Management & Canonical Hierarchy',
-						text: 'We eliminate duplicate content, solve faceted navigation issues and resolve 404 errors and 301 redirect chains so search engines index only live, high-priority landing pages.',
+						title: 'Indexing & Canonical Tag Management',
+						text: 'We use canonical tags and XML sitemaps to help search engines understand which pages should be considered for indexing.',
 						imageSrc: '/images/technical-seo-indexation-management-canonical-hierarchy.webp',
 					},
 					{
-						title: 'Mobile Usability & Technical Architecture Alignment',
-						text: 'We clean up site taxonomy, URL hierarchy and internal linking structures, making sure complex, multi-layered websites stay fast and responsive on mobile devices.',
+						title: 'Mobile Usability & Website Structure',
+						text: 'We check mobile usability to ensure your website works smoothly across different screen sizes and devices.',
 						imageSrc:
 							'/images/technical-seo-mobile-usability-technical-architecture-alignment.webp',
 					},
@@ -639,27 +776,27 @@ export const seo: MainService = {
 			},
 			clarity: {
 				id: 'clarity',
-				pill: 'Industry Impact',
-				title: 'How Technical Site Health Drives Revenue Across Sectors',
+				pill: 'Technical SEO Across Different Industries',
+				title: 'Our Technical SEO Services Support Different Industries',
 				titleLines: [
-					'How Technical Site Health Drives Revenue Across',
-					'Sectors',
+					'Our Technical SEO Services Support Different',
+					'Industries',
 				],
-				text: 'Complex web platforms and regulated industries require robust technical foundations to prevent costly traffic drops and lost inquiries.',
+				text: 'Different industries have different website requirements. Our professional technical SEO services support your website, no matter which industry your business belongs to.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'High-Volume E-Commerce & Multi-Category Retailers',
-								text: 'Faceted filter menus, variant combinations and out-of-stock items create thousands of duplicate URLs. We structure clean canonicalization, configure server response codes and optimise product schema so search engines index only live, revenue-generating inventory.',
+								title: 'E-Commerce & Online Retail Businesses',
+								text: 'Online stores often have many product pages, filters and categories. These can create duplicate URLs and indexing problems. We improve your website structure, product schema and page performance to help search engines find your important product pages.',
 							},
 							{
-								title: 'Legal Practices & Professional Advisory Firms',
-								text: 'Corporate legal sites often hide valuable practice insights behind complex document paths and unindexed PDFs. We restructure site hierarchies, apply legal schema and streamline page templates, so prospective business clients in Manchester discover fee-earners immediately.',
+								title: 'Legal Practices & Law Firms',
+								text: 'Law firm websites need a clear structure so potential clients can easily find legal services and useful information. We improve website navigation, fix broken links and optimise important service pages to support better search visibility.',
 							},
 							{
 								title: 'Private Healthcare & Diagnostic Clinics',
-								text: 'Medical websites require strict security and clinical verification under Google\'s E-E-A-T guidelines. We resolve SSL/HTTPS conflicts, optimise mobile booking portals and embed healthcare schema to ensure clinical pages crawl securely and rank reliably.',
+								text: 'Healthcare websites need to provide clear and reliable information. We improve website speed, mobile usability, security and page structure to make it easier for patients to access your services and make appointments.',
 							},
 						],
 					},
@@ -667,439 +804,502 @@ export const seo: MainService = {
 						items: [
 							{
 								title: 'Commercial Trades & Field Services',
-								text: 'Local contractors need rapid mobile load speeds to capture emergency inquiries across Greater Manchester. We strip out heavy plugins, compress mobile assets and clean up code to guarantee pages load in under two seconds on 4G networks.',
+								text: 'Customers often search for local trades and services using their mobile phones. We improve mobile loading speed, fix technical errors and make important service pages easier to access, helping businesses provide a better online experience.',
 							},
 							{
 								title: 'B2B Technology & Software Companies',
-								text: 'Software and SaaS websites frequently rely on heavy JavaScript frameworks that search crawlers struggle to render. We implement dynamic or server-side rendering and clean up asset pipelines so your product features are indexed accurately.',
+								text: 'Software websites often contain complex features and interactive pages. We review their technical setup, improve JavaScript rendering and fix indexing issues so search engines can better understand and access important website content.',
 							},
 						],
 					},
 				],
 			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance Technical SEO Built on Transparent Delivery',
-				text: 'Our senior technical team works directly inside your codebase and server setup to resolve root-cause architectural issues.',
+				pill: 'Our Process',
+				heading: 'Our Technical SEO Process for Better Website Performance',
+				text: 'As an experienced technical SEO company in Manchester, we follow a clear process to identify problems and improve website performance.',
 				cards: [
 					{
-						title: 'Scoped Around Root-Cause Code Resolution',
-						text: 'We do not hand over surface-level checklists or automated software summaries. Our developers and SEO directors resolve errors directly within your templates, server configurations and CMS setup.',
+						title: 'Understanding Your Website & Technical Needs',
+						text: 'We start by reviewing your website, its structure and current performance. We identify technical issues, indexing problems and areas that need improvement to build a clear action plan.',
 						imageSrc:
 							'/images/technical-seo-Scoped-around-root-cause-code-resolution.webp',
 					},
 					{
-						title: 'Direct Access to Senior Web Engineers & SEO Directors',
-						text: 'No junior account managers acting as messengers. You work directly with experienced software developers and search directors who write the code and implement architectural fixes.',
+						title: 'Working Directly with Technical SEO Specialists',
+						text: 'You work directly with our SEO specialists and technical team. We keep communication simple and make sure you understand the issues affecting your website and how we plan to fix them.',
 						imageSrc:
 							'/images/technical-seo-direct-access-to-senior-web-engineers-seo-directors.webp',
 					},
 					{
-						title: 'Plain-English Strategy Before Implementation',
-						text: 'We explain every technical adjustment in clear, non-technical language before making changes, showing you exactly what is holding back your site and how our fixes will impact your revenue.',
+						title: 'Creating a Clear Technical SEO Strategy',
+						text: 'We explain our audit findings in simple language and prioritise the issues that need attention. You receive a clear plan covering website speed, crawling, indexing, mobile usability and other technical improvements.',
 						imageSrc:
 							'/images/technical-seo-Plain-english-strategy-before-implementation.webp',
 					},
 					{
-						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'Whether you have an internal dev department or an external agency, we provide developer-ready technical specifications, pull requests and code snippets that deploy without friction.',
+						title: 'Working with Your Existing Development Team',
+						text: 'Our team can work with your in-house developers. We provide clear instructions, technical recommendations and code updates to make website improvements easier to implement.',
 						imageSrc:
 							'/images/technical-seo-seamless-collaboration-with-your-existing-web-team.webp',
 					},
 					{
-						title: 'Continuous Monitoring & Regression Protection',
-						text: 'Every update is tested in staging environments, verified across Google Search Console and backed by automated alerts to ensure site changes never break rankings or crawl efficiency.',
+						title: 'Monitoring Website Health & Performance',
+						text: 'Technical SEO needs regular checks. We monitor website performance, indexing status, crawl errors and Core Web Vitals. We also review website updates to identify new problems and keep your website in good technical condition.',
 						imageSrc:
 							'/images/technical-seo-continuous-monitoring-regression-protection.webp',
 					},
 				],
 			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Technical SEO Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Technical SEO Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium technical SEO services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
+					},
+				],
+			},
 			servicesBehind: {
 				id: 'services-behind',
-				pill: 'Full-Funnel Growth',
-				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'Technical SEO works best when connected across our primary service pillars.',
+				pill: 'Complete Digital Growth Solutions',
+				title: 'Different Needs. Connected Digital Solutions.',
+				text: 'Technical SEO creates a strong foundation for your website when combined with our other digital services.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Pairs technical crawlability with targeted keyword research, content marketing, local visibility and link building.',
+							"Our SEO services improve your website's visibility in organic search results. We focus on technical SEO, quality content, keyword targeting and website authority to support long-term growth.",
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Clean, custom WordPress and Shopify development engineered for speed, mobile responsiveness and clean code.',
+							'We build fast, user-friendly and mobile-friendly websites that make it easier for visitors to explore your services.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
 						icon: '/icons/service-circles.svg',
-						title: 'Social & Paid Campaigns',
+						title: 'Social Media & Paid Advertising',
 						description:
-							'Fast-loading, technically optimised landing pages maximise Google Ads Quality Scores and reduce cost-per-click across paid media.',
+							'We use targeted Google Ads and social media campaigns to help you reach potential customers. These services can support your local SEO strategy by increasing your visibility across different online channels.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
 			},
 			faq: {
 				pill: 'Clear Information',
-				heading: 'Frequently Asked Questions About Technical SEO',
-				text: 'Straightforward answers on site health, crawlability and search infrastructure.',
+				heading: 'FAQs About Technical SEO',
+				text: 'Find answers to common questions about technical SEO',
 				items: [
 					{
-						question:
-							'What exactly is Technical SEO, and why does my business need it?',
+						question: 'What is technical SEO, and why does my business need it?',
 						answer:
-							'Technical SEO focuses on the backend infrastructure of your website rather than features on the page. It involves optimising server settings, indexing directives, page loading speeds, site architecture and mobile performance. Without proper technical SEO, search engines struggle to crawl and index your site, preventing even the best content from ranking on Google.',
+							'Technical SEO improves the backend structure and performance of your website. It includes fixing crawl errors, improving website speed, managing indexing and making your website mobile-friendly.',
 					},
 					{
-						question:
-							'How do Core Web Vitals affect search rankings and user conversions?',
+						question: "How do Core Web Vitals affect my website's performance?",
 						answer:
-							'Core Web Vitals are official Google ranking metrics that evaluate page loading speed, responsiveness to clicks and visual stability during page load. Fast, stable pages provide better user experiences, which Google rewards with higher organic positions.',
+							'Core Web Vitals measure important parts of the user experience, including loading speed, responsiveness and visual stability.',
 					},
 					{
 						question: 'What is the difference between crawling and indexing?',
 						answer:
-							'Crawling is the process where search engine bots (like Googlebot) discover and scan the code and links on your website. Indexing is the subsequent step where the search engine evaluates, processes and stores that page in its database to display in search results.',
+							'Crawling is when search engines discover and visit your website pages. Indexing happens when search engines process and store information about those pages.',
 					},
 					{
-						question: 'Can technical errors cause a sudden drop in Google rankings?',
+						question: 'Can technical SEO issues affect my Google rankings?',
 						answer:
-							'Yes. Issues such as accidental ‘noindex’ tags, server timeouts, redirect loops, broken sitemaps or failed software updates can immediately remove commercial pages from Google\'s index.',
+							'Yes. Problems such as broken links, incorrect indexing settings, slow loading times and server errors can affect how search engines access your website.',
 					},
 					{
-						question:
-							'How long does it take for Google to reflect technical SEO fixes?',
+						question: 'How long does it take to see results from technical SEO?',
 						answer:
-							'Once technical fixes and sitemaps are deployed, Googlebot must recrawl and reprocess the modified URLs. For established websites, re-indexing and early performance improvements typically show in Google Search Console within 2 to 4 weeks, with compounding ranking and traffic gains following over the next 2 to 3 months.',
+							'The time depends on the type of issues and the size of your website. Some technical fixes may show improvements within a few weeks. However, Google needs time to crawl and process website changes. Ranking and traffic improvements may take longer.',
 					},
 					{
-						question:
-							'Do we need an entirely new website to fix technical SEO issues?',
+						question: 'Do I need a new website to fix technical SEO problems?',
 						answer:
-							'In most cases, no. Our technical developers can optimise code, clean up plugins, fix database queries, adjust server configurations and restructure URL hierarchies directly on your existing CMS (WordPress, Shopify, etc.).',
+							'No. Most technical SEO issues can be fixed on your existing website. Our team can improve your website code, fix broken links, manage indexing, optimise images and improve loading speed without rebuilding the entire website.',
 					},
 				],
 			},
 			cta: {
-				pill: 'Fix Your Foundations',
-				heading: 'Let’s Eliminate the Technical Roadblocks Holding Your Site Back',
-				text: 'Speak directly with our senior technical SEO engineers for an honest evaluation of your site health.',
+				pill: 'Build a Stronger Website',
+				heading: 'Ready to Fix the Technical Issues Holding Your Website Back?',
+				text: 'Speak with our technical SEO experts to improve your website performance, fix technical errors and build a stronger foundation for better search visibility.',
 				buttonLabel: 'Request Your Technical Site Audit →',
 				buttonHref: '/contact',
 			},
 		},
 		{
 			...onPageSeoChild,
-			metaTitle: 'On Page SEO Services - Optimise Every Page',
+			metaTitle: 'On Page SEO Services Manchester | Content & Page Optimisation',
 			metaDescription:
-				'Turn your pages into ranking pages. Xoomplus optimises titles, content, internal links and UX with on-page SEO in Manchester. Get a quote.',
+				'Get On Page SEO Services in Manchester from XoomPlus. Optimise website pages, improve keyword targeting and strengthen organic search visibility.',
 			hero: {
 				...onPageSeoChild.hero,
-				pill: 'On-Page Search Optimisation',
+				pill: 'On Page Search Optimisation',
 				titleLines: [
-					'On-Page SEO Agency in Manchester:',
-					'Align Every Page with Commercial Intent',
+					'On Page SEO Services Manchester |',
+					'Improve Page Performance',
 				],
 				paragraphs: [
-					'Search engines do not rank websites as a whole; they evaluate individual pages against specific user search intent. If your headings are vague, your internal links are disordered or your copy fails to answer commercial questions, Google will rank a clearer competitor.',
-					'At Xoomplus, our On-Page SEO specialists engineer every page template and content asset, optimising title tags, semantic heading hierarchies, internal linking SILOs and conversion pathways.',
-					'We make sure your site is easy for search engines to index and simple for visitors in Manchester and across the UK to buy from.',
+					'Poorly optimised website pages can struggle to rank in search results, even when they offer valuable content. Missing keywords, weak headings, poorly written meta descriptions and weak internal links can make it harder for search engines to understand your pages and connect them with the right audience.',
+					'At Xoom Plus, we provide professional on page SEO services in Manchester to fix these issues. We optimise page titles, headings, descriptions, content, images and internal links to make every page more relevant and search-friendly.',
 				],
-				buttonLabel: 'Request an On-Page SEO Audit',
+				buttonLabel: 'Request an On Page SEO Audit',
 				image: {
 					...onPageSeoChild.hero.image,
 					src: childServiceHeroImage('on-page-seo'),
 				},
 			},
 			features: {
-				pill: 'The Mechanics of On-Page SEO',
-				titleLines: [
-					'Relevance, Structure & Intent.',
-					'The Anatomy of High-Ranking Content.',
-				],
-				text: 'Modern On-Page SEO is not keyword stuffing; it is about organising information so both search algorithms and human visitors immediately understand the page’s commercial value.',
+				pill: 'Understanding On Page SEO',
+				titleLines: ['What Is', 'On Page SEO?'],
+				text: 'On page SEO is the process of improving individual website pages to make them more useful for visitors and easier for search engines to understand.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'Search Intent Mapping & Keyword Architecture',
-						text: 'We map target search queries to dedicated pages, ensuring primary and secondary terms sit naturally in titles, H1–H3 tags and body copy without keyword stuffing.',
+						title: 'Keyword Research & Search Intent',
+						text: 'We identify the keywords your potential customers use when searching for your services. We use them naturally in page titles, headings and content to match what people are looking for.',
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Semantic Topic Clusters & SILO Internal Linking',
-						text: 'We build structured internal linking silos that pass authority from your high-ranking pages to deep service pages, helping search crawlers understand your industry expertise.',
+						title: 'Content Structure & Internal Linking',
+						text: 'We organise your website content with clear headings and relevant internal links. This helps visitors find useful information and allows search engines to understand how your pages are connected.',
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Conversion-Centred Content & Visual Hierarchy',
-						text: 'We format content with clear sub-headings, bullet lists, scannable summaries and prominent calls to action that keep bounce rates low and inquiry rates high.',
+						title: 'Content Quality & User Experience',
+						text: 'We improve your page content with clear information, easy-to-read sections and relevant calls to action. This makes your website easier to use and helps visitors take the next step.',
 					},
 				],
 			},
-			processPill: 'Practical Commercial Value',
-			processHeading: 'What Better On-Page SEO Can Do for Your Business',
+			processPill: 'Practical Business Benefits',
+			processHeading: 'What On Page SEO Can Do for Your Business',
 			processText: [
-				'When prospective clients in Manchester and across the UK search for specific commercial solutions, they land on individual web pages, not your homepage. If those pages are poorly formatted, confusing to read or lack clear service explanations, visitors leave within seconds and Google drops your position.',
-				'Without precise on-page structuring, even high-authority domains fail to convert their rankings into inbound leads. Aligning your pages with genuine buyer intent eliminates keyword cannibalisation, clarifies your value proposition for search engines and AI models and turns regular page visitors into high-value commercial enquiries.',
+				'When potential customers in Manchester and across the UK search for your business, they usually land on specific service pages rather than your homepage. If these pages are poorly structured, difficult to read or unclear about what you offer, visitors may leave without taking action. This can also affect your search rankings.',
+				'Even websites with strong domain authority can struggle to generate leads if their pages are not properly optimised. Aligning your content with what potential customers are searching for helps search engines and AI platforms understand your pages.',
 			],
 			processImage: {
 				src: '/images/on-page-seo-practical-commercial-value.webp',
 				alt: 'On-Page SEO practical commercial value',
 			},
-			processPrimaryLabel: 'Request an On-Page SEO Audit',
-			processSecondaryLabel: 'Explore Our On-Page Process ↓',
+			processPrimaryLabel: 'Request an On Page SEO Audit',
+			processSecondaryLabel: 'Explore Our On Page Process ↓',
+			processSecondaryHref: '#service-stack',
 			services: {
-				pill: 'Specialised Technical Delivery',
-				heading: 'Our On-Page Optimisation & Content Structuring Services',
-				text: 'We deploy structured, page-level optimisations to make sure your content satisfies search engine algorithms and prospective customers alike.',
+				pill: 'Complete On Page Optimisation Services',
+				heading: 'Our Professional On Page SEO Services',
+				text: 'We provide complete on page SEO services to improve your website content, structure and search visibility.',
 				cards: [
 					{
-						title: 'Search Intent & Commercial Keyword Mapping',
-						text: 'We audit your site to eliminate keyword cannibalisation, mapping distinct primary, secondary and localised Manchester search terms to dedicated URLs so every page has a clear commercial role.',
+						title: 'Keyword Research & Search Intent Mapping',
+						text: 'We research relevant keywords and understand what your target audience is looking for. We assign the right keywords to the right pages to avoid overlap and help each page target a clear search topic.',
 						imageSrc: '/images/on-page-seo-search-intent-commercial-keyword-mapping.webp',
 					},
 					{
-						title: 'Semantic Heading & Content Architecture',
-						text: 'We structure pages using logical H1–H4 heading tags, descriptive answer paragraphs and structured bullet lists that make complex service offerings effortless for humans to scan and search bots to recommend.',
+						title: 'Heading Structure & Content Optimisation',
+						text: 'We organise your content using clear H1, H2 and H3 headings. We also improve page copy, add useful information and make your content easier to read and understand.',
 						imageSrc: '/images/on-page-seo-semantic-heading-content-architecture.webp',
 					},
 					{
-						title: 'Metadata Engineering & Organic CTR Optimisation',
-						text: 'We write compelling title tags and meta descriptions focused on click-through performance, incorporating target commercial keywords and clear value hooks that capture attention on search results pages.',
+						title: 'Title Tags & Meta Descriptions',
+						text: 'We write clear and relevant title tags and meta descriptions for your website pages. These explain what each page offers and encourage people to visit your website from search results.',
 						imageSrc: '/images/on-page-seo-metadata-engineering-organic-ctr-optimisation.webp',
 					},
 					{
-						title: 'SILO Internal Linking & Topical Depth',
-						text: 'We design contextual internal linking structures that pass link equity directly to your most valuable service pages, reinforcing topical authority and keeping prospective clients exploring your site.',
+						title: 'Internal Linking & Content Structure',
+						text: 'We add relevant internal links between related pages to help visitors find useful information. A clear linking structure also helps search engines discover your important pages and understand their relationship.',
 						imageSrc: '/images/on-page-seo-silo-internal-linking-topical-depth.webp',
 					},
 					{
-						title: 'Media Optimisation & Accessibility Tagging',
-						text: 'We optimise descriptive image alt text, compress image filenames and format on-page media elements so visual assets contribute directly to keyword relevance without slowing down page rendering.',
+						title: 'Image Optimisation & Alt Text',
+						text: 'We optimise website images by reducing file sizes, using descriptive file names and adding relevant alt text. This helps improve page performance and makes visual content more accessible.',
 						imageSrc: '/images/on-page-seo-media-optimisation-accessibility-tagging.webp',
 					},
 				],
 			},
 			clarity: {
 				id: 'clarity',
-				pill: 'Industry Impact',
-				title: 'On-Page Structuring Drives Growth Across Sectors',
+				pill: 'On Page SEO Across Different Industries',
+				title: 'Our On-Page SEO Services for Different Industries',
 				titleLines: [
-					'On-Page Structuring Drives Growth Across',
-					'Sectors',
+					'Our On-Page SEO Services for Different',
+					'Industries',
 				],
-				text: 'When businesses explain their value with clarity and purpose, both search engines and prospective clients respond immediately.',
+				text: 'Our on-page SEO strategies are tailored to your industry, helping your business attract relevant visitors and build trust.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'Professional Legal & Commercial Advisory Services',
-								text: 'Legal websites often hide expertise behind dense legal jargon that confuses buyers and weakens search relevance. We rewrite core service pages into scannable, plain-English overviews with transparent steps and clear information that win client trust across Manchester.',
+								title: 'Legal Practices & Law Firms',
+								text: 'Legal websites often contain complex information that can be difficult for visitors to understand. We improve service pages with clear headings, simple explanations and relevant FAQs to help potential clients understand your legal services.',
 							},
 							{
 								title: 'Medical Reporting, Clinics & Private Healthcare',
-								text: 'Healthcare queries demand verified details and immediate clarity. We structure clinical service pages with verified specialist accreditations, treatment FAQs and clear booking links that satisfy Google\'s E-E-A-T standards.',
+								text: 'Healthcare visitors need clear and reliable information before choosing a provider. We organise clinical service pages, improve treatment descriptions, add relevant FAQs and make appointment information easier to find.',
 							},
 							{
 								title: 'Commercial Trades & Field Service Contractors',
-								text: 'Property managers and homeowners need quick answers when looking for local contractors. We structure service-area landing pages with bulleted capabilities, upfront pricing indicators and direct one-click quote forms that turn mobile visits into booked jobs.',
+								text: 'Customers looking for plumbers, electricians and other trades want quick answers. We optimise service pages with clear descriptions, relevant keywords and easy-to-find contact details to help generate more enquiries.',
 							},
 						],
 					},
 					{
 						items: [
 							{
-								title: 'B2B Technology & Business Solutions',
-								text: 'Complex software and business consultancy pages can easily lose buyers in abstract features. We structure product and service pages around clear commercial problems, inputs and solutions that help procurement teams qualify your solutions quickly.',
+								title: 'B2B Business & Technology Solutions',
+								text: 'Technology and consultancy services can be difficult to explain. We organise your content around customer problems, service benefits and solutions so potential business clients can understand what you offer.',
 							},
 							{
 								title: 'E-Commerce & Specialist Retail',
-								text: 'Online stores often struggle with thin product copy and duplicate descriptions. We write unique category overviews, structure spec tables and align collection copy with transactional buyer queries to capture shoppers ready to buy.',
+								text: 'Online shoppers need clear product and category information before making a purchase. We optimise product descriptions, category pages, headings and images to help customers find the right products.',
 							},
 						],
 					},
 				],
 			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance On-Page SEO Built on Transparent Delivery',
-				text: 'Our senior search strategists structure every URL, heading and sentence to build long-term organic authority and buyer clarity.',
+				pill: 'Our On Page SEO Process',
+				heading: 'Our On Page SEO Process for Better Search Performance',
+				text: 'As an on page SEO company in Manchester, we follow a clear process to improve your website content and page structure.',
 				cards: [
 					{
-						title: 'Scoped Around Commercial Target Queries',
-						text: 'We prioritise high-margin service pages and regional intent terms across Manchester, focusing optimisation efforts on search terms that bring in serious, ready-to-buy commercial leads.',
+						title: 'Understanding Your Business & Target Keywords',
+						text: 'We start by learning about your business, services and target audience. We research relevant search terms and identify the pages that have the best opportunities to attract potential customers.',
 						imageSrc: '/images/on-page-seo-scoped-around-commercial.webp',
 					},
 					{
-						title: 'Direct Access to Senior SEO Strategists',
-						text: 'No junior account handlers rewriting your copy. You work directly with experienced search strategists and commercial copywriters who understand UK business tone and conversion mechanics.',
+						title: 'Working Directly with On Page SEO Experts',
+						text: 'You work directly with our on page SEO specialists and content team. We understand your business needs and make sure every optimisation supports your website goals and target audience.',
 						imageSrc: '/images/on-page-seo-direct-access-to-senior.webp',
 					},
 					{
-						title: 'Plain-English Strategy Before Implementation',
-						text: 'Every title revision, heading adjustment and content framework is mapped out in straightforward language and reviewed with your team before anything goes live on your website.',
+						title: 'Creating a Clear Optimisation Strategy',
+						text: 'We review your website content, headings, page titles, descriptions and internal links. We then create a clear plan explaining what needs improvement and how each change can support your on page SEO performance.',
 						imageSrc: '/images/on-page-seo-plain-english-strategy-before-implementation.webp',
 					},
 					{
-						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'We supply clean, formatted copy decks, HTML markup recommendations and internal linking schematics that your developers or in-house marketers can implement without friction.',
+						title: 'Working with Your Existing Website Team',
+						text: 'Our team can work with your existing developers. We provide optimised content, heading recommendations and internal linking suggestions to make implementation easier.',
 						imageSrc:
 							'/images/on-page-seo-seamless-collaboration-with-your-existing-web-team.webp',
 					},
 					{
-						title: 'Continuous Refinement & Performance Tracking',
-						text: 'We track keyword rankings, user engagement metrics and organic click-through rates in Google Search Console, making ongoing adjustments to maintain top positions against competitors.',
+						title: 'Monitoring Results & Improving Content',
+						text: 'We track keyword rankings, organic traffic and page performance. We also review your content regularly and make improvements when search trends or business needs change.',
 						imageSrc: '/images/on-page-seo-continuous-refinement-performance-tracking.webp',
+					},
+				],
+			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for On Page SEO Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other On Page SEO Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium on page SEO services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
-				pill: 'Full-Funnel Growth',
-				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'On-Page SEO is one part of our connected digital growth ecosystem.',
+				pill: 'Complete Digital Growth Solutions',
+				title: 'Different Needs. Connected Digital Solutions.',
+				text: 'On Page SEO is one part of our connected digital growth ecosystem.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Pairs on-page content alignment with technical site crawlability, AI SEO and off-page link building.',
+							"Our SEO services improve your website's visibility in organic search results. We focus on technical SEO, quality content, keyword targeting and website authority to support long-term growth.",
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Clean website development that keeps on-page layouts fast, mobile-friendly and simple to navigate.',
+							'We build fast, user-friendly and mobile-friendly websites that make it easier for visitors to explore your services.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
 						icon: '/icons/service-circles.svg',
-						title: 'Social & Paid Campaigns',
+						title: 'Social Media & Paid Advertising',
 						description:
-							'Well-structured on-page content improves paid ad Quality Scores, reducing cost-per-click and raising campaign returns.',
+							'We use targeted Google Ads and social media campaigns to help you reach potential customers. These services can support your local SEO strategy by increasing your visibility across different online channels.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
 			},
 			faq: {
-				pill: 'Clear Information',
-				heading: 'Frequently Asked Questions About On-Page SEO',
-				text: 'Straightforward answers on content optimisation, keyword intent and internal linking.',
+				pill: 'Your Questions Answered',
+				heading: 'FAQs About On-Page SEO',
+				text: 'Find answers to common questions about on-page optimisation, website content and keyword research.',
 				items: [
 					{
 						question:
-							'What is the difference between On-Page SEO and Technical SEO?',
+							'What is the difference between on-page SEO and technical SEO?',
 						answer:
-							'Technical SEO focuses on backend infrastructure, such as server response times, crawl budgets, XML sitemaps and Core Web Vitals. On-Page SEO focuses on the visible content and HTML elements of individual pages, including title tags, headings (H1–H3), copy clarity, image alt attributes and contextual internal links. Both must work together for a site to rank well.',
+							"On-page SEO focuses on the content and elements of individual website pages. Technical SEO focuses on the website's backend, including loading speed, crawling, indexing and website structure.",
 					},
 					{
 						question: 'Can On-Page SEO fix keyword cannibalisation?',
 						answer:
-							'Yes. Keyword cannibalisation happens when multiple pages on your site compete for the same search query, confusing search engines and splitting your ranking power. We audit your site, consolidate overlapping pages and give each URL a distinct commercial keyword target to restore search rankings.',
+							'Yes. Keyword cannibalisation happens when multiple pages target the same or very similar search terms. This can make it difficult for search engines to understand which page is most relevant.',
 					},
 					{
-						question:
-							'How do title tags and meta descriptions affect Google rankings?',
+						question: 'How do title tags and meta descriptions affect SEO?',
 						answer:
-							'Title tags are a confirmed direct ranking signal that tells Google the exact topic of a page. Meta descriptions do not directly influence organic rankings, but an engaging, clear description acts as your organic ad copy, directly raising click-through rates (CTR) from search result pages.',
+							'Title tags help search engines and visitors understand what a page is about. Meta descriptions do not directly affect rankings, but a clear and useful description can encourage more people to click on your website in search results.',
 					},
 					{
-						question: 'Why is internal linking important for SEO?',
+						question: 'Why are internal links important for on-page SEO?',
 						answer:
-							'Internal links guide search engines through your content hierarchy and pass ranking authority (link equity) between related pages. A structured internal linking SILO shows Google which pages are your primary commercial pillars and helps users find relevant information without getting lost.',
+							'Internal links connect different pages on your website. They help visitors find related information and allow search engines to discover your important pages.',
 					},
 					{
-						question:
-							'How often should on-page content be refreshed or updated?',
+						question: 'How often should I update my website content?',
 						answer:
-							'Core commercial service pages should be reviewed every 6 to 12 months, or whenever your service offerings, pricing or target market changes. Updating outdated facts, refining headings to match new search trends and improving calls to action helps protect page-one rankings from newer competitors.',
+							'You should review your important website pages regularly, especially when your services, prices or business information change.',
 					},
 					{
-						question: 'Do we have to rewrite all the copy on our website?',
+						question: 'Do I need to rewrite all the content on my website?',
 						answer:
-							'Not necessarily. Often, existing copy simply needs to be restructured by refining title tags, adjusting heading levels, clarifying value propositions and adding missing topical sub-sections. We keep your brand voice intact while making sure search engines can properly index your content.',
+							'No. Not every page needs a complete rewrite. Sometimes, improving headings, updating page titles, adding relevant keywords and making existing content clearer is enough.',
 					},
 				],
 			},
 			cta: {
-				pill: 'Turn Content into Revenue',
-				heading: 'Let’s Make Every Page on Your Website Work Harder',
-				text: 'Speak directly with our senior search specialists to discover how targeted on-page adjustments can lift your rankings.',
+				pill: 'Turn Your Content into Results',
+				heading: 'Are your website pages struggling to rank or generate enquiries?',
+				text: 'Speak with our on-page SEO team to discover how our on-page optimisation strategies can help your website reach more potential customers.',
 				buttonLabel: 'Request Your On-Page Content Audit →',
 				buttonHref: '/contact',
 			},
 		},
 		{
 			...linkBuildingChild,
-			metaTitle: 'Link Building Services | White-Hat Backlinks',
+			metaTitle: 'Link Building Services Manchester | Build Quality Backlinks',
 			metaDescription:
-				'Earn authoritative backlinks that move rankings. Xoomplus builds white-hat, relevant links for UK businesses through outreach and digital PR. Get a quote.',
+				'Grow your website authority with XoomPlus. Get Link Building Services in Manchester through quality backlinks, editorial outreach and digital PR.',
 			hero: {
 				...linkBuildingChild.hero,
-				pill: 'Off-Page Search Engine Optimisation & Domain Authority',
+				pill: 'Off-Page SEO & Link Building Services',
 				titleLines: [
-					'Off-Page SEO Agency in Manchester:',
-					'Drive Sustainable Search Rankings',
+					'Link Building Services Manchester |',
+					'Earn Quality Backlinks',
 				],
 				paragraphs: [
-					'On-page content and technical health tell search engines what your website is about, but off-page backlinks prove whether your business can be trusted. High-authority backlinks act as third-party endorsements that validate your digital reputation in the eyes of Google.',
-					'At Xoomplus, our Manchester link building specialists secure genuine, editorial placements across respected UK publications, trade bodies and regional news platforms.',
-					'We build durable domain authority that helps businesses across Manchester and the North West outrank established market competitors.',
+					'A lack of quality backlinks can make it harder for your website to build authority and compete for higher search rankings. Without links from relevant and trusted websites, search engines may have fewer signals to recognise your business as a reliable source of information.',
+					'At Xoomplus, our link building services in Manchester help businesses strengthen their online authority through quality backlinks from relevant websites, industry publications and trusted UK sources.',
 				],
-				buttonLabel: 'Request a Backlink Profile Audit',
+				buttonLabel: 'Request Off-Page SEO Audit',
 				image: {
 					...linkBuildingChild.hero.image,
 					src: childServiceHeroImage('link-building-off-page'),
 				},
 			},
 			features: {
-				pill: 'The Mechanics of Off-Page Authority',
-				titleLines: [
-					'Relevance, Authority & Trust.',
-					'The Fundamentals of Off-Page SEO.',
-				],
-				text: 'Search algorithms do not evaluate links by raw quantity alone. Modern search engines assess editorial quality, context and topical relevance, penalising artificial link schemes while rewarding genuine third-party citations.',
+				pill: 'Understanding Off-Page SEO',
+				titleLines: ['What Is', 'Off-Page SEO?'],
+				text: 'Link building/off-page SEO includes activities outside your website that help improve its reputation, trust and authority. It mainly focuses on earning quality backlinks, getting brand mentions and building relationships with relevant websites.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'Topical Relevance & Editorial Context',
-						text: 'A single backlink from an industry-relevant UK publication carries far more weight than hundreds of generic directory entries. We secure contextual, in-content placements within articles that naturally align with your commercial services.',
+						title: 'Quality Backlinks & Relevant Websites',
+						text: "We help your website earn links from trusted websites, industry publications and relevant blogs. These backlinks help build your website's authority and improve its chances of ranking in search results.",
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Domain Authority & Trust Flow',
-						text: 'Search engines measure the cumulative authority of the websites referencing your brand. By earning links from established domains with verified organic traffic, we pass authentic ranking equity directly to your primary service pages.',
+						title: 'Website Authority & Online Reputation',
+						text: "We build your online presence through relevant website mentions, industry features and quality link placements. This helps improve your brand's reputation and makes your business more recognisable.",
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Anchor Text Diversity & Risk Mitigation',
-						text: 'Over-optimised, repetitive anchor text triggers algorithmic search penalties. We structure a balanced anchor profile using branded phrases, natural variations and commercial keywords to protect long-term search stability.',
+						title: 'Natural Link Building & Trust',
+						text: 'We focus on earning genuine backlinks through useful content, guest posts and digital PR. A natural backlink profile helps build long-term trust and reduces the risks of poor-quality link-building practices.',
 					},
 				],
 			},
-			processPill: 'Practical Commercial Value',
-			processHeading: 'What Better Off-Page SEO Can Do for Your Business',
+			processPill: 'Practical Business Benefits',
+			processHeading: 'What Link Building Can Do for Your Business',
 			processText: [
-				'When commercial search terms in Manchester and across the UK are highly contested, multiple competing websites will have well-written content and clean code.',
-				'In these competitive spaces, search engines rely on external backlink authority as the deciding factor for who earns page-one positions. Without authentic domain authority, high-value service pages remain pinned below older competitors, regardless of how thoroughly your on-page copy is written.',
-				'Earning relevant editorial links builds the institutional trust required to accelerate keyword rankings, safeguard your website against sudden algorithm shifts and capture valuable referral traffic from established industry publications.',
+				'In competitive markets across Manchester and the UK, many businesses have well-written content and technically strong websites. However, these factors alone may not be enough to achieve higher search rankings.',
+				"Search engines also consider the quality and relevance of backlinks when assessing a website's authority. Without links from trusted and relevant websites, your pages may struggle to compete with established businesses, even if your content is well-optimised.",
+				"Earning quality backlinks from industry websites and trusted publications helps build your website's authority and credibility. This can support better keyword rankings, improve your search visibility and bring relevant referral traffic to your website.",
 			],
 			processImage: {
 				src: '/images/link-building-off-page-practical-commercial-value.webp',
@@ -1107,62 +1307,63 @@ export const seo: MainService = {
 			},
 			processPrimaryLabel: 'Request a Backlink Profile Audit',
 			processSecondaryLabel: 'Explore Our Link Building Process ↓',
+			processSecondaryHref: '#service-stack',
 			services: {
-				pill: 'Specialised Technical Delivery',
-				heading: 'Our Off-Page SEO & Digital PR Services',
-				text: 'We deploy manual outreach campaigns and data-backed content assets to earn high-tier placements that compound your site\'s authority.',
+				pill: 'Specialist Link Building Services',
+				heading: 'Our Professional Link-Building Services',
+				text: 'As a link building agency in Manchester, we use different methods to help your website earn relevant links, build authority and improve its online presence.',
 				cards: [
 					{
-						title: 'Competitor Backlink Gap Analysis',
-						text: 'We perform an exhaustive audit of your competitors\' link profiles across Manchester and the UK, identifying the exact publications, directories and trade portals driving their organic positions.',
+						title: 'Competitor Backlink Analysis',
+						text: "We analyse your competitors' backlinks to find websites and publications linking to them. This helps us identify new link-building opportunities for your business.",
 						imageSrc: '/images/link-building-off-page-competitor-backlink-gap-analysis.webp',
 					},
 					{
-						title: 'Digital PR & Editorial Media Outreach',
-						text: 'Our team pitches relevant story angles, expert commentary and business milestones directly to regional journalists, national news desks and trade editors across the UK.',
+						title: 'Digital PR & Guest Posting',
+						text: "We reach out to relevant publications, blogs and industry websites to secure guest posts, expert contributions and editorial mentions that build your brand's visibility.",
 						imageSrc: '/images/link-building-off-page-digital-pr-editorial-media-outreach.webp',
 					},
 					{
-						title: 'Linkable Asset Creation & Research Data',
-						text: 'We develop proprietary industry surveys, calculators and benchmark reports that journalists, bloggers and industry resource hubs actively want to cite and reference.',
+						title: 'Linkable Content & Resource Creation',
+						text: 'We create useful content, industry guides, research and other resources that give relevant websites a reason to link to your business.',
 						imageSrc: '/images/link-building-off-page-linkable-asset-creation-research-data.webp',
 					},
 					{
-						title: 'Regional Manchester & North West Citation Building',
-						text: 'We secure localised mentions in reputable regional business portals, Chamber of Commerce directories and regional trade hubs to build geographic prominence for localised searches.',
+						title: 'Local Link Building',
+						text: 'We find relevant local link opportunities through Manchester business directories, regional publications, trade associations and trusted local websites.',
 						imageSrc:
 							'/images/link-building-off-page-regional-manchester-north-west-citation-building.webp',
 					},
 					{
-						title: 'Toxic Link Auditing & Disavow Management',
-						text: 'We inspect legacy backlink profiles to identify spammy, low-quality or penalised links, safely neutralising negative SEO footprints through Google Search Console disavow protocols.',
+						title: 'Backlink Profile Audit & Toxic Link Review',
+						text: 'We review your existing backlinks to identify suspicious, irrelevant or potentially harmful links. Where necessary, we recommend suitable action to maintain a healthy backlink profile.',
 						imageSrc: '/images/link-building-off-page-toxic-link-auditing-disavow-management.webp',
 					},
 				],
 			},
 			clarity: {
 				id: 'clarity',
-				pill: 'Industry Impact',
-				title: 'Domain Authority Drives Commercial Growth Across Sectors',
+				pill: 'Industry-Specific Link Building',
+				title: 'How Our Link Building Services Support Different Industries',
 				titleLines: [
-					'Domain Authority Drives Commercial Growth Across',
-					'Sectors',
+					'How Our Link Building Services Support Different',
+					'Industries',
 				],
-				text: 'Search engines demand verified, third-party validation before granting top rankings to businesses handling high-stakes decisions and regulated services.',
+				text: 'We make link-building strategies around your business, target audience and industry to help you earn relevant links and improve online visibility.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'Legal Practices & Specialist Law Firms',
-								text: 'Search results for solicitors and lawyers across Manchester are heavily dominated by established directories and national corporate practices. We secure high-tier editorial mentions in regional business press and legal trade journals, giving independent practices the authority required to compete.',
+								title: 'Legal Practices & Law Firms',
+								text: "We help law firms earn backlinks from relevant legal publications, professional websites and regional business platforms. These links can strengthen your online reputation and help you compete in Manchester's legal market.",
 							},
 							{
 								title: 'Private Healthcare, Clinics & Medical Reporting',
-								text: 'Healthcare websites operate under Google’s strictest ‘Your Money or Your Life’ (YMYL) evaluation, where unverified claims or spammy links actively damage rankings. We earn citations from accredited medical associations, clinical education journals and health publications to build genuine authority.',
+								text: 'We identify relevant healthcare publications, medical resources and professional organisations where your business can earn useful mentions and backlinks.',
 							},
 							{
 								title: 'Commercial Trades & Engineering Contractors',
-								text: 'Commercial facility managers look for proven credibility when procuring contractors. We secure placements across regional construction hubs, engineering associations and safety body portals that validate your commercial credentials.',
+								text: 'We find link opportunities through construction websites, trade directories, industry associations and regional business platforms. These links help contractors improve their online presence and reach potential clients.',
 							},
 						],
 					},
@@ -1170,152 +1371,185 @@ export const seo: MainService = {
 						items: [
 							{
 								title: 'B2B Technology & Professional Consultancies',
-								text: 'Enterprise software and corporate advisory firms face long buying cycles with discerning corporate buyers. We place authoritative commentary and white-paper citations in established tech and management publications to generate qualified referral leads.',
+								text: 'We help technology companies and consultancies earn links from relevant business publications, technology blogs and industry resources. This supports their authority and helps them reach business decision-makers.',
 							},
 							{
-								title: 'E-Commerce & Direct-to-Consumer Brands',
-								text: 'Online retail demands high brand visibility to outpace marketplace aggregators. We secure product roundups, lifestyle media features and buyer-guide placements that drive qualified referral sales alongside valuable domain equity.',
+								title: 'E-Commerce & Retail Businesses',
+								text: 'We build links through product features, relevant blogs, industry publications and online shopping guides. These placements can improve brand awareness, attract potential customers and support organic search visibility.',
 							},
 						],
 					},
 				],
 			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance Link Building Built on Transparent Delivery',
-				text: 'Our senior digital PR leads and outreach specialists secure high-impact placements through genuine media relationships, never automated link networks.',
+				pill: 'Our Process',
+				heading: 'Our Effective Link Building Process',
+				text: 'Our link-building process focuses on quality, relevance and transparency.',
 				cards: [
 					{
-						title: 'Scoped Around Industry-Relevant UK Publications',
-						text: 'We build custom, manual outreach targets comprising reputable regional media in Manchester, verified industry trade bodies and national commercial publications relevant to your market.',
+						title: 'Understanding Your Business & Goals',
+						text: 'We learn about your business, services, target audience and competitors. This helps us understand which websites and backlink opportunities are most relevant to your industry.',
 						imageSrc: '/images/on-page-seo-scoped-around-commercial.webp',
 					},
 					{
-						title: 'Direct Access to Senior Digital PR Specialists',
-						text: 'No junior automated email blasting. You work directly with experienced PR directors and search strategists who write tailored pitches and represent your brand professionally.',
+						title: 'Backlink Research & Opportunity Analysis',
+						text: 'We review your existing backlink profile and research your competitors. Our team identifies relevant websites, publications and platforms that offer suitable link-building opportunities.',
 						imageSrc:
 							'/images/link-building-off-page-direct-access-to-senior-digital-pr-specialists.webp',
 					},
 					{
-						title: 'Plain-English Strategy Before Implementation',
-						text: 'We outline our target publication lists, content angles and anchor-text distribution plans in clear language so you retain complete control over where your brand appears.',
+						title: 'Clear Strategy Before Outreach',
+						text: 'We prepare a link-building plan based on your goals, target pages and industry. We explain our approach in simple language so you understand where and how we plan to build links.',
 						imageSrc:
 							'/images/link-building-off-page-plain-english-strategy-before-implementation.webp',
 					},
 					{
-						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'We coordinate with your internal content or PR teams to turn corporate announcements, client wins and original data into link-earning media assets without disrupting workflows.',
+						title: 'Manual Outreach & Link Acquisition',
+						text: 'We contact relevant website owners, editors and publishers to secure suitable placements. We focus on genuine outreach and relevant websites rather than automated link schemes.',
 						imageSrc:
 							'/images/link-building-off-page-seamless-collaboration-with-your-existing-web-team.webp',
 					},
 					{
-						title: 'Continuous Monitoring & Verified Reporting',
-						text: 'Every live backlink is catalogued in your monthly report with target URLs, third-party domain metrics, organic referral clicks and indexation checks for complete transparency.',
+						title: 'Backlink Monitoring & Reporting',
+						text: 'We monitor your acquired links and share regular reports showing live placements, linking websites and campaign progress. This helps you understand how your backlink profile is developing.',
 						imageSrc:
 							'/images/link-building-off-page-continuous-monitoring-verified-reporting.webp',
 					},
 				],
 			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Off Page SEO Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Off Page SEO Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium off page SEO services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
+					},
+				],
+			},
 			servicesBehind: {
 				id: 'services-behind',
-				pill: 'Full-Funnel Growth',
-				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'Link building forms an integral part of our digital growth framework.',
+				pill: 'Complete Digital Solution',
+				title: 'Different Needs. Connected Digital Solution.',
+				text: 'Link building works best when combined with other SEO and digital marketing services.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Combines off-page domain authority with technical crawlability, AI SEO and on-page content relevance.',
+							"Our SEO services improve your website's visibility in organic search results. We focus on technical SEO, quality content, keyword targeting and website authority to support long-term growth.",
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Clean, fast website architecture that provides a seamless user experience when external visitors land from referral links.',
+							'We build fast, user-friendly and mobile-friendly websites that make it easier for visitors to explore your services.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
 						icon: '/icons/service-circles.svg',
-						title: 'Social & Paid Campaigns',
+						title: 'Social Media & Paid Advertising',
 						description:
-							'Amplifies content reach across social platforms, increasing organic pickup, shares and secondary backlinks.',
+							'We use targeted Google Ads and social media campaigns to help you reach potential customers. These services can support your local SEO strategy by increasing your visibility across different online channels.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
 			},
 			faq: {
 				pill: 'Clear Information',
-				heading: 'Frequently Asked Questions About Off-Page SEO',
-				text: 'Straightforward answers on backlinks, domain authority and digital outreach.',
+				heading: 'FAQs About Link Building',
+				text: 'Find answers to common questions about backlinks, off-page SEO and our link-building services.',
 				items: [
 					{
-						question:
-							'Why is link building essential if our on-page SEO is already optimised?',
+						question: 'What is link building in SEO?',
 						answer:
-							'On-page SEO informs search engines about your topics, but backlinks demonstrate credibility. In competitive commercial sectors, multiple websites have well-optimised pages; search engines use external backlink quality and quantity as the deciding factor for top positions.',
+							"Link building is the process of getting other websites to link to your website. These links, known as backlinks, help search engines discover your pages and assess your website's authority and relevance.",
 					},
 					{
-						question: 'What makes a backlink ‘high quality’?',
+						question: 'Why are backlinks important for SEO?',
 						answer:
-							'A high-quality backlink comes from an established, reputable website with verifiable organic traffic and topical relevance to your business.',
+							"Backlinks can help improve your website's authority and search visibility.",
 					},
 					{
-						question: 'How does Xoomplus avoid Google link penalties?',
+						question: 'What makes a backlink high quality?',
 						answer:
-							'We adhere strictly to Google\'s Search Essentials guidelines. We avoid automated link software, public link networks, spammy directory farms and bulk private blog networks (PBNs). All our links are earned through manual PR outreach, quality content creation and authentic industry relationships.',
+							'A quality backlink usually comes from a trusted website that is relevant to your industry. The link should appear naturally within useful content and provide value to readers.',
 					},
 					{
-						question:
-							'How many backlinks does a business need to rank on page one?',
+						question: 'How does Xoomplus build safe backlinks?',
 						answer:
-							'The volume depends on the competitive strength of your sector and target search terms. For localised commercial queries in Manchester, a handful of high-authority regional and trade links can produce significant ranking shifts. For national, highly competitive terms, a continuous acquisition strategy of 3 to 10 quality editorial placements per month is often effective.',
+							'We focus on manual outreach, relevant publications, useful content and genuine website relationships. We avoid automated link schemes, spammy websites and private blog networks that can put your website at risk.',
 					},
 					{
-						question:
-							'How long does it take for new backlinks to impact search rankings?',
+						question: 'How long does link building take to show results?',
 						answer:
-							'Once an external page with your backlink is crawled and indexed by Google, authority begins transferring to your domain. Meaningful ranking movements and domain authority increases typically register within 4 to 10 weeks of link placement.',
+							"Link building is a long-term SEO activity. Results depend on your website's current authority, industry competition and the quality of links you earn.",
 					},
 					{
-						question:
-							'What information is required to begin an off-page link campaign?',
+						question: 'How many backlinks does my website need?',
 						answer:
-							'We require your domain URL, details of your highest-priority commercial services, target locations and any previous link-building history. Our senior team will audit your current profile and identify target link opportunities before our first conversation.',
+							'There is no fixed number of backlinks every website needs. It depends on your industry, competitors, target keywords and current backlink profile.',
 					},
 				],
 			},
 			cta: {
-				pill: 'Build Real Authority',
-				heading: 'Let’s Build the Domain Authority Your Business Deserves',
-				text: 'Speak directly with our senior search specialists to discover how targeted link acquisition can lift your visibility.',
+				pill: 'Build Your Online Authority',
+				heading: 'Want to Build a Stronger Backlink Profile for Your Business?',
+				text: 'Speak with our SEO specialists to find the right link-building opportunities for your business.',
 				buttonLabel: 'Request Your Backlink Profile Audit →',
 				buttonHref: '/contact',
 			},
 		},
 		{
 			...ecommerceSeoChild,
-			metaTitle: 'E-Commerce SEO Agency - Grow Your Online Sales',
+			metaTitle: 'Ecommerce SEO Agency Manchester | Turn Traffic Into Sales',
 			metaDescription:
-				'Sell more without paying for every click. Our e-commerce SEO agency in Manchester optimises product and category pages to boost sales. Get a quote.',
+				'Struggling to grow online sales? XoomPlus, an Ecommerce SEO Agency in Manchester, optimises product pages, rankings and overall organic traffic.',
 			hero: {
 				...ecommerceSeoChild.hero,
-				pill: 'Ecommerce Search Optimisation & Category Architecture',
+				pill: 'Ecommerce SEO Services across the UK',
 				titleLines: [
-					'Ecommerce SEO Agency in Manchester:',
-					'Turn Product Search into Predictable Revenue',
+					'Ecommerce SEO Agency Manchester |',
+					'Grow Online Sales',
 				],
 				paragraphs: [
-					'Having hundreds or thousands of products means little if prospective buyers cannot find your collection pages, or if search engines get stuck in faceted navigation and duplicate URLs.',
-					'At Xoomplus, our Ecommerce SEO specialists optimise stores across Shopify, WooCommerce, Magento and custom headless builds.',
-					'We structure commercial category hierarchies, resolve indexation bloat, deploy rich product schema and capture high-intent shopping queries that grow your bottom line across Manchester and the UK.',
+					'Poor search visibility can make it difficult for online stores to reach potential customers and compete with other retailers. If your product and category pages are not properly optimised, your products may struggle to appear in relevant search results.',
+					'As an ecommerce agency in Manchester, we help online stores to overcome these challenges. We optimise product pages, category pages, website structure and technical SEO across Shopify, WooCommerce, Magento and other ecommerce platforms.',
 				],
 				buttonLabel: 'Request an Ecommerce SEO Audit',
 				image: {
@@ -1324,36 +1558,33 @@ export const seo: MainService = {
 				},
 			},
 			features: {
-				pill: 'The Mechanics of Ecommerce SEO',
-				titleLines: [
-					'Authority, Crawlability & Schema.',
-					'The Revenue Engines.',
-				],
-				text: 'Unlike standard service websites, e-commerce stores deal with massive URL volumes, dynamic product variations and intense commercial competition on Google.',
+				pill: 'Understanding Ecommerce SEO',
+				titleLines: ['What Is Ecommerce', 'Website SEO?'],
+				text: 'Ecommerce website SEO is the process of improving an online store so its products and category pages appear in relevant Google searches.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'High-Intent Category & Collection Structuring',
-						text: 'Shoppers rarely start their journey on a single product page; they search for categories, styles and solutions. We structure collection pages with descriptive category copy, clear internal link hierarchies and sub-category taxonomies that rank for high-volume commercial keywords.',
+						title: 'Product & Category Optimisation',
+						text: 'We optimise product descriptions, category pages, titles and headings so shoppers can find the products they are looking for.',
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Faceted Navigation & Crawl Budget Control',
-						text: 'Filter parameters for size, colour, brand and price can generate thousands of duplicate, thin URLs that waste search engine crawl resources. We configure canonical tags, robots directives and parameter handling so Google crawls and indexes only high-value, revenue-driving pages.',
+						title: 'Website Structure & Crawlability',
+						text: "Our ecommerce SEO experts improve your store's structure, internal links and URLs so search engines can find, crawl and index your important product pages.",
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Rich Product Schema & Google Merchant Centre Integration',
-						text: 'We implement structured JSON-LD Product and Offer markup, including live pricing, stock availability, review ratings and SKU data. This qualifies your store for rich shopping snippets in search results, directly increasing organic click-through rates.',
+						title: 'Product Schema & Search Visibility',
+						text: 'We add structured product information, including prices, availability and reviews, to help search engines understand your products and display eligible rich results.',
 					},
 				],
 			},
-			processPill: 'Practical Commercial Value',
-			processHeading: 'What Better Ecommerce SEO Can Do for Your Business',
+			processPill: 'Practical Business Benefits',
+			processHeading: 'What an Ecommerce SEO Agency Can Do for Your Business',
 			processText: [
-				'When prospective buyers across Manchester and the UK search for products to purchase, they do not browse indefinitely; they compare top-ranking category pages and click through to stores that load quickly and display clear product details.',
-				'If your store has indexation bottlenecks, missing schema or poorly structured collections, ready-to-buy shoppers land straight on a competitor\'s checkout page instead. Without tailored Ecommerce SEO, your store remains reliant on expensive pay-per-click ads, leaving your margins vulnerable to rising ad costs.',
-				'Structuring your catalogue for organic search captures high-intent transactional queries, drives qualified shoppers straight to your high-margin collections and builds compounding online revenue month after month.',
+				'When potential customers across Manchester search for products, they are more likely to visit stores that appear in search results. If your product pages are not indexed properly, your category pages are poorly structured or your website lacks important product details, shoppers may choose your competitors instead.',
+				'Without a strong ecommerce SEO strategy, your online store may also become too dependent on paid advertising to generate sales.',
+				'Optimising your product pages, category structure, website speed and product information helps search engines understand your store and connect your products with the right audience. This improves your organic search visibility, attracts visitors who are ready to buy and helps your store generate more sales over time.',
 			],
 			processImage: {
 				src: '/images/e-commerce-seo-practical-commercial-value.webp',
@@ -1361,35 +1592,36 @@ export const seo: MainService = {
 			},
 			processPrimaryLabel: 'Request an Ecommerce SEO Audit',
 			processSecondaryLabel: 'Explore Our Ecommerce SEO Process ↓',
+			processSecondaryHref: '#service-stack',
 			services: {
-				pill: 'Specialised Technical Delivery',
-				heading: 'Our Ecommerce SEO & Revenue Growth Services',
-				text: 'We deploy code-level fixes, architecture structuring and conversion-focused content to ensure your online store captures high-value shopping traffic.',
+				pill: 'Specialist Ecommerce SEO Services',
+				heading: 'Our Professional ECommerce SEO Services',
+				text: 'As an ecommerce SEO agency in Manchester, we improve the key areas of your online store to help search engines find your products.',
 				cards: [
 					{
-						title: 'Collection & Category Architecture Structuring',
-						text: 'We reorganise your store’s category tree, menus and breadcrumb navigation into clean SILOs, ensuring search engines pass link authority directly to your most profitable product ranges.',
+						title: 'Product & Category Page Optimisation',
+						text: 'We optimise product descriptions, category content, page titles and headings with relevant keywords. This helps your products and collections appear for searches made by potential customers.',
 						imageSrc: '/images/e-commerce-seo-collection-category-architecture-structuring.webp',
 					},
 					{
-						title: 'Faceted Navigation & Parameter Indexation Control',
-						text: 'We clean up dynamic filter URLs generated by colour, size and price facets, using canonical tags and indexing rules so search engines focus exclusively on primary collection pages.',
+						title: 'Website Structure & Duplicate URL Management',
+						text: 'We organise your product categories, menus and internal links to make your store easier to navigate. We also manage duplicate URLs created by product filters and variations to avoid unnecessary indexing issues.',
 						imageSrc:
 							'/images/e-commerce-seo-faceted-navigation-parameter-indexation-control.webp',
 					},
 					{
-						title: 'Product Schema & Merchant Feed Optimisation',
-						text: 'We embed nested JSON-LD structured data for products, pricing, stock levels and customer reviews, giving search engines and Google Shopping feeds the clean data needed to earn rich badges and snippets.',
+						title: 'Product Schema & Product Merchant Optimisation',
+						text: 'We add structured product information, including prices, availability, product details and reviews. We also help improve product feeds for Google Merchant Centre to support your shopping campaigns.',
 						imageSrc: '/images/e-commerce-seo-product-schema-merchant-feed-optimization.webp',
 					},
 					{
-						title: 'Out-of-Stock & Seasonal Inventory Management',
-						text: 'We implement automated redirect workflows and evergreen collection strategies for seasonal and discontinued stock, preventing broken 404 links while protecting accumulated search rankings year-round.',
+						title: 'Out-of-Stock Product Management',
+						text: 'We manage product pages when items become unavailable or are discontinued. We use suitable redirects, alternative product suggestions and updated category pages to protect valuable traffic.',
 						imageSrc: '/images/e-commerce-seo-out-of-stock-seasonal-inventory-management.webp',
 					},
 					{
-						title: 'Ecommerce Conversion & Mobile Checkout Optimisation',
-						text: 'We audit mobile speed, Core Web Vitals and checkout pathways across your product templates, stripping out heavy app code to ensure organic visitors complete their purchase without hesitation.',
+						title: 'Website Speed & Mobile Shopping Experience',
+						text: 'We improve website loading speed and mobile performance. We also review the checkout journey to make it easier for customers to browse products and complete their purchases.',
 						imageSrc:
 							'/images/e-commerce-seo-ecommerce-conversion-mobile-checkout-optimisation.webp',
 					},
@@ -1397,423 +1629,493 @@ export const seo: MainService = {
 			},
 			clarity: {
 				id: 'clarity',
-				pill: 'Industry Impact',
-				title: 'Ecommerce Search Drives Revenue Across Retail Sectors',
+				pill: 'Industry-Specific SEO',
+				title: 'How Ecommerce SEO Helps Different Retail Businesses Grow',
 				titleLines: [
-					'Ecommerce Search Drives Revenue Across Retail',
-					'Sectors',
+					'How Ecommerce SEO Helps Different Retail',
+					'Businesses Grow',
 				],
-				text: 'Different online retail sectors face unique hurdles, from rapid inventory turnover to complex technical specifications.',
+				text: 'We create strategies based on your product range, industry and business goals.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'Fashion, Apparel & Fast-Moving Consumer Goods (FMCG)',
-								text: 'High SKU counts, seasonal rotations and multi-variant combinations create severe index bloat and keyword cannibalisation. We structure parent-child URL canonicalisation, automate redirects for expired lines and build evergreen category landing pages that preserve search equity season after season.',
+								title: 'Fashion, Clothing & Accessories',
+								text: 'Fashion stores often have many products, sizes, colours and seasonal collections. We optimise product variations, category pages and product descriptions to help shoppers find the right items and improve organic visibility.',
 							},
 							{
-								title: 'Specialist B2B Wholesale & Industrial Components',
-								text: 'Technical buyers and procurement managers search using exact part numbers, materials and trade specifications. We convert unindexed PDF data into crawlable HTML tables, map specification keywords directly to product templates, and build structured B2B trade hubs that capture high-intent commercial buyers.',
+								title: 'B2B Wholesale & Industrial Products',
+								text: 'Wholesale businesses often sell products with technical names, specifications and product codes. We optimise product pages, category descriptions and technical information to help buyers find the products they need.',
 							},
 							{
-								title: 'Luxury Goods, Home Interiors & Direct-to-Consumer (D2C) Brands',
-								text: 'High-ticket items require instant brand credibility, visual richness and fast-loading pages. We streamline heavy theme templates, implement next-generation image compression and embed verified review schema to reassure buyers and keep checkout abandonment low.',
+								title: 'Furniture, Home Interiors & Lifestyle Products',
+								text: 'Customers often compare designs, materials, prices and product features before buying furniture and home products. We improve product descriptions, images, category pages and website navigation to make product research easier.',
 							},
 						],
 					},
 					{
 						items: [
 							{
-								title: 'Health, Supplements & Beauty Retail',
-								text: 'Personal care products operate under Google’s strict trust and safety guidelines. We integrate verified ingredient data, structured customer review schema and clear batch details to establish medical and cosmetic authority in search results.',
+								title: 'Health, Beauty & Personal Care Products',
+								text: 'Beauty and personal care shoppers often search for products based on ingredients, benefits and skin concerns. We create clear product descriptions, useful category content and relevant FAQs to help customers understand your products.',
 							},
 							{
-								title: 'Electronics, Tools & Multi-Brand Distributors',
-								text: 'Managing massive catalogues with competing manufacturer descriptions leads to widespread duplicate content. We rewrite high-priority category summaries, structure faceted attribute filters and optimise comparison matrices to help your store outrank generic brand resellers.',
+								title: 'Electronics, Tools & Multi-Brand Stores',
+								text: 'Electronics and tool stores often manage large product catalogues with similar products and technical specifications. We improve product information, category structures and comparison content to help customers find suitable products.',
 							},
 						],
 					},
 				],
 			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance Ecommerce SEO Built on Transparent Delivery',
-				text: 'Our senior technical team structures your online catalogue to capture ready-to-buy searchers without relying on bloated apps or vanity metrics.',
+				pill: 'Our Process',
+				heading: 'Our Effective E-commerce Website SEO Process',
+				text: "Our e-commerce SEO process focuses on improving your store's search visibility.",
 				cards: [
 					{
-						title: 'Scoped Around Revenue & High-Margin Collections',
-						text: 'We do not optimise vanity keywords. We review your inventory data, best-sellers and profit margins to prioritise category lines that generate the highest commercial return for your business.',
+						title: 'Understanding Your Products & Business Goals',
+						text: 'We review your online store, product range, target audience and competitors. This helps us identify the products and categories that offer the best opportunities for organic growth.',
 						imageSrc: '/images/e-commerce-seo-scoped-around-revenue-high-margin-collections.webp',
 					},
 					{
-						title: 'Direct Access to Senior Ecommerce SEO Engineers',
-						text: 'No junior account handlers relaying messages. You work directly with senior search strategists and technical developers experienced in Shopify Liquid, WooCommerce, Magento and custom headless platforms.',
+						title: 'Detailed E-commerce SEO Audit & Research',
+						text: 'We analyse your website structure, product pages, category pages, keywords and technical performance.',
 						imageSrc:
 							'/images/e-commerce-seo-direct-access-to-senior-ecommerce-seo-engineers.webp',
 					},
 					{
-						title: 'Plain-English Strategy Before Implementation',
-						text: 'We walk you through our catalogue audit in straightforward language, delivering a prioritised roadmap showing crawl traps, missing schema and keyword gaps before modifying your live templates.',
+						title: 'Clear Strategy Before Implementation',
+						text: 'We prepare a practical SEO plan based on our findings. We explain what needs improvement, which pages need attention and how our recommendations can support your business goals.',
 						imageSrc:
 							'/images/e-commerce-seo-Plain-english-strategy-before-implementation.webp',
 					},
 					{
-						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'Whether you have an in-house development team or an external agency, we provide developer-ready code snippets, theme modifications and data-entry guides that deploy smoothly without disrupting live sales.',
+						title: 'Optimisation & Implementation',
+						text: 'Our team works on product pages, category content, website structure, technical issues and product schema. We can also work with your existing developers to make the required changes.',
 						imageSrc:
 							'/images/e-commerce-seo-seamless-collaboration-with-your-existing-web-team.webp',
 					},
 					{
-						title: 'Continuous Monitoring & Revenue Attribution',
-						text: 'We track organic transactions, average order value (AOV) and conversion rates through Google Analytics 4 (GA4), continuously optimising category pages and product feeds as search algorithms evolve.',
+						title: 'Performance Monitoring & Reporting',
+						text: 'We monitor keyword rankings, organic traffic, product visibility and sales performance. Regular reports help us understand what is working and where further improvements are needed.',
 						imageSrc: '/images/e-commerce-seo-continuous-monitoring-revenue-attribution.webp',
+					},
+				],
+			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Ecommerce SEO Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Ecommerce SEO Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium ecommerce SEO services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Full-Funnel Growth',
-				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'Ecommerce SEO functions as a core component of our full-funnel digital ecosystem.',
+				title: 'Different Needs. Connected Digital Solutions.',
+				text: 'Ecommerce SEO works best when combined with other digital marketing services.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Combines e-commerce category ranking with technical site health, link building and regional visibility.',
+							"Our SEO services improve your website's visibility in organic search results. We focus on technical SEO, quality content, keyword targeting and website authority to support long-term growth.",
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Custom Shopify and WordPress/WooCommerce builds engineered for rapid checkout, mobile usability and clean architecture.',
+							'We build fast, user-friendly and mobile-friendly websites that make it easier for visitors to explore your services.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
 						icon: '/icons/service-circles.svg',
-						title: 'Social & Paid Campaigns',
+						title: 'Social Media & Paid Advertising',
 						description:
-							'High-converting collection pages lower Google Shopping and Performance Max ad costs while maximising blended return on ad spend (ROAS).',
+							'We use targeted Google Ads and social media campaigns to help you reach potential customers. These services can support your local SEO strategy by increasing your visibility across different online channels.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
 			},
 			faq: {
 				pill: 'Clear Information',
-				heading: 'Frequently Asked Questions About Ecommerce SEO',
-				text: 'Straightforward answers on optimising online stores for organic search growth.',
+				heading: 'FAQs About Ecommerce Website SEO',
+				text: 'Find answers to common questions about e-commerce website optimisation',
 				items: [
 					{
 						question:
-							'Why should we prioritise category pages over individual product pages for SEO?',
+							'What is e-commerce SEO, and why does my online store need it?',
 						answer:
-							'Category and collection pages target broader, higher-volume commercial search terms (e.g., ‘leather office chairs’ rather than a single specific model name). Since products can go out of stock or be discontinued, building authority on permanent category pages ensures your search rankings remain stable for a long term.',
+							'E-commerce SEO is the process of improving an online store so its products and category pages appear in relevant search results. It includes keyword research, product optimisation, technical SEO and website structure improvements.',
+					},
+					{
+						question: 'Why are category pages important for e-commerce SEO?',
+						answer:
+							'Category pages group similar products together and help customers find what they need. They can also target broader product-related keywords.',
+					},
+					{
+						question: 'How do you manage out-of-stock and discontinued products?',
+						answer:
+							'For temporarily unavailable products, we usually recommend keeping the page live and showing when the product may return.',
 					},
 					{
 						question:
-							'How do you handle out-of-stock or discontinued products without hurting rankings?',
+							'Can you optimise Shopify, WooCommerce and Magento websites?',
 						answer:
-							'If a product is temporarily out of stock, the page should remain live with an email notification signup and clear links to related in-stock items. If a product is permanently discontinued, we assess its historical traffic and backlink equity: high-equity pages are 301-redirected to the closest parent category or replacement model, while low-traffic pages are retired cleanly to preserve crawl budget.',
+							'Yes. Our Ecommerce SEO specialists work with popular platforms, including Shopify, WooCommerce and Magento.',
 					},
 					{
-						question:
-							'What is faceted navigation, and why does it cause SEO problems?',
+						question: 'How does product schema help an ecommerce website?',
 						answer:
-							'Faceted navigation allows shoppers to filter products by size, colour, brand or price. Each filter click often generates a new dynamic URL containing parameter strings. Without proper canonical tags and robots directives, search engines attempt to crawl millions of filter combinations, draining your crawl budget and creating massive duplicate content issues.',
+							'Product schema gives search engines clear information about your products, such as their names, prices, availability and reviews.',
 					},
 					{
-						question:
-							'Can you optimise e-commerce stores on Shopify, WooCommerce and Magento?',
+						question: 'How long does e-commerce SEO take to show results?',
 						answer:
-							'Yes. While each platform handles URLs, sitemaps and theme code differently, our developers and technical SEO leads understand the platform-specific constraints of Shopify, WooCommerce, Magento and custom headless frameworks to optimise them directly at the template level.',
-					},
-					{
-						question: 'How does Product Schema markup help organic sales?',
-						answer:
-							'Product Schema (JSON-LD) provides search engines with structured data about your products, including price, availability, currency and customer review scores. Google uses this data to display rich snippets and product badges directly in search results, making your listings stand out and attracting higher click-through rates from ready-to-buy shoppers.',
-					},
-					{
-						question:
-							'What information is needed to begin an Ecommerce SEO campaign?',
-						answer:
-							'We need your store URL, details on your primary e-commerce CMS platform, an outline of your top-performing product categories and access to Google Search Console and GA4. Our senior team will conduct a thorough store audit to identify crawl roadblocks and high-impact revenue opportunities before our initial strategy call.',
+							'E-commerce SEO takes time because search engines need to crawl and understand your website changes. Some improvements may appear within a few weeks, while stronger traffic and ranking growth can take several months.',
 					},
 				],
 			},
 			cta: {
-				pill: 'Scale Your Online Store',
-				heading: 'Turn Your E-Commerce Store into a High-Performing Search Engine',
-				text: 'Speak directly with our senior e-commerce SEO specialists for a clear, actionable review of your store.',
+				pill: 'Grow Your Online Store',
+				heading: 'Want more people to find your products through Google?',
+				text: "Speak with our Ecommerce SEO specialists to discover how we can improve your store's visibility, attract potential buyers and support long-term growth.",
 				buttonLabel: 'Request Your E-commerce Store Audit →',
 				buttonHref: '/contact',
 			},
 		},
 		{
 			...seoAuditChild,
-			metaTitle: 'SEO Audit Services - Full Website Audit',
+			metaTitle: 'SEO Audit Services Manchester | Find & Fix SEO Issues',
 			metaDescription:
-				'Find out why your site isn’t ranking. Xoomplus SEO audits in Manchester cover technical, on-page, content and backlinks, with an action plan. Book today.',
+				'Not getting the rankings you expect? XoomPlus offers SEO Audit Services in Manchester to identify problems and build a clear improvement plan.',
 			hero: {
 				...seoAuditChild.hero,
-				pill: 'Comprehensive Technical & Strategic Diagnostics',
+				pill: 'Complete Website Analysis',
 				titleLines: [
-					'SEO Audit Agency in Manchester:',
-					'Uncover the Bottlenecks Stopping Your Organic Revenue',
+					'SEO Audit Services Manchester |',
+					'Fix Issues, Improve Rankings',
 				],
 				paragraphs: [
-					'Generic website scanners generate surface checklists filled with automated warnings, but they fail to explain why your business is losing ground on Google. For established companies, high-volume e-commerce stores and complex websites, declining organic traffic points to deeper structural friction, ranging from crawl-budget waste and JavaScript rendering failures to legacy indexation bloat.',
-					'At Xoomplus, our senior search engineers conduct deep, manual SEO audits to isolate root architectural problems.',
-					'We deliver an actionable, developer-ready technical roadmap that clarifies what needs fixing, why it matters and where your strongest commercial opportunities lie across Manchester and the UK.',
+					'Poor website performance, technical errors, weak content and low-quality backlinks can prevent your website from achieving better search rankings. Without understanding what affects your website, it can be difficult to improve search visibility and attract the right audience.',
+					'At Xoomplus, we provide professional SEO audit services in Manchester to identify these issues and find opportunities for improvement.',
+					"Our SEO specialists review your website's technical setup, content, keywords, backlinks and competitors to understand what needs attention. We then provide a clear action plan to fix problems, strengthen your SEO strategy, improve search rankings and attract more potential customers.",
 				],
-				buttonLabel: 'Commission a Comprehensive SEO Audit',
+				buttonLabel: 'Request an SEO Audit',
 				image: {
 					...seoAuditChild.hero.image,
 					src: childServiceHeroImage('seo-audit'),
 				},
 			},
 			features: {
-				pill: 'Beyond Automated Scanners',
-				titleLines: [
-					'Infrastructure, Indexation & Authority.',
-					'Complete Diagnostic Clarity.',
-				],
-				text: 'Unlike automated online audit tools that flag basic surface issues, an enterprise diagnostic investigates the relationship between your server configurations, search engine crawl logs and commercial revenue paths.',
+				pill: 'Understanding SEO Audit',
+				titleLines: ['What Is an', 'SEO Audit?'],
+				text: 'An SEO audit is a detailed review of your website to find issues that affect its search rankings, traffic and performance. It helps identify technical errors, content gaps and backlink problems that may stop your website from reaching its full potential.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
-						title: 'Server Infrastructure & Crawl Governance',
-						text: 'We analyse how search engine bots actually navigate your domain. By evaluating server access logs, robots directives, redirect chains and internal crawl paths, we identify crawl traps and redirect crawl resources directly toward your highest-value commercial landing pages.',
+						title: 'Technical SEO & Website Health',
+						text: "We check your website's speed, mobile performance, broken links, redirects and crawlability. This helps search engines access your pages and understand your website without technical issues.",
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
-						title: 'Indexation Architecture & Code Rendering',
-						text: 'We examine how Google renders your pages, assessing modern JavaScript execution, Core Web Vitals performance and canonical logic. We locate hidden indexation roadblocks, duplicate URL loops and orphaned pages that suppress your domain authority.',
+						title: 'Content Quality & Indexation',
+						text: 'We review your page titles, headings, keywords and content to find duplicate pages, missing information and keyword conflicts. We also check whether Google can find and index your important pages.',
 					},
 					{
 						icon: 'think-beyond-one-screen',
-						title: 'Content Relevance & Competitive Authority Gaps',
-						text: 'We audit your keyword targeting against actual commercial search intent, identifying keyword cannibalisation and thin content. Combined with a toxic link review, we pinpoint the exact authority gaps that competitors exploit across your primary target markets.',
+						title: 'Backlink Profile & Competitor Analysis',
+						text: "We review your website's backlinks and compare your SEO performance with competitors. This helps us find link quality issues, missed opportunities and areas where your website needs to improve its authority.",
 					},
 				],
 			},
 			processPill: 'Practical Commercial Value',
-			processHeading: 'What Better SEO Audits Can Do for Your Business',
+			processHeading: 'What an SEO Audit Can Do for Your Business',
 			processText: [
-				'When an established business in Manchester or across the UK suffers sudden traffic drops, making arbitrary changes without real data wastes time and engineering budget. Complex websites often hide critical bottlenecks, such as broken redirect logic, unindexed rendering pipelines or wasted crawl budgets that prevent even exceptional content from ranking.',
-				'Without a comprehensive technical audit, internal teams are left guessing which issues genuinely impact commercial performance.',
-				'A forensic diagnostic provides total architectural clarity, protects your organic revenue during platform migrations or redesigns and supplies a clear, prioritised engineering roadmap that aligns development effort directly with business growth.',
+				'When an established business in Manchester or across the UK experiences a sudden drop in website traffic, making changes without understanding the cause can waste time and resources. Complex websites may have hidden technical issues, such as broken links, indexing issues or problems that prevent search engines from accessing important content. These issues can affect your rankings, even when your website has useful and relevant content.',
+				'Without a detailed SEO audit, it can be difficult for your team to identify which problems need attention and how they affect your business.',
+				'A comprehensive SEO audit helps uncover these issues and provides a clear plan for fixing them. It also helps protect your search visibility during website redesigns or platform migrations, ensures your development team focuses on the most important fixes and supports your long-term business growth.',
 			],
 			processImage: {
 				src: '/images/seo-audit-practical-commercial-value.webp',
 				alt: 'SEO Audit practical commercial value',
 			},
-			processPrimaryLabel: 'Commission an Enterprise SEO Audit',
+			processPrimaryLabel: 'Claim SEO Audit Now',
 			processSecondaryLabel: 'Explore Our Audit Framework ↓',
+			processSecondaryHref: '#service-stack',
 			services: {
-				pill: 'Specialised Technical Delivery',
-				heading: 'Our Comprehensive SEO Audit & Diagnostic Services',
-				text: 'We deploy manual, codebase-level inspections and server diagnostics to evaluate every part of your website\'s search performance.',
+				pill: 'Complete Website SEO Audit Services',
+				heading: 'Our Professional SEO Analysis Services',
+				text: 'As an SEO audit agency in Manchester, we review every part of your website to find issues, improve performance and identify opportunities for growth.',
 				cards: [
 					{
-						title: 'Log-File Ingestion & Crawl Behaviour Analysis',
-						text: 'We analyse raw server access logs to evaluate exactly how often Googlebot and other web crawlers visit your domain, uncovering hidden 404/500 server errors, redirect loops and wasted crawl budget.',
+						title: 'Technical SEO & Website Health Audit',
+						text: 'We check your website for broken links, crawl errors, redirect issues, slow pages and other technical problems. We also review your robots.txt file and XML sitemap to make sure search engines can access your important pages.',
 						imageSrc: '/images/seo-audit-log-file-ingestion-crawl-behaviour-analysis.webp',
 					},
 					{
-						title: 'Rendering, JavaScript & Core Web Vitals Inspection',
-						text: 'We run custom headless browser crawls to inspect how search algorithms render dynamic JavaScript frameworks, checking DOM structures, load speeds and visual layout stability.',
+						title: 'Website Speed & Core Web Vitals Analysis',
+						text: 'We review your website loading speed, mobile performance and Core Web Vitals. We identify issues with images, code and page layouts that may slow down your website or affect the user experience.',
 						imageSrc: '/images/seo-audit-rendering-javaScript-core-web-vitals-inspection.webp',
 					},
 					{
-						title: 'Indexation Governance & Canonical Hierarchy Audit',
-						text: 'We inspect your sitemaps, robots.txt directives and canonical tags to identify parameter bloat, pagination traps and duplicate content issues that dilute organic ranking power.',
+						title: 'Indexing & Website Structure Audit',
+						text: 'We check which pages Google can find and index. We also review duplicate URLs, canonical tags, internal links and website structure to help search engines understand your most important pages.',
 						imageSrc: '/images/seo-audit-indexation-governance-canonical-hierarchy-audit.webp',
 					},
 					{
-						title: 'Content Cannibalisation & Commercial Intent Mapping',
-						text: 'We evaluate page titles, headings and internal linking SILOs across your domain to resolve keyword cannibalisation, ensuring every commercial URL targets a distinct search query.',
+						title: 'Content & Keyword Analysis',
+						text: 'We review your page titles, headings, content and keyword targeting. We identify missing topics, outdated information, thin content and pages competing for the same keywords.',
 						imageSrc: '/images/seo-audit-content-cannibalisation-commercial-intent-mapping.webp',
 					},
 					{
-						title: 'Backlink Profile Quality & Toxic Link Review',
-						text: 'We perform a forensic audit of your historical backlink profile to detect unnatural link patterns, negative SEO footprints or legacy penalties, preparing clean disavow files when necessary.',
+						title: 'Backlink Profile & Competitor Analysis',
+						text: "We analyse your backlinks to understand the quality and relevance of websites linking to yours. We also compare your SEO performance with competitors to find opportunities to improve your website's authority.",
 						imageSrc: '/images/seo-audit-backlink-profile-quality-toxic-link-review.webp',
 					},
 				],
 			},
 			clarity: {
 				id: 'clarity',
-				pill: 'Practical Application',
-				title: 'How Forensic Audits Protect High-Stakes Web Platforms',
+				pill: 'Industry-Specific Analysis',
+				title:
+					'How Our SEO Analysis Services Help Businesses Across Different Industries',
 				titleLines: [
-					'How Forensic Audits Protect High-Stakes Web',
-					'Platforms',
+					'How Our SEO Analysis Services Help Businesses Across',
+					'Different Industries',
 				],
-				text: 'For established businesses, an audit is not an experimental exercise; it protects your revenue foundation before migrations, redesigns or high-budget marketing pushes.',
+				text: 'Every industry has different SEO challenges. We adjust our audit approach to your website, business model and target audience to identify the improvements that matter most.',
 				columns: [
 					{
 						items: [
 							{
-								title: 'Enterprise E-Commerce & Multi-Category Retailers',
-								text: 'Large stores managing thousands of SKUs across Shopify, Magento or custom builds often experience severe problems. We run complete catalogue crawl simulations to isolate crawl traps, audit product schema accuracy and deliver clean canonical directives that protect revenue-driving collections.',
+								title: 'Ecommerce Stores & Online Retailers',
+								text: 'Online stores often have thousands of product pages, category pages and filters. We check duplicate URLs, product indexing, page speed and product schema to help search engines find your most important products.',
 							},
 							{
-								title: 'Complex Site Migrations & CMS Platform Overhauls',
-								text: 'Moving domains, redesigning core page layouts or transitioning to an enterprise CMS can trigger catastrophic traffic losses if handled incorrectly. We provide structured pre-and-post-migration audits, mapping 301 redirect trees, auditing staging environments and confirming tracking setups to protect your search equity.',
+								title: 'Website Migrations & Redesign Projects',
+								text: 'Changing your website design, domain or CMS can affect your existing rankings if important pages and links are not managed properly. We review redirects, URL structures, tracking and indexing to help protect your organic traffic during a migration.',
 							},
 							{
-								title: 'Regulated Professional Advisory, Legal & Financial Practices',
-								text: 'Corporate law firms and financial advisory practices rely heavily on professional credibility and local market visibility. We audit site structures, author entities and professional accreditations to guarantee full alignment with Google\'s strict E-E-A-T evaluation criteria.',
+								title: 'Legal, Financial & Professional Services',
+								text: 'Professional service websites need clear information and strong trust signals. We review service pages, website structure, content quality and professional information to identify ways to improve search visibility and build user confidence.',
 							},
 						],
 					},
 					{
 						items: [
 							{
-								title: 'Private Healthcare Portals & Diagnostic Clinics',
-								text: 'Healthcare providers face strict scrutiny from search algorithms. We audit clinical information architecture, patient booking pathways and medical schema markup to ensure sensitive service pages crawl securely and rank prominently.',
+								title: 'Private Healthcare & Medical Websites',
+								text: 'Healthcare websites need accurate information and a clear user experience. We review clinical content, service pages, mobile performance and relevant structured data to identify areas that need improvement.',
 							},
 							{
-								title: 'High-Growth B2B SaaS & Tech Consultancies',
-								text: 'Software platforms frequently rely on modern client-side JavaScript that search crawlers struggle to render properly. We analyse frontend rendering pipelines, API dependencies and feature landing pages to ensure all platform capabilities are indexed cleanly.',
+								title: 'B2B Technology & SaaS Companies',
+								text: 'Technology websites often have complex service pages and JavaScript-based features. We check how search engines access and understand these pages, review content structure and identify opportunities to improve organic visibility.',
 							},
 						],
 					},
 				],
 			},
 			serviceStack: {
-				pill: 'The Xoomplus Standard',
-				heading: 'High-Performance SEO Audits Built on Transparent Delivery',
-				text: 'Our senior technical team conducts a thorough, manual investigation of your codebase and server setup to deliver a reliable engineering plan.',
+				pill: 'SEO Audit Process',
+				heading: 'Our Professional SEO Audit Process',
+				text: 'Our SEO audit process is designed to find the problems affecting your website and turn our findings into practical solutions.',
 				cards: [
 					{
-						title: 'Scoped Around Codebase-Level Investigation',
-						text: 'We do not rely on standard software outputs. Our senior SEO directors and web developers manually inspect your template code, CMS configurations, database queries and analytics tracking setups.',
+						title: 'Understanding Your Website & Business Goals',
+						text: 'We start by learning about your business, services, target audience and competitors. This helps us understand what you want to achieve and which website areas need the most attention.',
 						imageSrc: '/images/seo-audit-scoped-around-codebase-level-investigation.webp',
 					},
 					{
-						title: 'Direct Access to Senior Technical Directors',
-						text: 'No junior account handlers delivering surface-level summaries. You speak directly with the senior technical engineers who tore down your codebase and mapped out the fixes.',
+						title: 'Complete Website Analysis',
+						text: 'Our SEO experts review your technical SEO, website content, keywords, backlinks and overall performance. We use website crawls and search data to identify errors.',
 						imageSrc: '/images/seo-audit-direct-access-to-senior-technical-directors.webp',
 					},
 					{
-						title: 'Plain-English Strategy Before Implementation',
-						text: 'We explain every diagnostic finding in clear, business-focused language, providing an executive summary for commercial leaders alongside detailed technical specifications for engineers.',
+						title: 'Clear Findings & Action Plan',
+						text: 'We organise our findings into a clear report. Each issue is explained in simple language, with solutions based on its importance and potential impact on your website.',
 						imageSrc: '/images/seo-audit-Plain-english-strategy-before-implementation.webp',
 					},
 					{
-						title: 'Seamless Collaboration with Your Existing Web Team',
-						text: 'We supply developer-ready execution tickets, complete with code snippets, URL mappings and clear priority tags that your internal development team can implement immediately.',
+						title: 'Working with Your Development Team',
+						text: 'We provide practical recommendations, technical instructions and content suggestions that your existing developers can use. If needed, our team can also help implement the improvements.',
 						imageSrc: '/images/seo-audit-seamless-collaboration-with-your-existing-web-team.webp',
 					},
 					{
-						title: 'Continuous Post-Audit Verification & Testing',
-						text: 'Once your developers deploy our recommendations, we re-crawl the modified environments, test redirects in Google Search Console and verify that all technical roadblocks are resolved.',
+						title: 'Testing & Performance Monitoring',
+						text: 'After the recommended changes are made, we review the affected pages and check whether the issues have been resolved. We also monitor rankings, organic traffic and website performance to measure progress.',
 						imageSrc: '/images/seo-audit-continuous-post-audit-verification-testing.webp',
+					},
+				],
+			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for SEO Audit Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other SEO Audit Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium SEO audit services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Full-Funnel Growth',
-				title: 'Different Needs. Connected Digital Capabilities.',
+				title: 'Different Needs. Connected Digital Solution.',
 				text: 'We use audit findings to inform our core digital services.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Implement the strategic roadmap through continuous on-page optimisation, AI search readiness and authority building.',
+							"Our SEO services improve your website's visibility in organic search results. We focus on technical SEO, quality content, keyword targeting and website authority to support long-term growth.",
 						items: [],
-						buttonLabel: 'Explore Full SEO Services',
+						buttonLabel: 'Explore Full SEO Services →',
 						href: '/services/seo',
 					},
 					{
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Clean codebase refactoring to implement technical audit recommendations directly at the template level.',
+							'We build fast, user-friendly and mobile-friendly websites that make it easier for visitors to explore your services.',
 						items: [],
-						buttonLabel: 'Explore Web Development',
+						buttonLabel: 'Explore Web Development →',
 						href: '/services/web-design-development',
 					},
 					{
 						icon: '/icons/service-circles.svg',
-						title: 'Social & Paid Campaigns',
+						title: 'Social Media & Paid Advertising',
 						description:
-							'Fix high-bounce landing pages identified during the SEO audit to improve conversion rates and paid media performance.',
+							'We use targeted Google Ads and social media campaigns to help you reach potential customers. These services can support your local SEO strategy by increasing your visibility across different online channels.',
 						items: [],
-						buttonLabel: 'Explore Paid Media',
+						buttonLabel: 'Explore Paid Media →',
 						href: '/services/ppc-google-ads',
 					},
 				],
 			},
 			faq: {
 				pill: 'Clear Information',
-				heading: 'Frequently Asked Questions About Our SEO Audits',
-				text: 'Clear answers on what our audit covers and how it differs from free website tools.',
+				heading: 'FAQs About SEO Audit',
+				text: 'Find answers to common questions about SEO audits.',
 				items: [
 					{
-						question:
-							'How is Xoomplus SEO audit different from the free audits available online?',
+						question: 'What is an SEO audit?',
 						answer:
-							'Our comprehensive SEO audit is a manual, senior-led technical diagnostic. We examine server logs, render dynamic JavaScript, review indexation architecture, assess commercial intent and deliver an actionable technical roadmap prioritised around commercial revenue.',
+							'An SEO audit is a detailed review of your website to find issues that may affect its search engine performance. It checks technical SEO, content, keywords, backlinks and website structure.',
 					},
 					{
 						question:
-							'When should an established business commission an SEO audit?',
+							'How is a professional SEO audit different from free online tools?',
 						answer:
-							'An in-depth audit is recommended if your business is experiencing an unexplained drop in organic traffic, planning a site migration or CMS redesign, preparing to launch a major growth campaign or evaluating an acquisition or investment in an online brand.',
+							"Free SEO tools usually check basic website issues and provide automated reports. A professional SEO audit goes further by reviewing your website's technical setup, content quality, keyword targeting, backlinks and competitors.",
 					},
 					{
-						question: 'Who should be involved in reviewing the audit findings?',
+						question: 'When should I get an SEO audit for my website?',
 						answer:
-							'Our audits are structured for both commercial leaders and technical teams. We provide an executive summary focusing on commercial impact and revenue risks for management, alongside detailed code specifications for your in-house developers or development agency.',
+							'You should consider an SEO audit if your website is losing traffic, struggling to rank, receiving fewer enquiries or experiencing technical problems.',
 					},
 					{
 						question:
-							'Can our in-house developers implement the audit recommendations?',
+							'Can my development team fix the issues found in an SEO audit?',
 						answer:
-							'Yes. Our audits are designed to be developer-ready, detailing root causes, affected URL sets and exact technical fixes. If you do not have in-house technical resources, our senior engineering team at Xoomplus can handle the implementation directly.',
+							'Yes. We provide clear recommendations and technical instructions that your in-house developers can follow. If you need additional support, our team can also help implement the recommended changes.',
 					},
 					{
-						question: 'How long does a full technical SEO audit take to complete?',
+						question: 'How long does a complete SEO audit take?',
 						answer:
-							'A comprehensive forensic audit typically takes 1 to 2 weeks depending on the size and complexity of your website. This timeframe allows us to collect sufficient crawl and log data, analyse edge cases and build a tailored engineering roadmap.',
+							"The time depends on your website's size, structure and complexity. A standard website may take a few days, while larger ecommerce stores and complex websites may take one to two weeks. We allow enough time to review important issues and prepare a useful action plan.",
 					},
 					{
-						question: 'What access is needed to begin the audit?',
+						question: 'What access do you need to conduct an SEO audit?',
 						answer:
-							'To conduct a complete diagnostic, we request view-only access to Google Search Console and your primary analytics platform (GA4), along with sample server access logs and access to a staging environment if you are currently running a site redesign.',
+							'We may need your website URL and access to Google Search Console and Google Analytics 4 (GA4). For more detailed technical checks, we may also request server logs or access to a staging website. We discuss the required access before starting the audit.',
 					},
 				],
 			},
 			cta: {
 				pill: 'Diagnostic Clarity',
-				heading: 'Get Complete Clarity on Your Website’s Search Health',
-				text: 'Stop guessing why your website is struggling. Speak directly with our senior search engineers for a comprehensive diagnostic of your website.',
-				buttonLabel: 'Commission an Enterprise SEO Audit →',
+				heading: 'Not getting the search traffic your business deserves?',
+				text: 'Speak with our SEO audit experts to identify website problems, discover growth opportunities and get a clear plan for improving your search performance.',
+				buttonLabel: 'Request Your SEO Audit →',
 				buttonHref: '/contact',
 			},
 		},
 	],
 	hero: {
 		pill: 'Search Engine Optimisation (SEO)',
-		pillBrand: 'Senior-Led UK Delivery',
-		titleLines: ['SEO Agency in Manchester |', 'Built to Turn Visibility into Revenue'],
+		titleLines: ['SEO Agency Manchester |', 'Built to Turn Visibility into Revenue'],
 		textParagraphs: [
-			'Ranking on Google is only half the battle. If your organic traffic does not convert into qualified leads, high rankings mean very little.',
-			'At Xoomplus, our SEO specialists engineer full-funnel search strategies and prepare your website for modern AI search engines like Google Gemini and ChatGPT Search.',
+			'As an SEO agency in Manchester, we focus on more than just improving your Google rankings. We help your business attract the right visitors, turn website traffic into qualified leads and generate more sales.',
+			'At Xoom Plus, we create SEO strategies that improve your search visibility and prepare your website for AI-powered platforms like Google Gemini and ChatGPT Search.',
 		],
 		primaryButton: { label: 'Claim Your Free SEO Audit', href: '/contact#enquiry-form' },
-		secondaryLink: { label: 'Compare SEO Service Tiers', href: '/pricing#pricing-plans' },
+		secondaryLink: { label: 'Compare SEO Service', href: '/pricing#pricing-plans' },
 		footerLeft: 'Digital Marketing. Designed for Growth.',
 		footerRight: 'AI SEO + Local + Technical',
 		metricBadges: [
@@ -1832,102 +2134,102 @@ export const seo: MainService = {
 		panelCaptions: ['Clear priorities', 'Useful content', 'Measurable growth'],
 	},
 	features: {
-		pill: 'Commercial Search Strategy',
-		titleLines: ['Not Just Page-One Rankings.', 'Real Commercial Return.'],
-		text: 'We replace vanity keyword metrics with search campaigns engineered to drive measurable revenue through organic methods.',
+		pill: 'SEO Services',
+		titleLines: ['What Is Search Engine', 'Optimisation (SEO)?'],
+		text: 'Search Engine Optimisation (SEO) is the process of improving your website so it appears higher in Google search results. At Xoom Plus, we focus on three key areas:',
 		items: [
 			{
 				icon: 'make-the-next-step-clear',
-				title: 'Target Ready-to-Buy Commercial Intent',
-				text: 'We ignore high-volume, generic search queries that deliver zero revenue. Instead, we focus on high-intent commercial keywords used by serious buyers.',
+				title: 'Target the Right Keywords',
+				text: 'We find the search terms your potential customers use and create content that matches what they are looking for.',
 			},
 			{
 				icon: 'bring-your-brand-into-focus',
-				title: 'Build Sustainable Technical Authority',
-				text: 'We resolve crawling errors, optimise Core Web Vitals and build secure site structures that safeguard your organic visibility against algorithm updates.',
+				title: 'Improve Your Website Performance',
+				text: 'We fix technical issues, improve page speed and make your website easier for search engines to crawl and understand.',
 			},
 			{
 				icon: 'think-beyond-one-screen',
-				title: 'Turn Inbound Clicks into Paid Clients',
-				text: 'Organic traffic is wasted if your landing pages fail to persuade. We connect search intent directly to clear navigation, persuasive copy and friction-free inquiry forms.',
+				title: 'Turn Visitors into Customers',
+				text: 'We improve your website content, page structure and calls to action to help turn organic visitors into enquiries and sales.',
 			},
 		],
 	},
 	experience: {
-		pill: 'Technical Foundations',
-		titleLines: ['The Right Search Strategy.', 'The Right Technical Foundation.'],
-		text: 'Our technical team implements code, schema and performance fixes directly onto your website. Our focus is to help businesses across Manchester and the North West corridor scale their organic market share.',
+		pill: 'SEO Strategy',
+		titleLines: ['How We Build an SEO Strategy', 'That Drives Business Growth'],
+		text: 'We focus on the key areas that help your business improve search visibility, build trust and generate more enquiries across the UK.',
 		items: [
 			{
 				icon: 'ui-ux-design',
-				title: 'Core Web Vitals & Speed Optimisation',
-				text: 'Ensure your site loads in under 2 seconds, passing Google’s strict performance benchmarks to improve organic rankings.',
+				title: 'Keyword Research & Search Intent',
+				text: 'We find what your potential customers are searching for and target keywords that match their needs, interests and buying decisions.',
 			},
 			{
 				icon: 'landing-page-design',
-				title: 'Structured Data & Schema Architecture',
-				text: 'Implement advanced JSON-LD schema across your services, reviews and physical locations so search engines can index your data clearly.',
+				title: 'Technical SEO & Website Health',
+				text: 'We check your website for issues that affect search performance, including slow pages, broken links, indexing problems and mobile usability.',
 			},
 			{
 				icon: 'website-redesign',
-				title: 'Crawl Budget & Indexation Control',
-				text: 'Eliminate duplicate URLs, redirect loops and crawl bloat to ensure Google prioritises your highest-value commercial landing pages.',
+				title: 'SEO Reporting & Performance Tracking',
+				text: 'We monitor rankings, organic traffic, enquiries and conversions to understand what is working and where your SEO strategy needs improvement.',
 			},
 		],
 	},
 	bento: {
-		pill: 'Full-Spectrum SEO',
-		title: 'Make Every Search Query Work Harder for Your Pipeline',
-		text: 'To outrank established competitors across Manchester and the UK, your website needs to perform across technical health, content relevance, local authority and AI search readiness.',
+		pill: 'Our SEO Services',
+		title: 'Our Professional SEO Services in Manchester',
+		text: 'As a professional SEO agency Manchester, we provide a range of SEO services to help your business improve Google rankings, attract the right audience and generate more enquiries.',
 		cards: [
 			{
 				icon: 'wordpress-development',
 				title: 'AI SEO (GEO & AEO)',
-				text: 'Position your brand as the primary source cited by conversational AI engines like Google Gemini, Perplexity and ChatGPT Search.',
+				text: 'We create content and improve your online presence so AI search tools can find, understand and mention your brand.',
 				linkLabel: 'Explore AI SEO →',
 				href: '/services/seo/ai-seo',
 			},
 			{
 				icon: 'sopify-development',
 				title: 'Local SEO Manchester',
-				text: 'Dominate local search queries and Google Map pack rankings across Greater Manchester and the North West.',
+				text: 'Improve your Google Maps visibility, attract nearby customers and help your business rank across Manchester.',
 				linkLabel: 'Explore Local SEO →',
 				href: '/services/seo/local-seo',
 			},
 			{
 				icon: 'ecommerce-development',
 				title: 'Technical SEO',
-				text: 'Resolve deep indexing roadblocks, optimise site architecture and ensure lightning-fast mobile performance.',
+				text: 'We improve site structure, loading speed, mobile performance and overall website health.',
 				linkLabel: 'Explore Technical SEO →',
 				href: '/services/seo/technical-seo',
 			},
 			{
 				icon: 'custom-website-development',
 				title: 'On-Page SEO',
-				text: 'Optimise headings, meta architecture, schema markup and content relevance so search engines understand your exact commercial focus.',
+				text: 'We optimise page titles, meta descriptions, headings, content and schema markup to target the right keywords and attract relevant traffic.',
 				linkLabel: 'Explore On-Page SEO →',
 				href: '/services/seo/on-page-seo',
 			},
 			{
 				icon: 'wordpress-development',
 				title: 'High-Authority Link Building',
-				text: 'Build domain authority and trust through verified, high-quality editorial links from recognised UK publications.',
+				text: 'Our link-building strategies help improve search visibility, credibility and organic rankings.',
 				linkLabel: 'Explore Link Building →',
 				href: '/services/seo/link-building',
 			},
 			{
 				icon: 'ecommerce-development',
-				title: 'E-Commerce SEO',
-				text: 'Increase revenue across Shopify, WooCommerce and custom stores through optimised category hierarchy and product schema.',
-				linkLabel: 'Explore E-Commerce SEO →',
+				title: 'Ecommerce SEO',
+				text: 'We optimise product pages, category pages, site structure and product schema for Shopify, WooCommerce and other ecommerce platforms.',
+				linkLabel: 'Explore Ecommerce SEO →',
 				href: '/services/seo/e-commerce-seo',
 			},
 		],
 	},
 	showcase: {
-		pill: 'User Experience & Conversion',
-		titleLines: ['Desktop or Mobile.', 'The Same Flawless Conversion Journey.'],
-		text: 'With Google operating strictly on mobile-first indexing, the mobile experience determines your search rankings. We ensure your site delivers intuitive user flows, rapid load speeds and effortless inquiry paths on every screen size.',
+		pill: 'User Experience on Every Screen',
+		titleLines: ['Desktop or Mobile.', 'A Smooth Experience on Every Screen.'],
+		text: 'Google uses mobile-first indexing, so your mobile website plays an important role in search rankings. We improve website speed, navigation and page layouts to make it easier for visitors to find information and contact your business.',
 		compactHeading: true,
 		plainPanel: true,
 		panel: {
@@ -1942,16 +2244,16 @@ export const seo: MainService = {
 			caption: '',
 		},
 		items: [
-			'Instant Answers: Content engineered to answer high-intent user questions immediately.',
-			'Frictionless Navigation: Intuitive mobile layouts that keep browsing natural on any screen.',
-			'Thumb-Reach Conversions: Tap-to-call links, booking forms, and quote requests positioned for mobile users.',
+			'Quick Answers: Clear, helpful content that answers customer questions and makes important information easy to find.',
+			'Easy Navigation: Simple website layouts that help visitors browse your pages smoothly on any device.',
+			'Easy Mobile Conversions: Convenient tap-to-call buttons, booking forms and quote requests that make it easier for mobile users to get in touch.',
 		],
 		// PLACEHOLDER: replace with real content — reuse Web Design icon until SEO icons land
 		icon: 'one-connected-experience-arrow',
 	},
 	process: {
 		pill: 'The Xoomplus Standard',
-		titleLines: ['High-Performance SEO Built on', 'Direct Partnership'],
+		titleLines: ['Why Choose XoomPlus as', 'Your SEO Partner'],
 		text: 'Our senior delivery model protects your budget and drives dependable growth.',
 		image: {
 			src: '/images/seo-the-xoomplus-standard.webp',

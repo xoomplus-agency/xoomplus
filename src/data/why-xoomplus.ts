@@ -22,8 +22,8 @@ export type WhyXoomplusContent = {
 export const defaultWhyXoomplus: WhyXoomplusContent = {
 	id: 'why-xoomplus',
 	pill: 'Why Xoomplus',
-	title: 'A Strategic Partner for Digital Growth',
-	text: '6 Reasons Why Ambitious UK Brands Choose Xoomplus Over Everyone Else',
+	title: 'Why Choose Xoomplus for Digital Marketing Services',
+	text: '6 Reasons Why Brands Choose Xoomplus Over Other Marketing Agencies',
 	cards: [
 		{
 			icon: '/icons/strategy-first.svg',
@@ -42,8 +42,8 @@ export const defaultWhyXoomplus: WhyXoomplusContent = {
 		},
 		{
 			icon: '/icons/tailored-strategies.svg',
-			title: 'Tailored Plans',
-			text: 'Every business is a unique idea and has distinct digital needs. We craft tailored plans that reflect your unique business needs.',
+			title: 'Customised Plans',
+			text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
 		},
 		{
 			icon: '/icons/result-focused.svg',

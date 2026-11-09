@@ -7,6 +7,7 @@ import { extractFaqs } from './extract-faqs.ts';
 function assertNoFaqLeak(html: string, label: string) {
 	const lower = html.toLowerCase();
 	assert.ok(!lower.includes('faq-items'), `${label} still has faq-items`);
+	assert.ok(!lower.includes('faq-item'), `${label} still has faq-item`);
 	assert.ok(!lower.includes('<details'), `${label} still has details FAQ`);
 	assert.ok(!lower.includes('data-bs-toggle'), `${label} still has bootstrap FAQ chrome`);
 }
@@ -20,7 +21,7 @@ function assertNoFaqLeak(html: string, label: string) {
 	const result = extractFaqs(html);
 	assert.deepEqual(result.faqs, []);
 	assert.equal(result.before, html);
-	console.log('✓ without faq-items class → no extraction');
+	console.log('✓ without faq-items / faq-item class → no extraction');
 }
 
 {
@@ -86,11 +87,127 @@ function assertNoFaqLeak(html: string, label: string) {
 }
 
 {
+	const html = [
+		'<p>Intro copy.</p>',
+		'<div class="faq-items">',
+		'<h2>FAQs</h2>',
+		'<p>Is a full-service agency more expensive than a specialist?</p>',
+		'<p>Not necessarily. Compare the total fees, deliverables and management time involved.</p>',
+		'<p>Can I use both a full-service and specialist agency?</p>',
+		'<p>Yes. Make sure responsibilities, reporting and communication are clearly defined.</p>',
+		'</div>',
+	].join('');
+	const result = extractFaqs(html);
+	assert.equal(result.faqs.length, 2);
+	assert.equal(
+		result.faqs[0].question,
+		'Is a full-service agency more expensive than a specialist?',
+	);
+	assert.match(result.faqs[0].answerHtml, /Not necessarily/i);
+	assert.equal(
+		result.faqs[1].question,
+		'Can I use both a full-service and specialist agency?',
+	);
+	assert.match(result.faqs[1].answerHtml, /responsibilities/i);
+	assert.match(result.before, /Intro copy/);
+	assert.ok(!/full-service agency more expensive/i.test(result.before));
+	console.log('✓ plain alternating paragraph faq-items');
+}
+
+{
+	const html = [
+		'<div class="faq-item">',
+		'<h2>FAQs</h2>',
+		'<details id="e-n-accordion-item-2480">',
+		'<summary>What are the top WordPress development trends to watch in 2026?</summary>',
+		'The biggest WordPress development trends in 2026 include AI-powered tools.',
+		'</details>',
+		'<details id="e-n-accordion-item-2481">',
+		'<summary>Why is Headless WordPress becoming more popular?</summary>',
+		'Headless WordPress separates content management from the front end.',
+		'</details>',
+		'</div>',
+	].join('');
+	const result = extractFaqs(html);
+	assert.equal(result.faqs.length, 2);
+	assert.match(result.faqs[0].question, /WordPress development trends/i);
+	assert.match(result.faqs[1].answerHtml, /separates content management/i);
+	console.log('✓ faq-item class + details/summary');
+}
+
+{
 	const html = '<div class="faq-items"><h2>FAQs</h2><p>No pairs.</p></div>';
 	const result = extractFaqs(html);
 	assert.deepEqual(result.faqs, []);
 	assert.equal(result.before, html);
 	console.log('✓ empty faq-items leaves content untouched');
+}
+
+{
+	const html = [
+		'<div class="faq-items">',
+		'<h2>FAQs</h2>',
+		'What is product page design?',
+		'Product page design is the way a product page is organised and displayed.',
+		'Why is product page design important for e-commerce?',
+		'A good product page design improves the shopping experience.',
+		'How to design product pages for conversions?',
+		'To design product pages for conversions, focus on making the buying process simple.',
+		'How do product images improve conversions?',
+		'Clear images allow customers to see product details before buying.',
+		'How can I improve my product page performance?',
+		'You can improve your product pages by:',
+		'<ul>',
+		'<li>Speeding up page loading times.</li>',
+		'<li>Using better product images.</li>',
+		'<li>Writing simple product descriptions.</li>',
+		'</ul>',
+		'</div>',
+	].join('\n');
+	const result = extractFaqs(html);
+	assert.equal(result.faqs.length, 5);
+	assert.equal(result.faqs[0].question, 'What is product page design?');
+	assert.match(result.faqs[0].answerHtml, /organised and displayed/i);
+	assert.equal(result.faqs[4].question, 'How can I improve my product page performance?');
+	assert.match(result.faqs[4].answerHtml, /You can improve your product pages by/i);
+	assert.match(result.faqs[4].answerHtml, /<li>Speeding up page loading times\.<\/li>/i);
+	assert.ok(!/Why is product page design important/i.test(result.faqs[0].answerHtml));
+	console.log('✓ plain CMS faq-items with newline Q/A + list answer');
+}
+
+{
+	const html = [
+		'<div class="faq-items">',
+		'<h2>FAQs</h2>',
+		'<p>What is product page design?<br>Product page design is the layout of a product page.</p>',
+		'<p>Why is product page design important for e-commerce?<br>It improves trust and conversions.</p>',
+		'</div>',
+	].join('');
+	const result = extractFaqs(html);
+	assert.equal(result.faqs.length, 2);
+	assert.equal(result.faqs[0].question, 'What is product page design?');
+	assert.match(result.faqs[0].answerHtml, /layout of a product page/i);
+	assert.equal(result.faqs[1].question, 'Why is product page design important for e-commerce?');
+	console.log('✓ plain CMS faq-items with br-separated Q/A inside p');
+}
+
+{
+	const html = [
+		'<div class="faq-items">',
+		'<h2>FAQs</h2>',
+		'<details><summary>What are the 7 C&#8217;s of ecommerce websites?</summary>',
+		'<p>Clear, compelling, customer-centric content helps.</p>',
+		'</details>',
+		'</div>',
+	].join('');
+	const result = extractFaqs(html);
+	assert.equal(result.faqs.length, 1);
+	assert.equal(
+		result.faqs[0].question,
+		'What are the 7 C\u2019s of ecommerce websites?',
+	);
+	assert.ok(!result.faqs[0].question.includes('&#'), 'question still has raw entity');
+	console.log('✓ WordPress &#8217; decoded in FAQ questions');
 }
 
 console.log('\nAll extractFaqs tests passed.');

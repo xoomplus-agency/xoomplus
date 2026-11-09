@@ -1,17 +1,27 @@
 /**
  * Extract blog CTA content from cleaned WordPress post HTML.
  * Supports:
- *   1. `<div class="cta-section">` — first line heading, second line text, `<a>` → button
+ *   1. `<div class="cta-section">` — first line heading, second line text, `<a>` → button(s)
  *   2. `<h2>CTA</h2>` marker (like FAQs) followed by 1–2 content lines until FAQs / next section
+ * Phone (`tel:`) → button with number only (never “Book a Service Call” in copy).
+ * Service/page link + phone → both buttons; email is wired on the blog page.
  * Server-side only; never throws.
  */
 import { ELEMENT_NODE, TEXT_NODE, parse, renderSync } from 'ultrahtml';
+import { SITE_PHONE } from '../data/site-contact';
+import { decodeHtmlEntities } from './decode-html-entities';
 
 export type BlogCtaContent = {
 	heading: string;
 	text: string;
+	/** Primary button — service/page link when present, otherwise phone or default. */
 	href: string;
+	scrollTarget?: string;
 	buttonLabel: string;
+	/** Second button when both a page link and a phone number exist. */
+	phoneHref?: string;
+	/** Display number only (e.g. +44 330 010 4786). */
+	phoneLabel?: string;
 };
 
 export type ExtractCtaResult = {
@@ -71,8 +81,16 @@ function hasClass(node: ElementNode, name: string): boolean {
 	return classList(node).includes(name);
 }
 
+function isFaqWrapper(node: ElementNode): boolean {
+	return hasClass(node, 'faq-items') || hasClass(node, 'faq-item');
+}
+
 function normalizeSpace(text: string): string {
 	return text.replace(/\s+/g, ' ').trim();
+}
+
+function plainText(text: string): string {
+	return decodeHtmlEntities(normalizeSpace(text));
 }
 
 function textContent(node: Node): string {
@@ -105,27 +123,107 @@ function textWithoutAnchors(node: Node): string {
 	return node.children.map(textWithoutAnchors).join('');
 }
 
-function findFirstAnchor(node: Node): { href: string; label: string } | null {
-	if (!isElement(node)) return null;
+type CtaAnchor = { href: string; label: string; scrollTarget?: string };
+
+function findAllAnchors(node: Node, out: CtaAnchor[] = []): CtaAnchor[] {
+	if (!isElement(node)) return out;
+	/* Never harvest links from FAQ blocks nested under a broken CMS CTA wrapper. */
+	if (isFaqWrapper(node)) return out;
 	if (tagName(node) === 'a') {
 		const href = (node.attributes?.href || '').trim();
 		if (href) {
-			return { href, label: normalizeSpace(textContent(node)) };
+			out.push({
+				href,
+				label: plainText(textContent(node)),
+				scrollTarget: node.attributes?.['data-scroll-target'],
+			});
 		}
+		return out;
 	}
-	for (const child of node.children || []) {
-		const found = findFirstAnchor(child);
-		if (found) return found;
+	for (const child of node.children || []) findAllAnchors(child, out);
+	return out;
+}
+
+function isTelHref(href: string): boolean {
+	return /^tel:/i.test(href.trim());
+}
+
+function phoneDigits(href: string): string {
+	return href.replace(/^tel:/i, '').replace(/[^\d+]/g, '');
+}
+
+function phoneButtonLabel(href: string): string {
+	const digits = phoneDigits(href).replace(/\D/g, '');
+	const siteDigits = SITE_PHONE.e164.replace(/\D/g, '');
+	if (digits === siteDigits || digits.endsWith(siteDigits) || siteDigits.endsWith(digits)) {
+		return SITE_PHONE.display;
 	}
-	return null;
+	return SITE_PHONE.display;
+}
+
+function phoneButtonHref(href: string): string {
+	const digits = phoneDigits(href).replace(/\D/g, '');
+	const siteDigits = SITE_PHONE.e164.replace(/\D/g, '');
+	if (digits === siteDigits || digits.endsWith(siteDigits) || siteDigits.endsWith(digits)) {
+		return SITE_PHONE.href;
+	}
+	return href.startsWith('tel:') ? href : `tel:${href}`;
+}
+
+/** Drop phone / “Book a Service Call” chrome from CTA body copy. */
+function stripCtaChromeFromText(text: string): string {
+	return normalizeSpace(
+		text
+			.replace(/\+?\d[\d\s().-]{6,}\d(?:\s*Book a Service Call)?/gi, ' ')
+			.replace(/Book a Service Call/gi, ' ')
+			.replace(/\s*[|·•]\s*/g, ' '),
+	);
+}
+
+/** If FAQ markup leaked into CTA copy, cut before the FAQs heading / first FAQ Q. */
+function stripFaqBleedFromText(text: string): string {
+	const cutFaqHeading = text.search(/\bFAQs?\b/i);
+	if (cutFaqHeading !== -1) {
+		return normalizeSpace(text.slice(0, cutFaqHeading));
+	}
+	return text;
+}
+
+function classifyAnchors(anchors: CtaAnchor[]): {
+	page: CtaAnchor | null;
+	phone: CtaAnchor | null;
+} {
+	let page: CtaAnchor | null = null;
+	let phone: CtaAnchor | null = null;
+	for (const a of anchors) {
+		if (isTelHref(a.href)) {
+			if (!phone) phone = a;
+			continue;
+		}
+		if (!page) page = a;
+	}
+	return { page, phone };
 }
 
 function collectBlocks(node: ElementNode): ElementNode[] {
 	const blocks: ElementNode[] = [];
 	for (const child of node.children || []) {
+		/* CMS often omits <p> — treat direct text as a soft paragraph block. */
+		if (child.type === TEXT_NODE) {
+			const t = normalizeSpace(child.value ?? '');
+			if (!t) continue;
+			blocks.push({
+				type: ELEMENT_NODE,
+				name: 'p',
+				attributes: {},
+				children: [child],
+			} as ElementNode);
+			continue;
+		}
 		if (!isElement(child)) continue;
+		if (isFaqWrapper(child)) continue;
 		const name = tagName(child);
-		if (name === 'br') continue;
+		if (name === 'br' || name === 'details') continue;
 		if (BLOCK_TAGS.has(name)) {
 			if (normalizeSpace(textContent(child))) blocks.push(child);
 			continue;
@@ -135,6 +233,24 @@ function collectBlocks(node: ElementNode): ElementNode[] {
 		}
 	}
 	return blocks;
+}
+
+/** Pull nested `.faq-items` out of a CTA wrapper so extractFaqs can still find them. */
+function hoistFaqWrappers(node: ElementNode): Node[] {
+	const faqs: Node[] = [];
+	const keep: Node[] = [];
+	for (const child of node.children || []) {
+		if (isElement(child) && isFaqWrapper(child)) {
+			faqs.push(child);
+			continue;
+		}
+		if (isElement(child) && child.children?.length) {
+			faqs.push(...hoistFaqWrappers(child));
+		}
+		keep.push(child);
+	}
+	node.children = keep;
+	return faqs;
 }
 
 function isHeadingTag(name: string): boolean {
@@ -154,15 +270,58 @@ function isFaqMarker(node: Node): boolean {
 function buildCta(
 	heading: string,
 	text: string,
-	anchor: { href: string; label: string } | null,
+	page: CtaAnchor | null,
+	phone: CtaAnchor | null,
 ): BlogCtaContent | null {
-	if (!heading && !text && !anchor) return null;
+	if (!heading && !text && !page && !phone) return null;
+
+	const cleanHeading = plainText(stripFaqBleedFromText(stripCtaChromeFromText(heading)));
+	const cleanText =
+		plainText(stripFaqBleedFromText(stripCtaChromeFromText(text))) || DEFAULT_TEXT;
+
+	if (page && phone) {
+		return {
+			heading: cleanHeading,
+			text: cleanText,
+			href: page.href,
+			scrollTarget: page.scrollTarget,
+			buttonLabel: page.label || DEFAULT_BUTTON_LABEL,
+			phoneHref: phoneButtonHref(phone.href),
+			phoneLabel: phoneButtonLabel(phone.href),
+		};
+	}
+
+	if (page) {
+		return {
+			heading: cleanHeading,
+			text: cleanText,
+			href: page.href,
+			scrollTarget: page.scrollTarget,
+			buttonLabel: page.label || DEFAULT_BUTTON_LABEL,
+		};
+	}
+
+	if (phone) {
+		return {
+			heading: cleanHeading,
+			text: cleanText,
+			href: phoneButtonHref(phone.href),
+			buttonLabel: phoneButtonLabel(phone.href),
+		};
+	}
+
 	return {
-		heading,
-		text: text || DEFAULT_TEXT,
-		href: anchor?.href || DEFAULT_HREF,
-		buttonLabel: anchor?.label || DEFAULT_BUTTON_LABEL,
+		heading: cleanHeading,
+		text: cleanText,
+		href: DEFAULT_HREF,
+		buttonLabel: DEFAULT_BUTTON_LABEL,
 	};
+}
+
+function isPureLinkBlock(block: ElementNode): boolean {
+	const kids = (block.children || []).filter((c) => !isEmptyText(c));
+	if (kids.length !== 1 || !isElement(kids[0])) return false;
+	return tagName(kids[0]) === 'a';
 }
 
 function parseCtaFromBlocks(
@@ -170,36 +329,27 @@ function parseCtaFromBlocks(
 	anchorRoot?: ElementNode,
 ): BlogCtaContent | null {
 	const contentBlocks = blocks.filter((b) => {
+		if (isFaqWrapper(b)) return false;
 		const name = tagName(b);
 		// Skip nested CTA/FAQ headings if any
 		if (isHeadingTag(name) && (isCtaMarker(b) || isFaqMarker(b))) return false;
 		return true;
 	});
 
-	let anchor: { href: string; label: string } | null = anchorRoot
-		? findFirstAnchor(anchorRoot)
-		: null;
-	if (!anchor) {
-		for (const block of contentBlocks) {
-			anchor = findFirstAnchor(block);
-			if (anchor) break;
-		}
-	}
+	const anchors: CtaAnchor[] = [];
+	if (anchorRoot) findAllAnchors(anchorRoot, anchors);
+	for (const block of contentBlocks) findAllAnchors(block, anchors);
+	const { page, phone } = classifyAnchors(anchors);
 
 	const lines: string[] = [];
 	for (const block of contentBlocks) {
 		const name = tagName(block);
-		const plain = normalizeSpace(textWithoutAnchors(block));
+		const plain = stripFaqBleedFromText(stripCtaChromeFromText(textWithoutAnchors(block)));
 		if (!plain) continue;
 		// Pure link paragraph: only use for button, not as a copy line
-		if (
-			name === 'p' &&
-			block.children?.length === 1 &&
-			isElement(block.children[0]) &&
-			tagName(block.children[0]) === 'a'
-		) {
-			continue;
-		}
+		if (name === 'p' && isPureLinkBlock(block)) continue;
+		// Standalone CTA link row (often not wrapped in <p>)
+		if (name === 'a') continue;
 		lines.push(plain);
 	}
 
@@ -214,13 +364,13 @@ function parseCtaFromBlocks(
 		const q = single.indexOf('?');
 		if (q !== -1 && q < single.length - 1) {
 			heading = single.slice(0, q + 1).trim();
-			text = single.slice(q + 1).trim();
+			text = stripFaqBleedFromText(single.slice(q + 1).trim());
 		} else {
 			text = single;
 		}
 	}
 
-	return buildCta(heading, text, anchor);
+	return buildCta(heading, text, page, phone);
 }
 
 function parseCtaSection(node: ElementNode): BlogCtaContent | null {
@@ -233,7 +383,10 @@ function removeCtaSections(nodes: Node[]): { nodes: Node[]; cta: BlogCtaContent 
 
 	for (const node of nodes) {
 		if (isElement(node) && hasClass(node, 'cta-section')) {
+			/* CMS sometimes nests faq-items inside cta-section — keep FAQs in the HTML stream. */
+			const hoistedFaqs = hoistFaqWrappers(node);
 			if (!cta) cta = parseCtaSection(node);
+			out.push(...hoistedFaqs);
 			continue;
 		}
 		if (isElement(node) && node.children?.length) {
@@ -267,6 +420,7 @@ function extractFromHeadingPattern(rootChildren: Node[]): ExtractCtaResult | nul
 			continue;
 		}
 		if (isCtaMarker(node) || isFaqMarker(node)) break;
+		if (isElement(node) && isFaqWrapper(node)) break;
 		if (isElement(node) && isHeadingTag(tagName(node))) {
 			// Another real section heading ends the CTA block
 			break;

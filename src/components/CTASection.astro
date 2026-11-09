@@ -9,6 +9,7 @@ interface Props {
 	heading?: string;
 	text?: string;
 	buttonHref?: string;
+	buttonScrollTarget?: string;
 	buttonLabel?: string;
 	/** Optional outline secondary button (between primary and email). */
 	secondaryButtonHref?: string;
@@ -26,6 +27,7 @@ const {
 	heading: headingProp,
 	text = "Tell us what you're working towards. We'll explore the challenge, the possibilities and the right place to start.",
 	buttonHref = '#contact',
+	buttonScrollTarget,
 	buttonLabel = 'Discuss your project',
 	secondaryButtonHref,
 	secondaryButtonLabel,
@@ -46,6 +48,7 @@ const headingId = `${id}-heading`;
 {
 	embedded ? (
 		<div
+			data-bg="dark"
 			class="cta-card cta-card--embedded"
 			style="background-image: url('/images/cta-bg-image.webp')"
 			aria-label="Call to action"
@@ -64,7 +67,7 @@ const headingId = `${id}-heading`;
 					</p>
 				</div>
 				<div class="cta-card__right">
-					<Button href={buttonHref}>{buttonLabel}</Button>
+					<Button href={buttonHref} scrollTarget={buttonScrollTarget}>{buttonLabel}</Button>
 					{
 						hasSecondaryButton ? (
 							<ButtonOutline
@@ -101,7 +104,7 @@ const headingId = `${id}-heading`;
 							<p class="cta-card__copy m-0">{text}</p>
 						</div>
 						<div class="cta-card__right">
-							<Button href={buttonHref}>
+							<Button href={buttonHref} scrollTarget={buttonScrollTarget}>
 								{buttonLabel}
 							</Button>
 							{
@@ -199,20 +202,30 @@ const headingId = `${id}-heading`;
 		display: flex;
 		flex: 0 0 auto;
 		flex-direction: column;
-		align-items: center;
+		align-items: stretch;
 		justify-content: center;
 		gap: 16px;
+		width: max-content;
+		max-width: 100%;
+	}
+
+	/* Equal width: column sizes to the widest control; both buttons fill it */
+	.cta-card__right :global(.btn),
+	.cta-card__right :global(.cta-card__secondary) {
+		box-sizing: border-box;
+		width: 100%;
+		min-width: 220px;
+		white-space: nowrap;
 	}
 
 	/* Match primary CTA height (layout only — reuses outline-dark styles) */
 	.cta-card__right :global(.cta-card__secondary) {
 		height: 52px;
-		min-width: 220px;
 		padding-inline: 28px;
-		white-space: nowrap;
 	}
 
 	.cta-card__email {
+		align-self: center;
 		font-family: var(--font-inter);
 		font-size: var(--text-small);
 		font-weight: 400;
@@ -246,12 +259,7 @@ const headingId = `${id}-heading`;
 		}
 
 		.cta-card__right {
-			align-items: flex-start;
-			width: 100%;
-		}
-
-		.cta-card__right :global(.btn),
-		.cta-card__right :global(.cta-card__secondary) {
+			align-items: stretch;
 			width: 100%;
 		}
 	}

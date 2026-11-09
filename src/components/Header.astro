@@ -1,7 +1,14 @@
 ---
 import Button from './Button.astro';
 import ServicesMegaMenu from './ServicesMegaMenu.astro';
-import { getNavItemsStatic, isNavActive, NAV_LETS_TALK_HREF, type NavItem } from '../data/nav';
+import {
+	getNavItemsStatic,
+	isNavActive,
+	NAV_LETS_TALK_HREF,
+	NAV_LETS_TALK_LABEL,
+	type NavItem,
+} from '../data/nav';
+
 import { getServicesMenuSections, servicesMenu } from '../data/services-menu';
 
 interface Props {
@@ -167,7 +174,9 @@ function isActive(item: NavItem) {
 		</nav>
 
 		<div class="z-[1] shrink-0 justify-self-end" data-nav-cta>
-			<Button size="nav" href={NAV_LETS_TALK_HREF}>Let’s Talk</Button>
+			<Button size="nav" href={NAV_LETS_TALK_HREF} aria-label="Call +44 330 010 4786">
+				{NAV_LETS_TALK_LABEL}
+			</Button>
 		</div>
 	</div>
 
@@ -302,7 +311,9 @@ function isActive(item: NavItem) {
 				</ul>
 			</nav>
 			<div class="mobile-drawer__cta">
-				<Button size="nav" class="!w-full" href={NAV_LETS_TALK_HREF}>Let’s Talk</Button>
+				<Button size="nav" class="!w-full" href={NAV_LETS_TALK_HREF} aria-label="Call +44 330 010 4786">
+					{NAV_LETS_TALK_LABEL}
+				</Button>
 			</div>
 		</aside>
 	</div>
@@ -1913,8 +1924,19 @@ function isActive(item: NavItem) {
 	let closeTimer = 0;
 	let megaOpen = false;
 
+	/** Desktop nav shell (≥1024). Mobile drawer owns Services below this. */
 	function isDesktopMega() {
 		return window.matchMedia('(min-width: 1024px)').matches;
+	}
+
+	/** Large tablet only — matches Header “Large tablet” CSS (1024–1199). */
+	function isTabletMega() {
+		return window.matchMedia('(min-width: 1024px) and (max-width: 1199px)').matches;
+	}
+
+	/** Wide desktop — hover megamenu. */
+	function isPcMega() {
+		return window.matchMedia('(min-width: 1200px)').matches;
 	}
 
 	function isMegaOpen() {
@@ -1954,7 +1976,7 @@ function isActive(item: NavItem) {
 	}
 
 	function scheduleOpen() {
-		if (!isDesktopMega()) return;
+		if (!isPcMega()) return;
 		window.clearTimeout(closeTimer);
 		window.clearTimeout(openTimer);
 		openTimer = window.setTimeout(() => setMegaOpen(true), OPEN_DELAY_MS);
@@ -1970,6 +1992,11 @@ function isActive(item: NavItem) {
 		return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 	}
 
+	/** Hover open only on PC with a fine pointer — never on tablet widths. */
+	function usesHoverMega() {
+		return isPcMega() && prefersFinePointer();
+	}
+
 	if (
 		servicesNav instanceof HTMLElement &&
 		servicesTrigger instanceof HTMLElement &&
@@ -1978,24 +2005,24 @@ function isActive(item: NavItem) {
 		setMegaOpen(false);
 
 		servicesNav.addEventListener('mouseenter', () => {
-			if (prefersFinePointer()) scheduleOpen();
+			if (usesHoverMega()) scheduleOpen();
 		});
 		servicesNav.addEventListener('mouseleave', () => {
-			if (prefersFinePointer()) scheduleClose();
+			if (usesHoverMega()) scheduleClose();
 		});
 
 		megaPanel.addEventListener('mouseenter', () => {
-			if (prefersFinePointer()) {
+			if (usesHoverMega()) {
 				window.clearTimeout(closeTimer);
 				openMega();
 			}
 		});
 		megaPanel.addEventListener('mouseleave', () => {
-			if (prefersFinePointer()) scheduleClose();
+			if (usesHoverMega()) scheduleClose();
 		});
 
 		servicesTrigger.addEventListener('focus', () => {
-			if (isDesktopMega()) openMega();
+			if (usesHoverMega()) openMega();
 		});
 
 		servicesTrigger.addEventListener('keydown', (event) => {
@@ -2007,9 +2034,15 @@ function isActive(item: NavItem) {
 			}
 		});
 
-		/* Touch / coarse pointer at desktop width: first tap opens; second tap navigates */
+		/*
+		 * Tablet (1024–1199): click opens megamenu (no hover).
+		 * PC coarse pointer: same first-tap open.
+		 * Second click navigates to /services.
+		 */
 		servicesTrigger.addEventListener('click', (event) => {
-			if (!isDesktopMega() || prefersFinePointer()) return;
+			if (!isDesktopMega()) return;
+			const clickToOpen = isTabletMega() || !prefersFinePointer();
+			if (!clickToOpen) return;
 			if (!megaOpen) {
 				event.preventDefault();
 				openMega();

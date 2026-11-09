@@ -951,7 +951,7 @@
 
 /*
  * Dark-background pill — Figma glass (frost 24, depth/refraction approx)
- * Inter Semibold 16 · pad 12×6 · fill white 10%
+ * Inter Medium 14 · pad 12×6 · fill white 10%
  */
 @utility pill-dark {
 	display: inline-flex;
@@ -962,7 +962,7 @@
 	border: 1px solid rgb(255 255 255 / 0.12);
 	background-color: rgb(255 255 255 / 0.1);
 	font-family: var(--font-inter);
-	font-size: var(--text-body);
+	font-size: 14px;
 	font-weight: 500;
 	line-height: 1.25;
 	letter-spacing: 0.01em;
@@ -1024,7 +1024,7 @@
 		linear-gradient(#ffffff, #ffffff) padding-box,
 		linear-gradient(180deg, #d6d6d6 0%, #4a4a4a 100%) border-box;
 	font-family: var(--font-inter);
-	font-size: var(--text-body);
+	font-size: 14px;
 	font-weight: 500;
 	line-height: 1;
 	letter-spacing: 0.02em;

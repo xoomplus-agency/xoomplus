@@ -1,4 +1,6 @@
 ---
+import { normalizeLinkHref } from '../lib/normalize-link';
+
 interface Props {
 	href?: string;
 	type?: 'button' | 'submit' | 'reset';
@@ -28,12 +30,14 @@ const classes = [
 	.filter(Boolean)
 	.join(' ');
 const Tag = href && !disabled ? 'a' : 'button';
+const normalizedLink = normalizeLinkHref(href, Astro.url);
 ---
 
 <Tag
 	class={classes}
 	id={id}
-	href={Tag === 'a' ? href : undefined}
+	href={Tag === 'a' ? normalizedLink.href : undefined}
+	data-scroll-target={Tag === 'a' ? normalizedLink.scrollTarget : undefined}
 	type={Tag === 'button' ? type : undefined}
 	disabled={Tag === 'button' ? disabled : undefined}
 	aria-disabled={Tag === 'a' && disabled ? 'true' : undefined}

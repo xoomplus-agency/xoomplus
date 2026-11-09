@@ -4,12 +4,14 @@
  */
 import Layout from '../../layouts/Layout.astro';
 import ContactPage from '../../components/wp-pages/ContactPage.astro';
+import { SITE_OG_PAGE_HERO } from '../../data/site-og';
 ---
 
 <Layout
 	seoPath="/contact"
 	title="Contact Xoomplus | Manchester Digital Marketing & Web Agency"
 	description="Ready to grow your business online? Contact Xoomplus about SEO, PPC or web design and let’s talk about your goals. Get in touch today."
+	image={SITE_OG_PAGE_HERO}
 	skipWpSeo
 >
 	<ContactPage />

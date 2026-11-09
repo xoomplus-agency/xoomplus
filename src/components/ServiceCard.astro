@@ -1,4 +1,6 @@
 ---
+import { normalizeLinkHref } from '../lib/normalize-link';
+
 type FeatureItem = string | { label: string; href?: string };
 
 interface Props {
@@ -37,6 +39,7 @@ const {
 const label = buttonLabel ?? cta.label;
 const arrow = buttonIcon === 'down' ? '↓' : '→';
 const hasPrice = Boolean(price);
+const normalizedCta = normalizeLinkHref(cta.href, Astro.url);
 
 function featureLabel(feature: FeatureItem): string {
 	return typeof feature === 'string' ? feature : feature.label;
@@ -91,6 +94,7 @@ function featureHref(feature: FeatureItem): string | undefined {
 			features.map((feature) => {
 				const text = featureLabel(feature);
 				const href = featureHref(feature);
+				const normalizedHref = normalizeLinkHref(href, Astro.url);
 				return (
 					<li class="service-feature flex items-start gap-2.5 text-[14px] leading-snug [font-family:var(--font-inter)]">
 						<span
@@ -108,7 +112,11 @@ function featureHref(feature: FeatureItem): string | undefined {
 							</svg>
 						</span>
 						{href ? (
-							<a class="service-feature__link" href={href}>
+							<a
+								class="service-feature__link"
+								href={normalizedHref.href}
+								data-scroll-target={normalizedHref.scrollTarget}
+							>
 								{text}
 							</a>
 						) : (
@@ -119,7 +127,11 @@ function featureHref(feature: FeatureItem): string | undefined {
 			})
 		}
 	</ul>
-	<a class="service-card-btn mt-auto" href={cta.href}>
+	<a
+		class="service-card-btn mt-auto"
+		href={normalizedCta.href}
+		data-scroll-target={normalizedCta.scrollTarget}
+	>
 		{label}
 		<span aria-hidden="true">{arrow}</span>
 	</a>

@@ -1,0 +1,21 @@
+# Place at /home/xoomplus/public_html/.htaccess (site root).
+#
+# DO NOT add PassengerBaseURI / PassengerAppType / PassengerStartupFile /
+# PassengerNodejs here — on this host they are "not allowed" in .htaccess and
+# cause HTTP 500 before Node starts.
+#
+# Configure the app in cPanel → Setup Node.js App instead:
+#   Application root: /home/xoomplus/public_html
+#   Application URL:  xoomplus.co.uk (or /)
+#   Startup file:     server.js
+#   Node.js version:  20.x
+# Then Run NPM Install + Restart.
+
+Options -Indexes
+
+<IfModule mod_headers.c>
+	Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	Header always set X-Content-Type-Options "nosniff"
+	Header always set X-Frame-Options "SAMEORIGIN"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

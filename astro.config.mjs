@@ -28,10 +28,25 @@ export default defineConfig({
   // Only set when SITE_URL is provided — prevents accidental production canonicals in staging.
   site: env.SITE_URL || undefined,
 
+  // Trust public host behind Cloudflare / cPanel TLS termination (Node socket is http).
+  security: {
+    allowedDomains: [
+      { hostname: 'xoomplus.co.uk', protocol: 'https' },
+      { hostname: 'www.xoomplus.co.uk', protocol: 'https' },
+      { hostname: 'localhost' },
+      { hostname: '127.0.0.1' },
+    ],
+  },
+
   redirects: {
+    '/appointment-booking/': {
+      status: 301,
+      destination: '/contact/',
+    },
     ...removedChildRedirects,
     ...legacyServiceRedirects,
   },
+
 
   // Static by default; SEO pages + revalidate API opt into on-demand via `prerender = false`.
   // Homepage SSR calls WordPress several times — give the serverless function enough time.

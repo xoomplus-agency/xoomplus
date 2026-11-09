@@ -1,5 +1,6 @@
 ---
 import loadingIcon from '../assets/icons/btn-loading-icon.svg';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 interface Props {
 	href?: string;
@@ -12,6 +13,7 @@ interface Props {
 	variant?: 'primary' | 'light';
 	class?: string;
 	id?: string;
+	scrollTarget?: string;
 	'aria-label'?: string;
 	'aria-controls'?: string;
 	hidden?: boolean;
@@ -26,6 +28,7 @@ const {
 	variant = 'primary',
 	class: className = '',
 	id,
+	scrollTarget,
 	'aria-label': ariaLabel,
 	'aria-controls': ariaControls,
 	hidden = false,
@@ -33,6 +36,7 @@ const {
 
 const isDisabled = disabled || loading;
 const isLight = variant === 'light';
+const normalizedLink = normalizeLinkHref(href, Astro.url);
 
 const sizeClass =
 	size === 'nav' ? 'btn-size-nav' : size === 'hero' ? 'btn-size-hero' : 'px-[28px] py-[18px]';
@@ -61,7 +65,8 @@ const prefetchViewport =
 <Tag
 	class={classes}
 	id={id}
-	href={Tag === 'a' ? href : undefined}
+	href={Tag === 'a' ? normalizedLink.href : undefined}
+	data-scroll-target={Tag === 'a' ? scrollTarget || normalizedLink.scrollTarget : undefined}
 	data-astro-prefetch={prefetchViewport ? 'viewport' : undefined}
 	type={Tag === 'button' ? type : undefined}
 	disabled={Tag === 'button' ? isDisabled : undefined}

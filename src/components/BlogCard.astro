@@ -51,7 +51,7 @@ const category = (categoryProp ?? '').toString();
 const image = (imageProp || '/images/1st.webp').toString();
 const alt = (altProp || title).toString();
 
-let href = '#';
+let href = '/blogs/';
 try {
 	href = post
 		? postUrl(post)
@@ -59,10 +59,10 @@ try {
 			? postUrl({ path: hrefProp, slug: post?.slug || title, id: post?.id ?? 0, title })
 			: post?.path
 				? postUrl({ path: post.path, slug: post.slug || title, id: post.id ?? 0, title })
-				: '#';
+				: '/blogs/';
 } catch (err) {
 	console.error(`[BlogCard] href resolve failed for "${title}":`, err);
-	href = '#';
+	href = '/blogs/';
 }
 
 const TitleTag = headingLevel;

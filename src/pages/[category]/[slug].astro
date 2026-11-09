@@ -27,6 +27,7 @@ import { cleanWpPostHtml } from '../../lib/wp-content';
 import { enhanceTables } from '../../lib/enhance-post-html';
 import { extractFaqs } from '../../lib/extract-faqs';
 import { extractCta } from '../../lib/extract-cta';
+import { SITE_EMAIL } from '../../data/site-contact';
 import { BLOG_AUTHOR, RESPECT_CMS_NOINDEX } from '../../config';
 import '../../styles/prose-blog.css';
 
@@ -172,7 +173,7 @@ const breadcrumbJsonLd = {
 	],
 };
 
-/** Only FAQs from `.faq-items` in the post — never inject placeholder Q&As. */
+/** Only FAQs from `.faq-items` / `.faq-item` in the post — never inject placeholder Q&As. */
 const faqItems = extracted.faqs.map((item, index) => ({
 	id: `blog-faq-item-${index}`,
 	question: item.question,
@@ -341,7 +342,12 @@ const faqJsonLd =
 									heading={blogCta.heading || undefined}
 									text={blogCta.text}
 									buttonHref={blogCta.href}
+									buttonScrollTarget={blogCta.scrollTarget}
 									buttonLabel={blogCta.buttonLabel}
+									secondaryButtonHref={blogCta.phoneHref}
+									secondaryButtonLabel={blogCta.phoneLabel}
+									secondaryHref={SITE_EMAIL.href}
+									secondaryLabel={SITE_EMAIL.display}
 								/>
 							)
 						}
@@ -606,6 +612,10 @@ const faqJsonLd =
 	@media (max-width: 639px) {
 		.blog-detail-main {
 			--blog-nav-offset: 88px;
+		}
+
+		.blog-article__title {
+			font-size: 30px;
 		}
 
 		.blog-article__meta {

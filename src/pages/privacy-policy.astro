@@ -5,6 +5,7 @@
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Section from '../components/Section.astro';
+import { SITE_OG_PAGE_HERO } from '../data/site-og';
 import '../styles/prose-blog.css';
 
 const title = 'Privacy Policy | Xoomplus';
@@ -16,6 +17,7 @@ const description =
 	title={title}
 	description={description}
 	canonicalPath="/privacy-policy/"
+	image={SITE_OG_PAGE_HERO}
 	suppressNavActive={true}
 	skipWpSeo={true}
 >

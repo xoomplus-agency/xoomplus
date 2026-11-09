@@ -4,6 +4,10 @@
  * Base: PUBLIC_WP_API (default https://xoomplusagency.com/wp-json/wp/v2)
  */
 
+import { decodeHtmlEntities } from './decode-html-entities';
+
+export { decodeHtmlEntities } from './decode-html-entities';
+
 export type WpPostImage = {
 	src: string;
 	srcset: string;
@@ -153,24 +157,6 @@ function stripLeadingStyles(text: string): string {
 	return out;
 }
 
-function decodeEntities(text: string): string {
-	return text
-		.replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
-		.replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
-		.replace(/&amp;/g, '&')
-		.replace(/&lt;/g, '<')
-		.replace(/&gt;/g, '>')
-		.replace(/&quot;/g, '"')
-		.replace(/&apos;/g, "'")
-		.replace(/&#8217;/g, '\u2019')
-		.replace(/&#8216;/g, '\u2018')
-		.replace(/&#8220;/g, '\u201C')
-		.replace(/&#8221;/g, '\u201D')
-		.replace(/&#8211;/g, '\u2013')
-		.replace(/&#8212;/g, '\u2014')
-		.replace(/&nbsp;/g, ' ');
-}
-
 function stripTags(html: string): string {
 	return html.replace(/<[^>]*>/g, ' ');
 }
@@ -180,7 +166,7 @@ function collapseWhitespace(text: string): string {
 }
 
 function plainFromHtml(html: string): string {
-	return collapseWhitespace(decodeEntities(stripTags(html || '')));
+	return collapseWhitespace(decodeHtmlEntities(stripTags(html || '')));
 }
 
 /** Trim to ~120 chars on a word boundary with an ellipsis. */

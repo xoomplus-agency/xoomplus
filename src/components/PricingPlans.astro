@@ -2,6 +2,7 @@
 import Section from './Section.astro';
 import Button from './Button.astro';
 import ServiceCard from './ServiceCard.astro';
+import { normalizeLinkHref } from '../lib/normalize-link';
 import { pricingPlans } from '../data/pricing-plans';
 
 const { pill, title, text, tabs, packages, adhoc } = pricingPlans;
@@ -86,7 +87,11 @@ const defaultTab = 'adhoc';
 			<article class="service-card pricing-plans__help" data-reveal="up">
 				<div class="pricing-plans__help-body">
 					<h3 class="pricing-plans__help-title m-0">{adhoc.help.title}</h3>
-					<a class="service-card-btn" href={adhoc.help.href}>
+					<a
+						class="service-card-btn"
+						href={normalizeLinkHref(adhoc.help.href, Astro.url).href}
+						data-scroll-target={normalizeLinkHref(adhoc.help.href, Astro.url).scrollTarget}
+					>
 						{adhoc.help.buttonLabel}
 						<span aria-hidden="true">→</span>
 					</a>
@@ -148,7 +153,11 @@ const defaultTab = 'adhoc';
 								</li>
 							))}
 						</ul>
-						<a class="service-card-btn mt-auto" href={card.href}>
+						<a
+							class="service-card-btn mt-auto"
+							href={normalizeLinkHref(card.href, Astro.url).href}
+							data-scroll-target={normalizeLinkHref(card.href, Astro.url).scrollTarget}
+						>
 							{card.buttonLabel}
 							<span class="pricing-plans__btn-arrow" aria-hidden="true">
 								→

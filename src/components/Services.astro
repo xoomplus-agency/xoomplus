@@ -2,9 +2,11 @@
 import Button from './Button.astro';
 import ServiceCard from './ServiceCard.astro';
 import { services, helpCard } from '../data/services';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 const intro =
-	'Sustainable growth demands a unified digital ecosystem. We combine search discovery, brand interaction and paid acquisition to build high-performance pathways for your business.'
+	'Our digital marketing services help your business reach the right people at the right time, attract more customers and grow online.';
+const helpCardLink = normalizeLinkHref(helpCard.cta.href, Astro.url);
 ---
 
 <section
@@ -22,7 +24,7 @@ const intro =
 				id="services-heading"
 				class="text-heading-dark mb-4"
 			>
-			Full-Funnel Digital Solutions Built for Commercial Impact
+				Our Professional Digital Marketing Services in Manchester
 			</h2>
 			<p class="mx-auto max-w-[640px] text-lead font-normal leading-[1.55] text-[var(--text-body-dark)] [font-family:var(--font-inter)]">
 				{intro}
@@ -53,7 +55,11 @@ const intro =
 						{helpCard.description}
 					</p>
 				</div>
-				<a class="service-card-btn" href={helpCard.cta.href}>
+				<a
+					class="service-card-btn"
+					href={helpCardLink.href}
+					data-scroll-target={helpCardLink.scrollTarget}
+				>
 					{helpCard.cta.label}
 					<span aria-hidden="true">→</span>
 				</a>
@@ -64,7 +70,7 @@ const intro =
 			<p class="text-h3-sm m-0 text-center font-semibold tracking-[-0.01em] text-[var(--text-body-dark)] sm:text-left">
 				Unsure which channel offers the highest growth return?
 			</p>
-			<Button size="nav" href="#contact">Request an Audit</Button>
+			<Button size="nav" href="/contact">Request an Audit</Button>
 		</div>
 	</div>
 </section>

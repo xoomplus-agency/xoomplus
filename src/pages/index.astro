@@ -20,6 +20,7 @@ import FAQ from '../components/FAQ.astro';
 import CTASection from '../components/CTASection.astro';
 import { getPosts } from '../lib/wp-posts';
 import type { WpPost } from '../lib/wp';
+import { SITE_OG_HOME_HERO } from '../data/site-og';
 
 const HOME_SEO = {
 	title: 'Data-Driven Digital Marketing Agency Manchester | Xoomplus',
@@ -39,6 +40,7 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 <Layout
 	title={HOME_SEO.title}
 	description={HOME_SEO.description}
+	image={SITE_OG_HOME_HERO}
 	skipWpSeo
 	lcpImagePreload={{
 		href: '/videos/bg-hero-poster-640.avif',
@@ -51,14 +53,14 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 		<Hero />
 		<Brands />
 		<Services />
-		<WhyXoomplus />
 		<OurProcess />
+		<Industries content={homeIndustries} />
+		<WhyXoomplus />
 		<OurGrowth />
 		<CaseStudies />
-		<Industries content={homeIndustries} />
 		<OurLocations />
-		<!-- <Testimonials /> -->
 		<Blogs posts={blogPosts} />
+		<Testimonials />
 		<!-- <FAQ page="home" /> -->
 		<ContactSection
 			content={{

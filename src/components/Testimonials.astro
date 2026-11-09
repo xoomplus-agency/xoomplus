@@ -3,20 +3,17 @@ import '../styles/infinite-marquee.css';
 
 const testimonials = [
 	{
-		name: 'Sophia Moore',
-		role: 'CEO at Webflow Agency',
+		name: 'Josephine Smith',
 		text: 'Xoomplus brought real structure to our growth efforts. By linking our web redesign with a targeted local SEO plan, they helped us achieve our strongest pipeline to date. Their focus on commercial results sets them apart.',
 		avatar: '/images/avatar.webp',
 	},
 	{
-		name: 'Sophia Moore',
-		role: 'CEO at Webflow Agency',
+		name: 'Michael Johnson',
 		text: 'Finding an agency that backs up its claims with actual data is rare. Xoomplus expanded our Manchester presence within a few months, and their reporting is clear, honest and directly tied to pipeline value.',
 		avatar: '/images/avatar.webp',
 	},
 	{
-		name: 'Sophia Moore',
-		role: 'CEO at Webflow Agency',
+		name: 'Emily Davis',
 		text: 'The team rebuilt our entire inquiry journey while carefully navigating the compliance needs of our sector. Reliable, responsive and commercially sharp at every step.',
 		avatar: '/images/avatar.webp',
 	},
@@ -36,7 +33,7 @@ const testimonials = [
 				id="testimonials-heading"
 				class="mb-4 text-h2 font-semibold tracking-[-0.02em] text-primary-black"
 			>
-				What UK Business Leaders Say About Partnering with Xoomplus
+				What UK Business Say About Xoomplus
 			</h2>
 			<p class="text-on-light mx-auto max-w-[640px]">
 				Our clients are not just happy because we deliver results; they are happy because we go every
@@ -92,7 +89,6 @@ const testimonials = [
 											loading="lazy"
 										/>
 										<p class="testimonial-card__name">{item.name}</p>
-										<p class="testimonial-card__role">{item.role}</p>
 									</div>
 								</li>
 							))}
@@ -200,11 +196,4 @@ const testimonials = [
 		color: var(--color-primary-black);
 	}
 
-	.testimonial-card__role {
-		margin: 4px 0 0;
-		font-family: var(--font-inter);
-		font-size: var(--text-small);
-		line-height: 1.4;
-		color: #888888;
-	}
 </style>

@@ -1,0 +1,37 @@
+---
+description: Astro site playbook — static-first, perf, cPanel, low tokens, design fidelity
+alwaysApply: true
+---
+
+# Astro playbook (summary)
+
+Full detail: `.cursor/ASTRO-SITE-PLAYBOOK.md`
+
+## Workflow
+- Analyze → plan → implement only when user explicitly asks to build.
+- Design/image alone is not permission to code. No invented UI when design is missing/absent pieces.
+
+## Scope & tokens
+- Touch only files needed for the task. No repo-wide scans, no `node_modules`/cache reads, no alternate implementations unless asked.
+- Prefer smallest change; concise replies.
+
+## Stack defaults
+- Prefer `.astro` + static HTML/CSS. No React/Vue/Svelte unless required.
+- No new libraries without a one-line justification and user OK when unsure.
+- Marketing/cPanel sites: static `dist/` — do not add SSR adapters unless the host requires them.
+
+## Performance
+- Never lazy-load LCP/hero image. Reserve space (CLS). Local fonts + font-display.
+- No static GSAP in layouts; hydrate only real islands. Prefer prefetch over ClientRouter.
+- Validate perf on production build, not only `astro dev`. Do not change approved design for shortcuts.
+
+## Assets & CMS
+- Fixed design assets in `public/`. Editorial media stays in CMS when headless WP is used.
+- Native `fetch` for WP REST; one shared SEO mapping from `yoast_head_json` when Yoast is used.
+
+## Deploy (cPanel static)
+- Build with `SITE_URL` set → upload **contents** of `dist/` to `public_html` including `.htaccess`.
+- Rebuild after CMS changes on static sites.
+
+## UI
+- Reuse shared buttons/sections; no one-off button styles. No generic AI card/gradient spam.
