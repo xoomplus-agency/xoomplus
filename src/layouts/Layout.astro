@@ -47,7 +47,7 @@ interface Props {
 	suppressNavActive?: boolean;
 	/**
 	 * Skip WordPress page SEO lookup (blog posts pass title/description themselves).
-	 * Cuts TTFB on `/[category]/[slug]` where getPageSEO is wasted work.
+	 * Cuts TTFB on `/blog/[slug]` where getPageSEO is wasted work.
 	 */
 	skipWpSeo?: boolean;
 	/** Optional `<link rel="preload" as="image">` for the LCP featured image. */

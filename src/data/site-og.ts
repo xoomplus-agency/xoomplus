@@ -13,12 +13,13 @@ export const SITE_OG_PAGE_HERO = '/images/bread-crumb-bg-image.webp';
 export const SITE_OG_HOME_HERO = '/videos/bg-hero-poster-960.webp';
 
 /**
- * True for blog listing and WP-shaped blog posts (`/{category}/{slug}/`).
+ * True for blog listing and post URLs (`/blog/{slug}/`, plus legacy shapes).
  * Static marketing routes must return false.
  */
 export function isBlogSeoPath(pathname: string): boolean {
 	const p = pathname.replace(/\/+$/, '') || '/';
-	if (p === '/blog' || p === '/blogs' || p.startsWith('/blogs/')) return true;
+	if (p === '/blog' || p === '/blogs') return true;
+	if (p.startsWith('/blog/') || p.startsWith('/blogs/')) return true;
 	if (
 		p.startsWith('/services/') ||
 		p.startsWith('/locations/') ||
@@ -32,5 +33,6 @@ export function isBlogSeoPath(pathname: string): boolean {
 	) {
 		return false;
 	}
+	// Legacy CMS-shaped post URLs during redirect period.
 	return /^\/[^/]+\/[^/]+$/.test(p);
 }

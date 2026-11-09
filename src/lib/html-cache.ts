@@ -78,8 +78,9 @@ export function isHtmlCacheablePath(pathname: string): boolean {
 		return false;
 	}
 	if (p.endsWith('.xml') || p.endsWith('.xsl')) return false;
-	// /blog listing stays fresh from WordPress — do not HTML-cache the shell.
+	// /blog listing + legacy /blogs shells stay fresh from WordPress.
 	if (p === '/blog' || p === '/blogs' || p.startsWith('/blogs/')) return false;
+	// Individual /blog/{slug} posts may be cached (same as former category paths).
 	return true;
 }
 

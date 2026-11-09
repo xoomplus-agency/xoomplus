@@ -25,7 +25,10 @@ export type WpPost = {
 	title: string;
 	excerpt: string;
 	category: string;
-	/** Frontend pathname from CMS `link` (trailing slash), e.g. `/digital-marketing/my-post/`. */
+	/**
+	 * CMS permalink pathname (trailing slash), e.g. `/digital-marketing/my-post/`.
+	 * Public frontend URL is always `/blog/{slug}/` via `postUrl()`.
+	 */
 	path: string;
 	/** First URL segment (category). */
 	categorySlug: string;
@@ -140,10 +143,13 @@ function getApiBase(): string {
 	return raw.replace(/\/+$/, '');
 }
 
-/** True for legacy `/blogs/<slug>/` post URLs (listing `/blogs` is fine elsewhere). */
-function isLegacyBlogsPostPath(pathname: string): boolean {
-	const cleaned = pathname.replace(/\/+$/, '') || '/';
-	return /^\/blogs\/[^/]+$/.test(cleaned);
+/** Public frontend post path: `/blog/{slug}/`. */
+export function blogPostPath(slug: string): string {
+	const cleaned = slug.replace(/^\/+|\/+$/g, '').trim();
+	if (!cleaned) {
+		throw new Error('[wp] blogPostPath: empty slug');
+	}
+	return withTrailingSlash(`/blog/${cleaned}`);
 }
 
 /** Strip Elementor (and similar) leading <style> blocks before JSON.parse. */
@@ -211,11 +217,7 @@ export function withTrailingSlash(path: string): string {
 }
 
 /**
- * Canonical frontend URL for a post — always the WordPress path (`/<category>/<slug>/`).
- * Never `/blogs/<slug>/`. Throws at build time if `path` is missing.
- */
-/**
- * Shared category key for /blogs chips + card `data-category`.
+ * Shared category key for /blog chips + card `data-category`.
  * Lowercased trim; empty → "". "All articles" → "all".
  */
 export function categoryKey(nameOrSlug: string): string {
@@ -225,21 +227,19 @@ export function categoryKey(nameOrSlug: string): string {
 	return t;
 }
 
-export function postUrl(post: Pick<WpPost, 'path' | 'slug' | 'id' | 'title'>): string {
-	const pathValue = typeof post.path === 'string' ? post.path.trim() : '';
-	if (!pathValue || pathValue === '/') {
-		const label = post.slug || post.title || String(post.id ?? '?');
-		throw new Error(
-			`[wp] postUrl: post "${label}" has no path — cannot fall back to /blogs/<slug>`,
-		);
+/**
+ * Canonical frontend URL for a post — always `/blog/{slug}/`.
+ * CMS may still use `/{category}/{slug}/`; those paths 301 here.
+ */
+export function postUrl(
+	post: Pick<WpPost, 'slug' | 'id' | 'title'> & { postSlug?: string },
+): string {
+	const slug = (post.postSlug || post.slug || '').trim();
+	if (!slug) {
+		const label = post.title || String(post.id ?? '?');
+		throw new Error(`[wp] postUrl: post "${label}" has no slug`);
 	}
-	if (isLegacyBlogsPostPath(pathValue)) {
-		const label = post.slug || post.title || String(post.id ?? '?');
-		throw new Error(
-			`[wp] postUrl: post "${label}" still has legacy path "${pathValue}" — refetch CMS link`,
-		);
-	}
-	return pathValue;
+	return blogPostPath(slug);
 }
 
 function resolvePostPath(
@@ -518,9 +518,16 @@ export async function getPublishedPostBySlug(slug: string): Promise<WpPost | nul
 	return getPostBySlug(slug);
 }
 
-/** Look up a published post by URL segments (category + slug). */
+/**
+ * Look up a published post by URL segments.
+ * Accepts `/blog/{slug}` or legacy `/{category}/{slug}`.
+ */
 export async function getPostByPath(segments: string[]): Promise<WpPost | undefined> {
 	const parts = segments.map((s) => s.replace(/^\/+|\/+$/g, '')).filter(Boolean);
+	if (parts.length === 2 && parts[0] === 'blog') {
+		const post = await getPublishedPostBySlug(parts[1]);
+		return post ?? undefined;
+	}
 	if (parts.length < 2) return undefined;
 	const postSlug = parts[parts.length - 1];
 	const categorySlug = parts[parts.length - 2];

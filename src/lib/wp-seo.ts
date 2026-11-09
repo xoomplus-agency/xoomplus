@@ -49,6 +49,7 @@ export const CASE_STUDIES_WP_ID = WP_SEO_PAGES.caseStudies.id;
  */
 export const WP_SEO_PATH_ALIASES: Partial<Record<WpPageKey, readonly string[]>> = {
 	services: ['/our-services'],
+	blogs: ['/blogs'],
 };
 
 /** @deprecated Prefer WP_SEO_PAGES. Kept for scripts that still iterate path→id aliases. */

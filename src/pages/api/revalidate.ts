@@ -106,17 +106,20 @@ export const POST: APIRoute = async ({ request }) => {
 		invalidateWpSeoCache(typeof body.id === 'number' ? body.id : undefined);
 
 		const paths = new Set<string>(['/blog', '/blogs', '/']);
+		if (typeof body.slug === 'string' && body.slug.length > 0) {
+			paths.add(normalizePurgePath(`/blog/${body.slug}`));
+			paths.add(normalizePurgePath(`/blogs/${body.slug}`));
+		}
 		if (typeof body.path === 'string' && body.path.length > 0) {
 			paths.add(normalizePurgePath(body.path));
-		} else if (
+		}
+		if (
 			typeof body.slug === 'string' &&
 			body.slug.length > 0 &&
 			typeof body.category === 'string' &&
 			body.category.length > 0
 		) {
 			paths.add(normalizePurgePath(`/${body.category}/${body.slug}`));
-		} else if (typeof body.slug === 'string' && body.slug.length > 0) {
-			paths.add(normalizePurgePath(`/blogs/${body.slug}`));
 		}
 
 		const purged = await purgeCachedPaths([...paths]);

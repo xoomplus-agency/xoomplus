@@ -8,10 +8,10 @@ interface Props {
 	title: string;
 	excerpt: string;
 	/**
-	 * Prefer passing `post` so the href always comes from CMS `path` via postUrl().
-	 * If only `href` is passed, it must already be the WordPress path (not /blogs/<slug>).
+	 * Prefer passing `post` so the href always comes from `postUrl()` → `/blog/{slug}/`.
+	 * If only `href` is passed, prefer a slug-bearing post object when available.
 	 */
-	post?: Pick<WpPost, 'path' | 'slug' | 'id' | 'title'>;
+	post?: Pick<WpPost, 'path' | 'slug' | 'id' | 'title' | 'postSlug'>;
 	href?: string;
 	/** Smaller title/excerpt for narrow sidebar cards only */
 	size?: 'default' | 'compact';
@@ -51,18 +51,20 @@ const category = (categoryProp ?? '').toString();
 const image = (imageProp || '/images/1st.webp').toString();
 const alt = (altProp || title).toString();
 
-let href = '/blogs/';
+let href = '/blog/';
 try {
 	href = post
 		? postUrl(post)
-		: hrefProp
-			? postUrl({ path: hrefProp, slug: post?.slug || title, id: post?.id ?? 0, title })
-			: post?.path
-				? postUrl({ path: post.path, slug: post.slug || title, id: post.id ?? 0, title })
-				: '/blogs/';
+		: hrefProp && /\/blog\/[^/]+\/?$/.test(hrefProp)
+			? hrefProp.endsWith('/')
+				? hrefProp
+				: `${hrefProp}/`
+			: post?.slug
+				? postUrl({ slug: post.slug, id: post.id ?? 0, title, postSlug: post.postSlug || post.slug })
+				: '/blog/';
 } catch (err) {
 	console.error(`[BlogCard] href resolve failed for "${title}":`, err);
-	href = '/blogs/';
+	href = '/blog/';
 }
 
 const TitleTag = headingLevel;

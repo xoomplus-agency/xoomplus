@@ -31,13 +31,23 @@ function isLegacyBlogSlugPath(pathname: string): boolean {
 	return /^\/blogs\/[^/]+$/.test(p);
 }
 
+/** Current post URLs: `/blog/{slug}`. */
 function isBlogPostPath(pathname: string): boolean {
+	const p = pathname.replace(/\/+$/, '') || '/';
+	return /^\/blog\/[^/]+$/.test(p);
+}
+
+/** Legacy CMS-shaped posts: `/{category}/{slug}` (redirect shell). */
+function isLegacyCategoryBlogPath(pathname: string): boolean {
 	const p = pathname.replace(/\/+$/, '') || '/';
 	return (
 		/^\/[^/]+\/[^/]+$/.test(p) &&
+		!p.startsWith('/blog/') &&
+		!p.startsWith('/blogs/') &&
 		!p.startsWith('/services/') &&
 		!p.startsWith('/api/') &&
-		!p.startsWith('/locations/')
+		!p.startsWith('/locations/') &&
+		!p.startsWith('/case-studies/')
 	);
 }
 
@@ -46,7 +56,7 @@ function applyCacheHeaders(
 	pathname: string,
 	refresh: boolean,
 ): void {
-	if (isLegacyBlogSlugPath(pathname)) {
+	if (isLegacyBlogSlugPath(pathname) || isLegacyCategoryBlogPath(pathname)) {
 		response.headers.set('Cache-Control', BLOG_NO_STORE);
 		response.headers.set('CDN-Cache-Control', BLOG_NO_STORE);
 		response.headers.set('Vercel-CDN-Cache-Control', BLOG_NO_STORE);
@@ -194,6 +204,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const blogCacheOwned =
 		isBlogsListingPath(pathname) ||
 		isLegacyBlogSlugPath(pathname) ||
+		isLegacyCategoryBlogPath(pathname) ||
 		isBlogPostPath(pathname);
 
 	if (refresh) {

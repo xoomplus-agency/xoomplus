@@ -102,6 +102,9 @@ export function postSiteUrlFromLink(
 	siteUrl: string,
 	slug: string,
 ): string | null {
+	const cleanedSlug = slug.replace(/^\/+|\/+$/g, '').trim();
+	if (!cleanedSlug) return null;
+
 	let pathname = '';
 	try {
 		pathname = new URL(link).pathname;
@@ -109,13 +112,11 @@ export function postSiteUrlFromLink(
 		return null;
 	}
 	const normalized = pathname.replace(/\/+$/, '') || '/';
-	if (normalized === '/' || !normalized.endsWith(`/${slug}`)) {
+	if (normalized === '/' || !normalized.endsWith(`/${cleanedSlug}`)) {
 		return null;
 	}
-	if (/^\/blogs\/[^/]+$/.test(normalized)) {
-		return null;
-	}
-	return siteAbsoluteUrl(siteUrl, withTrailingSlash(normalized));
+	// Public Astro URLs are always /blog/{slug}/ (legacy CMS paths redirect).
+	return siteAbsoluteUrl(siteUrl, withTrailingSlash(`/blog/${cleanedSlug}`));
 }
 
 /**

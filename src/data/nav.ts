@@ -8,7 +8,7 @@ export type NavItem = {
 	hasDropdown?: boolean;
 	/** Extra path prefixes that also mark this item active (trailing slashes ignored). */
 	matchPrefixes?: string[];
-	/** When true, also active on /{category}/{slug}/ blog posts (not under /blogs). */
+	/** When true, also active on `/blog/{slug}/` posts (and legacy shapes). */
 	matchBlogPosts?: boolean;
 };
 
@@ -109,13 +109,13 @@ export function normalizePath(pathname: string): string {
 
 function isBlogPostPath(pathname: string): boolean {
 	const p = normalizePath(pathname);
+	if (/^\/blog\/[^/]+$/.test(p) || /^\/blogs\/[^/]+$/.test(p)) return true;
 	return (
 		/^\/[^/]+\/[^/]+$/.test(p) &&
 		!p.startsWith('/services/') &&
 		!p.startsWith('/api/') &&
 		!p.startsWith('/locations/') &&
-		!p.startsWith('/case-studies/') &&
-		!p.startsWith('/blog/')
+		!p.startsWith('/case-studies/')
 	);
 }
 
