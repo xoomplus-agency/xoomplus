@@ -15,12 +15,14 @@ export function normalizeLinkHref(
 		const scrollTarget = destination.hash.replace(/^#/, '').trim();
 		const isInternal = destination.origin === currentUrl.origin;
 		destination.hash = '';
+		// Slashless internal paths — trailing slash fights Express/middleware 301 strip.
 		const pathname =
-			destination.pathname !== '/' && !destination.pathname.endsWith('/')
-				? `${destination.pathname}/`
-				: destination.pathname;
+			destination.pathname === '/'
+				? '/'
+				: destination.pathname.replace(/\/+$/, '') || '/';
 
 		if (!isInternal) {
+			destination.pathname = pathname === '/' ? '/' : pathname;
 			return { href: destination.href };
 		}
 

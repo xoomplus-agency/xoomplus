@@ -1,6 +1,6 @@
 /**
- * /blogs — one page of cards in the HTML. Load more, category chips, and
- * search each request the next slim page. Search never filters the grid.
+ * /blog — one page of cards in the HTML. Load more and search each request
+ * the next slim page. Search never filters the grid.
  * Search-only roots (e.g. 404) opt in with `data-blog-search-only`.
  */
 import { setButtonLoading } from './btn-loading';
@@ -68,7 +68,7 @@ function sleep(ms: number): Promise<void> {
 
 function fillCard(li: HTMLElement, post: Card): void {
 	li.hidden = false;
-	li.classList.add('blog-listing__item--cv');
+	li.classList.remove('blog-listing__item--cv');
 	li.setAttribute('data-category', post.categoryKey);
 	const link = li.querySelector('a.blog-card');
 	if (link instanceof HTMLAnchorElement) link.href = post.href;
@@ -80,45 +80,34 @@ function fillCard(li: HTMLElement, post: Card): void {
 		img.alt = post.alt || post.title || 'Blog article';
 		img.width = post.width || 400;
 		img.height = post.height || 240;
-		if (post.srcset) {
-			img.setAttribute('srcset', post.srcset);
+		const nextSrc = post.image || '';
+		const nextSrcset = post.srcset || '';
+		const sameSrc = img.getAttribute('src') === nextSrc;
+		const sameSrcset = (img.getAttribute('srcset') || '') === nextSrcset;
+		if (nextSrcset) {
+			if (!sameSrcset) img.setAttribute('srcset', nextSrcset);
 			img.setAttribute('sizes', CARD_SIZES);
 		} else {
 			img.removeAttribute('srcset');
 			img.removeAttribute('sizes');
 		}
-		// Set src last so sizes/srcset apply before the browser picks a candidate.
-		if (post.image) img.src = post.image;
+		// Avoid reassigning identical URLs — re-decode spikes memory and can crash Chrome on scroll.
+		if (nextSrc && !sameSrc) img.src = nextSrc;
 	}
 	const title = li.querySelector('.blog-card__title');
 	if (title) title.textContent = post.title;
 	const excerpt = li.querySelector('.blog-card__excerpt');
 	if (excerpt) excerpt.textContent = post.excerpt;
-	const cat = li.querySelector('.blog-card__category');
-	if (cat) {
-		const dot = cat.querySelector('.blog-card__dot');
-		[...cat.childNodes].forEach((node) => {
-			if (node !== dot) node.remove();
-		});
-		if (post.category) {
-			cat.append(document.createTextNode(post.category));
-			cat.removeAttribute('aria-hidden');
-		} else {
-			cat.setAttribute('aria-hidden', 'true');
-		}
-	}
 }
 
 function initBlogList(root: HTMLElement): void {
 	if (root.getAttribute(INIT_ATTR) === '1') return;
 
 	const grid = root.querySelector('[data-blog-grid]');
-	const filtersEl = root.querySelector('[data-blog-filters]');
 	const search = root.querySelector('[data-blog-search]');
 	const searchWrap = root.querySelector('[data-blog-search-wrap]');
 	const resultsEl = root.querySelector('[data-blog-search-results]');
 	const liveEl = root.querySelector('[data-blog-search-live]');
-	const perspectiveEl = root.querySelector('[data-blog-perspective]');
 	const countEl = root.querySelector('[data-blog-count]');
 	const matchEl = root.querySelector('[data-blog-matching]');
 	const emptyEl = root.querySelector('[data-blog-empty]');
@@ -141,7 +130,6 @@ function initBlogList(root: HTMLElement): void {
 
 	root.setAttribute(INIT_ATTR, '1');
 
-	let categoryId = '';
 	let nextPage = hasGrid
 		? Number(gridEl.getAttribute('data-page') || '1') + 1
 		: 1;
@@ -151,7 +139,6 @@ function initBlogList(root: HTMLElement): void {
 	let activeIndex = -1;
 	let searchSeq = 0;
 	let loadSeq = 0;
-	const filterSkel = root.querySelector('[data-blog-filter-skeleton]');
 
 	function shownCount(): number {
 		if (!gridEl) return 0;
@@ -210,6 +197,17 @@ function initBlogList(root: HTMLElement): void {
 		if (focusFirst) first?.querySelector('a')?.focus({ preventScroll: true });
 	}
 
+	/** Patch SSR/existing cards in place — avoids destroy+redecode that OOM-crashes Chrome. */
+	function syncPostsInPlace(posts: Card[]): void {
+		if (!gridEl) return;
+		const existing = [...gridEl.querySelectorAll<HTMLElement>('[data-post-card]')];
+		const reuse = Math.min(existing.length, posts.length);
+		for (let i = 0; i < reuse; i++) fillCard(existing[i], posts[i]);
+		for (let i = reuse; i < existing.length; i++) existing[i].remove();
+		if (posts.length > reuse) appendPosts(posts.slice(reuse), false);
+		else paintCounts();
+	}
+
 	function setLoadMoreLoading(on: boolean): void {
 		if (!(loadMore instanceof HTMLButtonElement)) return;
 		setButtonLoading(loadMore, on, {
@@ -219,23 +217,6 @@ function initBlogList(root: HTMLElement): void {
 		});
 	}
 
-	function setFilterSkeleton(visible: boolean): void {
-		if (!(filterSkel instanceof HTMLElement) || !gridEl) return;
-		filterSkel.hidden = !visible;
-		const meta = root
-			.querySelector('[data-blog-perspective]')
-			?.closest('.blog-listing__meta');
-		if (meta instanceof HTMLElement) meta.hidden = visible;
-		if (emptyEl instanceof HTMLElement && visible) emptyEl.hidden = true;
-		if (loadMoreWrap instanceof HTMLElement && visible) loadMoreWrap.hidden = true;
-		if (visible) {
-			gridEl.hidden = true;
-			gridEl.setAttribute('aria-busy', 'true');
-		} else {
-			gridEl.removeAttribute('aria-busy');
-		}
-	}
-
 	async function loadPages(
 		pages: number[],
 		opts: { replace?: boolean; focusFirst?: boolean; silent?: boolean } = {},
@@ -243,7 +224,6 @@ function initBlogList(root: HTMLElement): void {
 		if (!gridEl || !pages.length) return;
 		const replace = Boolean(opts.replace);
 		const silent = Boolean(opts.silent);
-		// Load more stays serialized; category replace may supersede an in-flight fetch.
 		if (loading && !replace) return;
 		const seq = ++loadSeq;
 		loading = true;
@@ -251,14 +231,10 @@ function initBlogList(root: HTMLElement): void {
 		const loadStarted = performance.now();
 		if (useButtonLoading) setLoadMoreLoading(true);
 		else if (loadMore) loadMore.disabled = true;
-		// Silent boot sync keeps SSR cards visible while refreshing from the live API
-		// (CDN often serves stale HTML with broken featured-image URLs).
-		if (replace && !silent) setFilterSkeleton(true);
 		try {
 			const params = new URLSearchParams();
 			if (pages.length === 1) params.set('page', String(pages[0]));
 			else params.set('pages', pages.join(','));
-			if (categoryId) params.set('category', categoryId);
 			const res = await fetch(`${api}?${params}`, { cache: 'no-store' });
 			if (!res.ok) throw new Error(`blog list ${res.status}`);
 			const body = (await res.json()) as ListResponse;
@@ -269,14 +245,11 @@ function initBlogList(root: HTMLElement): void {
 				gridEl.setAttribute('data-total', String(total));
 			}
 			const posts = ordered.flatMap((page) => page.posts);
-			if (replace) {
-				gridEl.replaceChildren();
-				if (!silent) setFilterSkeleton(false);
-			}
 			if (posts.length === 0) {
+				if (replace) gridEl.replaceChildren();
 				gridEl.hidden = true;
 				if (emptyEl instanceof HTMLElement) {
-					emptyEl.textContent = 'No articles in this category.';
+					emptyEl.textContent = 'No articles found.';
 				}
 			} else {
 				gridEl.hidden = false;
@@ -289,21 +262,24 @@ function initBlogList(root: HTMLElement): void {
 				if (remaining > 0) await sleep(remaining);
 				if (seq !== loadSeq) return;
 			}
-			appendPosts(posts, Boolean(opts.focusFirst));
+			if (replace && silent && posts.length > 0) {
+				syncPostsInPlace(posts);
+			} else if (replace) {
+				gridEl.replaceChildren();
+				appendPosts(posts, Boolean(opts.focusFirst));
+			} else {
+				appendPosts(posts, Boolean(opts.focusFirst));
+			}
 
 			const last = ordered[ordered.length - 1];
 			if (last) nextPage = last.page + 1;
 		} catch (err) {
 			if (seq !== loadSeq) return;
 			console.error('[blog-list] load failed:', err);
-			if (replace) {
-				if (!silent) setFilterSkeleton(false);
-				gridEl.hidden = shownCount() === 0;
-			}
+			if (replace) gridEl.hidden = shownCount() === 0;
 			if (statusEl && !silent) statusEl.textContent = "Couldn't load more articles.";
 			paintCounts({ keepStatus: true });
 		} finally {
-			// Always clear our own button loading (even if superseded by a category replace).
 			if (useButtonLoading) setLoadMoreLoading(false);
 			if (seq === loadSeq) {
 				loading = false;
@@ -401,27 +377,6 @@ function initBlogList(root: HTMLElement): void {
 		});
 	}
 
-	if (hasGrid && filtersEl instanceof HTMLElement) {
-		filtersEl.addEventListener('click', (e) => {
-			const chip = (e.target as Element | null)?.closest?.('[data-filter-chip]');
-			if (!(chip instanceof HTMLElement) || !filtersEl.contains(chip)) return;
-			filtersEl.querySelectorAll('[data-filter-chip]').forEach((o) => {
-				if (!(o instanceof HTMLElement)) return;
-				const on = o === chip;
-				o.classList.toggle('is-active', on);
-				o.setAttribute('aria-pressed', on ? 'true' : 'false');
-			});
-			const filter = chip.getAttribute('data-filter') || 'all';
-			categoryId = filter === 'all' ? '' : chip.getAttribute('data-category-id') || '';
-			if (perspectiveEl) {
-				perspectiveEl.textContent =
-					filter === 'all' ? 'All perspectives' : chip.textContent?.trim() || filter;
-			}
-			nextPage = 1;
-			void loadPages([1], { replace: true });
-		});
-	}
-
 	if (search instanceof HTMLInputElement) {
 		search.addEventListener('input', () => {
 			clearTimeout(debounceId);
@@ -478,15 +433,14 @@ function initBlogList(root: HTMLElement): void {
 
 	if (!hasGrid) return;
 
-	// Re-sync page 1 from /api/blog-posts on every load. Filter chips already do this
-	// (which is why images look fine after clicking a filter). Refresh alone served
-	// CDN-stale SSR HTML with 404 image URLs and removed posts like "test".
+	// Re-sync page 1 from /api/blog-posts on every load so refresh does not keep
+	// CDN-stale SSR HTML with 404 image URLs or removed posts.
 	void (async () => {
 		await loadPages([1], { replace: true, silent: true });
 		const wanted = Math.min(restore(), PAGE_SIZE * MAX_RESTORE_PAGES);
 		const already = shownCount();
 		const pagesNeeded = Math.ceil(wanted / PAGE_SIZE);
-		if (!categoryId && pagesNeeded > 1 && already < wanted && total > already) {
+		if (pagesNeeded > 1 && already < wanted && total > already) {
 			for (let page = 2; page <= pagesNeeded; page++) {
 				await loadPages([page]);
 				if (shownCount() >= wanted) break;

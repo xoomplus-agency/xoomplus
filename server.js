@@ -37,9 +37,13 @@ app.use((_req, res, next) => {
 });
 
 /**
- * Single place for slash normalization (Passenger → Express).
- * `/path/` → 301 → `/path` (+ query). Never the reverse. Homepage `/` unchanged.
- * Keep Apache DirectorySlash Off; do not also strip in Astro middleware/.htaccess.
+ * Slash normalization — INTERNAL REWRITE ONLY (no 301).
+ *
+ * Why not 301: Apache DirectorySlash can ADD `/` while a 301 strip REMOVES it →
+ * infinite redirect loop. Rewrite serves the slashless handler without bouncing
+ * the browser, so fighting is impossible. Canonicals + in-page links stay slashless.
+ *
+ * Keep Apache `DirectorySlash Off` in public/.htaccess. Do not strip in middleware.
  */
 app.use((req, res, next) => {
 	if (req.method !== 'GET' && req.method !== 'HEAD') return next();
@@ -63,10 +67,8 @@ app.use((req, res, next) => {
 	}
 
 	const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
-	res.setHeader('Cache-Control', 'public, max-age=3600');
-	res.setHeader('CDN-Cache-Control', 'max-age=3600');
-	res.setHeader('Cloudflare-CDN-Cache-Control', 'max-age=3600');
-	res.redirect(301, `${withoutSlash}${qs}`);
+	req.url = `${withoutSlash}${qs}`;
+	next();
 });
 
 /** Force CDN/browser to skip caching — CF was pinning robots/sitemaps for a year. */

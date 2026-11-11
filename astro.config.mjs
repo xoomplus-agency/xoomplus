@@ -28,7 +28,8 @@ export default defineConfig({
   // Only set when SITE_URL is provided — prevents accidental production canonicals in staging.
   site: env.SITE_URL || undefined,
 
-  // Slash normalization is Express-only (server.js). Astro must not add reciprocal slash redirects.
+  // Accept both forms. Express rewrites `/path/` internally (no 301) so Apache cannot loop.
+  // Never use 'always' — that would ADD slashes and fight slashless canonicals.
   trailingSlash: 'ignore',
 
   // Trust public host behind Cloudflare / cPanel TLS termination (Node socket is http).

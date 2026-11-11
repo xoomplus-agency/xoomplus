@@ -3,18 +3,18 @@ import { describe, it } from 'node:test';
 import { normalizeLinkHref } from './normalize-link';
 
 describe('normalizeLinkHref', () => {
-	const currentUrl = new URL('https://xoomplus.co.uk/about/');
+	const currentUrl = new URL('https://xoomplus.co.uk/about');
 
 	it('removes same-page fragments and retains the scroll target', () => {
 		assert.deepEqual(normalizeLinkHref('#contact', currentUrl), {
-			href: '/about/',
+			href: '/about',
 			scrollTarget: 'contact',
 		});
 	});
 
 	it('removes fragments from internal page links and preserves their target', () => {
 		assert.deepEqual(normalizeLinkHref('/contact#enquiry-form', currentUrl), {
-			href: '/contact/',
+			href: '/contact',
 			scrollTarget: 'enquiry-form',
 		});
 	});
@@ -26,15 +26,15 @@ describe('normalizeLinkHref', () => {
 		);
 	});
 
-	it('leaves links without fragments unchanged', () => {
+	it('normalizes trailing-slash links to slashless', () => {
 		assert.deepEqual(normalizeLinkHref('/contact/', currentUrl), {
-			href: '/contact/',
+			href: '/contact',
 		});
 	});
 
 	it('strips bare hash-only hrefs without inventing a scroll target', () => {
 		assert.deepEqual(normalizeLinkHref('#', currentUrl), {
-			href: '/about/',
+			href: '/about',
 		});
 	});
 });

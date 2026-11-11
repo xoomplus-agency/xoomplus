@@ -2,35 +2,11 @@
 import Section from './Section.astro';
 import BlogCard from './BlogCard.astro';
 import BlogPostsGrid from './BlogPostsGrid.astro';
-import BlogGridSkeleton from './BlogGridSkeleton.astro';
 import BlogSearch from './BlogSearch.astro';
-import {
-	BLOG_IMAGE_PLACEHOLDER,
-	categoryKey,
-	getPublishedCategories,
-} from '../lib/wp';
+import { BLOG_IMAGE_PLACEHOLDER } from '../lib/wp';
 import { BLOG_LIST_PAGE_SIZE } from '../lib/wp-posts';
 
 const PAGE_SIZE = BLOG_LIST_PAGE_SIZE;
-
-/** Categories in shell; posts render inline in BlogPostsGrid (SSR, no server island). */
-let categoryFilters: { id: number; key: string; label: string }[] = [];
-try {
-	const categories = await getPublishedCategories();
-	categoryFilters = categories
-		.filter(
-			(cat) =>
-				!/^uncategorized$/i.test(cat.slug) && !/^uncategorised$/i.test(cat.slug),
-		)
-		.map((cat) => ({
-			id: cat.id,
-			key: categoryKey(cat.name || cat.slug),
-			label: cat.name || cat.slug,
-		}))
-		.sort((a, b) => a.label.localeCompare(b.label));
-} catch (err) {
-	console.error('[BlogListing] getPublishedCategories failed:', err);
-}
 ---
 
 <Section aria-labelledby="blogs-heading">
@@ -47,7 +23,6 @@ try {
 				post={{ id: 0, slug: 'template', path: '/template/post/', title: 'Template' }}
 				image={BLOG_IMAGE_PLACEHOLDER}
 				alt="Blog article placeholder"
-				category="Category"
 				title="Template"
 				excerpt="Excerpt"
 			/>
@@ -67,37 +42,6 @@ try {
 		<BlogSearch />
 	</div>
 
-	<div
-		class="blog-listing__filters"
-		role="group"
-		aria-label="Filter articles by category"
-		data-blog-filters
-	>
-		<button
-			type="button"
-			class="blog-listing__chip is-active"
-			aria-pressed="true"
-			data-filter-chip
-			data-filter="all"
-		>
-			All articles
-		</button>
-		{
-			categoryFilters.map((cat) => (
-				<button
-					type="button"
-					class="blog-listing__chip"
-					aria-pressed="false"
-					data-filter-chip
-					data-filter={cat.key}
-					data-category-id={String(cat.id)}
-				>
-					{cat.label}
-				</button>
-			))
-		}
-	</div>
-
 	<hr class="blog-listing__divider" />
 
 	<noscript>
@@ -115,11 +59,7 @@ try {
 	{/*
 	  Render BlogPostsGrid inline (SSR). server:defer islands break on cPanel/Passenger
 	  when island chunks are missing or deploy hashes drift — /blog then 500s.
-	  Filter skeleton is client-toggled only while category chips refetch.
 	*/}
-	<div data-blog-filter-skeleton hidden>
-		<BlogGridSkeleton />
-	</div>
 	<BlogPostsGrid />
 	</div>
 </Section>
@@ -135,8 +75,8 @@ try {
 	}
 
 	/*
-	  Grid/meta/load-more render inside BlogPostsGrid / BlogGridSkeleton
-	  (server:defer). Keep rules global so deferred HTML inherits layout.
+	  Grid/meta/load-more render inside BlogPostsGrid.
+	  Keep rules global so the listing inherits layout.
 	*/
 	[data-blog-listing] .blog-listing__meta {
 		display: flex;
@@ -171,19 +111,11 @@ try {
 		grid-template-columns: 1fr;
 		gap: 24px;
 		margin-top: 40px;
-		content-visibility: visible;
 	}
 
 	[data-blog-listing] .blog-listing__item {
 		min-width: 0;
 		height: 100%;
-		content-visibility: visible;
-	}
-
-	/* Below-fold only (first row has no --cv). Fixed intrinsic size avoids zero-height. */
-	[data-blog-listing] .blog-listing__item--cv {
-		content-visibility: auto;
-		contain-intrinsic-size: 400px 420px;
 	}
 
 	[data-blog-listing] .blog-listing__load-more {
@@ -250,49 +182,6 @@ try {
 		margin: 16px 0 0;
 	}
 
-	.blog-listing__filters {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-		margin-top: 28px;
-	}
-
-	.blog-listing__chip {
-		box-sizing: border-box;
-		padding: 8px 16px;
-		border: 1px solid #e9e9e7;
-		border-radius: 9999px;
-		background: #ffffff;
-		font-family: var(--font-inter);
-		font-size: 13px;
-		font-weight: 500;
-		line-height: 1.3;
-		color: var(--color-primary-black);
-		cursor: pointer;
-		transition:
-			background-color 0.2s ease,
-			border-color 0.2s ease,
-			color 0.2s ease,
-			transform var(--dur-fast) var(--ease-out);
-	}
-
-	.blog-listing__chip.is-active {
-		border-color: #ffa800;
-		background: #ffa800;
-		color: var(--color-primary-black);
-	}
-
-	.blog-listing__chip:focus-visible {
-		outline: 2px solid #ffa800;
-		outline-offset: 2px;
-	}
-
-	@media (hover: hover) {
-		.blog-listing__chip:hover {
-			border-color: #ffa800;
-		}
-	}
-
 	.blog-listing__divider {
 		margin: 40px 0;
 		border: 0;
@@ -309,22 +198,6 @@ try {
 		.blog-listing__header {
 			flex-direction: column;
 			align-items: stretch;
-		}
-
-		.blog-listing__filters {
-			flex-wrap: nowrap;
-			overflow-x: auto;
-			padding-bottom: 4px;
-			-webkit-overflow-scrolling: touch;
-			scrollbar-width: none;
-		}
-
-		.blog-listing__filters::-webkit-scrollbar {
-			display: none;
-		}
-
-		.blog-listing__chip {
-			flex-shrink: 0;
 		}
 	}
 </style>

@@ -127,28 +127,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	/**
-	 * `/path/` → 301 → `/path` (dev + SSR). Express `server.js` does the same for
-	 * production static files. Strip only — never add a trailing slash.
+	 * Do NOT 301-strip trailing slashes here.
+	 * Production: Express rewrites `/path/` → `/path` internally (no Location header),
+	 * so Apache DirectorySlash cannot fight us. Astro `trailingSlash: 'ignore'` accepts both.
 	 */
-	{
-		const raw = context.url.pathname;
-		const isExcluded =
-			raw.startsWith('/api/') ||
-			raw.startsWith('/_astro/') ||
-			raw.startsWith('/images/') ||
-			raw.startsWith('/videos/') ||
-			raw.startsWith('/fonts/') ||
-			raw.startsWith('/icons/') ||
-			raw === '/robots.txt' ||
-			raw.endsWith('.xml') ||
-			raw.endsWith('.txt') ||
-			/\.[a-z0-9]+$/i.test(raw.replace(/\/+$/, ''));
-		if (!isExcluded && raw.length > 1 && raw.endsWith('/')) {
-			const stripped = raw.replace(/\/+$/, '') || '/';
-			const qs = context.url.search || '';
-			return redirect301(`${stripped}${qs}`);
-		}
-	}
 
 	if (refresh) {
 		const { clearWpPostsCache } = await import('./lib/wp-posts');

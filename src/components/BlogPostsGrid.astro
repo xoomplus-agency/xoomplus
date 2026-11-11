@@ -43,11 +43,11 @@ const hasMore = totalPages > 1;
 		</p>
 	) : blogs.length === 0 ? (
 		<p class="blog-listing__empty" role="status" data-blog-empty>
-			No articles in this category.
+			No articles found.
 		</p>
 	) : (
 		<p class="blog-listing__empty" role="status" aria-live="polite" hidden data-blog-empty>
-			No articles in this category.
+			No articles found.
 		</p>
 	)
 }
@@ -66,7 +66,7 @@ const hasMore = totalPages > 1;
 	{
 		blogs.map((post, index) => (
 			<li
-				class:list={['blog-listing__item', index >= 3 && 'blog-listing__item--cv']}
+				class="blog-listing__item"
 				data-reveal="up"
 				data-post-card
 				data-category={categoryKey(post.category || post.categorySlug || '')}

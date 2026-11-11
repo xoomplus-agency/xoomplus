@@ -441,7 +441,10 @@ export function resolveIdFromSlug(slug: string): number | null {
 }
 
 export function frontendAbsoluteUrl(siteUrl: string, route: string): string {
-	return `${stripTrailingSlash(siteUrl)}${withTrailingSlashPath(route)}`;
+	const path = normalizeSeoPath(route);
+	return path === '/'
+		? `${stripTrailingSlash(siteUrl)}/`
+		: `${stripTrailingSlash(siteUrl)}${path}`;
 }
 
 // —— URL rewrite ——
@@ -519,10 +522,11 @@ function rewriteUrlsDeepToFrontend(
 	return value;
 }
 
-function applyTrailingSlash(url: string): string {
+/** Prefer slashless public paths (except `/`) — matches Express strip policy. */
+function applyPreferredSlash(url: string): string {
 	try {
 		const u = new URL(url);
-		u.pathname = withTrailingSlashPath(u.pathname);
+		u.pathname = normalizeSeoPath(u.pathname);
 		return u.href;
 	} catch {
 		return url;
@@ -731,7 +735,7 @@ export function normalizePage(
 	const yoastCanonicalPath = pathnameOf(yoast.canonical);
 	const wpLinkPath = pathnameOf(raw.link);
 	if (yoast.canonical && yoastCanonicalPath && wpLinkPath && !pathsMatch(yoastCanonicalPath, wpLinkPath)) {
-		canonical = applyTrailingSlash(hostRewriteUrl(yoast.canonical, wpBase, siteUrl));
+		canonical = applyPreferredSlash(hostRewriteUrl(yoast.canonical, wpBase, siteUrl));
 	} else {
 		canonical = frontendUrl;
 	}
@@ -779,7 +783,7 @@ export function normalizePage(
 
 	// Keep WP permalink path (host-rewritten) for diagnostics when drifted.
 	const wpLink = raw.link
-		? applyTrailingSlash(hostRewriteUrl(raw.link, wpBase, siteUrl))
+		? applyPreferredSlash(hostRewriteUrl(raw.link, wpBase, siteUrl))
 		: null;
 
 	return {

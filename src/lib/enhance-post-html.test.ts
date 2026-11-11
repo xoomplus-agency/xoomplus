@@ -154,7 +154,7 @@ function assertTextPreserved(original: string, enhanced: string, needles: string
 	const original = `
 <div class="custom-callout" style="background:red;padding:99px">
   <h3 style="margin:40px">Note</h3>
-  <p>Body with a <a href="/contact/">link</a>.</p>
+  <p>Body with a <a href="/contact">link</a>.</p>
 </div>
 <aside class="key-takeaways" style="border:2px solid blue">
   <p><strong>Key Takeaways</strong></p>
@@ -167,7 +167,7 @@ function assertTextPreserved(original: string, enhanced: string, needles: string
 	assert.ok(!/key-takeaways"[^>]*\sstyle=/.test(enhanced), 'takeaways style stripped');
 	assert.ok(enhanced.includes('data-toc-exclude'), 'heading inside callout TOC-excluded');
 	assert.ok(enhanced.includes('Body with a'), 'callout text unchanged');
-	assert.ok(enhanced.includes('<a href="/contact/">link</a>'), 'link kept');
+	assert.ok(enhanced.includes('<a href="/contact">link</a>'), 'link kept');
 	console.log('✓ callout/takeaways: style stripped, TOC-excluded, classes kept');
 }
 

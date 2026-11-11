@@ -4,7 +4,8 @@ import { postUrl, type WpPost } from '../lib/wp';
 interface Props {
 	image: string;
 	alt: string;
-	category: string;
+	/** @deprecated Unused in card UI — kept optional for existing call sites. */
+	category?: string;
 	title: string;
 	excerpt: string;
 	/**
@@ -29,7 +30,6 @@ interface Props {
 const {
 	image: imageProp,
 	alt: altProp,
-	category: categoryProp,
 	title: titleProp,
 	excerpt: excerptProp,
 	post,
@@ -37,7 +37,7 @@ const {
 	size = 'default',
 	headingLevel = 'h3',
 	srcset,
-	sizes = '(min-width:1024px) 33vw, 100vw',
+	sizes = '(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw',
 	width = 400,
 	height = 240,
 	loading = 'lazy',
@@ -47,28 +47,24 @@ const {
 /** Null-safe — a missing field must not blank the whole listing grid. */
 const title = (titleProp ?? post?.title ?? 'Untitled').toString();
 const excerpt = (excerptProp ?? '').toString();
-const category = (categoryProp ?? '').toString();
 const image = (imageProp || '/images/1st.webp').toString();
 const alt = (altProp || title).toString();
 
-let href = '/blog/';
+let href = '/blog';
 try {
 	href = post
 		? postUrl(post)
 		: hrefProp && /\/blog\/[^/]+\/?$/.test(hrefProp)
-			? hrefProp.endsWith('/')
-				? hrefProp
-				: `${hrefProp}/`
+			? hrefProp.replace(/\/+$/, '')
 			: post?.slug
 				? postUrl({ slug: post.slug, id: post.id ?? 0, title, postSlug: post.postSlug || post.slug })
-				: '/blog/';
+				: '/blog';
 } catch (err) {
 	console.error(`[BlogCard] href resolve failed for "${title}":`, err);
-	href = '/blog/';
+	href = '/blog';
 }
 
 const TitleTag = headingLevel;
-const showCategory = Boolean(category.trim());
 ---
 
 <article class:list={['blog-card-wrap', size === 'compact' && 'blog-card-wrap--compact']}>
@@ -89,16 +85,6 @@ const showCategory = Boolean(category.trim());
 		</div>
 
 		<div class="blog-card__meta">
-			{
-				showCategory ? (
-					<span class="blog-card__category">
-						<span class="blog-card__dot" aria-hidden="true"></span>
-						{category}
-					</span>
-				) : (
-					<span class="blog-card__category" aria-hidden="true"></span>
-				)
-			}
 			<span class="blog-card__label">From our blog</span>
 		</div>
 
@@ -172,29 +158,7 @@ const showCategory = Boolean(category.trim());
 	.blog-card__meta {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
 		margin-top: 16px;
-	}
-
-	.blog-card__category {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		font-family: var(--font-inter);
-		font-size: var(--text-small);
-		font-weight: 500;
-		line-height: 1.3;
-		color: #555555;
-		min-height: 1.3em;
-	}
-
-	.blog-card__dot {
-		flex-shrink: 0;
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: #ffa800;
 	}
 
 	.blog-card__label {

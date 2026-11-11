@@ -67,18 +67,18 @@ export const RESERVED_BLOG_CATEGORY_SLUGS = new Set([
 ]);
 
 /** Prefer these size keys (in order) for the primary `src` (LCP-friendly ≤1536). */
-const PREFERRED_SIZES = ['medium_large', 'large', '1536x1536'] as const;
+/** Listing/card hero pick — keep under ~1024w to avoid Chrome decode OOM on scroll. */
+const PREFERRED_SIZES = ['medium_large', 'large'] as const;
 
 /**
- * Featured-image srcset: real WP variants only (300 / 768 / 1024 / 1536).
- * Excludes the 2000px `full` original and theme crop sizes (digtek_*).
+ * Featured-image srcset: real WP variants only (300 / 768 / 1024).
+ * Never include `full` / 1536+ originals — those crash Chromium when many
+ * lazy card images decode during scroll.
+ * Excludes theme crop sizes (digtek_*).
  */
-const FEATURE_SRCSET_KEYS = new Set([
-	'medium',
-	'medium_large',
-	'large',
-	'1536x1536',
-]);
+const FEATURE_SRCSET_KEYS = new Set(['medium', 'medium_large', 'large']);
+/** Hard cap — ignore any WP size wider than this even if keyed above. */
+const FEATURE_SRCSET_MAX_W = 1024;
 
 type WpMediaSize = {
 	file?: string;
@@ -321,27 +321,36 @@ function mapImage(media: WpFeaturedMedia | undefined, title: string): WpPostImag
 		break;
 	}
 
-	const src =
-		chosen?.source_url ||
-		fullSrc ||
-		Object.values(sizes).find((s) => s.source_url)?.source_url;
+	const fallbackSized = Object.values(sizes).find(
+		(s) =>
+			s.source_url &&
+			s.width &&
+			s.width <= FEATURE_SRCSET_MAX_W &&
+			(!fullSrc || sizeMatchesAttachment(fullSrc, s.source_url)),
+	);
+	// Prefer a resized variant — never use the full original as the card `src`.
+	const src = chosen?.source_url || fallbackSized?.source_url || fullSrc;
 	if (!src) return null;
 
-	const width = chosen?.width ?? media.media_details?.width ?? 1200;
-	const height = chosen?.height ?? media.media_details?.height ?? 720;
+	const width = chosen?.width ?? fallbackSized?.width ?? Math.min(media.media_details?.width ?? 768, FEATURE_SRCSET_MAX_W);
+	const height =
+		chosen?.height ??
+		fallbackSized?.height ??
+		Math.round(
+			((media.media_details?.height ?? 480) * width) /
+				Math.max(media.media_details?.width ?? width, 1),
+		);
 
 	const srcsetParts: string[] = [];
 	const seenWidths = new Set<number>();
 	for (const key of FEATURE_SRCSET_KEYS) {
 		const size = sizes[key];
 		if (!size?.source_url || !size.width) continue;
+		if (size.width > FEATURE_SRCSET_MAX_W) continue;
 		if (fullSrc && !sizeMatchesAttachment(fullSrc, size.source_url)) continue;
 		if (seenWidths.has(size.width)) continue;
 		seenWidths.add(size.width);
 		srcsetParts.push(`${size.source_url} ${size.width}w`);
-	}
-	if (fullSrc && media.media_details?.width && !seenWidths.has(media.media_details.width)) {
-		srcsetParts.push(`${fullSrc} ${media.media_details.width}w`);
 	}
 	// Sort ascending so browsers pick cleanly
 	srcsetParts.sort(

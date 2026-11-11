@@ -534,7 +534,7 @@ function stripAnchorFragments(nodes: Node[]): void {
 
 		const isInternal = CMS_HOSTS.has(destination.hostname.toLowerCase());
 		if (isInternal) {
-			const pathname = withTrailingSlashPath(destination.pathname || '/');
+			const pathname = withoutTrailingSlashPath(destination.pathname || '/');
 			el.attributes.href = `${pathname}${destination.search}`;
 			el.attributes['data-scroll-target'] = fragment;
 		} else {
@@ -543,11 +543,11 @@ function stripAnchorFragments(nodes: Node[]): void {
 	}
 }
 
-function withTrailingSlashPath(pathname: string): string {
+/** Slashless site paths — trailing slash fights Express/middleware 301 strip. */
+function withoutTrailingSlashPath(pathname: string): string {
 	if (!pathname || pathname === '/') return '/';
 	const cleaned = pathname.split('?')[0].split('#')[0].replace(/\/+$/, '');
-	const withSlash = cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
-	return `${withSlash}/`;
+	return cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
 }
 
 function isAstroSitePath(pathname: string): boolean {
@@ -596,7 +596,7 @@ function rewriteCmsPageLinks(nodes: Node[]): void {
 		}
 
 		if (isCmsHost && isAstroSitePath(path)) {
-			el.attributes.href = withTrailingSlashPath(path) + absolute.search + absolute.hash;
+			el.attributes.href = withoutTrailingSlashPath(path) + absolute.search + absolute.hash;
 			delete el.attributes.target;
 			delete el.attributes.rel;
 			continue;
