@@ -18,6 +18,7 @@ type SafariMode = "default" | "simple"
 export interface SafariProps extends HTMLAttributes<HTMLDivElement> {
   url?: string
   imageSrc?: string
+  imageAlt?: string
   videoSrc?: string
   mode?: SafariMode
   /** Unique prefix so multiple Safari frames on one page don't clash mask/clip IDs. */
@@ -26,6 +27,7 @@ export interface SafariProps extends HTMLAttributes<HTMLDivElement> {
 
 export function Safari({
   imageSrc,
+  imageAlt = "Website screenshot",
   videoSrc,
   url,
   mode = "default",
@@ -84,7 +86,7 @@ export function Safari({
         >
           <img
             src={imageSrc}
-            alt=""
+            alt={imageAlt}
             className="block size-full object-cover object-top"
             loading="lazy"
             decoding="async"

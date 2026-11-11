@@ -245,6 +245,8 @@ export type MainService = {
 	process: ServiceProcessData;
 	/** Nested pages at /services/<slug>/<child-slug>. */
 	children?: ChildService[];
+	/** Optional Why Xoomplus section; omit to hide. */
+	why?: import('../why-xoomplus').WhyXoomplusContent;
 	faqKey?: string;
 	// Optional future escape hatch — hide/reorder blocks without forking the template.
 	// overrides?: { ... };

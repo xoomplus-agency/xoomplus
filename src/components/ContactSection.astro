@@ -84,7 +84,19 @@ const contactItems = [
 						contactItems.map((item) => (
 							<li class="contact-list__item">
 								<span class="contact-list__icon" aria-hidden="true">
-									<img src={item.icon} alt="" width="36" height="36" decoding="async" />
+									<img
+										src={item.icon}
+										alt={
+											item.icon.endsWith('phone.svg')
+												? 'Phone'
+												: item.icon.endsWith('email.svg')
+													? 'Email'
+													: 'Location'
+										}
+										width="36"
+										height="36"
+										decoding="async"
+									/>
 								</span>
 								{item.href ? (
 									<a class="contact-list__text" href={item.href}>
@@ -359,14 +371,20 @@ const contactItems = [
 </style>
 
 <script>
-	/* After images/map settle, re-apply hash scroll once so #contact stays clear of the navbar. */
-	if (location.hash === '#contact') {
-		window.addEventListener(
-			'load',
-			() => {
-				document.getElementById('contact')?.scrollIntoView();
-			},
-			{ once: true },
-		);
-	}
+	/*
+	 * Layout scrolls via `data-scroll-target` (no # in the URL). After images/map settle,
+	 * nudge once if the contact block is already the focused scroll target.
+	 */
+	window.addEventListener(
+		'load',
+		() => {
+			const el = document.getElementById('contact');
+			if (!el) return;
+			const top = el.getBoundingClientRect().top;
+			if (top > -120 && top < 160) {
+				el.scrollIntoView();
+			}
+		},
+		{ once: true },
+	);
 </script>

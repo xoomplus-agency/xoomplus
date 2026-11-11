@@ -112,7 +112,7 @@ export const servicesDetail: ServiceDetailEntry[] = [
 		noteTitle: 'Not sure where your search visibility is falling short?',
 		note: 'An SEO Audit clarifies whether your technical foundations or your content need attention first.',
 		noteButtonLabel: 'Book an SEO Audit',
-		noteButtonHref: '/contact#contact-form',
+		noteButtonHref: '/contact/',
 	},
 	{
 		layout: 'pair',

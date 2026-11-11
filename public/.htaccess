@@ -1,20 +1,24 @@
 # Xoomplus static site — upload dist/ contents into public_html
 # (Astro directory format: /about/index.html)
+# Slashless URLs: /about (not /about/). DirectorySlash must stay Off or it
+# fights Node middleware (add slash ↔ strip slash = infinite redirect).
 
 Options -Indexes
 DirectoryIndex index.html
+DirectorySlash Off
 
-# Pretty URLs: /about → /about/ or /about/index.html
+# DirectorySlash Off = Apache must not ADD trailing slashes (that would fight Express 301 strip).
+# Slash strip 301 lives only in server.js — do not duplicate here.
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteBase /
 
-	# Existing files/dirs
-	RewriteCond %{REQUEST_FILENAME} -f [OR]
-	RewriteCond %{REQUEST_FILENAME} -d
+	# Existing files
+	RewriteCond %{REQUEST_FILENAME} -f
 	RewriteRule ^ - [L]
 
-	# Trailing-slash directories with index.html
+	# /about → /about/index.html (slashless; trailing-slash requests are 301'd by Node first)
+	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME}/index.html -f
 	RewriteRule ^(.*)$ $1/index.html [L]
 

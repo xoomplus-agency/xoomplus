@@ -31,7 +31,7 @@ const secondaryLink = normalizeLinkHref(hero.secondaryLink.href, Astro.url);
 	<img
 		class="service-hero__media"
 		src={bgImage}
-		alt=""
+		alt={`${titleLine1} ${titleLine2} service hero background`}
 		width="1920"
 		height="1080"
 		decoding="async"
@@ -105,7 +105,7 @@ const secondaryLink = normalizeLinkHref(hero.secondaryLink.href, Astro.url);
 						<img
 							class="service-hero__panel-plus"
 							src={panelPlus}
-							alt=""
+							alt="Decorative plus icon"
 							width="278"
 							height="277"
 							aria-hidden="true"

@@ -40,6 +40,7 @@ const blogPosts: Promise<WpPost[]> = getPosts({ perPage: 3 })
 <Layout
 	title={HOME_SEO.title}
 	description={HOME_SEO.description}
+	canonicalPath="/"
 	image={SITE_OG_HOME_HERO}
 	skipWpSeo
 	lcpImagePreload={{

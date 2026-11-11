@@ -77,7 +77,7 @@ function fillCard(li: HTMLElement, post: Card): void {
 		img.loading = 'lazy';
 		img.decoding = 'async';
 		img.removeAttribute('fetchpriority');
-		img.alt = post.alt || '';
+		img.alt = post.alt || post.title || 'Blog article';
 		img.width = post.width || 400;
 		img.height = post.height || 240;
 		if (post.srcset) {
@@ -335,7 +335,7 @@ function initBlogList(root: HTMLElement): void {
 				? `<span class="blog-listing__search-cat">${esc(h.category)}</span>`
 				: '';
 			const img = h.image
-				? `<img class="blog-listing__search-thumb" src="${esc(h.image)}" alt="" width="64" height="48" loading="lazy" decoding="async">`
+				? `<img class="blog-listing__search-thumb" src="${esc(h.image)}" alt="${esc(h.alt || h.title || 'Blog article')}" width="64" height="48" loading="lazy" decoding="async">`
 				: '';
 			return `<a id="blog-search-option-${i}" class="blog-listing__search-option" role="option" aria-selected="false" href="${esc(h.href)}" data-search-option><span class="blog-listing__search-media">${img}</span><span class="blog-listing__search-body"><span class="blog-listing__search-title">${esc(h.title)}</span>${cat}</span></a>`;
 		});

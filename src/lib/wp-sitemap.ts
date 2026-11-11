@@ -7,10 +7,9 @@
 
 import {
 	getSiteUrl,
-	withTrailingSlashPath,
+	normalizeSeoPath,
 	WP_PAGE_FALLBACK_ROUTES,
 } from './wp-seo';
-import { withTrailingSlash } from './wp';
 import {
 	getLiveChildServices,
 	isDisabledChildPath,
@@ -91,10 +90,13 @@ export function toLastmodIso(modifiedGmt: string): string {
 	return `${raw}+00:00`;
 }
 
+/**
+ * Absolute sitemap URL — no trailing slash except homepage `https://…/`.
+ */
 export function siteAbsoluteUrl(siteUrl: string, path: string): string {
 	const origin = stripTrailingSlash(siteUrl);
-	const pathname = path === '/' ? '/' : withTrailingSlashPath(path);
-	return `${origin}${pathname === '/' ? '/' : pathname}`;
+	if (!path || path === '/') return `${origin}/`;
+	return `${origin}${normalizeSeoPath(path)}`;
 }
 
 export function postSiteUrlFromLink(
@@ -115,8 +117,8 @@ export function postSiteUrlFromLink(
 	if (normalized === '/' || !normalized.endsWith(`/${cleanedSlug}`)) {
 		return null;
 	}
-	// Public Astro URLs are always /blog/{slug}/ (legacy CMS paths redirect).
-	return siteAbsoluteUrl(siteUrl, withTrailingSlash(`/blog/${cleanedSlug}`));
+	// Public Astro URLs are always /blog/{slug} (legacy CMS paths redirect).
+	return siteAbsoluteUrl(siteUrl, `/blog/${cleanedSlug}`);
 }
 
 /**
@@ -337,21 +339,21 @@ function collectStaticPagePaths(): string[] {
 	const paths = new Set<string>();
 
 	for (const route of Object.values(WP_PAGE_FALLBACK_ROUTES)) {
-		paths.add(route === '/' ? '/' : withTrailingSlashPath(route));
+		paths.add(route === '/' ? '/' : normalizeSeoPath(route));
 	}
 	for (const route of ['/pricing', '/privacy-policy']) {
-		paths.add(withTrailingSlashPath(route));
+		paths.add(normalizeSeoPath(route));
 	}
 	for (const loc of locations) {
-		paths.add(withTrailingSlashPath(`/locations/${loc.slug}`));
+		paths.add(normalizeSeoPath(`/locations/${loc.slug}`));
 	}
 	for (const study of caseStudies) {
-		paths.add(withTrailingSlashPath(`/case-studies/${study.slug}`));
+		paths.add(normalizeSeoPath(`/case-studies/${study.slug}`));
 	}
 	for (const service of mainServices) {
-		paths.add(withTrailingSlashPath(`/services/${service.slug}`));
+		paths.add(normalizeSeoPath(`/services/${service.slug}`));
 		for (const child of getLiveChildServices(service)) {
-			paths.add(withTrailingSlashPath(`/services/${service.slug}/${child.slug}`));
+			paths.add(normalizeSeoPath(`/services/${service.slug}/${child.slug}`));
 		}
 	}
 

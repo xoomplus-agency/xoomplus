@@ -61,37 +61,34 @@ export const webDesignDevelopment: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Purposeful experiences. Stronger websites.',
-	metaTitle: 'Web Design and Development Agency | Xoomplus',
+	metaTitle: 'Web Design and Development Agency Manchester | XoomPlus',
 	metaDescription:
-		'Custom web design and development agency in Manchester built around your business. Fast, mobile-friendly websites that turn visitors into customers.',
+		'Need a better website? Choose a Web Design and Development Agency in Manchester for custom, user-friendly websites designed to convert visitors.',
 	children: [
 		{
 			...uiuxChild,
-			metaTitle: 'UI and UX Design Agency | User-Focused Design',
+			metaTitle: 'UI/UX Design Agency Manchester | Web & Mobile App Design',
 			metaDescription:
-				'Xoomplus is a UI and UX design agency in Manchester creating intuitive, user-focused interfaces that keep visitors engaged and convert.',
+				'Struggling with poor website usability? Our UI/UX Design Agency in Manchester creates intuitive interfaces that improve navigation and user satisfaction.',
 			// Hero image: /images/ui-ux-design.webp (falls back to .jpg until webp is added).
 			hero: {
 				...uiuxChild.hero,
-				pill: 'UI/UX Design Agency in Manchester',
+				pill: 'UI/UX Design Agency',
 				titleLines: [
-					'UI/UX Design That Makes',
-					'Every Interaction Count',
+					'UI/UX Design Agency Manchester |',
+					'Create Better Experiences',
 				],
 				paragraphs: [
-					'A digital product should do more than look good. It should help people find what they need and complete tasks with ease.',
-					'XoomPlus designs websites, mobile apps, web applications and CRM systems for businesses in Manchester and across the UK. We combine usability and visual design to create intuitive experiences that reflect your users’ needs and business goals.',
-					'Whether you’re improving an existing interface or planning a new product, we turn your requirements into clear designs before development begins.',
+					'Poor user experience, inconsistent interface elements and complex navigation can create friction across digital products. When users struggle to find information or complete tasks, they may lose interest, leave your website or choose a competitor instead.',
+					"As a UI/UX design agency in Manchester, we create user-friendly websites, mobile apps, web applications and CRM systems for businesses across the UK. We combine clear layouts, intuitive navigation and engaging visual design to create digital experiences that meet your users' needs and support your business goals.",
+					'From improving existing interfaces to designing new products, our UI/UX design experts turn your ideas into practical, user-focused designs that are ready for development.',
 				],
 				buttonLabel: 'Book a UI/UX Consultation',
 			},
 			features: {
 				pill: 'User-Centred Design',
-				titleLines: [
-					'UI/UX Design Built Around',
-					'Your Users',
-				],
-				text: 'Good design helps people find what they need and use your product with confidence. We bring usability, visual appeal and business goals together to create a smoother experience.',
+				titleLines: ['What Is UI/UX', 'Design?'],
+				text: 'UI/UX design is the process of creating digital products that are visually appealing and easy to use. UI focuses on the look of a product, including layouts, colours, buttons and typography. UX focuses on how users interact with it and how easily they complete tasks.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
@@ -111,21 +108,20 @@ export const webDesignDevelopment: MainService = {
 				],
 			},
 			processPill: 'Business Benefits',
-			processHeading: 'Create a More Useful Digital Experience',
+			processHeading: 'How Better UI/UX Design Supports Your Business',
 			processText: [
-				'Thoughtful design makes your website and digital tools easier to use. Clear navigation helps users find what they need, consistent visuals build trust, and intuitive interfaces simplify everyday tasks. Responsive layouts improve usability across devices, while prototypes help identify issues before development.',
+				'Thoughtful design makes your website and digital tools easier to use. Clear navigation helps users find what they need, consistent visuals build trust and intuitive interfaces simplify everyday tasks. Responsive layouts improve usability across devices, while prototypes help identify issues before development.',
 				'Design cannot guarantee better conversions or productivity, but it creates a stronger foundation for improvement.',
 			],
 			// Prefer `/images/uiux-design-working-together.webp` (auto lookup).
-			// Card grid (below Working together) + scroll stack (below Clarity).
 			services: {
 				pill: 'Services',
-				heading: 'Our UI/UX Design Services',
-				text: 'Every digital product has different goals. Our UI/UX design services shape websites, apps and business systems around your users and needs.',
+				heading: 'Professional UI/UX Design Services',
+				text: 'Our UI/UX design services in Manchester shape websites, apps and business systems around your users and needs.',
 				cards: [
 					{
 						title: 'Website UI/UX Design',
-						text: 'We design intuitive page structures, user journeys and layouts that help visitors find information and take the next step.',
+						text: 'As a UI/UX design agency in Manchester, we design intuitive page structures, user journeys and layouts that help visitors find information and take the next step.',
 					},
 					{
 						title: 'Mobile App UI/UX Design',
@@ -156,8 +152,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			serviceStack: {
 				pill: 'Our Approach',
-				heading: 'From Requirements to Development-Ready Designs',
-				text: 'Our design process aligns business objectives with practical interface decisions, tailored to your product, users and project requirements across Manchester and the UK.',
+				heading: 'Our Simple and Clear UI/UX Design Process',
+				text: 'Our process aligns business objectives with practical interface decisions.',
 				cards: [
 					{
 						title: 'Discovery and Workflow Mapping',
@@ -189,12 +185,12 @@ export const webDesignDevelopment: MainService = {
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Applications',
-				title: 'Design Around Your Industry and Users',
+				title: 'UI/UX Design Around Your Industry and Users',
 				titleLines: [
-					'Design Around Your Industry',
-					'and Users',
+					'UI/UX Design Around Your',
+					'Industry and Users',
 				],
-				text: 'We adapt each project to the needs of your product, whether it’s a customer-facing website or an internal business platform.',
+				text: "As a UI/UX design firm in Manchester, we adapt each project to the needs of your product, whether it's a customer-facing website or an internal business platform.",
 				columns: [
 					{
 						items: [
@@ -225,13 +221,51 @@ export const webDesignDevelopment: MainService = {
 						],
 					},
 				],
-				note: 'These examples reflect common design needs, but our work isn’t limited to specific industries. We assess each project according to its objectives and requirements.',
+				note: "These examples reflect common design needs, but our work isn't limited to specific industries. We assess each project according to its objectives and requirements.",
+			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for UI/UX Design',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other UI/UX Design Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium UI/UX design services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
+					},
+				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
 				title: 'More Than Design. Everything Your Digital Project Needs.',
-				text: 'UI/UX design can contribute to a broader digital strategy. Explore our core services to support website development, improve search visibility and align landing pages with wider marketing objectives.',
+				text: 'UI and UX design can contribute to a broader digital strategy. Explore our core services to support website development, improve search visibility and align landing pages with wider marketing objectives.',
 				cards: [
 					{
 						icon: '/icons/service-layers.svg',
@@ -253,7 +287,7 @@ export const webDesignDevelopment: MainService = {
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Improve your website’s visibility through relevant content, technical optimisation and a focused SEO strategy.',
+							"Improve your website's visibility through relevant content, technical optimisation and a focused SEO strategy.",
 						items: [
 							'AI SEO (GEO & AEO)',
 							'Local SEO',
@@ -261,6 +295,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -286,8 +321,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Frequently Asked Questions',
-				text: 'Learn more about our design services, project costs, deliverables and development handover.',
+				heading: 'FAQs About UI/UX Design',
+				text: 'Learn more about our UI and UX design services.',
 				items: [
 					{
 						question: 'What Is the Difference Between UI and UX Design?',
@@ -302,7 +337,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'How Long Does a UI/UX Design Project Take?',
 						answer:
-							'Timelines depend on the project’s complexity, number of screens, feedback cycles and agreed deliverables.',
+							"Timelines depend on the project's complexity, number of screens, feedback cycles and agreed deliverables.",
 					},
 					{
 						question: 'What Can You Design?',
@@ -317,7 +352,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'Can I Use Your Designs With Another Development Company?',
 						answer:
-							'Yes. You can share the agreed design deliverables with your chosen development partner, subject to the project’s scope and handover arrangements.',
+							"Yes. You can share the agreed design deliverables with your chosen development partner, subject to the project's scope and handover arrangements.",
 					},
 				],
 			},
@@ -326,39 +361,39 @@ export const webDesignDevelopment: MainService = {
 				heading: 'Let’s Bring Your Digital Product to Life',
 				text: 'From websites to apps and CRMs, let’s shape an experience around your users and goals.',
 				buttonLabel: 'Book a UI/UX Consultation →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Discuss Your Project →',
-				secondaryButtonHref: '/contact',
+				secondaryButtonHref: '/contact#enquiry-form',
 				secondaryLabel: 'info@xoomplus.co.uk',
 				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
 		{
 			...landingChild,
-			metaTitle: 'Landing Page Design Services | Boost Conversions',
+			metaTitle: 'Landing Page Design Manchester | Design That Converts',
 			metaDescription:
-				'Paying for traffic that doesn’t convert? Xoomplus designs landing pages in Manchester built to capture leads and lift your ad and campaign results.',
+				'Turn more clicks into customers with XoomPlus. Get professional Landing Page Design in Manchester focused on engagement, leads and conversions.',
 			hero: {
 				...landingChild.hero,
 				pill: 'Landing Page Design Agency in Manchester',
 				titleLines: [
-					'Landing Pages Built Around',
-					'Your Goals',
+					'Landing Page Design Manchester |',
+					'Turn Clicks into Leads',
 				],
 				paragraphs: [
-					'A landing page should do more than attract attention. It should help visitors understand your offer and take the next step.',
-					'XoomPlus designs landing pages for businesses in Manchester and across the UK. We combine clear messaging, purposeful layouts and visual design to support service promotions, advertising campaigns and lead generation.',
-					'Each page is tailored to your audience and objectives, giving your campaign a clear message and a straightforward route to conversion.',
+					'A weak page structure, unclear content hierarchy and ineffective calls to action can make it difficult for visitors to understand your offer or take the next step. These issues can reduce user engagement, lower conversion rates and result in missed business opportunities.',
+					'As a landing page design agency in Manchester, we create conversion-focused landing pages using clear messaging, user-friendly layouts and engaging visual design. Our designs support service promotions, advertising campaigns and lead generation.',
+					'Every landing page is customised according to your target audience and business goals, helping visitors understand your offer, build trust in your brand and take action.',
 				],
 				buttonLabel: 'Discuss Your Landing Page',
 			},
 			features: {
 				pill: 'Landing Page Design',
 				titleLines: [
-					'Not Just How It Looks.',
-					'How It Works for You.',
+					'What Is Lead Generation',
+					'Landing Page Design?',
 				],
-				text: 'Effective landing page design aligns your audience, offer and campaign goals. We bring these elements together to create a focused experience that guides visitors towards the next step.',
+				text: 'Lead generation landing page design is the process of creating a dedicated web page that encourages visitors to take a specific action, such as making a purchase, booking a call or submitting a form. It focuses on clear messaging, attractive visuals, simple layouts and strong calls to action.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
@@ -388,8 +423,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			services: {
 				pill: 'Services',
-				heading: 'Our Landing Page Design Services',
-				text: 'We design landing pages around your campaign goals, target audience and intended action. From clear messaging to intuitive layouts, every element helps visitors understand your offer and take the next step.',
+				heading: 'Our Professional Landing Page Design Services',
+				text: 'Our expert landing page designers make pages around your campaign goals, target audience and intended action. From clear messaging to intuitive layouts, every element helps visitors understand your offer and take the next step.',
 				cards: [
 					{
 						title: 'Campaign Landing Pages',
@@ -417,6 +452,37 @@ export const webDesignDevelopment: MainService = {
 					},
 				],
 			},
+			serviceStack: {
+				pill: 'Our Approach',
+				heading: 'Our Clear Landing Page Design Process',
+				text: 'Our process combines strategy, messaging and visual design to create landing pages that align with your campaign goals and guide visitors towards the next step.',
+				cards: [
+					{
+						title: 'Strategy Before Design',
+						text: 'We start by understanding your audience, offer and campaign goals to establish a clear direction for the design.',
+					},
+					{
+						title: 'Your Message, Made Clear',
+						text: 'We structure content around your value proposition and key benefits, helping visitors understand your offer and its relevance to them.',
+					},
+					{
+						title: 'A Consistent Brand Experience',
+						text: 'We align the page design with your brand identity and campaign materials to maintain a consistent visual experience.',
+					},
+					{
+						title: 'A User Journey with Purpose',
+						text: 'We organise content, forms and calls to action to help visitors find relevant information and take the intended action.',
+					},
+					{
+						title: 'A Clear Plan for Development',
+						text: 'We provide a structured design reference covering layouts, content hierarchy and key interactions to support development.',
+					},
+					{
+						title: 'Review, Feedback and Refinement',
+						text: "We review feedback against the agreed requirements and refine the design within the project's scope.",
+					},
+				],
+			},
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Applications',
@@ -425,7 +491,7 @@ export const webDesignDevelopment: MainService = {
 					'Landing Page Design for Different',
 					'Industries',
 				],
-				text: 'We tailor each WordPress website to your services, audience and content needs. Our websites help businesses in Manchester and across the UK present their offerings clearly and guide visitors towards the next step.',
+				text: 'As a professional landing page design agency in Manchester, we help different businesses to present their offerings clearly and guide visitors towards the next step.',
 				columns: [
 					{
 						items: [
@@ -455,48 +521,55 @@ export const webDesignDevelopment: MainService = {
 							},
 							{
 								title: 'SaaS and Technology',
-								text: 'Explain your product’s value and guide visitors towards demos, trials or other intended actions.',
+								text: "Explain your product's value and guide visitors towards demos, trials or other intended actions.",
 							},
 						],
 					},
 				],
 				note: 'These examples illustrate common landing page requirements, not a limit on the industries we serve.',
 			},
-			serviceStack: {
-				pill: 'Our Approach',
-				heading: 'The XoomPlus Approach to Landing Page Design',
-				text: 'We combine strategy, messaging and visual design to create landing pages that align with your campaign goals and guide visitors towards the next step.',
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Landing Page Design Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Landing Page Design Agencies',
 				cards: [
 					{
-						title: 'Strategy Before Design',
-						text: 'We start by understanding your audience, offer and campaign goals to establish a clear direction for the design.',
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
 					},
 					{
-						title: 'Your Message, Made Clear',
-						text: 'We structure content around your value proposition and key benefits, helping visitors understand your offer and its relevance to them.',
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium landing page development services and the results you need.',
 					},
 					{
-						title: 'A Consistent Brand Experience',
-						text: 'We align the page design with your brand identity and campaign materials to maintain a consistent visual experience.',
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
 					},
 					{
-						title: 'A User Journey with Purpose',
-						text: 'We organise content, forms and calls to action to help visitors find relevant information and take the intended action.',
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
 					},
 					{
-						title: 'A Clear Plan for Development',
-						text: 'We provide a structured design reference covering layouts, content hierarchy and key interactions to support development.',
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
 					},
 					{
-						title: 'Review, Feedback and Refinement',
-						text: 'We review feedback against the agreed requirements and refine the design within the project’s scope.',
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
-				title: 'Different Needs. Connected Digital Capabilities.',
+				title: 'Different Needs. Connected Digital Solutions.',
 				text: 'From search visibility and website design to paid campaigns, our digital services support different business goals and work together where needed. Explore our full range of services to find the right fit.',
 				cards: [
 					{
@@ -511,6 +584,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -519,7 +593,7 @@ export const webDesignDevelopment: MainService = {
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Create a website experience that reflects your brand, presents your offer clearly and supports your users’ needs.',
+							"Create a website experience that reflects your brand, presents your offer clearly and supports your users' needs.",
 						items: [
 							'UI/UX Design',
 							'Landing Page Design',
@@ -553,14 +627,14 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Frequently Asked Questions',
-				text: 'Answers to common questions about landing page design, costs and implementation.',
+				heading: 'FAQs About Landing Page Design',
+				text: 'Answers to common questions about landing page design.',
 				items: [
 					{
 						question:
 							'Can You Design Landing Pages for Google Ads and Social Media Campaigns?',
 						answer:
-							'Yes. We align the page’s messaging and structure with your campaign, audience and intended action.',
+							"Yes. We align the page's messaging and structure with your campaign, audience and intended action.",
 					},
 					{
 						question: 'Can You Build the Landing Page as Well?',
@@ -585,7 +659,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'How Long Does It Take to Design a Landing Page?',
 						answer:
-							'Timelines depend on complexity, content readiness, feedback and implementation requirements. We’ll estimate the timeframe once the scope is clear.',
+							"Timelines depend on complexity, content readiness, feedback and implementation requirements. We'll estimate the timeframe once the scope is clear.",
 					},
 					{
 						question:
@@ -600,45 +674,40 @@ export const webDesignDevelopment: MainService = {
 				heading: 'Give Your Campaign a Better Destination.',
 				text: 'Give every click a purpose with landing pages that communicate your offer clearly and guide visitors towards action.',
 				buttonLabel: 'Discuss Your Landing Page →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Explore Our Approach →',
-				secondaryButtonHref: '#process',
+				secondaryButtonHref: '#service-stack',
 				secondaryLabel: 'info@xoomplus.co.uk',
 				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
-		// PLACEHOLDER: replace with real content
 		{
 			...redesignChild,
-			metaTitle: 'Website Redesign Services | SEO-Safe Redesigns',
+			metaTitle: 'Website Redesign Agency Manchester | Better User Experience',
 			metaDescription:
-				'Website redesign services that refresh your design, speed and UX without losing rankings. SEO-safe migrations from Xoomplus in Manchester. Get a quote.',
+				'Struggling with an outdated website? XoomPlus, a Website Redesign Agency in Manchester, improves design, structure and user experience.',
 			hero: {
 				...redesignChild.hero,
-				pill: 'Website Redesign',
+				pill: 'Website Redesign Agency',
 				titleLines: [
-					'Website Redesign Agency',
-					'in Manchester',
+					'Website Redesign Agency Manchester |',
+					'Design That Performs',
 				],
 				paragraphs: [
-					'Your business changes. Your website should keep pace.',
-					'XoomPlus helps businesses in Manchester and across the UK review their existing websites, identify areas for improvement and align their messaging, structure and visual identity with current goals.',
-					'Whether you need a visual refresh, clearer navigation or broader structural changes, we create a more purposeful website around your business and audience.',
+					'Inconsistent design elements and inefficient website navigation can make it difficult for visitors to find information, understand your services or connect with your business. These issues can reduce user engagement, affect conversions and lead to missed enquiries.',
+					'As a website redesign agency in Manchester, we help businesses improve their existing websites to better meet their business goals and audience needs. Our experts review your website, identify areas for improvement and refine its messaging, structure and visual design to create a more engaging and user-friendly experience.',
 				],
 				buttonLabel: 'Discuss Your Website Redesign',
 			},
 			features: {
-				pill: 'Website Redesign',
-				titleLines: [
-					'Not Every Website Needs',
-					'to Start Again.',
-				],
-				text: 'An existing website may still have useful content, established page structures and functionality worth retaining. We help identify what works, what needs improvement and how your website can better support your current business goals.',
+				pill: 'Understanding Website Redesign',
+				titleLines: ['What Is Website', 'Redesign?'],
+				text: "Website redesign is the process of improving an existing website's appearance, structure, content and functionality. It involves updating layouts, navigation, visuals and user experience to make the website easier to use and more effective.",
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
 						title: 'Content and Brand Messaging',
-						text: 'Your website’s content and visual identity should reflect what your business offers today. We refine messaging and visual elements to align with your current services, brand positioning and business priorities.',
+						text: "Your website's content and visual identity should reflect what your business offers today. We refine messaging and visual elements to align with your current services, brand positioning and business priorities.",
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
@@ -662,8 +731,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			services: {
 				pill: 'Redesign Solutions',
-				heading: 'Our Website Redesign Services',
-				text: 'We tailor each website redesign to your existing site, business goals and user needs. From visual updates to structural improvements, we make your website clearer, easier to use and better aligned with your business.',
+				heading: 'Our Professional Website Redesign Services in Manchester',
+				text: 'As a website redesign consultant, we make your website clearer, easier to use and better aligned with your business.',
 				cards: [
 					{
 						title: 'Visual Redesign',
@@ -683,51 +752,10 @@ export const webDesignDevelopment: MainService = {
 					},
 				],
 			},
-			clarity: {
-				id: 'clarity',
-				pill: 'Industry Applications',
-				title: 'Website Redesign for Different Industries',
-				titleLines: [
-					'Website Redesign for Different',
-					'Industries',
-				],
-				text: 'Every industry has unique website needs. We tailor redesigns to your audience, services and goals, helping businesses in Manchester and beyond create clearer, more user-friendly websites.',
-				columns: [
-					{
-						items: [
-							{
-								title: 'Professional and Medical Services',
-								text: 'We improve service pages, navigation and enquiry forms to help visitors find relevant information and understand your services.',
-							},
-							{
-								title: 'Legal and Financial Services',
-								text: 'We organise complex information, clarify service offerings and create a professional website experience that builds trust and makes enquiries easier.',
-							},
-							{
-								title: 'E-commerce and Retail',
-								text: 'We refine product pages, category structures and checkout journeys to make browsing easier and reduce friction during purchases.',
-							},
-						],
-					},
-					{
-						items: [
-							{
-								title: 'Trades and Service Businesses',
-								text: 'We highlight key services, service areas and contact options to help potential customers find what they need and request a quote.',
-							},
-							{
-								title: 'SaaS and Business Operations',
-								text: 'We simplify product information, improve feature navigation and clarify user journeys to help visitors understand your offering and take the next step.',
-							},
-						],
-					},
-				],
-				note: 'These examples highlight common industry needs, but our website redesign services aren’t limited to these sectors.',
-			},
 			serviceStack: {
 				pill: 'Our Approach',
 				heading: 'Our Website Redesign Process',
-				text: 'We bring website strategy, visual design and content structure together to create a website that reflects your business today and supports its evolving needs.',
+				text: 'We bring website strategy, visual design and content structure together to create a website that reflects your business.',
 				cards: [
 					{
 						title: 'Understand Before Redesigning',
@@ -749,17 +777,96 @@ export const webDesignDevelopment: MainService = {
 					},
 				],
 			},
+			clarity: {
+				id: 'clarity',
+				pill: 'Industry Applications',
+				title: 'Our Website Rebuild Services for Different Industries',
+				titleLines: [
+					'Our Website Rebuild Services for',
+					'Different Industries',
+				],
+				text: 'Every industry has unique website needs. We redesign your website that supports your audience, services and goals.',
+				columns: [
+					{
+						items: [
+							{
+								title: 'Professional and Medical Services',
+								text: 'We improve service pages, navigation and enquiry forms to help visitors find relevant information and understand your services.',
+							},
+							{
+								title: 'Legal and Financial Services',
+								text: 'We organise complex information, clarify service offerings and create a professional website experience that builds trust and makes enquiries easier.',
+							},
+							{
+								title: 'E-commerce and Retail',
+								text: 'We refine product pages, category structures and checkout journeys to make browsing easier and reduce friction during purchases.',
+							},
+						],
+					},
+					{
+						items: [
+							{
+								title: 'Trades and Service Businesses',
+								text: 'We highlight key services, contact options and service areas to help potential customers find what they need and request a quote.',
+							},
+							{
+								title: 'SaaS and Business Operations',
+								text: 'We simplify product information, improve feature navigation and clarify user journeys to help visitors understand your offering and take the next step.',
+							},
+						],
+					},
+				],
+				note: "These examples highlight common industry needs, but our website redesign services aren't limited to these sectors.",
+			},
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Website Revamp Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Website Redesign Agencies',
+				cards: [
+					{
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+					},
+					{
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver professional landing page redesign services and the results you need.',
+					},
+					{
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+					},
+					{
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
+					},
+				],
+			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
-				title: 'Different Needs. Connected Digital Capabilities.',
+				title: 'Different Needs. Connected Digital Solutions.',
 				text: 'A website redesign may also create opportunities to improve search visibility, user experience and campaign performance. Explore our connected digital services to find the right support for your wider business goals.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Support your website’s search visibility through relevant content, technical improvements and a stronger SEO foundation.',
+							"Support your website's search visibility through relevant content, technical improvements and a stronger SEO foundation.",
 						items: [
 							'AI SEO (GEO & AEO)',
 							'Local SEO',
@@ -767,6 +874,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -775,7 +883,7 @@ export const webDesignDevelopment: MainService = {
 						icon: '/icons/service-layers.svg',
 						title: 'Web Design & Development',
 						description:
-							'Create a website experience that reflects your brand, presents your services clearly and supports your users’ needs.',
+							"Create a website experience that reflects your brand, presents your services clearly and supports your users' needs.",
 						items: [
 							'UI/UX Design',
 							'Landing Page Design',
@@ -809,8 +917,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Frequently Asked Questions',
-				text: 'Answers to common questions about website redesign, SEO, timelines and implementation.',
+				heading: 'FAQs About Website Redesign',
+				text: 'Answers to common questions about website redesign.',
 				items: [
 					{
 						question: 'When Should I Consider a Website Redesign?',
@@ -847,43 +955,41 @@ export const webDesignDevelopment: MainService = {
 			},
 			cta: {
 				pill: 'Your Next Stage',
-				heading: 'Your Business Has Evolved. Has Your Website?',
+				heading: 'Is Your Website Ready for a Redesign?',
 				text: 'Let’s identify what works, what needs improving and how a redesign can support your business goals.',
 				buttonLabel: 'Discuss Your Website Redesign →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Explore Our Approach →',
-				secondaryButtonHref: '#process',
+				secondaryButtonHref: '#service-stack',
 				secondaryLabel: 'info@xoomplus.co.uk',
 				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
-		// PLACEHOLDER: replace with real content
 		{
 			...wordpressChild,
-			metaTitle: 'WordPress Development Manchester | Custom Sites',
+			metaTitle: 'WordPress Development Manchester | Websites Built to Grow',
 			metaDescription:
-				'Need an easy-to-manage website? Xoomplus is a WordPress development agency in Manchester building custom themes, plugins and secure sites. Get a quote.',
+				'Need a better business website? XoomPlus provides WordPress Development in Manchester with custom designs, useful features & easy content management.',
 			hero: {
 				...wordpressChild.hero,
 				pill: 'WordPress Development',
 				titleLines: [
-					'WordPress Development Agency',
-					'in Manchester',
+					'WordPress Development Manchester |',
+					'Website That Convert',
 				],
 				paragraphs: [
-					'Your website should reflect your business and make content easier to manage.',
-					'XoomPlus develops WordPress websites for businesses in Manchester and across the UK. We bring page structure, visual design and website functionality together to create an experience that serves your audience and supports your team’s needs.',
-					'Whether you’re building a new business website or moving an existing site to WordPress, we shape the development approach around your goals.',
+					'Limited functionality of websites and inconsistent interface elements can make it difficult for visitors to navigate your pages, find information or interact with your business. These technical issues can affect user experience, reduce engagement and prevent your website from supporting your business goals.',
+					"As a WordPress development agency in Manchester, we build user-friendly websites with clear page structures, engaging visual designs and reliable functionality. Whether you're creating a new business website or migrating an existing site to WordPress, we tailor the development process to your requirements, audience and business objectives.",
 				],
 				buttonLabel: 'Discuss Your WordPress Project',
 			},
 			features: {
 				pill: 'WordPress Development',
 				titleLines: [
-					'Easy for Your Visitors.',
-					'Practical for Your Team.',
+					'What Is WordPress',
+					'Website Development',
 				],
-				text: 'Your website should make it easy for visitors to find information and for your team to keep content up to date. We build WordPress websites with clear page structures, manageable content layouts and functionality tailored to your business needs.',
+				text: 'WordPress website development is the process of building websites using WordPress, a popular content management system (CMS). It involves designing page layouts, adding features, customising themes and setting up website functionality.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
@@ -903,7 +1009,7 @@ export const webDesignDevelopment: MainService = {
 				],
 			},
 			processPill: 'Business Benefits',
-			processHeading: 'How WordPress Development Benefits Your Business',
+			processHeading: 'How WordPress Web Development Benefits Your Business',
 			processText:
 				'A well-built WordPress website helps you present your business clearly, keep content up to date and deliver a consistent experience across devices. Its flexible structure also makes it easier to add pages, publish new content and adapt your website as your business grows.',
 			processImage: {
@@ -912,8 +1018,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			services: {
 				pill: 'Development Solutions',
-				heading: 'Our WordPress Development Services',
-				text: 'We tailor WordPress development to your content, brand and functional needs, from new websites to custom layouts and migrations, aligning each project with your goals and visitors’ needs.',
+				heading: 'Our Professional WordPress Development Services',
+				text: 'We make websites that align with your content, brand and functional needs.',
 				cards: [
 					{
 						title: 'Business Website Development',
@@ -925,7 +1031,7 @@ export const webDesignDevelopment: MainService = {
 					},
 					{
 						title: 'Custom Templates and Functionality',
-						text: 'We develop reusable page templates and tailored features to support your content, user journeys and business processes.',
+						text: 'We develop custom WordPress websites and make features to support your content, user journeys and business processes.',
 					},
 					{
 						title: 'WordPress Migration and Updates',
@@ -933,15 +1039,45 @@ export const webDesignDevelopment: MainService = {
 					},
 				],
 			},
+			serviceStack: {
+				pill: 'Our Approach',
+				heading: 'Our WordPress Development Process',
+				text: "We bring planning, design and functionality together to build a WordPress website that supports your business goals and meets your audience's needs.",
+				cards: [
+					{
+						title: 'Understand Your Requirements',
+						text: 'We assess your business objectives, target audience, existing content and required features to establish a clear direction for your website.',
+						imageSrc:
+							'/images/wordpress-development-understand-your-requirements.webp',
+					},
+					{
+						title: 'Plan the Structure and Design',
+						text: 'We map out page structures, reusable content templates and visual elements to reflect your brand and create a clear user experience.',
+						imageSrc:
+							'/images/wordpress-development-plan-the-structure-and-design.webp',
+					},
+					{
+						title: 'Develop Your Website',
+						text: 'We implement the agreed layouts, WordPress configuration, functionality and integrations in line with your project requirements.',
+						imageSrc:
+							'/images/wordpress-development-develop-your-website.webp',
+					},
+					{
+						title: 'Test and Handover',
+						text: 'We test the agreed pages and functionality, address feedback within the project scope and provide relevant access details and content management guidance for handover.',
+						imageSrc: '/images/wordpress-development-test-and-handover.webp',
+					},
+				],
+			},
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Applications',
-				title: 'WordPress Websites for Different Business Needs',
+				title: 'Our WordPress Web Development for Different Businesses',
 				titleLines: [
-					'WordPress Websites for Different',
-					'Business Needs',
+					'Our WordPress Web Development for',
+					'Different Businesses',
 				],
-				text: 'We build WordPress websites around your services, audience and content needs. Our solutions help businesses in Manchester and across the UK present their offerings clearly and guide visitors towards the next step.',
+				text: 'We build WordPress website design around your services, audience and content needs. Our solutions help businesses in Manchester and across the UK present their offerings clearly and guide visitors towards the next step.',
 				columns: [
 					{
 						items: [
@@ -974,47 +1110,55 @@ export const webDesignDevelopment: MainService = {
 				],
 				note: 'Our WordPress development services support businesses across these and other industries, based on their goals and website requirements.',
 			},
-			serviceStack: {
-				pill: 'Our Approach',
-				heading: 'Our WordPress Development Process',
-				text: 'We bring planning, design and functionality together to build a WordPress website that supports your business goals and meets your audience’s needs.',
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for WordPress Development Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other WordPress Development Agencies',
 				cards: [
 					{
-						title: 'Understand Your Requirements',
-						text: 'We assess your business objectives, target audience, existing content and required features to establish a clear direction for your website.',
-						imageSrc:
-							'/images/wordpress-development-understand-your-requirements.webp',
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
 					},
 					{
-						title: 'Plan the Structure and Design',
-						text: 'We map out page structures, reusable content templates and visual elements to reflect your brand and create a clear user experience.',
-						imageSrc:
-							'/images/wordpress-development-plan-the-structure-and-design.webp',
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each WordPress developer of Xoomplus has a strong portfolio and years of experience to deliver professional services and the results you need.',
 					},
 					{
-						title: 'Develop Your Website',
-						text: 'We implement the agreed layouts, WordPress configuration, functionality and integrations in line with your project requirements.',
-						imageSrc:
-							'/images/wordpress-development-develop-your-website.webp',
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
 					},
 					{
-						title: 'Test and Handover',
-						text: 'We test the agreed pages and functionality, address feedback within the project scope and provide relevant access details and content management guidance for handover.',
-						imageSrc: '/images/wordpress-development-test-and-handover.webp',
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
-				title: 'Different Needs. Connected Digital Capabilities.',
+				title: 'Different Needs. Connected Digital Solutions.',
 				text: 'Your website is one part of your wider digital presence. Explore our related services to strengthen search visibility, improve user experience and connect your website with your marketing activities.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Improve your website’s search visibility through relevant content, technical optimisation and a focused SEO strategy.',
+							"Improve your website's search visibility through relevant content, technical optimisation and a focused SEO strategy.",
 						items: [
 							'AI SEO (GEO & AEO)',
 							'Local SEO',
@@ -1022,6 +1166,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -1064,7 +1209,7 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Frequently Asked Questions',
+				heading: 'FAQs About WordPress Development',
 				text: 'Find answers to common questions about WordPress development, customisation, migration and ongoing website support.',
 				items: [
 					{
@@ -1091,12 +1236,12 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'Can I Update My WordPress Website Myself?',
 						answer:
-							'WordPress allows authorised users to manage supported content through its administration interface. The editing experience depends on how the website’s pages, templates and features are configured.',
+							"WordPress allows authorised users to manage supported content through its administration interface. The editing experience depends on how the website's pages, templates and features are configured.",
 					},
 					{
 						question: 'Do You Provide WordPress Development Outside Manchester?',
 						answer:
-							'Yes. XoomPlus works with businesses in Manchester and across the UK. Each project is tailored to the client’s website requirements, business goals and technical needs.',
+							"Yes. XoomPlus works with businesses in Manchester and across the UK. Each project is tailored to the client's website requirements, business goals and technical needs.",
 					},
 				],
 			},
@@ -1105,48 +1250,45 @@ export const webDesignDevelopment: MainService = {
 				heading: 'Ready to Build Your WordPress Website?',
 				text: 'Tell us what your business needs. We’ll help you plan a WordPress website built around your goals.',
 				buttonLabel: 'Discuss Your WordPress Project →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Explore Our Approach →',
-				secondaryButtonHref: '#process',
+				secondaryButtonHref: '#service-stack',
+				secondaryLabel: 'info@xoomplus.co.uk',
+				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
-		// PLACEHOLDER: replace with real content
 		{
 			...shopifyChild,
-			metaTitle: 'Shopify Development Company Manchester | Xoomplus',
+			metaTitle: 'Shopify Agency Manchester | Custom Stores for Your Brand',
 			metaDescription:
-				'Launch or upgrade your online store with Shopify development in Manchester. Custom themes, app integrations and smooth checkouts that sell. Book a call.',
+				'Need a professional online store? XoomPlus is a Shopify Agency in Manchester, helping businesses build, improve and manage successful Shopify stores.',
 			hero: {
 				...shopifyChild.hero,
-				pill: 'Shopify Development',
+				pill: 'Shopify Agency',
 				titleLines: [
-					'Shopify Development Agency',
-					'in Manchester',
+					'Shopify Agency Manchester |',
+					'Grow Your Online Store',
 				],
 				paragraphs: [
-					'Your online store should make it easy for customers to discover products, compare options and complete their purchases.',
-					'XoomPlus develops Shopify stores for businesses in Manchester and across the UK. We create storefronts that reflect your brand, showcase your products clearly and provide the functionality needed for a smooth shopping experience.',
-					'Whether you’re launching a new store or improving an existing one, we tailor the approach to your goals and customers.',
+					'Inefficient product navigation, inconsistent store layouts and limited ecommerce functionality can make it difficult for customers to find products, compare options or complete their purchases. These issues can affect the shopping experience, increase cart abandonment and result in lost sales.',
+					'As a Shopify agency in Manchester, we develop user-friendly Shopify stores that reflect your brand, showcase your products clearly and provide the features needed for a smooth shopping experience. We focus on creating easy-to-navigate storefronts that help customers find what they need and complete their purchases with confidence.',
 				],
 				buttonLabel: 'Discuss Your Shopify Project',
 			},
 			features: {
-				pill: 'Shopify Development',
-				titleLines: [
-					'Make Shopping Easier',
-					'for Your Customers',
-				],
-				text: 'Your online store should make it easy for customers to discover products, compare options and move towards checkout. We develop Shopify stores around your product range, brand identity and business needs.',
+				pill: 'Understanding Shopify Development',
+				titleLines: ['What Is Shopify', 'Development?'],
+				text: 'Shopify development is the process of building and customising online stores using the Shopify platform. It includes designing shopfronts, adding product pages, setting up payment options and integrating useful features.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
 						title: 'Product Organisation',
-						text: 'Product organisation focuses on how customers browse your store. We structure collections, categories and product pages to help shoppers find relevant items, compare options and understand what you’re offering.',
+						text: "Product organisation focuses on how customers browse your store. We structure collections, categories and product pages to help shoppers find relevant items, compare options and understand what you're offering.",
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
 						title: 'Store Design and Branding',
-						text: 'Store design shapes how customers perceive and interact with your brand. We use layouts, typography, colours, imagery and content to create a consistent storefront that presents your products clearly.',
+						text: 'Shopify web design shapes how customers perceive and interact with your brand. We use layouts, typography, colours, imagery and content to create a consistent shopfront that presents your products clearly.',
 					},
 					{
 						icon: 'think-beyond-one-screen',
@@ -1158,24 +1300,24 @@ export const webDesignDevelopment: MainService = {
 			processPill: 'Business Benefits',
 			processHeading: 'How Shopify Development Benefits Your Business',
 			processText:
-				'A well-structured Shopify store helps customers explore your products, understand what you offer and navigate the purchasing process. Clear product information, organised collections and consistent layouts can make the shopping experience easier to use. A storefront built around your requirements also provides a practical foundation for managing products and adapting your store as your business needs change.',
+				'A well-structured Shopify store helps customers explore your products, understand what you offer and navigate the purchasing process. Clear product information, organised collections and consistent layouts can make the shopping experience easier to use. A shopfront built around your requirements also provides a practical foundation for managing products and adapting your store as your business needs change.',
 			processImage: {
 				src: '/images/shopify-development-business-benefits.webp',
 				alt: 'Shopify development business benefits',
 			},
 			services: {
 				pill: 'Development Solutions',
-				heading: 'Our Shopify Development Services',
-				text: 'We build Shopify stores around your products, brand and functional needs, aligning each project with your business goals and desired shopping experience.',
+				heading: 'Our Professional Shopify Development Services',
+				text: 'As a Shopify ecommerce agency in Manchester, we build stores around your products, brand and functional needs.',
 				cards: [
 					{
 						title: 'Shopify Store Setup',
-						text: 'We set up your Shopify store around your products and business needs, organising its structure and essential settings to prepare you for online sales.',
+						text: 'Our Shopify experts set up your store around your products and business needs, organising its structure and essential settings to prepare you for online sales.',
 						imageSrc: '/images/shopify-development-shopify-store-setup.webp',
 					},
 					{
-						title: 'Shopify Storefront Design',
-						text: 'We design storefronts that reflect your brand and support the shopping journey, presenting products clearly across homepage, collection and product pages.',
+						title: 'Shopify Shopfront Design',
+						text: 'We design shopfronts that reflect your brand and support the shopping journey, presenting products clearly across the homepage, collection and product pages.',
 						imageSrc: '/images/shopify-development-shopify-storefront-design.webp',
 					},
 					{
@@ -1190,18 +1332,48 @@ export const webDesignDevelopment: MainService = {
 					},
 					{
 						title: 'Shopify Integrations and Functionality',
-						text: 'We identify and implement suitable features and integrations to extend your store’s capabilities and support your business operations.',
+						text: "We identify and implement suitable features and integrations to extend your store's capabilities and support your business operations.",
 						imageSrc: '/images/shopify-development-product-and-collection-pages.webp',
+					},
+				],
+			},
+			serviceStack: {
+				pill: 'Our Approach',
+				heading: 'Our Shopify Development Process',
+				text: 'We bring product organisation, shopfront design and functionality together to build a Shopify store around your business goals.',
+				cards: [
+					{
+						title: 'Understand Your Requirements',
+						text: "We establish your store's goals, product range, target customers and business requirements before planning the build. This helps keep decisions focused on your priorities and the experience you want to create.",
+						imageSrc:
+							'/images/shopify-development-understand-your-equirements.webp',
+					},
+					{
+						title: 'Plan the Store Structure and Design',
+						text: 'We map out collections, product pages, visual direction and required features around your catalogue and customer journey. This gives the project a clear structure before development begins.',
+						imageSrc:
+							'/images/shopify-development-plan-the-Store-structure-and-design.webp',
+					},
+					{
+						title: 'Develop Your Store',
+						text: 'The agreed design and functionality are brought together through Shopify configuration, theme customisation and relevant integrations. Development follows the approved requirements and project scope.',
+						imageSrc: '/images/shopify-development-develop-your-store.webp',
+					},
+					{
+						title: 'Review, Test and Handover',
+						text: 'We review the agreed pages and functionality, gather feedback and address relevant changes within scope. Before handover, we provide the necessary store access and guidance to help you manage your products and day-to-day store content.',
+						imageSrc:
+							'/images/shopify-development-review-test-and-handover.webp',
 					},
 				],
 			},
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Applications',
-				title: 'Shopify Stores for Different Business Needs',
+				title: 'Our Shopify Web Design Services for Different Businesses',
 				titleLines: [
-					'Shopify Stores for Different',
-					'Business Needs',
+					'Our Shopify Web Design Services for',
+					'Different Businesses',
 				],
 				text: 'We develop Shopify stores that reflect your brand, support your operations and make it easier for customers to browse and buy.',
 				columns: [
@@ -1229,54 +1401,62 @@ export const webDesignDevelopment: MainService = {
 							},
 							{
 								title: 'B2B and Wholesale Retail',
-								text: 'We structure product information around business customers and incorporate suitable wholesale features based on your requirements and Shopify setup.',
+								text: 'We structure product information around business customers and incorporate suitable wholesale features based on your requirements.',
 							},
 						],
 					},
 				],
-				note: 'Our Shopify development services can support these and other retail businesses, depending on their products, sales model and store requirements.',
+				note: 'Our Shopify development services in Manchester can support these and other retail businesses, depending on their products, sales model and store requirements.',
 			},
-			serviceStack: {
-				pill: 'Our Approach',
-				heading: 'The XoomPlus Approach to Shopify Development',
-				text: 'From initial planning to final handover, we bring product organisation, storefront design and functionality together to build a Shopify store around your business goals and customers’ needs.',
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Shopify Development Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Shopify Development Agencies',
 				cards: [
 					{
-						title: 'Understand Your Requirements',
-						text: 'We establish your store’s goals, product range, target customers and business requirements before planning the build. This helps keep decisions focused on your priorities and the experience you want to create.',
-						imageSrc:
-							'/images/shopify-development-understand-your-equirements.webp',
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
 					},
 					{
-						title: 'Plan the Store Structure and Design',
-						text: 'We map out collections, product pages, visual direction and required features around your catalogue and customer journey. This gives the project a clear structure before development begins.',
-						imageSrc:
-							'/images/shopify-development-plan-the-Store-structure-and-design.webp',
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each Shopify developer of Xoomplus has a strong portfolio and years of experience to deliver professional services and the results you need.',
 					},
 					{
-						title: 'Develop Your Store',
-						text: 'The agreed design and functionality are brought together through Shopify configuration, theme customisation and relevant integrations. Development follows the approved requirements and project scope.',
-						imageSrc: '/images/shopify-development-develop-your-store.webp',
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
 					},
 					{
-						title: 'Review, Test and Handover',
-						text: 'We review the agreed pages and functionality, gather feedback and address relevant changes within scope. Before handover, we provide the necessary store access and guidance to help you manage your products and day-to-day store content.',
-						imageSrc:
-							'/images/shopify-development-review-test-and-handover.webp',
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
-				title: 'Different Needs. Connected Digital Capabilities.',
+				title: 'Different Needs. Connected Digital Solutions.',
 				text: 'Your Shopify store is one part of your wider digital presence. Explore our related services to strengthen search visibility, improve the user experience and connect your store with your marketing activities.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Improve your store’s search visibility through relevant content, technical optimisation and a focused SEO strategy.',
+							"Improve your store's search visibility through relevant content, technical optimisation and a focused SEO strategy.",
 						items: [
 							'AI SEO (GEO & AEO)',
 							'Local SEO',
@@ -1284,6 +1464,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -1326,8 +1507,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Frequently Asked Questions',
-				text: 'Find answers to common questions about Shopify development, storefront customisation, product catalogues and store management.',
+				heading: 'FAQs About Shopify Development',
+				text: 'Find answers to common questions about Shopify web design.',
 				items: [
 					{
 						question: 'Is Shopify Suitable for My Business?',
@@ -1337,7 +1518,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'Can You Customise an Existing Shopify Store?',
 						answer:
-							'Yes. We can discuss changes to your storefront’s design, navigation, product pages and functionality. Available options depend on your current theme, configuration and project requirements.',
+							"Yes. We can discuss changes to your storefront's design, navigation, product pages and functionality. Available options depend on your current theme, configuration and project requirements.",
 					},
 					{
 						question: 'Can You Help Organise or Migrate My Product Catalogue?',
@@ -1368,36 +1549,38 @@ export const webDesignDevelopment: MainService = {
 				heading: 'Ready to Bring Your Shopify Store to Life?',
 				text: 'Let’s plan a Shopify store that reflects your brand and makes shopping easier.',
 				buttonLabel: 'Discuss Your Shopify Project →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Explore Our Approach →',
-				secondaryButtonHref: '#process',
+				secondaryButtonHref: '#service-stack',
+				secondaryLabel: 'info@xoomplus.co.uk',
+				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
 		{
 			...ecommerceChild,
-			metaTitle: 'Ecommerce Website Development Agency | Xoomplus',
+			metaTitle: 'Ecommerce Development Agency Manchester | Custom Stores',
 			metaDescription:
-				'Build an online store made to convert. Ecommerce development in Manchester covering secure payments, product management and mobile-first design. Enquire now.',
+				'XoomPlus is an Ecommerce Development Agency in Manchester, creating online stores with custom features, payment tools and inventory management.',
 			hero: {
 				...ecommerceChild.hero,
-				pill: 'Ecommerce Development',
+				pill: 'Ecommerce Development Agency',
 				titleLines: [
-					'Ecommerce Development Agency',
-					'in Manchester',
+					'Ecommerce Development Agency Manchester |',
+					'Built to Sell',
 				],
 				paragraphs: [
-					'XoomPlus provides ecommerce development services for businesses in Manchester and across the UK. We bring product presentation, navigation and purchasing functionality together to create online stores that reflect your brand and provide a clear shopping experience.',
-					'Whether you’re launching your first online store or improving an existing one, we tailor the ecommerce website development approach to your business goals and how you sell online.',
+					'Inefficient product categorisation, complex navigation and limited checkout functionality can make it difficult for customers to browse products, find what they need or complete their purchases. These issues can create a poor shopping experience, increase cart abandonment and result in lost sales.',
+					"As an ecommerce development agency in Manchester, we build user-friendly online stores with clear product displays, simple navigation and smooth purchasing features. We create tailored ecommerce websites that reflect your brand, meet your customers' needs and make it easier for them to complete their purchases.",
 				],
 				buttonLabel: 'Discuss Your Ecommerce Project',
 			},
 			features: {
 				pill: 'Ecommerce Development',
 				titleLines: [
-					'Make Every Step of Shopping',
-					'Easier to Follow',
+					'What Is Ecommerce',
+					'Development',
 				],
-				text: 'Customers need to find products, compare options and access key information easily. We bring your catalogue, navigation and checkout journey together to create an ecommerce experience that meets your business and customer needs.',
+				text: 'Ecommerce development is the process of building and maintaining websites where businesses can sell products or services online. It involves designing product pages, setting up payment systems, creating easy navigation and adding shopping features.',
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
@@ -1407,7 +1590,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						icon: 'bring-your-brand-into-focus',
 						title: 'Product Information and Presentation',
-						text: 'Product presentation shapes how customers understand what you’re selling. We consider descriptions, imagery, specifications and available options to make important information easier to find and compare.',
+						text: "Product presentation shapes how customers understand what you're selling. We consider descriptions, imagery, specifications and available options to make important information easier to find and compare.",
 					},
 					{
 						icon: 'think-beyond-one-screen',
@@ -1417,10 +1600,10 @@ export const webDesignDevelopment: MainService = {
 				],
 			},
 			processPill: 'Business Benefits',
-			processHeading: 'Build a Better Foundation for Online Sales',
+			processHeading: 'How Ecommerce Website Development Supports Your Business',
 			processText: [
 				'A well-structured ecommerce website helps customers browse products, compare options and understand what they are buying. Clear navigation and useful product information support purchasing decisions, while a considered checkout journey helps customers move from product selection towards payment.',
-				'The right ecommerce platform and functionality also provide a practical foundation for managing products, processing orders and adapting your online store as business requirements change.',
+				'The right online store development process provides a practical foundation for managing products, processing orders and adapting your online store as business requirements change.',
 			],
 			processImage: {
 				src: '/images/ecommerce-development-business-benefits.webp',
@@ -1428,12 +1611,12 @@ export const webDesignDevelopment: MainService = {
 			},
 			services: {
 				pill: 'Development Solutions',
-				heading: 'Ecommerce Development Services for Your Business',
-				text: 'Our ecommerce development services cover storefront design, product structure, checkout and integrations. We align each project with your products, customers and business needs, whether launching a new store or improving an existing one.',
+				heading: 'Our Ecommerce Development Services in Manchester',
+				text: 'Our services cover shopfront design, product structure, checkout and integrations.',
 				cards: [
 					{
-						title: 'Ecommerce Store Development',
-						text: 'We build well-structured storefronts that bring your brand and products together, with clear navigation and layouts that make browsing easier.',
+						title: 'Ecommerce Online Store Development',
+						text: 'We build well-structured online stores that bring your brand and products together, with clear navigation and layouts that make browsing easier.',
 						imageSrc: '/images/ecommerce-development-ecommerce-store-development.webp',
 					},
 					{
@@ -1458,15 +1641,42 @@ export const webDesignDevelopment: MainService = {
 					},
 				],
 			},
+			serviceStack: {
+				pill: 'Our Approach',
+				heading: 'Our Bespoke Ecommerce Website Development Process',
+				text: 'We combine catalogue planning, shopfront design and purchasing functionality to build an ecommerce  online store that aligns with your business goals and customer needs.',
+				cards: [
+					{
+						title: 'Understand Your Business',
+						text: 'Every ecommerce project starts with understanding your products, customers and business goals. From your product range to your existing systems, every detail helps us shape an online store that fits your operations and supports your growth.',
+						imageSrc: '/images/ecommerce-development-understand-your-business.webp',
+					},
+					{
+						title: 'Plan the Platform and Structure',
+						text: 'We map out your product catalogue, page structure, navigation and key ecommerce features. We also assess platform suitability and integration requirements to create a clear development plan that supports your products, operations and future growth.',
+						imageSrc: '/images/ecommerce-development-plan-the-platform-and-structure.webp',
+					},
+					{
+						title: 'Design and Develop Your Store',
+						text: 'With the structure in place, we develop your store design, product presentation and purchasing functionality. Each element follows the planned structure, business needs and capabilities of your chosen platform.',
+						imageSrc: '/images/ecommerce-development-design-and-develop-your-store.webp',
+					},
+					{
+						title: 'Review, Test and Handover',
+						text: 'We test key pages, product displays and purchasing journeys to check that the store works as expected. After addressing feedback within the agreed scope, we provide the relevant access details and guidance for managing your store.',
+						imageSrc: '/images/ecommerce-development-review-test-and-handover.webp',
+					},
+				],
+			},
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Applications',
-				title: 'Ecommerce Websites for Different Business Needs',
+				title: 'Ecommerce Web Development Services for Different Businesses',
 				titleLines: [
-					'Ecommerce Websites for Different',
-					'Business Needs',
+					'Ecommerce Web Development Services for',
+					'Different Businesses',
 				],
-				text: 'We build ecommerce websites around your products, customers and operations, helping businesses in Manchester and across the UK create online stores suited to their sales needs.',
+				text: 'As an ecommerce development agency, we build stores around your products, customers and operations.',
 				columns: [
 					{
 						items: [
@@ -1497,46 +1707,57 @@ export const webDesignDevelopment: MainService = {
 						],
 					},
 				],
-				note: 'Our ecommerce development services can support these and other industries, depending on your products, sales model and technical requirements.',
+				note: 'Our Manchester-based ecommerce agency can support these and other industries, depending on your products, sales model and technical requirements.',
 			},
-			serviceStack: {
-				pill: 'Our Approach',
-				heading: 'Our Ecommerce Website Development Process',
-				text: 'We combine catalogue planning, storefront design and purchasing functionality to build an online store that aligns with your business goals and customer needs.',
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Ecommerce Development Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Ecommerce Store Development Agencies',
 				cards: [
 					{
-						title: 'Understand Your Business',
-						text: 'Every ecommerce project starts with understanding your products, customers and business goals. From your product range to your existing systems, every detail helps us shape an online store that fits your operations and supports your growth.',
-						imageSrc: '/images/ecommerce-development-understand-your-business.webp',
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
 					},
 					{
-						title: 'Plan the Platform and Structure',
-						text: 'We map out your product catalogue, page structure, navigation and key ecommerce features. We also assess platform suitability and integration requirements to create a clear development plan that supports your products, operations and future growth.',
-						imageSrc: '/images/ecommerce-development-plan-the-platform-and-structure.webp',
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each ecommerce developer of Xoomplus has a strong portfolio and years of experience to deliver professional services and the results you need.',
 					},
 					{
-						title: 'Design and Develop Your Store',
-						text: 'With the structure in place, we develop your storefront design, product presentation and purchasing functionality. Each element follows the planned structure, business needs and capabilities of your chosen platform.',
-						imageSrc: '/images/ecommerce-development-design-and-develop-your-store.webp',
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
 					},
 					{
-						title: 'Review, Test and Handover',
-						text: 'We test key pages, product displays and purchasing journeys to check that the store works as expected. After addressing feedback within the agreed scope, we provide the relevant access details and guidance for managing your store.',
-						imageSrc: '/images/ecommerce-development-review-test-and-handover.webp',
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
-				title: 'Different Needs. Connected Digital Capabilities.',
-				text: 'Your ecommerce website is one part of your wider digital presence. Alongside ecommerce development, explore our related services to strengthen search visibility, improve user experience and connect your online store with your marketing activities.',
+				title: 'Different Needs. Connected Digital Solutions.',
+				text: 'Your ecommerce website is one part of your wider digital presence. Alongside ecommerce development, explore our related services to strengthen search visibility.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Improve your store’s search visibility through relevant content, technical optimisation and a focused SEO strategy.',
+							"Improve your store's search visibility through relevant content, technical optimisation and a focused SEO strategy.",
 						items: [
 							'AI SEO (GEO & AEO)',
 							'Local SEO',
@@ -1544,6 +1765,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -1586,13 +1808,13 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Ecommerce Development FAQs',
-				text: 'Find answers to common questions about ecommerce website development, platform selection, custom functionality and online store management.',
+				heading: 'FAQs About Ecommerce Website Development',
+				text: 'Find answers to common questions about ecommerce website development.',
 				items: [
 					{
 						question: 'What Does Ecommerce Development Include?',
 						answer:
-							'Ecommerce development can include storefront design, product catalogue organisation, product pages, cart and checkout functionality, and relevant integrations. The exact scope depends on your platform, business requirements and project objectives.',
+							'Ecommerce development can include shopfront design, product catalogue organisation, product pages, cart and checkout functionality, and relevant integrations. The exact scope depends on your platform, business requirements and project objectives.',
 					},
 					{
 						question: 'What Is the Difference Between Ecommerce and Shopify Development?',
@@ -1622,52 +1844,52 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'Do You Provide Ecommerce Development Outside Manchester?',
 						answer:
-							'Yes. XoomPlus works with businesses in Manchester and across the UK. Each ecommerce project is tailored to the client’s products, sales model, operational needs and technical requirements.',
+							"Yes. XoomPlus works with businesses in Manchester and across the UK. Each ecommerce project is tailored to the client's products, sales model, operational needs and technical requirements.",
 					},
 				],
 			},
 			cta: {
 				pill: 'Your Next Stage',
-				heading: 'More Than a Store. A Better Shopping Experience.',
-				text: 'Let’s bring your products, brand and customer journey together in one seamless ecommerce experience.',
+				heading: 'Ready to Build an Ecommerce Website That Sells?',
+				text: "Let's discuss your project with our expert ecommerce developers.",
 				buttonLabel: 'Discuss Your Ecommerce Project →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Explore Our Approach →',
-				secondaryButtonHref: '#process',
+				secondaryButtonHref: '#service-stack',
 				secondaryLabel: 'info@xoomplus.co.uk',
 				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
 		{
 			...customWebsiteChild,
-			metaTitle: 'Custom Website Development Services | Xoomplus',
+			metaTitle: 'Custom Website Development Manchester | Fast & Secure',
 			metaDescription:
-				'No templates, no limits. Xoomplus delivers custom website development in Manchester, built around your goals, your brand and your customers.',
+				'Need a website that works for your business? XoomPlus offers Custom Website Development in Manchester, from planning and design to launch.',
 			hero: {
 				...customWebsiteChild.hero,
 				pill: 'Custom Website Development',
 				titleLines: [
-					'Custom Website Development Agency',
-					'in Manchester',
+					'Custom Website Development Manchester |',
+					'Built for Growth',
 				],
 				paragraphs: [
-					'Some businesses need more than a standard website structure. XoomPlus provides custom website development services for businesses in Manchester and across the UK. We create digital experiences around your specific requirements, users and workflows.',
-					'From tailored page layouts to specialised functionality and system integrations, each project is shaped around your business goals and technical requirements.',
+					'Standard website templates may not provide the features, flexibility or functionality your business needs. As your business grows, limited customisation and rigid layouts can make it difficult to support specific workflows, user requirements and business goals.',
+					'As an agency of custom website development in Manchester, we build websites around your specific needs, combining page layouts, specialised features and system integrations to create practical digital solutions. Every project is designed to meet your technical requirements, improve user experience and support your business growth.',
 				],
 				buttonLabel: 'Discuss Your Custom Website Project',
 			},
 			features: {
 				pill: 'Custom Website Development',
 				titleLines: [
-					'Your Website Should Fit',
-					'the Way You Work',
+					'What Is Custom Website',
+					'Development?',
 				],
-				text: 'Every business has different requirements. We start by understanding what your website needs to achieve, how people will use it and which features will support your goals.',
+				text: "Custom website development is the process of building a website that aligns with a business's specific needs and goals. It involves creating unique layouts, features, functionality and integrations rather than relying on standard templates.",
 				items: [
 					{
 						icon: 'make-the-next-step-clear',
 						title: 'Define Functionality',
-						text: 'Website functionality determines how visitors interact with your site and complete key tasks. We identify the features, forms and interactions needed to support your website’s purpose and business requirements.',
+						text: "Website functionality determines how visitors interact with your site and complete key tasks. We identify the features, forms and interactions needed to support your website's purpose and business requirements.",
 					},
 					{
 						icon: 'bring-your-brand-into-focus',
@@ -1677,22 +1899,22 @@ export const webDesignDevelopment: MainService = {
 					{
 						icon: 'think-beyond-one-screen',
 						title: 'Plan the Technical Approach',
-						text: 'The technical approach shapes how your website’s features and requirements are implemented. We consider the platform, integrations and development requirements to establish a suitable foundation before development begins.',
+						text: "The technical approach shapes how your website's features and requirements are implemented. We consider the platform, integrations and development requirements to establish a suitable foundation before development begins.",
 					},
 				],
 			},
 			processPill: 'Business Benefits',
-			processHeading: 'Build a Website Around Your Specific Needs',
+			processHeading: 'How Custom Web Development Supports Your Business',
 			processText:
-				'Custom website development gives you greater control over your website’s structure, functionality and user experience. Tailored layouts help present complex information clearly, while specific features and integrations support workflows that standard website setups may not accommodate. Defining these requirements early also helps establish a clear project scope and suitable technical approach.',
+				'Custom web development gives you greater control over your website’s structure, functionality and user experience. Interactive layouts help present complex information clearly, while specific features and integrations support workflows that standard website setups may not support. Defining these requirements early also helps establish a clear project scope and suitable technical approach.',
 			processImage: {
 				src: '/images/custom-website-development-business-benefits.webp',
 				alt: 'Custom website development business benefits',
 			},
 			services: {
 				pill: 'Development Solutions',
-				heading: 'Custom Website Development Services for Your Business',
-				text: 'Our custom website development services cover bespoke builds, tailored layouts, specialised functionality and third-party integrations. We assess your requirements to define a suitable technical approach and project scope.',
+				heading: 'Our Professional Custom Web Development Services',
+				text: 'Our services cover bespoke website development, tailored layouts, specialised functionality and third-party integrations. We assess your requirements to define a suitable technical approach and project scope.',
 				cards: [
 					{
 						title: 'Custom Website Development',
@@ -1724,15 +1946,44 @@ export const webDesignDevelopment: MainService = {
 					},
 				],
 			},
+			serviceStack: {
+				pill: 'Our Approach',
+				heading: 'Our Custom Web Development Process',
+				text: 'Our custom website development process connects your business requirements with website structure, design and functionality to support your goals and users’ needs across Manchester and the UK.',
+				cards: [
+					{
+						title: 'Understand Your Requirements',
+						text: 'We assess your business goals, target audience and functional needs to define the website’s purpose, key features and project priorities.',
+						imageSrc:
+							'/images/custom-website-development-understand-your-requirements.webp',
+					},
+					{
+						title: 'Plan Before Development',
+						text: 'We map out page structures, user journeys, required features and integrations before development begins. This helps us establish a clear direction and identify technical requirements early.',
+						imageSrc: '/images/custom-website-development-plan-before-development.webp',
+					},
+					{
+						title: 'Turn Requirements Into a Working Website',
+						text: 'We turn the agreed plans into interface designs and functional website components, ensuring each element aligns with your requirements, user experience goals and project scope.',
+						imageSrc:
+							'/images/custom-website-development-turn-requirements-into-a-working-website.webp',
+					},
+					{
+						title: 'Review, Test and Handover',
+						text: "We review the website's agreed features and user journeys, address identified issues within scope and prepare the website for handover with relevant access details and guidance.",
+						imageSrc: '/images/custom-website-development-review-test-and-handover.webp',
+					},
+				],
+			},
 			clarity: {
 				id: 'clarity',
 				pill: 'Industry Applications',
-				title: 'Custom Websites for Different Business Needs',
+				title: 'Custom Website Development Agency in Manchester for Different Businesses',
 				titleLines: [
-					'Custom Websites for Different',
-					'Business Needs',
+					'Custom Website Development Agency in',
+					'Manchester for Different Businesses',
 				],
-				text: 'Different industries have distinct workflows, content requirements and user expectations. We tailor each website to the business’s functional needs and the experience its users expect.',
+				text: 'We develop websites to meet the business’s functional needs and the experience its users expect.',
 				columns: [
 					{
 						items: [
@@ -1757,7 +2008,7 @@ export const webDesignDevelopment: MainService = {
 								text: 'We create service pages, enquiry forms and quote-request journeys that reflect your business processes and make it easier for customers to get in touch.',
 							},
 							{
-								title: 'SaaS and Business Services',
+								title: 'SaaS and Business Website Development',
 								text: 'We structure complex solutions, product features and specialised user journeys through layouts and functionality that help users understand your offering.',
 							},
 						],
@@ -1765,46 +2016,55 @@ export const webDesignDevelopment: MainService = {
 				],
 				note: 'Our custom website development services can support these and other industries, depending on your requirements, technical needs and project scope.',
 			},
-			serviceStack: {
-				pill: 'Our Approach',
-				heading: 'The XoomPlus Approach to Custom Website Development',
-				text: 'Our development process connects your business requirements with website structure, design and functionality to support your goals and users’ needs across Manchester and the UK.',
+			why: {
+				id: 'why-xoomplus',
+				pill: 'Why Xoomplus',
+				title: 'Why Choose Xoomplus for Custom Web Development Services',
+				text: '6 Reasons Why Brands Choose Xoomplus Over Other Custom Website Development Agencies',
 				cards: [
 					{
-						title: 'Understand Your Requirements',
-						text: 'We assess your business goals, target audience and functional needs to define the website’s purpose, key features and project priorities.',
-						imageSrc:
-							'/images/custom-website-development-understand-your-requirements.webp',
+						icon: '/icons/strategy-first.svg',
+						title: 'Audit & Research',
+						text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
 					},
 					{
-						title: 'Plan Before Development',
-						text: 'We map out page structures, user journeys, required features and integrations before development begins. This helps us establish a clear direction and identify technical requirements early.',
-						imageSrc: '/images/custom-website-development-plan-before-development.webp',
+						icon: '/icons/experienced-team.svg',
+						title: 'The A Team',
+						text: 'Each custom web developer of Xoomplus has a strong portfolio and years of experience to deliver professional services and the results you need.',
 					},
 					{
-						title: 'Turn Requirements Into a Working Website',
-						text: 'We turn the agreed plans into interface designs and functional website components, ensuring each element aligns with your requirements, user experience goals and project scope.',
-						imageSrc:
-							'/images/custom-website-development-turn-requirements-into-a-working-website.webp',
+						icon: '/icons/clear-reporting.svg',
+						title: 'Transparent Reporting',
+						text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
 					},
 					{
-						title: 'Review, Test and Handover',
-						text: 'We review the website’s agreed features and user journeys, address identified issues within scope and prepare the website for handover with relevant access details and guidance.',
-						imageSrc: '/images/custom-website-development-review-test-and-handover.webp',
+						icon: '/icons/tailored-strategies.svg',
+						title: 'Customised Plans',
+						text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+					},
+					{
+						icon: '/icons/result-focused.svg',
+						title: 'Focused Efforts',
+						text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+					},
+					{
+						icon: '/icons/long-term-growth.svg',
+						title: 'Lasting Growth',
+						text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
 					},
 				],
 			},
 			servicesBehind: {
 				id: 'services-behind',
 				pill: 'Connected Services',
-				title: 'Different Needs. Connected Digital Capabilities.',
+				title: 'Different Needs. Connected Digital Solutions.',
 				text: 'Your website is one part of your wider digital presence. Explore our related services to strengthen search visibility, improve user experience and connect your website with your marketing activities.',
 				cards: [
 					{
 						icon: '/icons/service-circles.svg',
 						title: 'Search Engine Optimisation (SEO)',
 						description:
-							'Improve your website’s search visibility through relevant content, technical optimisation and a focused SEO strategy.',
+							"Improve your website's search visibility through relevant content, technical optimisation and a focused SEO strategy.",
 						items: [
 							'AI SEO (GEO & AEO)',
 							'Local SEO',
@@ -1812,6 +2072,7 @@ export const webDesignDevelopment: MainService = {
 							'On-Page SEO',
 							'Link Building (Off-Page SEO)',
 							'SEO Audits',
+							'SEO Content Marketing',
 						],
 						buttonLabel: 'Explore SEO Services',
 						href: '/services/seo',
@@ -1854,8 +2115,8 @@ export const webDesignDevelopment: MainService = {
 			},
 			faq: {
 				pill: 'FAQ',
-				heading: 'Frequently Asked Questions',
-				text: 'Find answers to common questions about custom website development, functionality, integrations and project requirements.',
+				heading: 'FAQs About Custom Web Development',
+				text: 'Find answers to common questions about custom website development.',
 				items: [
 					{
 						question: 'What Is Custom Website Development?',
@@ -1875,7 +2136,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'How Much Does Custom Website Development Cost?',
 						answer:
-							'Costs depend on the website’s scope, design, functionality, integrations and technical complexity. Defining the requirements helps establish the work involved and an appropriate budget.',
+							"Costs depend on the website's scope, design, functionality, integrations and technical complexity. Defining the requirements helps establish the work involved and an appropriate budget.",
 					},
 					{
 						question: 'How Long Does Custom Website Development Take?',
@@ -1890,7 +2151,7 @@ export const webDesignDevelopment: MainService = {
 					{
 						question: 'Do You Provide Custom Website Development Outside Manchester?',
 						answer:
-							'Yes. XoomPlus works with businesses in Manchester and across the UK. Each project is tailored to the client’s requirements, technical needs and agreed scope.',
+							"Yes. XoomPlus works with businesses in Manchester and across the UK. Each project is tailored to the client's requirements, technical needs and agreed scope.",
 					},
 				],
 			},
@@ -1899,23 +2160,26 @@ export const webDesignDevelopment: MainService = {
 				heading: 'Need Something Beyond a Standard Website?',
 				text: 'Let’s discuss your requirements and find the right custom solution.',
 				buttonLabel: 'Discuss Your Custom Website Project →',
-				buttonHref: '/contact',
+				buttonHref: '/contact#enquiry-form',
 				secondaryButtonLabel: 'Explore Our Approach →',
-				secondaryButtonHref: '#process',
+				secondaryButtonHref: '#service-stack',
 				secondaryLabel: 'info@xoomplus.co.uk',
 				secondaryHref: 'mailto:info@xoomplus.co.uk',
 			},
 		},
 	],
 	hero: {
-		pill: 'Web Design & Development in Manchester',
+		pill: 'Web Design and Development Agency',
 		pillBrand: 'XoomPlus',
 		titleLines: [
-			'Web Design and Development in Manchester,',
-			'Built Around Your Business',
+			'Web Design and Development',
+			'Agency Manchester',
 		],
-		text: 'XoomPlus provides web design and development services for businesses in Manchester and across the UK. We create responsive landing pages, WordPress websites, Shopify stores and custom solutions tailored to your users and business goals. Whether you need a new website, a redesign or improved functionality, we help you find the right approach.',
-		primaryButton: { label: 'Discuss Your Project', href: '/contact' },
+		textParagraphs: [
+			'As a web design and development agency in Manchester, we provide web solution services for businesses. We create responsive landing pages, WordPress websites, Shopify stores and custom websites for your business goals.',
+			'Whether you need a new website, a redesign or improved functionality, we help you find the right approach.',
+		],
+		primaryButton: { label: 'Discuss Your Project', href: '/contact#enquiry-form' },
 		secondaryLink: { label: 'Explore the Possibilities', href: '#details' },
 		footerLeft: 'Digital Marketing. Designed for Growth.',
 		footerRight: 'UI/UX + Websites + Ecommerce',
@@ -1930,7 +2194,7 @@ export const webDesignDevelopment: MainService = {
 	features: {
 		pill: 'Built Around People',
 		titleLines: ['Not Just How It Looks.', 'How It Works for You.'],
-		text: 'Your website should communicate your brand clearly and guide visitors towards their goals. XoomPlus combines effective web design and reliable web development to create user-friendly websites that support your business objectives.',
+		text: 'Your website should communicate your brand clearly and guide visitors towards their goals. We, as a professional web design and development agency in Manchester, combine effective web solutions to create user-friendly websites that support your business objectives.',
 		items: [
 			{
 				icon: 'make-the-next-step-clear',
@@ -1951,7 +2215,7 @@ export const webDesignDevelopment: MainService = {
 	},
 	experience: {
 		pill: 'Experience & Design',
-		titleLines: ['Make Every Page', 'Feel Purposeful.'],
+		titleLines: ['What We Do as a', 'Website Design Agency'],
 		text: 'Effective web design combines clear structure, visual consistency and user-focused navigation. From landing pages to complete redesigns, we create intuitive experiences that reflect your brand and support your business goals.',
 		items: [
 			{
@@ -1963,7 +2227,7 @@ export const webDesignDevelopment: MainService = {
 			{
 				icon: 'landing-page-design',
 				title: 'Landing Page Design',
-				text: 'Give your campaigns a focused destination with audience-specific messaging, purposeful layouts and clear calls to action that support conversions.',
+				text: 'Give your pages a focused destination with audience-specific messaging, purposeful layouts and clear calls to action that support conversions.',
 				href: `/services/${SLUG}/landing-page-design`,
 			},
 			{
@@ -1977,12 +2241,12 @@ export const webDesignDevelopment: MainService = {
 			'We tailor the platform, page structure and handover to your needs rather than relying on a one-size-fits-all approach.',
 	},
 	bento: {
-		pill: 'Development & Commerce',
-		title: 'Thoughtful Development. Practical Solutions.',
-		text: 'Every business has different needs. XoomPlus combines thoughtful design with the right platforms and features to build websites that support your goals, work for your business and adapt as it grows.',
+		pill: 'Our Services',
+		title: 'Professional Web Design and Development Services',
+		text: 'Every business has different needs. We combine thoughtful design with the right platforms and features to build websites that support your goals, work for your business and adapt as they grow.',
 		mainCard: {
 			icon: '/icons/service-layers.svg',
-			title: 'Web Design & Development',
+			title: 'Web Design and Development',
 			description:
 				'Create a website that looks great, works smoothly and reflects your brand, with responsive design and easy navigation that support your business goals.',
 			items: [
@@ -1995,7 +2259,7 @@ export const webDesignDevelopment: MainService = {
 				'Custom Website Development',
 			],
 			buttonLabel: 'Discuss Your Website',
-			href: '/contact',
+			href: '/contact#enquiry-form',
 		},
 		cards: [
 			{
@@ -2023,7 +2287,7 @@ export const webDesignDevelopment: MainService = {
 			{
 				icon: 'custom-website-development',
 				title: 'Custom Website Development',
-				text: 'Build a custom website with tailored features, integrations and workflows that meet your specific business needs.',
+				text: 'Build a custom web design with customised features, integrations and workflows that meet your specific business needs.',
 				linkLabel: 'Read More →',
 				href: `/services/${SLUG}/custom-website-development`,
 			},
@@ -2078,6 +2342,44 @@ export const webDesignDevelopment: MainService = {
 			},
 		],
 		note: "What Should You Prepare Before We Start? Bring your business goals, required pages and available brand assets. We'll help clarify your requirements and next steps, even if everything isn't finalised.",
+	},
+	why: {
+		id: 'why-xoomplus',
+		pill: 'Why Xoomplus',
+		title: 'Why Choose Xoomplus for Web Design and Development Services',
+		text: '6 Reasons Why Brands Choose Xoomplus Over Other Web Development Agencies',
+		cards: [
+			{
+				icon: '/icons/strategy-first.svg',
+				title: 'Audit & Research',
+				text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+			},
+			{
+				icon: '/icons/experienced-team.svg',
+				title: 'The A Team',
+				text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium web development services and the results you need.',
+			},
+			{
+				icon: '/icons/clear-reporting.svg',
+				title: 'Transparent Reporting',
+				text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+			},
+			{
+				icon: '/icons/tailored-strategies.svg',
+				title: 'Customised Plans',
+				text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+			},
+			{
+				icon: '/icons/result-focused.svg',
+				title: 'Focused Efforts',
+				text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+			},
+			{
+				icon: '/icons/long-term-growth.svg',
+				title: 'Lasting Growth',
+				text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
+			},
+		],
 	},
 	faqKey: 'web-design-development',
 };

@@ -35,6 +35,8 @@ const phoneScreen = {
 
 const desktopHasImage = Boolean(panel.desktop.imageSrc?.trim());
 const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
+const desktopImageAlt = panel.desktop.alt?.trim() || panel.desktop.title;
+const mobileImageAlt = panel.mobile.alt?.trim() || panel.mobile.title;
 ---
 
 <Section id="showcase" background="light-gray" aria-labelledby={headingId}>
@@ -76,6 +78,7 @@ const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
 					instanceId="cs-safari-desktop"
 					url={panel.desktop.url || undefined}
 					imageSrc={desktopHasImage ? panel.desktop.imageSrc : undefined}
+					imageAlt={desktopImageAlt}
 					className="cs-showcase__safari"
 				/>
 				{
@@ -97,17 +100,13 @@ const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
 						</div>
 					)
 				}
-				{
-					desktopHasImage && panel.desktop.alt ? (
-						<span class="sr-only">{panel.desktop.alt}</span>
-					) : null
-				}
 			</div>
 
 			<div class="cs-showcase__phone">
 				<Iphone
 					instanceId="cs-iphone-mobile"
 					src={mobileHasImage ? panel.mobile.imageSrc : undefined}
+					imageAlt={mobileImageAlt}
 					className="cs-showcase__iphone"
 				/>
 				{
@@ -128,11 +127,6 @@ const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
 						</div>
 					)
 				}
-				{
-					mobileHasImage && panel.mobile.alt ? (
-						<span class="sr-only">{panel.mobile.alt}</span>
-					) : null
-				}
 			</div>
 		</div>
 
@@ -152,6 +146,7 @@ const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
 								instanceId={`cs-safari-frame-${index}`}
 								url={frame.barLabel || undefined}
 								imageSrc={hasImage ? frame.imageSrc : undefined}
+								imageAlt={alt}
 								className="cs-showcase__safari"
 							/>
 							{!hasImage && (
@@ -171,7 +166,6 @@ const mobileHasImage = Boolean(panel.mobile.imageSrc?.trim());
 									<p class="cs-showcase__ph-helper m-0">Website screenshot to be supplied</p>
 								</div>
 							)}
-							{hasImage ? <span class="sr-only">{alt}</span> : null}
 						</div>
 						<div class="cs-showcase__frame-meta">
 							<p class="cs-showcase__frame-title m-0">{frame.title}</p>

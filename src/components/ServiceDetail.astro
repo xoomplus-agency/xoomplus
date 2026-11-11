@@ -2,6 +2,7 @@
 import Section from './Section.astro';
 import { getServiceDetail } from '../data/services-detail';
 import { getChildHrefByName } from '../data/main-services';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 interface Props {
 	serviceId: string;
@@ -30,6 +31,9 @@ const colWidths =
 		? (['24%', '24%', '42%', '10%'] as const)
 		: (['24%', '32%', '38%', '64px'] as const);
 const caption = `${service.pill} capabilities, what each helps address and the scope to explore`;
+const noteLink = service.noteButtonHref
+	? normalizeLinkHref(service.noteButtonHref, Astro.url)
+	: null;
 ---
 
 <Section
@@ -111,7 +115,7 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 									>
 										<img
 											src="/icons/arrow.svg"
-											alt=""
+											alt={arrowLabel}
 											aria-hidden="true"
 											width="24"
 											height="24"
@@ -135,8 +139,12 @@ const caption = `${service.pill} capabilities, what each helps address and the s
 					{service.noteTitle ? <h3 class="sd-note__title m-0">{service.noteTitle}</h3> : null}
 					{service.note ? <p class="sd-note__text m-0">{service.note}</p> : null}
 				</div>
-				{service.noteButtonLabel && service.noteButtonHref ? (
-					<a class="sd-note__link" href={service.noteButtonHref}>
+				{service.noteButtonLabel && noteLink?.href ? (
+					<a
+						class="sd-note__link"
+						href={noteLink.href}
+						data-scroll-target={noteLink.scrollTarget}
+					>
 						{service.noteButtonLabel} →
 					</a>
 				) : null}

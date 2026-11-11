@@ -28,6 +28,9 @@ export default defineConfig({
   // Only set when SITE_URL is provided — prevents accidental production canonicals in staging.
   site: env.SITE_URL || undefined,
 
+  // Slash normalization is Express-only (server.js). Astro must not add reciprocal slash redirects.
+  trailingSlash: 'ignore',
+
   // Trust public host behind Cloudflare / cPanel TLS termination (Node socket is http).
   security: {
     allowedDomains: [
@@ -39,9 +42,14 @@ export default defineConfig({
   },
 
   redirects: {
-    '/appointment-booking/': {
+    // One key each — duplicate slash variants cause Astro redirect collisions.
+    '/appointment-booking': {
       status: 301,
-      destination: '/contact/',
+      destination: '/contact',
+    },
+    '/locations/manchester': {
+      status: 301,
+      destination: '/',
     },
     ...removedChildRedirects,
     ...legacyServiceRedirects,

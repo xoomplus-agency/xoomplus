@@ -54,12 +54,13 @@ const LEGACY_SERVICE_REDIRECT_PAIRS: ReadonlyArray<readonly [string, string]> = 
 	['/graphic-design-solutions/print-design', '/services/web-design-development'],
 ];
 
-function withTrailingSlash(path: string): string {
-	return path.endsWith('/') ? path : `${path}/`;
+function withoutTrailingSlash(path: string): string {
+	if (!path || path === '/') return '/';
+	return path.replace(/\/+$/, '') || '/';
 }
 
 /**
- * Astro `redirects` map — trailing-slash keys only (avoids slash-variant collisions).
+ * Astro `redirects` map — slashless keys only (matches site URL policy).
  * Middleware still accepts both slash forms via `resolveLegacyServiceRedirect`.
  */
 export function getLegacyServiceRedirects(): Record<
@@ -68,9 +69,9 @@ export function getLegacyServiceRedirects(): Record<
 > {
 	const redirects: Record<string, { status: 301; destination: string }> = {};
 	for (const [from, to] of LEGACY_SERVICE_REDIRECT_PAIRS) {
-		redirects[withTrailingSlash(from)] = {
+		redirects[withoutTrailingSlash(from)] = {
 			status: 301,
-			destination: withTrailingSlash(to),
+			destination: withoutTrailingSlash(to),
 		};
 	}
 	return redirects;
@@ -78,7 +79,7 @@ export function getLegacyServiceRedirects(): Record<
 
 const LOOKUP = new Map<string, string>();
 for (const [from, to] of LEGACY_SERVICE_REDIRECT_PAIRS) {
-	const destination = withTrailingSlash(to);
+	const destination = withoutTrailingSlash(to);
 	LOOKUP.set(from.replace(/\/+$/, '') || '/', destination);
 }
 

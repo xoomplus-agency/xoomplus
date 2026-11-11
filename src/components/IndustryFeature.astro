@@ -4,6 +4,7 @@ import {
 	getIndustryFeature,
 	type IndustryFeatureRow,
 } from '../data/industry-features';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 interface Props {
 	/**
@@ -83,6 +84,9 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 					const rowImgH = row.image.height ?? 390;
 					const imageOnRight = Boolean(row.reverse);
 					const caption = row.image.caption;
+					const buttonLink = row.button
+						? normalizeLinkHref(row.button.href, Astro.url)
+						: null;
 					const imgEl = (
 						<img
 							class="industry-feature__image"
@@ -135,9 +139,13 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 								{row.tag ? (
 									<p class="industry-feature__row-tag m-0">{row.tag}</p>
 								) : null}
-								{row.button ? (
+								{row.button && buttonLink?.href ? (
 									<p class="industry-feature__row-cta m-0">
-										<a class="industry-feature__row-link" href={row.button.href}>
+										<a
+											class="industry-feature__row-link"
+											href={buttonLink.href}
+											data-scroll-target={buttonLink.scrollTarget}
+										>
 											{row.button.label}
 											<span aria-hidden="true"> →</span>
 										</a>
@@ -224,7 +232,7 @@ const firstRowHeadingId = `${firstRowId}-heading`;
 									<span class="industry-feature__icon" aria-hidden="true">
 										<img
 											src={`/icons/${item.icon}.svg`}
-											alt=""
+											alt={item.title}
 											width="44"
 											height="44"
 											decoding="async"

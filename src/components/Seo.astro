@@ -1,5 +1,5 @@
 ---
-import type { PageSEO } from '../lib/wp-seo';
+import { normalizeSeoPath, type PageSEO } from '../lib/wp-seo';
 
 interface Props {
 	/** Fallback title when pageSeo is absent or seoTitle is null (non-WP routes). */
@@ -8,15 +8,24 @@ interface Props {
 	description?: string;
 	image?: string;
 	type?: string;
-	/** Override canonical path; defaults to current pathname. Only emitted when SITE_URL is set. */
+	/**
+	 * Static canonical path for this page (e.g. `/about`, `/services/seo`).
+	 * Always wins — never replaced by WordPress/Yoast at runtime.
+	 * Defaults to current pathname when omitted.
+	 */
 	canonicalPath?: string;
 	/**
 	 * Normalized Yoast page SEO from getPageSEO.
-	 * When provided, head tags come from WP only — missing fields are omitted, not invented.
+	 * Used for title/description/OG/schema — not for canonical (canonical is static).
 	 */
 	pageSeo?: PageSEO | null;
-	/** When true: force noindex,nofollow and omit canonical + og:url. Default false. */
+	/** When true: force noindex,nofollow. Default false. */
 	noindex?: boolean;
+	/**
+	 * When true: omit canonical + og:url (e.g. 404). Independent of `noindex` so
+	 * site-wide staging noindex can still emit canonicals on real pages.
+	 */
+	omitCanonical?: boolean;
 	/**
 	 * Explicit robots meta (e.g. CMS post noindex → "noindex, follow").
 	 * Wins over pageSeo robots when set; ignored when `noindex` is true or staging.
@@ -37,11 +46,17 @@ const {
 	canonicalPath = Astro.url.pathname,
 	pageSeo,
 	noindex = false,
+	omitCanonical = false,
 	robots: robotsProp,
 	syncOgWithMeta = false,
 } = Astro.props;
 
-const site = Astro.site;
+/**
+ * Canonicals always use the preferred production origin + slashless path.
+ * Same tag for `/path` and `/path/` — no request-URL variance, no WP override.
+ */
+const PREFERRED_ORIGIN = 'https://xoomplus.co.uk';
+const site = Astro.site ?? new URL(PREFERRED_ORIGIN);
 const fromWp = pageSeo != null;
 
 const seoTitle = fromWp ? (pageSeo.seoTitle ?? title) : title;
@@ -49,13 +64,13 @@ const seoDescription = fromWp
 	? (pageSeo.metaDescription ?? (description || undefined))
 	: description || undefined;
 
-const canonical = noindex
-	? undefined
-	: fromWp
-		? (pageSeo.canonical ?? undefined)
-		: site != null
-			? new URL(canonicalPath, site).href
-			: undefined;
+/** Preferred absolute canonical: https://xoomplus.co.uk[/path] — no slash, query, or hash. */
+function preferredCanonicalHref(path: string): string {
+	const normalized = normalizeSeoPath(path.split('?')[0].split('#')[0] || '/');
+	return normalized === '/' ? `${PREFERRED_ORIGIN}/` : `${PREFERRED_ORIGIN}${normalized}`;
+}
+
+const canonical = omitCanonical ? undefined : preferredCanonicalHref(canonicalPath);
 
 const og = fromWp ? pageSeo.social.og : null;
 const x = fromWp ? pageSeo.social.x : null;
@@ -79,7 +94,8 @@ const ogDescription = syncOgWithMeta
 		? (og?.description ?? undefined)
 		: seoDescription;
 const ogType = fromWp ? (og?.type ?? type) : type;
-const ogUrl = noindex ? undefined : fromWp ? (og?.url ?? canonical) : canonical;
+/** og:url matches the preferred canonical — not Yoast og:url / request slash. */
+const ogUrl = canonical;
 const ogSiteName = fromWp ? (og?.siteName ?? undefined) : undefined;
 const ogLocale = fromWp ? (og?.locale ?? undefined) : undefined;
 

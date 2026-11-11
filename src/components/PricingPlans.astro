@@ -200,7 +200,6 @@ const defaultTab = 'adhoc';
 			const target = event.target.closest('[role="tab"]');
 			if (!target?.dataset.tab) return;
 			activate(target.dataset.tab, false);
-			history.replaceState(null, '', '#' + target.dataset.tab);
 		});
 
 		tablist?.addEventListener('keydown', (event) => {
@@ -214,14 +213,19 @@ const defaultTab = 'adhoc';
 			if (key === 'Home') next = 0;
 			if (key === 'End') next = tabs.length - 1;
 			const id = tabs[next]?.dataset.tab;
-			if (id) {
-				activate(id, true);
-				history.replaceState(null, '', '#' + id);
-			}
+			if (id) activate(id, true);
 		});
 
+		// Legacy `#adhoc` / `#packages` deep links — activate then strip the fragment.
 		const hash = window.location.hash.replace(/^#/, '');
-		if (hash === 'adhoc' || hash === 'packages') activate(hash, false);
+		if (hash === 'adhoc' || hash === 'packages') {
+			activate(hash, false);
+			history.replaceState(
+				history.state,
+				'',
+				window.location.pathname + window.location.search,
+			);
+		}
 	}
 </script>
 

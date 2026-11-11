@@ -18,6 +18,7 @@ const RADIUS_V = (SCREEN_RADIUS / SCREEN_HEIGHT) * 100
 
 export interface IphoneProps extends HTMLAttributes<HTMLDivElement> {
   src?: string
+  imageAlt?: string
   videoSrc?: string
   /** Unique prefix so multiple iPhone frames on one page don't clash mask IDs. */
   instanceId?: string
@@ -25,6 +26,7 @@ export interface IphoneProps extends HTMLAttributes<HTMLDivElement> {
 
 export function Iphone({
   src,
+  imageAlt = "Website screenshot on mobile",
   videoSrc,
   instanceId = "iphone",
   className,
@@ -81,7 +83,7 @@ export function Iphone({
         >
           <img
             src={src}
-            alt=""
+            alt={imageAlt}
             className="block size-full object-cover object-top"
             loading="lazy"
             decoding="async"

@@ -384,7 +384,8 @@ export async function resolveAliasRedirect(
 		console.warn(
 			`[wp-seo] alias redirect: "${normalized}" → "${hit.route}" (key "${key}", id ${hit.id})`,
 		);
-		return withTrailingSlashPath(hit.route);
+		// Slashless — trailing slash would fight middleware / Apache DirectorySlash.
+		return normalizeSeoPath(hit.route);
 	}
 	return null;
 }

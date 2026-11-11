@@ -27,7 +27,7 @@ export type WpPost = {
 	category: string;
 	/**
 	 * CMS permalink pathname (trailing slash), e.g. `/digital-marketing/my-post/`.
-	 * Public frontend URL is always `/blog/{slug}/` via `postUrl()`.
+	 * Public frontend URL is always `/blog/{slug}` via `postUrl()`.
 	 */
 	path: string;
 	/** First URL segment (category). */
@@ -143,13 +143,13 @@ function getApiBase(): string {
 	return raw.replace(/\/+$/, '');
 }
 
-/** Public frontend post path: `/blog/{slug}/`. */
+/** Public frontend post path: `/blog/{slug}` (no trailing slash). */
 export function blogPostPath(slug: string): string {
 	const cleaned = slug.replace(/^\/+|\/+$/g, '').trim();
 	if (!cleaned) {
 		throw new Error('[wp] blogPostPath: empty slug');
 	}
-	return withTrailingSlash(`/blog/${cleaned}`);
+	return `/blog/${cleaned}`;
 }
 
 /** Strip Elementor (and similar) leading <style> blocks before JSON.parse. */
@@ -228,7 +228,7 @@ export function categoryKey(nameOrSlug: string): string {
 }
 
 /**
- * Canonical frontend URL for a post — always `/blog/{slug}/`.
+ * Canonical frontend URL for a post — always `/blog/{slug}` (no trailing slash).
  * CMS may still use `/{category}/{slug}/`; those paths 301 here.
  */
 export function postUrl(

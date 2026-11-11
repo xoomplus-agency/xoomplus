@@ -106,9 +106,9 @@ export const seoProcess: OurProcessContent = {
 
 export const ppcProcess: OurProcessContent = {
 	pill: 'Our Process',
-	title: 'Not Your Average PPC Partner! Our Unique Process',
+	title: 'Our PPC Campaign Management Process',
 	intro:
-		'Our PPC marketing process combines strategic planning, campaign expertise and data-led optimisation. From strategy to reporting, every step is focused on improving your campaign performance.',
+		'As a PPC agency in Manchester, our process combines strategic planning, campaign expertise and data-led optimisation.',
 	steps: [
 		{
 			icon: '/icons/discovery-call.svg',
@@ -148,9 +148,9 @@ export const ppcProcess: OurProcessContent = {
 
 export const socialMediaProcess: OurProcessContent = {
 	pill: 'Our Process',
-	title: 'A Clear Process of Social Media Marketing, From Strategy to Growth',
+	title: 'Our Clear Process of Social Media Marketing',
 	intro:
-		'We keep the process simple so you always understand what happens next. From discovery and planning through content creation, campaign management and reporting, every stage has a clear purpose.',
+		'Our social media experts keep the process simple so you always understand what happens next. From discovery, campaign management and reporting, every stage has a clear purpose.',
 	steps: [
 		{
 			icon: '/icons/discovery-call.svg',
@@ -191,9 +191,9 @@ export const socialMediaProcess: OurProcessContent = {
 /** Web Design & Development service page Our Process. */
 export const webDesignProcess: OurProcessContent = {
 	pill: 'Our Process',
-	title: 'A Clear Process from First Conversation to Website Launch',
+	title: 'Our Clear Web Design and Development Process',
 	intro:
-		'Our web design and development process gives your project a clear direction, from initial requirements to launch and handover. Each stage keeps the work aligned with your business goals, technical requirements and agreed scope.',
+		'Our process gives your project a clear direction, from initial requirements to launch and handover. Each stage keeps the work aligned with your business goals, technical requirements and agreed scope.',
 	steps: [
 		{
 			icon: '/icons/discovery-call.svg',
@@ -225,7 +225,7 @@ export const webDesignProcess: OurProcessContent = {
 			height: 171,
 			title: 'Reporting and Refinement',
 			description:
-				'Key features are tested, identified issues are addressed, and recommendations are provided for ongoing improvements.',
+				'Key features are tested, identified issues are addressed and recommendations are provided for ongoing improvements.',
 		},
 	],
 	bgImage: '/icons/our-process-svgs-bg-image.svg',

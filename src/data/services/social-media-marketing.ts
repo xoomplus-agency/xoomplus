@@ -1,4 +1,5 @@
 import type { MainService } from './types';
+
 const SLUG = 'social-media-marketing';
 const NAME = 'Social Media Marketing';
 
@@ -6,9 +7,9 @@ export const socialMediaMarketing: MainService = {
 	slug: SLUG,
 	name: NAME,
 	menuDescription: 'Connect your message with the right people.',
-	metaTitle: 'Social Media Marketing Agency Manchester | Xoomplus',
+	metaTitle: 'Social Media Marketing Manchester | Content & Campaigns',
 	metaDescription:
-		'Grow your brand with Xoomplus, a social media marketing agency in Manchester. Content, campaigns and reporting that drive engagement and sales.',
+		'Struggling to keep your social pages active? XoomPlus provides Social Media Marketing in Manchester, from content planning to campaign management.',
 	children: [
 		// Name kept for mega menu; page not generated (disabled).
 		{
@@ -34,44 +35,41 @@ export const socialMediaMarketing: MainService = {
 		pill: 'Social Media Marketing & Management',
 		pillBrand: 'XoomPlus',
 		titleLines: [
-			'Social Media Marketing Strategy',
-			'That Drives Meaningful Growth.',
+			'Social Media Marketing Manchester |',
+			'Drives Meaningful Growth',
 		],
-		text: 'At XoomPlus, we provide strategic social media marketing in Manchester and across the UK, helping businesses build brand awareness, connect with the right audiences and turn engagement into meaningful growth.',
+		textParagraphs: [
+			'Many businesses struggle to build brand awareness and connect with the right audience on social media. Without a clear strategy, their content may fail to attract engagement, generate leads or deliver meaningful results.',
+			'At XoomPlus, we provide strategic social media marketing in Manchester and across the UK to help businesses overcome these challenges. We create targeted strategies that build brand awareness, reach potential customers and encourage meaningful engagement.',
+		],
 		primaryButton: { label: 'Book a free audit call', href: '/contact#enquiry-form' },
 		secondaryLink: { label: 'Explore our process', href: '#process' },
 		footerLeft: 'Digital Marketing. Designed for Growth.',
 		footerRight: 'Content + Creative + Campaigns',
-		// PLACEHOLDER: replace with real content
 		panelLabel: 'CONTENT / CREATIVE / CAMPAIGNS',
 		panelPlus: '',
 		panelImage: {
 			src: '/images/social-media-marketing-hero.webp',
-			// PLACEHOLDER: replace with real content
 			alt: 'Website shown on a laptop and a phone',
 		},
-		// PLACEHOLDER: replace with real content
 		panelCaptions: ['Clear messaging', 'Consistent presence', 'Ongoing refinement'],
 	},
 	features: {
-		pill: 'Strategy that works for you',
-		titleLines: ['Not just what you post.', 'How your audience connects.'],
-		text: 'Your social media presence is where people discover your brand and understand your message. Our social media marketing services in Manchester combine strategy and targeted advertising to create social experiences that are built for growth.',
+		pill: 'Strategy That Works For You',
+		titleLines: ['What Is Social Media', 'Management?'],
+		text: 'Social media management is the process of planning, creating, publishing and managing content across social media platforms such as Facebook, Instagram and LinkedIn.',
 		items: [
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'make-the-next-step-clear',
 				title: 'Create a Clear Brand Voice',
 				text: 'Help your audience recognise your business through consistent messaging, visual direction and meaningful content.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'bring-your-brand-into-focus',
 				title: 'Reach the right people',
 				text: 'Use targeted campaigns and audience insights to connect with potential customers in Manchester and across the UK who are most likely to engage with your business.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'think-beyond-one-screen',
 				title: 'Build beyond one platform',
 				text: 'Create a connected social presence across Instagram, Facebook, TikTok and LinkedIn.',
@@ -80,40 +78,33 @@ export const socialMediaMarketing: MainService = {
 	},
 	experience: {
 		pill: 'Content & Management',
-		titleLines: ['Make every post', 'feel purposeful.'],
-		text: 'We start with understanding your audience. Then shape your content, campaigns and creative direction around what they need to see, understand and act on.',
+		titleLines: ['Make Every Post', 'Feel Purposeful.'],
+		text: 'As a social media agency in Manchester, we start with understanding your audience. Then shape your content, campaigns and creative direction around your target audience.',
 		items: [
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'ui-ux-design',
 				title: 'Social Media Management',
 				text: 'Build a consistent online presence with planned content, audience engagement and ongoing account management.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'landing-page-design',
 				title: 'Reels & Short-Form Content',
 				text: 'Turn ideas into engaging videos designed for modern audiences and fast-moving platforms.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'website-redesign',
 				title: 'Monthly Content Calendar',
 				text: 'Bring structure to your social media with a clear monthly plan designed around your goals.',
 			},
 		],
-		// PLACEHOLDER: replace with real content
-		footnote:
-			'We shape the channel mix, content requirements and reporting around your needs, rather than starting with a one-size-fits-all calendar.',
 	},
 	bento: {
 		pill: 'Paid Growth & Advertising',
-		title: 'The right message. In front of the right audience.',
-		text: 'Great content builds attention. Strategic social media marketing turns that attention into measurable opportunities.',
+		title: 'Professional Social Media Advertising Services',
+		text: 'Our social media services turn engagement into measurable results and business growth.',
 		mainCard: {
-			// PLACEHOLDER: replace with real content — reuse overview icon until social art lands
 			icon: '/icons/service-circles.svg',
-			title: 'Social Media Marketing',
+			title: 'Social Media Marketing in Manchester',
 			description:
 				"Whether you're a Manchester-based business looking to attract local customers or a UK company aiming to expand its reach, we develop a strategy around your objectives.",
 			items: [
@@ -130,36 +121,30 @@ export const socialMediaMarketing: MainService = {
 		},
 		cards: [
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'wordpress-development',
 				title: 'Meta Ads',
 				text: 'Create targeted Facebook and Instagram campaigns designed around your objectives.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'sopify-development',
 				title: 'TikTok Ads',
 				text: 'Connect with audiences through creative campaigns designed for TikTok’s fast-moving environment.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'ecommerce-development',
 				title: 'LinkedIn Marketing',
 				text: 'Build professional authority and connect with valuable business audiences.',
 			},
 			{
-				// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 				icon: 'custom-website-development',
 				title: 'Google Business Profile',
 				text: 'Improve your local visibility across Manchester and other UK locations, helping nearby customers discover, trust and connect with your business online.',
 			},
 		],
-		// PLACEHOLDER: replace with real content
-		note: 'Not sure which channels fit? Start with your audience, message and priorities. We can explore the social requirements together.',
 	},
 	showcase: {
 		pill: 'A Connected Social Experience',
-		titleLines: ['Different platforms.', 'Different Strategies.'],
+		titleLines: ['Different Platforms.', 'Different Strategies.'],
 		text: 'Your audience moves between platforms every day. A successful social media marketing strategy creates consistency while adapting to how people use each channel.',
 		plainPanel: true,
 		panel: {
@@ -179,7 +164,6 @@ export const socialMediaMarketing: MainService = {
 			'Campaigns built around your goals',
 			'Social experiences designed for action',
 		],
-		// PLACEHOLDER: replace with real content — reuse Web Design icon until social icons land
 		icon: 'one-connected-experience-arrow',
 	},
 	process: {
@@ -205,8 +189,45 @@ export const socialMediaMarketing: MainService = {
 				text: 'From planning and content creation to campaign reporting, we keep you involved with clear updates and a transparent process.',
 			},
 		],
-		// PLACEHOLDER: replace with real content
 		note: 'A useful starting point: your existing channels, your goals, the audiences you want to reach and any content or brand assets you already have.',
+	},
+	why: {
+		id: 'why-xoomplus',
+		pill: 'Why Xoomplus',
+		title: 'Why Choose Xoomplus for Social Media Marketing Services',
+		text: '6 Reasons Why Brands Choose Xoomplus Over Other Social Media Marketing Agencies',
+		cards: [
+			{
+				icon: '/icons/strategy-first.svg',
+				title: 'Audit & Research',
+				text: 'We conduct thorough research to understand your audience, competitors, trends and gaps before we do anything.',
+			},
+			{
+				icon: '/icons/experienced-team.svg',
+				title: 'The A Team',
+				text: 'Each member of Xoomplus has a strong portfolio and years of experience to deliver premium social media services and the results you need.',
+			},
+			{
+				icon: '/icons/clear-reporting.svg',
+				title: 'Transparent Reporting',
+				text: 'Transparency is our non-negotiable practice. We ensure clear and transparent communication from the start.',
+			},
+			{
+				icon: '/icons/tailored-strategies.svg',
+				title: 'Customised Plans',
+				text: 'Every business is a unique idea and has distinct digital needs. We craft customised plans that reflect your unique business needs.',
+			},
+			{
+				icon: '/icons/result-focused.svg',
+				title: 'Focused Efforts',
+				text: 'Everything we do has a clear purpose and goal. That is why our efforts don’t waver, and our results aren’t delayed.',
+			},
+			{
+				icon: '/icons/long-term-growth.svg',
+				title: 'Lasting Growth',
+				text: 'We deliver immediate outcomes that also form the foundation for long-term digital growth.',
+			},
+		],
 	},
 	faqKey: 'social-media-marketing',
 };

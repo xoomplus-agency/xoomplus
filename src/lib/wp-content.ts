@@ -533,12 +533,13 @@ function stripAnchorFragments(nodes: Node[]): void {
 		}
 
 		const isInternal = CMS_HOSTS.has(destination.hostname.toLowerCase());
-		el.attributes.href = isInternal
-			? baseHref
-				? `${destination.pathname}${destination.search}`
-				: ''
-			: baseHref;
-		if (isInternal) el.attributes['data-scroll-target'] = fragment;
+		if (isInternal) {
+			const pathname = withTrailingSlashPath(destination.pathname || '/');
+			el.attributes.href = `${pathname}${destination.search}`;
+			el.attributes['data-scroll-target'] = fragment;
+		} else {
+			el.attributes.href = baseHref;
+		}
 	}
 }
 

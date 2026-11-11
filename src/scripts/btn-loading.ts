@@ -13,7 +13,7 @@ export type SetButtonLoadingOptions = {
 	lockWidth?: boolean;
 };
 
-const SPINNER_HTML = `<img class="btn-loading-icon size-[21px]" src="${loadingIconUrl}" width="21" height="21" alt="" aria-hidden="true" />`;
+const SPINNER_HTML = `<img class="btn-loading-icon size-[21px]" src="${loadingIconUrl}" width="21" height="21" alt="Loading" aria-hidden="true" />`;
 
 export function setButtonLoading(
 	btn: HTMLButtonElement,

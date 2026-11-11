@@ -107,18 +107,47 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	// Legacy capitalized slug (Linux is case-sensitive; keep old links working).
 	if (/^\/locations\/Blackburn\/?$/i.test(context.url.pathname) && context.url.pathname.includes('B')) {
-		return redirect301('/locations/blackburn/');
+		return redirect301('/locations/blackburn');
 	}
 
 	// Retired booking page → contact.
 	if (/^\/appointment-booking\/?$/i.test(context.url.pathname)) {
-		return redirect301('/contact/');
+		return redirect301('/contact');
+	}
+
+	// Retired Manchester location page → homepage.
+	if (/^\/locations\/manchester\/?$/i.test(context.url.pathname)) {
+		return redirect301('/');
 	}
 
 	// Retired WP service pages → current /services/... (exact paths only).
 	const legacyServiceTarget = resolveLegacyServiceRedirect(context.url.pathname);
 	if (legacyServiceTarget) {
 		return redirect301(legacyServiceTarget);
+	}
+
+	/**
+	 * `/path/` → 301 → `/path` (dev + SSR). Express `server.js` does the same for
+	 * production static files. Strip only — never add a trailing slash.
+	 */
+	{
+		const raw = context.url.pathname;
+		const isExcluded =
+			raw.startsWith('/api/') ||
+			raw.startsWith('/_astro/') ||
+			raw.startsWith('/images/') ||
+			raw.startsWith('/videos/') ||
+			raw.startsWith('/fonts/') ||
+			raw.startsWith('/icons/') ||
+			raw === '/robots.txt' ||
+			raw.endsWith('.xml') ||
+			raw.endsWith('.txt') ||
+			/\.[a-z0-9]+$/i.test(raw.replace(/\/+$/, ''));
+		if (!isExcluded && raw.length > 1 && raw.endsWith('/')) {
+			const stripped = raw.replace(/\/+$/, '') || '/';
+			const qs = context.url.search || '';
+			return redirect301(`${stripped}${qs}`);
+		}
 	}
 
 	if (refresh) {
@@ -223,6 +252,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		response.headers.set('Cache-Control', htmlCache);
 		response.headers.set('CDN-Cache-Control', htmlCache);
 		response.headers.set('Vercel-CDN-Cache-Control', htmlCache);
+		response.headers.set('Cloudflare-CDN-Cache-Control', `max-age=${sMaxAge}`);
 	} else if (!isXmlOrSitemap && !blogCacheOwned && response.status === 200) {
 		const isAsset =
 			pathname.startsWith('/_astro/') ||
@@ -239,6 +269,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 				response.headers.set('Cache-Control', htmlCache);
 				response.headers.set('CDN-Cache-Control', htmlCache);
 				response.headers.set('Vercel-CDN-Cache-Control', htmlCache);
+				response.headers.set('Cloudflare-CDN-Cache-Control', 'max-age=300');
 			}
 		}
 	}

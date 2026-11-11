@@ -1,9 +1,7 @@
 ---
-import ButtonOutline from './ButtonOutline.astro';
-
 /**
  * Home “Our Locations” cards.
- * Blackburn → /locations/blackburn · Manchester → /locations/manchester
+ * Blackburn → /locations/blackburn
  */
 const locations = [
 	{
@@ -18,18 +16,6 @@ const locations = [
 			'Social Media Blackburn',
 		],
 	},
-	// {
-	// 	slug: 'manchester',
-	// 	title: 'Manchester',
-	// 	image: '/images/manchester-1.webp',
-	// 	alt: 'Aerial view of the Manchester city skyline',
-	// 	items: [
-	// 		'SEO Manchester',
-	// 		'Web Design Manchester',
-	// 		'PPC Manchester',
-	// 		'Social Media Manchester',
-	// 	],
-	// },
 ];
 ---
 
@@ -57,71 +43,76 @@ const locations = [
 		<ul class="locations-grid m-0 list-none p-0" role="list" data-reveal-group>
 			{
 				locations.map((location) => {
-					const href = `/locations/${location.slug}`;
+					const href = `/locations/${location.slug}/`;
 					return (
-						<li class="location-card card-hover" data-reveal="up">
-							<div class="location-card-media">
-								<img
-									src={location.image}
-									alt={location.alt}
-									width="320"
-									height="280"
-									class="location-card-img"
-									decoding="async"
-									loading="lazy"
-								/>
-							</div>
-							<div class="location-card-body">
-								<div class="location-card-copy">
-									<h3 class="location-card-title m-0">{location.title}</h3>
-									<ul class="location-list m-0 list-none p-0" role="list">
-										{location.items.map((item) => (
-											<li class="location-list-item">
-												<span class="location-check" aria-hidden="true">
-													<svg
-														width="18"
-														height="18"
-														viewBox="0 0 18 18"
-														fill="none"
-														xmlns="http://www.w3.org/2000/svg"
-													>
-														<circle cx="9" cy="9" r="9" fill="#FFA800" />
-														<path
-															d="M5.25 9.25L7.75 11.75L12.75 6.5"
-															stroke="#ffffff"
-															stroke-width="1.75"
-															stroke-linecap="round"
-															stroke-linejoin="round"
-														/>
-													</svg>
-												</span>
-												<span>{item}</span>
-											</li>
-										))}
-									</ul>
+						<li data-reveal="up">
+							<a
+								class="location-card"
+								href={href}
+								data-astro-prefetch="viewport"
+								aria-label={`View ${location.title} location details`}
+							>
+								<div class="location-card-media">
+									<img
+										src={location.image}
+										alt={location.alt}
+										width="320"
+										height="280"
+										class="location-card-img"
+										decoding="async"
+										loading="lazy"
+									/>
 								</div>
-								{/* Main card link + stretched-link overlay — whole card clickable, no nested <a> */}
-								<ButtonOutline class="w-full location-card-link" href={href}>
-									<span>View Details</span>
-									<svg
-										class="btn-outline__icon"
-										width="16"
-										height="16"
-										viewBox="0 0 16 16"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-										aria-hidden="true"
-									>
-										<path
-											d="M3 8h10M9 4l4 4-4 4"
-											stroke="currentColor"
-											stroke-width="1.75"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-										/>
-									</svg>
-								</ButtonOutline>
-							</div>
+								<div class="location-card-body">
+									<div class="location-card-copy">
+										<h3 class="location-card-title m-0">{location.title}</h3>
+										<ul class="location-list m-0 list-none p-0" role="list">
+											{location.items.map((item) => (
+												<li class="location-list-item">
+													<span class="location-check" aria-hidden="true">
+														<svg
+															width="18"
+															height="18"
+															viewBox="0 0 18 18"
+															fill="none"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<circle cx="9" cy="9" r="9" fill="#FFA800" />
+															<path
+																d="M5.25 9.25L7.75 11.75L12.75 6.5"
+																stroke="#ffffff"
+																stroke-width="1.75"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+															/>
+														</svg>
+													</span>
+													<span>{item}</span>
+												</li>
+											))}
+										</ul>
+									</div>
+									<span class="btn-outline w-full location-card-cta" aria-hidden="true">
+										<span>View Details</span>
+										<svg
+											class="btn-outline__icon"
+											width="16"
+											height="16"
+											viewBox="0 0 16 16"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												d="M3 8h10M9 4l4 4-4 4"
+												stroke="currentColor"
+												stroke-width="1.75"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</span>
+								</div>
+							</a>
 						</li>
 					);
 				})
@@ -151,19 +142,23 @@ const locations = [
 		border-radius: 16px;
 		background-color: #ffffff;
 		box-shadow: 0 8px 24px 0 rgba(149, 157, 165, 0.2);
+		text-decoration: none;
+		color: inherit;
+		transition:
+			transform 250ms cubic-bezier(0.23, 1, 0.32, 1),
+			box-shadow 250ms cubic-bezier(0.23, 1, 0.32, 1),
+			border-color 250ms cubic-bezier(0.23, 1, 0.32, 1);
 	}
 
-	/* Stretch the View Details <a> over the card without nesting links */
-	.location-card :global(.location-card-link)::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		z-index: 1;
+	.location-card:focus-visible {
+		outline: 2px solid #ffa800;
+		outline-offset: 3px;
 	}
 
 	.location-card-media {
 		min-height: 0;
 		min-width: 0;
+		overflow: hidden;
 	}
 
 	.location-card-img {
@@ -171,6 +166,8 @@ const locations = [
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		transform: scale(1);
+		transition: transform 350ms cubic-bezier(0.23, 1, 0.32, 1);
 	}
 
 	.location-card-body {
@@ -193,6 +190,7 @@ const locations = [
 		font-weight: 700;
 		letter-spacing: -0.02em;
 		color: var(--color-primary-black);
+		transition: color 200ms ease;
 	}
 
 	.location-list {
@@ -216,6 +214,47 @@ const locations = [
 		flex-shrink: 0;
 		width: 18px;
 		height: 18px;
+	}
+
+	.location-card :global(.btn-outline__icon) {
+		transition: transform 200ms ease;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.location-card:hover {
+			transform: translate3d(0, -4px, 0);
+			border-color: rgba(255, 168, 0, 0.35);
+			box-shadow: 0 14px 32px 0 rgba(149, 157, 165, 0.28);
+		}
+
+		.location-card:hover .location-card-img {
+			transform: scale(1.04);
+		}
+
+		.location-card:hover .location-card-title {
+			color: #ffa800;
+		}
+
+		.location-card:hover :global(.btn-outline__icon) {
+			transform: translateX(3px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.location-card,
+		.location-card-img,
+		.location-card-title,
+		.location-card :global(.btn-outline__icon) {
+			transition: none;
+		}
+
+		.location-card:hover {
+			transform: none;
+		}
+
+		.location-card:hover .location-card-img {
+			transform: none;
+		}
 	}
 
 	@media (max-width: 639px) {

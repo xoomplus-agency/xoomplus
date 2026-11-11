@@ -101,7 +101,7 @@ export function getDisabledChildRedirects(): Record<string, string> {
 			const from = `/services/${service.slug}/${child.slug}`;
 			const to = `/services/${service.slug}`;
 			redirects[from] = to;
-			redirects[`${from}/`] = `${to}/`;
+			redirects[`${from}/`] = to;
 		}
 	}
 	return redirects;

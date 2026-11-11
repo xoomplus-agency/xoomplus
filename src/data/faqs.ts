@@ -276,7 +276,7 @@ export const faqs: Record<string, FaqSet> = {
 	},
 	'web-design-development': {
 		pill: 'FAQ',
-		heading: 'Frequently Asked Questions About Web Design & Development',
+		heading: 'FAQs About Web Design and Development Services',
 		items: [
 			{
 				question: 'What is included in web design and development services?',
@@ -329,7 +329,7 @@ export const faqs: Record<string, FaqSet> = {
 					'Yes. We help plan content ideas, create calendars, develop creative concepts and support ongoing content production.',
 			},
 			{
-				question: 'Can you manage paid social media marketing campaigns?',
+				question: 'Can you manage paid social media marketing in Manchester?',
 				answer:
 					'Yes. We provide Meta Ads and TikTok Ads management, including campaign planning, optimisation and performance reviews.',
 			},

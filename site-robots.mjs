@@ -12,34 +12,6 @@ export function buildRobotsTxt(siteUrl, siteNoindex) {
 	return `User-agent: *
 Allow: /
 
-# Build / API / static assets — not pages or posts
-Disallow: /_astro/
-Disallow: /api/
-Disallow: /images/
-Disallow: /videos/
-Disallow: /fonts/
-Disallow: /icons/
-Disallow: /*.js$
-Disallow: /*.mjs$
-Disallow: /*.css$
-Disallow: /*.map$
-Disallow: /*.json$
-Disallow: /*.woff$
-Disallow: /*.woff2$
-Disallow: /*.ttf$
-Disallow: /*.eot$
-Disallow: /*.webp$
-Disallow: /*.avif$
-Disallow: /*.png$
-Disallow: /*.jpg$
-Disallow: /*.jpeg$
-Disallow: /*.gif$
-Disallow: /*.svg$
-Disallow: /*.ico$
-Disallow: /*.mp4$
-Disallow: /*.webm$
-Disallow: /*.mp3$
-
 Allow: /sitemap_index.xml
 Allow: /robots.txt
 

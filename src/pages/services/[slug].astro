@@ -13,6 +13,7 @@ import ServiceBento from '../../components/ServiceBento.astro';
 import ServiceShowcase from '../../components/ServiceShowcase.astro';
 import ServiceProcess from '../../components/ServiceProcess.astro';
 import FAQ from '../../components/FAQ.astro';
+import WhyXoomplus from '../../components/WhyXoomplus.astro';
 import CTASection from '../../components/CTASection.astro';
 import {
 	getMainServiceBySlug,
@@ -83,6 +84,7 @@ const canonicalPath = `/services/${service.slug}`;
 			}
 			id="process"
 		/>
+		{service.why ? <WhyXoomplus content={service.why} /> : null}
 		{service.faqKey ? <FAQ page={service.faqKey} /> : null}
 		{
 			service.slug === 'seo' ? (
@@ -93,6 +95,7 @@ const canonicalPath = `/services/${service.slug}`;
 				/>
 			) : service.slug === 'ppc-google-ads' ? (
 				<CTASection
+					pill="Your next step"
 					heading="Let's grow your business through smarter PPC marketing services."
 					text="Let's create PPC campaigns that connect your business with the right customers."
 					buttonLabel="Discuss your campaign →"
@@ -102,6 +105,7 @@ const canonicalPath = `/services/${service.slug}`;
 				/>
 			) : service.slug === 'social-media-marketing' ? (
 				<CTASection
+					pill="Your next step"
 					heading="Let's grow your business through social media marketing."
 					text="Tell us what you are working towards. We’ll explore the opportunities, challenges and the right social media marketing strategy to move your brand in the right direction."
 					buttonLabel="Discuss your project now."

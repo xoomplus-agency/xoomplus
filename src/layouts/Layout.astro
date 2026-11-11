@@ -36,11 +36,14 @@ interface Props {
 	theme?: 'dark' | 'light';
 	/** @deprecated Prefer `theme`. Pass-through to Header when `theme` is omitted. */
 	headerTheme?: 'dark' | 'light';
-	/** When true: noindex/nofollow, no canonical, no og:url. Default false. */
+	/**
+	 * When true: noindex/nofollow and omit canonical + og:url (e.g. 404).
+	 * Site-wide `SITE_NOINDEX` still forces robots noindex without stripping canonicals.
+	 */
 	noindex?: boolean;
 	/**
 	 * Explicit robots meta (e.g. "noindex, follow" for CMS posts).
-	 * Does not strip canonical/og — use `noindex` for full suppression.
+	 * Does not strip canonical/og — use `noindex` for 404-style suppression.
 	 */
 	robots?: string;
 	/** When true, no nav item is marked active (e.g. 404 under /blogs/…). */
@@ -179,6 +182,7 @@ if (effectiveNoindex) {
 			canonicalPath={canonicalPath}
 			pageSeo={pageSeo}
 			noindex={effectiveNoindex}
+			omitCanonical={noindex}
 			robots={effectiveNoindex ? undefined : robotsProp}
 			syncOgWithMeta={syncOgWithMeta}
 		>
@@ -266,17 +270,31 @@ if (effectiveNoindex) {
 				console.error('[scroll-link] Could not restore pending scroll target:', error);
 			}
 
-			if (window.location.hash) {
-				const targetId = window.location.hash.slice(1);
-				if (document.getElementById(targetId)) {
-					requestAnimationFrame(() => scrollToId(targetId));
-				}
+			const stripHashFromUrl = () => {
+				if (!window.location.hash) return;
 				window.history.replaceState(
 					window.history.state,
 					'',
 					window.location.pathname + window.location.search,
 				);
+			};
+
+			if (window.location.hash) {
+				const targetId = window.location.hash.slice(1);
+				if (targetId && document.getElementById(targetId)) {
+					requestAnimationFrame(() => scrollToId(targetId));
+				}
+				stripHashFromUrl();
 			}
+
+			/* Keep crawlable/shareable URLs fragment-free if anything re-adds a hash. */
+			window.addEventListener('hashchange', () => {
+				const targetId = window.location.hash.slice(1);
+				if (targetId && document.getElementById(targetId)) {
+					scrollToId(targetId);
+				}
+				stripHashFromUrl();
+			});
 		</script>
 	</body>
 </html>

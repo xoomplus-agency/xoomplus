@@ -72,7 +72,7 @@ if (!resolved || resolved.child.disabled === true) {
 }
 
 const { service, child } = resolved;
-const canonicalPath = `/services/${service.slug}/${child.slug}/`;
+const canonicalPath = `/services/${service.slug}/${child.slug}`;
 const site = Astro.site;
 const origin = site?.origin ?? '';
 
@@ -161,13 +161,13 @@ const breadcrumbJsonLd = {
 			'@type': 'ListItem',
 			position: 2,
 			name: 'Services',
-			item: origin ? `${origin}/services/` : '/services/',
+			item: origin ? `${origin}/services` : '/services',
 		},
 		{
 			'@type': 'ListItem',
 			position: 3,
 			name: service.name,
-			item: origin ? `${origin}/services/${service.slug}/` : `/services/${service.slug}/`,
+			item: origin ? `${origin}/services/${service.slug}` : `/services/${service.slug}`,
 		},
 		{
 			'@type': 'ListItem',
@@ -241,7 +241,14 @@ const breadcrumbJsonLd = {
 			child.slug === 'on-page-seo' ||
 			child.slug === 'link-building' ||
 			child.slug === 'e-commerce-seo' ||
-			child.slug === 'seo-audit' ? (
+			child.slug === 'seo-audit' ||
+			child.slug === 'ui-ux-design' ||
+			child.slug === 'landing-page-design' ||
+			child.slug === 'website-redesign' ||
+			child.slug === 'wordpress-development' ||
+			child.slug === 'shopify-development' ||
+			child.slug === 'ecommerce-development' ||
+			child.slug === 'custom-website-development' ? (
 				<>
 					{childServiceStackContent ? (
 						<ChildServiceStack

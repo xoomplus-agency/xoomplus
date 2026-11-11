@@ -36,6 +36,39 @@ app.use((_req, res, next) => {
 	next();
 });
 
+/**
+ * Single place for slash normalization (Passenger → Express).
+ * `/path/` → 301 → `/path` (+ query). Never the reverse. Homepage `/` unchanged.
+ * Keep Apache DirectorySlash Off; do not also strip in Astro middleware/.htaccess.
+ */
+app.use((req, res, next) => {
+	if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+	const raw = req.path || '/';
+	if (raw.length <= 1 || !raw.endsWith('/')) return next();
+
+	const withoutSlash = raw.replace(/\/+$/, '') || '/';
+	if (
+		withoutSlash.startsWith('/api/') ||
+		withoutSlash.startsWith('/_astro/') ||
+		withoutSlash.startsWith('/images/') ||
+		withoutSlash.startsWith('/videos/') ||
+		withoutSlash.startsWith('/fonts/') ||
+		withoutSlash.startsWith('/icons/') ||
+		withoutSlash === '/robots.txt' ||
+		withoutSlash.endsWith('.xml') ||
+		withoutSlash.endsWith('.txt') ||
+		/\.[a-z0-9]+$/i.test(withoutSlash)
+	) {
+		return next();
+	}
+
+	const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+	res.setHeader('Cache-Control', 'public, max-age=3600');
+	res.setHeader('CDN-Cache-Control', 'max-age=3600');
+	res.setHeader('Cloudflare-CDN-Cache-Control', 'max-age=3600');
+	res.redirect(301, `${withoutSlash}${qs}`);
+});
+
 /** Force CDN/browser to skip caching — CF was pinning robots/sitemaps for a year. */
 function setNeverCache(res) {
 	res.setHeader(
@@ -115,7 +148,8 @@ function setHtmlCacheHeaders(res) {
 app.use(
 	express.static(clientRoot, {
 		index: false,
-		redirect: true,
+		// Do not 301 directories to trailing-slash URLs — static pages are slashless.
+		redirect: false,
 		fallthrough: true,
 		setHeaders(res, filePath) {
 			if (filePath.endsWith('.html')) setHtmlCacheHeaders(res);

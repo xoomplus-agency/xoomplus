@@ -27,7 +27,7 @@ const {
 	category,
 	name,
 	image,
-	imageAlt = '',
+	imageAlt,
 	imageClass,
 	tags,
 	title,
@@ -63,7 +63,7 @@ const linkLabel = showMetrics ? `${name} case study` : `View details: ${name}`;
 				<div class="case-hero-img-wrap">
 					<img
 						src={image}
-						alt={imageAlt}
+						alt={imageAlt ?? name}
 						width="280"
 						height="150"
 						sizes="(min-width:1280px) 220px, (min-width:720px) 40vw, 80vw"

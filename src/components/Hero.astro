@@ -61,7 +61,7 @@ const trust = [
 				id="hero-bg-poster"
 				class="absolute inset-0 z-0 size-full bg-[#0b0b0b] object-cover object-center"
 				src="/videos/bg-hero-poster-960.webp"
-				alt=""
+				alt="Digital marketing agency Manchester hero background"
 				width="1280"
 				height="720"
 				fetchpriority="high"
@@ -232,7 +232,7 @@ const trust = [
 					<div class:list={itemClass} role="listitem">
 						<img
 							src={item.icon}
-							alt=""
+							alt={item.title ?? item.subtitle ?? 'Trust signal'}
 							width={item.iconW}
 							height={item.iconH}
 							class="size-[47px] shrink-0 object-contain"
@@ -259,7 +259,7 @@ const trust = [
 										{Array.from({ length: item.stars }).map(() => (
 											<img
 												src="/icons/star.svg"
-												alt=""
+												alt="Star"
 												width="12"
 												height="12"
 												class="size-3"

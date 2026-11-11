@@ -3,6 +3,8 @@
  * Shared light feature card (ServiceFeatures "Built around people" + IndustryFundamentals).
  * Surface: global `.surface-card`. Hover lift disabled to match Built around people.
  */
+import { normalizeLinkHref } from '../lib/normalize-link';
+
 interface Props {
 	icon: string;
 	title: string;
@@ -27,16 +29,17 @@ const {
 } = Astro.props;
 
 const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
+const link = normalizeLinkHref(href, Astro.url);
 ---
 
-<article class:list={['surface-card', 'feature-card', href && 'feature-card--link', className]}>
+<article class:list={['surface-card', 'feature-card', link.href && 'feature-card--link', className]}>
 	{
 		showPlus ? (
 			<div class="feature-card__top">
 				<img
 					class="feature-card__icon"
 					src={iconSrc}
-					alt=""
+					alt={title}
 					width={iconSize}
 					height={iconSize}
 					aria-hidden="true"
@@ -64,7 +67,7 @@ const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
 			<img
 				class="feature-card__icon"
 				src={iconSrc}
-				alt=""
+				alt={title}
 				width={iconSize}
 				height={iconSize}
 				aria-hidden="true"
@@ -75,7 +78,16 @@ const iconSrc = icon.startsWith('/') ? icon : `/icons/${icon}.svg`;
 	}
 	<h3 class="feature-card__title m-0">{title}</h3>
 	<p class="feature-card__text m-0">{text}</p>
-	{href ? <a class="feature-card__stretched" href={href} aria-label={title} /> : null}
+	{
+		link.href ? (
+			<a
+				class="feature-card__stretched"
+				href={link.href}
+				data-scroll-target={link.scrollTarget}
+				aria-label={title}
+			/>
+		) : null
+	}
 </article>
 
 <style>

@@ -5,6 +5,7 @@
 import Section from './Section.astro';
 import ServiceCard from './ServiceCard.astro';
 import type { ServiceBentoCard, ServiceBentoMainCard } from '../data/main-services';
+import { normalizeLinkHref } from '../lib/normalize-link';
 
 interface Props {
 	type?: 'bento';
@@ -62,15 +63,17 @@ function iconSrc(name: string) {
 		}
 
 		{
-			cards.map((card) => (
+			cards.map((card) => {
+				const link = normalizeLinkHref(card.href, Astro.url);
+				return (
 				<article
-					class:list={['sb-card', card.href && 'sb-card--link']}
+					class:list={['sb-card', link.href && 'sb-card--link']}
 					data-reveal="up"
 				>
 					<img
 						class="sb-card__icon"
 						src={iconSrc(card.icon)}
-						alt=""
+						alt={card.title}
 						width="22"
 						height="22"
 						aria-hidden="true"
@@ -79,15 +82,25 @@ function iconSrc(name: string) {
 					<h3 class="sb-card__title m-0">{card.title}</h3>
 					<p class="sb-card__text m-0">{card.text}</p>
 					{card.tag ? <p class="sb-card__tag m-0">{card.tag}</p> : null}
-					{card.linkLabel && card.href ? (
-						<a class="sb-card__link" href={card.href}>
+					{card.linkLabel && link.href ? (
+						<a
+							class="sb-card__link"
+							href={link.href}
+							data-scroll-target={link.scrollTarget}
+						>
 							{card.linkLabel}
 						</a>
-					) : card.href ? (
-						<a class="sb-card__stretched" href={card.href} aria-label={card.title} />
+					) : link.href ? (
+						<a
+							class="sb-card__stretched"
+							href={link.href}
+							data-scroll-target={link.scrollTarget}
+							aria-label={card.title}
+						/>
 					) : null}
 				</article>
-			))
+				);
+			})
 		}
 	</div>
 

@@ -31,4 +31,10 @@ describe('normalizeLinkHref', () => {
 			href: '/contact/',
 		});
 	});
+
+	it('strips bare hash-only hrefs without inventing a scroll target', () => {
+		assert.deepEqual(normalizeLinkHref('#', currentUrl), {
+			href: '/about/',
+		});
+	});
 });
